@@ -15,9 +15,8 @@
 
 #define	PDLOG(message) post("error@%s::%s::%d::%s\n", __FILE__, __FUNCTION__, __LINE__, message)
 							
-#include 	"/Applications/Pd-extended.app/Contents/Resources/include/pdextended/m_pd.h"
-//#include 	"/usr/include/pdextended/m_pd.h"
-#include 	"../ambix.h"
+#include 	"m_pd.h"
+#include 	"ambix.h"
 
 #include	<sndfile.h>
 
