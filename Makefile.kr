@@ -1,0 +1,61 @@
+# $Id: makefile 54 2010-12-21 00:28:09Z kr $
+
+NAME    =   ax
+
+SOURCES = 	ax.o				\
+			ax_write_mono~.o	\
+			ax_write~.o         \
+			ax_read~.o			\
+			ax_xml.o		\
+			iemmatrix-prim.o
+
+PD_EXTRA =  /Users/kr/Applications/Pd-0.42-6.app/Contents/Resources/extra
+PD_INC =    /Users/kr/Applications/Pd-0.42-6.app/Contents/Resources/src
+#PD_INC   =  pdinc
+# SND_LIB  =  /usr/local/lib/libsndfile.a
+EXT_LIB  = -L/usr/local/lib -lsndfile -lmxml
+
+# from PD.PC
+#
+# Cflags: -I${includedir}/pd -DPD -fPIC                                       
+# Libs: -bundle -undefined dynamic_lookup
+
+
+
+CFLAGS += -I$(PD_INC)
+# CFLAGS += -DVERSION='"0.001"'
+# CFLAGS += -DPD
+CFLAGS += -Wall
+# CFLAGS += -W
+# CFLAGS += -g
+# CFLAGS += -arch ppc
+CFLAGS += -arch i386
+#CFLAGS += -arch x86_64
+# CFLAGS += -mmacosx-version-min=10.4
+# CFLAGS += -fPIC
+# CFLAGS += -ftree-vectorize
+# CFLAGS += -ftree-vectorizer-verbose=2
+# CFLAGS += -fast
+
+# LFLAGS += -arch ppc
+LFLAGS += -arch i386
+#LFLAGS += -arch x86_64
+# LFLAGS += -mmacosx-version-min=10.4
+LFLAGS += -bundle -undefined dynamic_lookup #!
+LFLAGS += -o "$(NAME).pd_darwin"
+#LFLAGS += -lc
+LFLAGS += $(EXT_LIB)
+
+
+main:	clean $(SOURCES)
+		$(CC) $(LFLAGS) $(SOURCES)
+		chmod a-x "$(NAME).pd_darwin"
+		@echo "   ---   "
+		@echo "  BUILT  "
+		@echo "   ---   "
+		rm -f *.o
+		rm -rf "$(PD_EXTRA)/$(NAME)"
+		mkdir "$(PD_EXTRA)/$(NAME)"
+		mv "$(NAME).pd_darwin" "$(PD_EXTRA)/$(NAME)/$(NAME).pd_darwin"
+clean:
+		rm -f *.pd_darwin *.o

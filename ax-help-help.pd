@@ -1,0 +1,5 @@
+#N canvas 359 617 450 300 10;
+#X text -30 8 ambiX: a iem ambisonics framework for Pd;
+#X text -80 246 part of ambiX (c) iem 2010/2011;
+#X text -31 20 =========================================;
+#X text -14 128 DUMMY HELP OBJECT NEEDED BY MAKEFILE;

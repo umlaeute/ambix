@@ -1,0 +1,7 @@
+#N canvas 607 260 441 259 10;
+#X text -30 8 ambiX: a iem ambisonics framework for Pd;
+#X text 44 79 available objects;
+#X obj 46 101 ax_write~;
+#X obj 47 126 ax_read~;
+#X text -31 20 =========================================;
+#X text -51 218 part of ambiX (c) iem 2010/2011;
