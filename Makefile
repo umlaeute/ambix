@@ -52,10 +52,10 @@ EXTRA_DIST =
 # TODO change compiler flags
 # _KR: -I"$(PD_PATH)/src" supports the header location for 0.42.6 (vanilla?)
 # m_pd.h is in /usr/local/include
-CFLAGS = -Wall -W -g
-#CFLAGS = -I"$(PD_INCLUDE)/pd" -I"$(PD_PATH)/src" -Wall -W -g
+#CFLAGS = -Wall -W -g
+CFLAGS = -I"$(PD_INCLUDE)/pd" -I"$(PD_PATH)/src" -I/home/cubemixer/src/libsndfile-cust-chunk/src/ -Wall -W -g
 LDFLAGS =  
-LIBS = -lsndfile
+LIBS = -L/home/cubemixer/src/libsndfile-cust-chunk/src/.libs -lsndfile
 
 #------------------------------------------------------------------------------#
 #
