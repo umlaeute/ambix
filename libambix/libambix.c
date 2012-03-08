@@ -24,6 +24,95 @@
 
 #include "ambix/private.h"
 #include <stdlib.h>
+#include <string.h>
+
+static int
+ambix_checkuuid(char*data) {
+  const char uuid[]="IEM.AT/AMBIX/XML";
+  unsigned int i;
+  for(i=0; i<16; i++)
+    if(uuid[i]!=data[i])
+      return 0;
+
+  return 1;
+}
+
+static int
+ambix_clearmatrix(ambix_t*ax) {
+  uint32_t r;
+  for(r=0; r<ax->matrix_rows; r++) {
+    if(ax->matrix[r])
+      free(ax->matrix[r]);
+    ax->matrix[r]=NULL;
+  }
+  free(ax->matrix);
+  ax->matrix=NULL;
+  ax->matrix_rows=0;
+  ax->matrix_cols=0;
+}
+static int
+ambix_makematrix(ambix_t*ax, uint32_t rows, uint32_t cols) {
+  uint32_t r;
+  ambix_clearmatrix(ax);
+  if(rows<1 || cols<1)
+    return 0;
+
+  ax->matrix_rows=rows;
+  ax->matrix_cols=cols;
+  ax->matrix=(float32_t**)malloc(sizeof(float32_t*)*rows);
+  for(r=0; r<rows; r++) {
+    ax->matrix[r]=(float32_t*)malloc(sizeof(float32_t)*cols);
+  }
+  return 1;
+}
+static int
+ambix_fillmatrix(ambix_t*ax, float32_t*data) {
+  float32_t**matrix=ax->matrix;
+  uint32_t rows=ax->matrix_rows;
+  uint32_t cols=ax->matrix_cols;
+  uint32_t r;
+  for(r=0; r<rows; r++) {
+    uint32_t c;
+    for(c=0; c<cols; c++) {
+      matrix[r][c]=*data++;
+    }
+  }
+  return 0;
+}
+
+
+static int
+ambix_readmatrix(ambix_t*ax, void*data, uint64_t datasize) {
+  uint32_t rows;
+  uint32_t cols;
+  uint64_t size;
+  uint32_t index;
+  ambix_clearmatrix(ax);
+  if(datasize<(sizeof(rows)+sizeof(cols)))
+    return 0;
+
+  index = 0;
+
+  memcpy(&rows, data+index, sizeof(uint32_t));	
+  index += sizeof(uint32_t);
+			
+  memcpy(&cols, data+index, sizeof(uint32_t));	
+  index += sizeof(uint32_t);
+
+  size=rows*cols;
+  if(size*sizeof(float32_t) > datasize) {
+    return 0;
+  }
+
+  if(!ambix_makematrix(ax, rows, cols))
+    return 0;
+
+  if(!ambix_fillmatrix(ax, (float32_t*)(data+index)))
+     return 0;
+
+  return 1;
+}
+
 
 #ifdef HAVE_SNDFILE_H
 
@@ -62,6 +151,47 @@ static void sndfile2ambix_info(const SF_INFO*sfinfo, ambixinfo_t*axinfo) {
   axinfo->otherchannels=sfinfo->channels;
   axinfo->sampleformat=sndfile2ambix_sampleformat(sfinfo->format && SF_FORMAT_SUBMASK);
 }
+
+static int ambix_read_uuidchunk(ambix_t*ax) {
+	int				err ;
+  int result=0;
+	SF_CHUNK_INFO	chunk_info ;
+  SNDFILE*file=ax->sf_file;
+  const char*id="uuid";
+	memset (&chunk_info, 0, sizeof (chunk_info)) ;
+	snprintf (chunk_info.id, sizeof (chunk_info.id), id) ;
+	chunk_info.id_size = 4 ;
+	err = sf_get_chunk_size (file, &chunk_info) ;
+  if(err != SF_ERR_NO_ERROR) {
+    result=__LINE__;goto cleanup;
+  }
+  if(chunk_info.datalen<16) {
+    result=__LINE__;goto cleanup;
+  }
+
+	chunk_info.data = malloc (chunk_info.datalen) ;
+	err = sf_get_chunk_data (file, &chunk_info) ;
+  if(err != SF_ERR_NO_ERROR) {
+    result=__LINE__;goto cleanup;
+  }
+  if(!ambix_checkuuid(chunk_info.data)) {
+    result=__LINE__;goto cleanup;
+  }
+
+
+
+
+
+  return 0;
+
+ cleanup:
+  if(chunk_info.data)
+    free(chunk_info.data) ;
+
+  return result;
+}
+
+
 #endif /* HAVE_SNDFILE_H */
 
 
