@@ -69,7 +69,15 @@ typedef enum {
   AMBIX_SIMPLE   = 1,
   /** extended ambix file (w pre-multiplication matrix ) */
   AMBIX_EXTENDED = 2
-} ambix_filetype_t;
+} ambix_fileformat_t;
+
+typedef enum {
+  AMBIX_SAMPLEFORMAT_NONE=0,
+  AMBIX_SAMPLEFORMAT_PCM16,
+  AMBIX_SAMPLEFORMAT_PCM24,
+  AMBIX_SAMPLEFORMAT_PCM32,
+  AMBIX_SAMPLEFORMAT_FLOAT32,
+} ambix_sampleformat_t;
 
 
 /** this is for passing data about the opened ambix file between the host application and the library */
@@ -78,17 +86,19 @@ typedef struct ambixinfo_t {
   unsigned long  frames;
   /** samplerate in Hz */
   int			samplerate;
+  /** type of the ambix file */
+  ambix_sampleformat_t sampleformat;
 
   /** type of the ambix file */
-  ambix_filetype_t ambixformat;
+  ambix_fileformat_t ambixfileformat;
   /** number of (raw) ambisonics channels present in the file
    * if the file contains a full set of ambisonics channels (always true if ambixformat==AMBIX_SIMPLE),
    * then ambichannels=(ambiorder+1)^2;
    * if the file contains a reduced set (ambichannels<(ambiorder+1)^2) you can reconstruct the full set by
    * multiplying the reduced set with the reconstruction matrix */
-	int			ambichannels;
+	unsigned int			ambichannels;
   /** number of non-ambisonics channels in the file */
-	int			otherchannels;
+	unsigned int			otherchannels;
 } ambixinfo_t;
 
 /** @brief Open an ambix file
@@ -130,7 +140,8 @@ ambix_err_t	ambix_close	(ambix_t*ambix);
  * @param ambix The handle to an ambix file
  * @return A libsndfile handle or NULL
  */
-struct SNDFILE*ambix_get_sndfile	(ambix_t*ambix);
+typedef struct SNDFILE_tag SNDFILE;
+SNDFILE*ambix_get_sndfile	(ambix_t*ambix);
 
 
 
