@@ -7,3 +7,5 @@ include_HEADERS = ambix/ambix.h \
 	ambix/exportdefs.h
 
 libambix_la_LDFLAGS = -version-info 0:0:0
+
+libambix_la_CFLAGS = -DAMBIX_INTERNAL
