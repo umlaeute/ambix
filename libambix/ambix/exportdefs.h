@@ -58,12 +58,21 @@
 #else
 /* unknown compiler */
 # warning set up compiler specific defines
+
+/** flag functions to be exported from libambix */
+# define AMBIX_EXPORT
+/** flag functions to be imported from libambix */
+# define AMBIX_IMPORT
+/** flag functions to be deprecated */
+# define AMBIX_DEPRECATED
 #endif
 
 
 #ifdef AMBIX_INTERNAL
+/** flag functions to be useable outside the library */
 # define AMBIX_EXTERN AMBIX_EXPORT
 #else
+/** flag functions to be useable outside the library */
 # define AMBIX_EXTERN AMBIX_IMPORT
 #endif
 

@@ -38,52 +38,75 @@
 //extern "C" {
 #endif	/* __cplusplus */
 
+/** opaque handle to an ambix file */
 typedef struct ambix_t ambix_t;
 
 
+/** error codes returned by functions */
 typedef enum
-{	AMBIX_ERR_SUCCESS			= 0,
+{	
+  /** no error encountered */
+  AMBIX_ERR_SUCCESS			= 0,
+  /** an invalid ambix handle was passed to the function */
   AMBIX_ERR_INVALID_HANDLE,
-	AMBIX_ERR_UNRECOGNISED_FORMAT,
-	AMBIX_ERR_SYSTEM,
-	AMBIX_ERR_MALFORMED_FILE,
-	AMBIX_ERR_UNSUPPORTED_ENCODING,
 } ambix_err_t;
 
 
+/** error codes returned by functions */
 typedef enum {
+  /** open file for reading */
   AMBIX_READ  = (1<<0),
+  /** open file for writing  */
   AMBIX_WRITE = (1<<1)
 } ambix_filemode_t;
 
+
+/** ambix file types */
 typedef enum {
-  AMBIX_NONE     = 0, /* file is no ambix file */
-  AMBIX_SIMPLE   = 1, /* simple ambix file   (w/ pre-multiplication matrix) */
-  AMBIX_EXTENDED = 2  /* extended ambix file (w pre-multiplication matrix ) */
+  /** file is not an ambix file (or unknown) */
+  AMBIX_NONE     = 0, 
+  /** simple ambix file   (w/ pre-multiplication matrix) */
+  AMBIX_SIMPLE   = 1,
+  /** extended ambix file (w pre-multiplication matrix ) */
+  AMBIX_EXTENDED = 2
 } ambix_filetype_t;
 
 
-
+/** this is for passing data about the opened ambix file between the host application and the library */
 typedef struct ambixinfo_t {
+  /** number of frames in the file */
   unsigned long  frames;
+  /** samplerate in Hz */
   int			samplerate;
 
-	int			format;
-	int			sections;
-	int			seekable;
-
+  /** type of the ambix file */
   ambix_filetype_t ambixformat;
+  /** number of (raw) ambisonics channels present in the file
+   * if the file contains a full set of ambisonics channels (always true if ambixformat==AMBIX_SIMPLE),
+   * then ambichannels=(ambiorder+1)^2;
+   * if the file contains a reduced set (ambichannels<(ambiorder+1)^2) you can reconstruct the full set by
+   * multiplying the reduced set with the reconstruction matrix */
 	int			ambichannels;
+  /** number of non-ambisonics channels in the file */
 	int			otherchannels;
 } ambixinfo_t;
 
 /** @brief Open an ambix file
  *
- * Opens a soundfilek for reading/writing
+ * Opens a soundfile for reading/writing
  *
  * @param path filename of the file to open
  * @param mode whether to open the file for reading and/or writing (AMBIX_READ, AMBIX_WRITE, AMBIX_READ | AMBIX_WRITE)
- * @param ambixinfo 
+ * @param ambixinfo pointer to a valid ambixinfo_t structure;
+ * @remark
+ *    when opening a file for reading, the structure should be initialized to zero before calling ambix_open():
+ *    the fields will be set by the library; if you set the ambixinfo_t.ambixformat field to something else than AMBIX_NONE, 
+ *    the library will present the data as if the was written in this format (e.g. if you set ambixinfo_t.ambixformat:=AMBIX_SIMPLE
+ *    but the file really is AMBIX_EXTENDED, the library will automatically pre-multiply the reconstruction matrix to
+ *    give you the full ambisonics set.
+ * @remark
+ *   when opening a file for writing, the caller must set the fields; if ambixinfo_t.ambixformat is AMBIX_NONE, than ambixinfo_t.ambixchannels must be 0,
+ *   else ambixinfo_t.ambichannels must be >0; if ambixinfo_t.ambixformat is AMBIX_SIMPLE, then ambixinfo_t.ambichannels must be (ambiorder+1)^2
  * @return A handle to the opened file (or NULL on failure)
  */
 ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambixinfo_t*ambixinfo) ;
