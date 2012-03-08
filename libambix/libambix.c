@@ -25,6 +25,7 @@
 #include "ambix/private.h"
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 static int
 ambix_checkuuid(char*data) {
@@ -38,7 +39,7 @@ ambix_checkuuid(char*data) {
 }
 
 static int
-ambix_clearmatrix(ambix_t*ax) {
+ambix_matrix_destroy(ambix_t*ax) {
   uint32_t r;
   for(r=0; r<ax->matrix_rows; r++) {
     if(ax->matrix[r])
@@ -51,7 +52,7 @@ ambix_clearmatrix(ambix_t*ax) {
   ax->matrix_cols=0;
 }
 static int
-ambix_makematrix(ambix_t*ax, uint32_t rows, uint32_t cols) {
+ambix_matrix_create(ambix_t*ax, uint32_t rows, uint32_t cols) {
   uint32_t r;
   ambix_clearmatrix(ax);
   if(rows<1 || cols<1)
@@ -66,7 +67,7 @@ ambix_makematrix(ambix_t*ax, uint32_t rows, uint32_t cols) {
   return 1;
 }
 static int
-ambix_fillmatrix(ambix_t*ax, float32_t*data) {
+ambix_matrix_fill(ambix_t*ax, float32_t*data) {
   float32_t**matrix=ax->matrix;
   uint32_t rows=ax->matrix_rows;
   uint32_t cols=ax->matrix_cols;
@@ -87,7 +88,7 @@ ambix_readmatrix(ambix_t*ax, void*data, uint64_t datasize) {
   uint32_t cols;
   uint64_t size;
   uint32_t index;
-  ambix_clearmatrix(ax);
+  ambix_matrix_destroy(ax);
   if(datasize<(sizeof(rows)+sizeof(cols)))
     return 0;
 
@@ -104,10 +105,10 @@ ambix_readmatrix(ambix_t*ax, void*data, uint64_t datasize) {
     return 0;
   }
 
-  if(!ambix_makematrix(ax, rows, cols))
+  if(!ambix_matrix_create(ax, rows, cols))
     return 0;
 
-  if(!ambix_fillmatrix(ax, (float32_t*)(data+index)))
+  if(!ambix_matrix_fill(ax, (float32_t*)(data+index)))
      return 0;
 
   return 1;
@@ -141,7 +142,7 @@ static void ambix2sndfile_info(const ambixinfo_t*axinfo, SF_INFO *sfinfo) {
   sfinfo->frames=axinfo->frames;
   sfinfo->samplerate=axinfo->samplerate;
   sfinfo->channels=axinfo->ambichannels+axinfo->otherchannels;
-  sfinfo->format=SF_FORMAT_CAF || ambix2sndfile_sampleformat(axinfo->sampleformat);
+  sfinfo->format=SF_FORMAT_CAF | ambix2sndfile_sampleformat(axinfo->sampleformat);
   sfinfo->sections=0;//axinfo->sections;
   sfinfo->seekable=1;//axinfo->seekable;
 }
@@ -149,7 +150,7 @@ static void sndfile2ambix_info(const SF_INFO*sfinfo, ambixinfo_t*axinfo) {
   axinfo->frames=sfinfo->frames;
   axinfo->samplerate=axinfo->samplerate;
   axinfo->otherchannels=sfinfo->channels;
-  axinfo->sampleformat=sndfile2ambix_sampleformat(sfinfo->format && SF_FORMAT_SUBMASK);
+  axinfo->sampleformat=sndfile2ambix_sampleformat(sfinfo->format & SF_FORMAT_SUBMASK);
 }
 
 static int ambix_read_uuidchunk(ambix_t*ax) {
@@ -172,22 +173,31 @@ static int ambix_read_uuidchunk(ambix_t*ax) {
 	chunk_info.data = malloc (chunk_info.datalen) ;
 	err = sf_get_chunk_data (file, &chunk_info) ;
   if(err != SF_ERR_NO_ERROR) {
-    result=__LINE__;goto cleanup;
+    /* FIXXME: no data chunk, can only be AMBIX_SIMPLE */
+    result=__LINE__;goto simple;
   }
+  
   if(!ambix_checkuuid(chunk_info.data)) {
-    result=__LINE__;goto cleanup;
+    result=__LINE__;goto simple;
+  }
+  if(!ambix_readmatrix(ax, chunk_info.data+16, chunk_info.datalen-16)) {
+    result=__LINE__;goto simple;
   }
 
-
-
-
-
-  return 0;
-
- cleanup:
   if(chunk_info.data)
     free(chunk_info.data) ;
+  return 0;
 
+ simple:
+
+  if(chunk_info.data)
+    free(chunk_info.data) ;
+  return result;
+
+ cleanup:
+
+  if(chunk_info.data)
+    free(chunk_info.data) ;
   return result;
 }
 
@@ -198,20 +208,73 @@ static int ambix_read_uuidchunk(ambix_t*ax) {
 ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambixinfo_t*ambixinfo) {
   ambix_t*ambix=calloc(1, sizeof(ambix_t));
   int sfmode=0;
+  uint32_t channels=0;
+  int isCAF=0;
 
 #ifdef HAVE_SNDFILE_H
   ambx2sndfile_info(ambixinfo, &ambix->sf_info);
 
-  if((mode && AMBIX_READ) & (mode && AMBIX_WRITE))
+  if((mode & AMBIX_READ) & (mode & AMBIX_WRITE))
     sfmode=	SFM_RDWR;
-  else if (mode && AMBIX_READ)
+  else if (mode & AMBIX_READ)
     sfmode=	SFM_READ;
-  else if (mode && AMBIX_READ)
+  else if (mode & AMBIX_READ)
     sfmode=	SFM_READ;
 
   ambix->sf_file=sf_open(path, sfmode, &ambix->sf_info) ;
   if(!ambix->sf_file)
     goto cleanup;
+
+  channels=ambix->sf_info.channels;
+  isCAF=(SF_FORMAT_CAF & ambix->sf_info.format);
+
+  if(isCAF) {
+    if(ambix_read_uuidchunk(ambix) == 0) {
+      /* check whether channels are (N+1)^2
+       * if so, we have a simple-ambix file, else it is just an ordinary caf
+       */
+      uint32_t order1=(uint32_t)sqrt((double)ambix->matrix_rows);
+      if(order1*order1==ambix->matrix_rows) {
+        /* it's a simple AMBIX! */
+        ambix->ambisonics_order=order1-1;
+        ambix->info.ambixfileformat=AMBIX_EXTENDED;
+        ambix->info.ambichannels=ambix->matrix_cols;
+        ambix->info.otherchannels=channels-ambix->matrix_cols;
+      } else {
+        /* ouch! matrix is not valid! */
+        ambix->ambisonics_order=0;
+        ambix->info.ambixfileformat=AMBIX_NONE;
+        ambix->info.ambichannels=0;
+        ambix->info.otherchannels=channels;
+      }
+    } else {
+      /* no uuid chunk found, it's probably a SIMPLE ambix file */
+
+      /* check whether channels are (N+1)^2
+       * if so, we have a simple-ambix file, else it is just an ordinary caf
+       */
+      uint32_t order1=(uint32_t)sqrt((double)channels);
+      if(order1*order1==channels) {
+        /* it's a simple AMBIX! */
+        ambix->ambisonics_order=order1-1;
+        ambix->info.ambixfileformat=AMBIX_SIMPLE;
+        ambix->info.ambichannels=channels;
+        ambix->info.otherchannels=0;
+      } else {
+        /* it's an ordinary CAF file */
+        ambix->ambisonics_order=0;
+        ambix->info.ambixfileformat=AMBIX_NONE;
+        ambix->info.ambichannels=0;
+        ambix->info.otherchannels=channels;
+      }
+    }
+  } else {
+    /* it's not a CAF file.... */
+    ambix->ambisonics_order=0;
+    ambix->info.ambixfileformat=AMBIX_NONE;
+    ambix->info.ambichannels=0;
+    ambix->info.otherchannels=channels;
+  }
 
 #else
   goto cleanup;
