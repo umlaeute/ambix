@@ -53,8 +53,8 @@ typedef enum {
 
 
 
-typedef struct ambixinfo_ {
-  size_t  frames;
+typedef struct ambixinfo_t {
+  unsigned long  frames;
   int			samplerate;
 
 	int			format;
