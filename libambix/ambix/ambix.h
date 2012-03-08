@@ -38,6 +38,22 @@
 //extern "C" {
 #endif	/* __cplusplus */
 
+/** 32bit floating point number */
+typedef float float32_t;
+
+#ifdef HAVE_STDINT_H
+# include <stdint.h>
+#else
+/** 32bit signed integer  */
+typedef signed int int32_t;
+/** 32bit unsigned integer  */
+typedef unsigned int uint32_t;
+/** 64bit signed integer  */
+typedef signed long int64_t;
+/** 64bit unsigned integer  */
+typedef unsigned long uint64_t;
+#endif
+
 /** opaque handle to an ambix file */
 typedef struct ambix_t ambix_t;
 
@@ -89,7 +105,7 @@ typedef enum {
 /** this is for passing data about the opened ambix file between the host application and the library */
 typedef struct ambixinfo_t {
   /** number of frames in the file */
-  unsigned long  frames;
+  uint64_t  frames;
   /** samplerate in Hz */
   double			samplerate;
   /** type of the ambix file */
@@ -102,9 +118,9 @@ typedef struct ambixinfo_t {
    * then ambichannels=(ambiorder+1)^2;
    * if the file contains a reduced set (ambichannels<(ambiorder+1)^2) you can reconstruct the full set by
    * multiplying the reduced set with the reconstruction matrix */
-	unsigned int			ambichannels;
+	uint32_t			ambichannels;
   /** number of non-ambisonics channels in the file */
-	unsigned int			otherchannels;
+	uint32_t			otherchannels;
 } ambixinfo_t;
 
 /** @brief Open an ambix file
