@@ -10,9 +10,6 @@ AC_PROG_MAKE_SET
 
 AC_HEADER_STDC
 
-AC_CHECK_HEADERS(unistd.h stdint.h)
-
-
 AC_CHECK_HEADERS(sndfile.h)
 AC_SEARCH_LIBS([sf_open], [sndfile])
 
