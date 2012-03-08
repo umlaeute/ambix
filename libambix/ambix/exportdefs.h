@@ -1,6 +1,6 @@
 /* exportdefs.h -  defines for dll import/export              -*- c -*-
 
-   Copyright (C) 2012 IOhannes m zmölnig <zmoelnig@iem.at>
+   Copyright (C) 2012 IOhannes m zmÃ¶lnig <zmoelnig@iem.at>
          Institute of Electronic Music and Acoustics (IEM),
          University of Music and Dramatic Arts, Graz
 

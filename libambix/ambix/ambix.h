@@ -1,10 +1,10 @@
 /** 
  * @file	ambix.h
  * @brief	Ambisonics Xchange Library Interface
- * @detail This file is part of libambix
- * @author IOhannes m zmölnig <zmoelnig@iem.at>
+ * @details This file is part of libambix
+ * @author IOhannes m zmÃ¶lnig <zmoelnig@iem.at>
  * @date 2012
- * @copyright (C) 2012 IOhannes m zmölnig <zmoelnig@iem.at>, Institute of Electronic Music and Acoustics (IEM), University of Music and Performing Arts Graz (KUG)
+ * @copyright (C) 2012 IOhannes m zmÃ¶lnig <zmoelnig@iem.at>, Institute of Electronic Music and Acoustics (IEM), University of Music and Performing Arts Graz (KUG)
  *   libambix is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Lesser General Public License as
  *   published by the Free Software Foundation; either version 2.1 of
