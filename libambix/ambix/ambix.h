@@ -119,6 +119,7 @@ typedef struct ambixinfo_t {
  *   else ambixinfo_t.ambichannels must be >0; if ambixinfo_t.ambixformat is AMBIX_SIMPLE, then ambixinfo_t.ambichannels must be (ambiorder+1)^2
  * @return A handle to the opened file (or NULL on failure)
  */
+AMBIX_API
 ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambixinfo_t*ambixinfo) ;
 
 /** @brief Close an ambix handle
@@ -128,6 +129,7 @@ ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambixinfo_t
  * @param ambix The handle to an ambix file
  * @return an error code indicating success
  */
+AMBIX_API
 ambix_err_t	ambix_close	(ambix_t*ambix);
 
 
@@ -141,6 +143,7 @@ ambix_err_t	ambix_close	(ambix_t*ambix);
  * @return A libsndfile handle or NULL
  */
 typedef struct SNDFILE_tag SNDFILE;
+AMBIX_API
 SNDFILE*ambix_get_sndfile	(ambix_t*ambix);
 
 
