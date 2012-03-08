@@ -34,7 +34,7 @@ ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambixinfo_t
   return ambix;
 }
 
-int	ambix_close	(ambix_t*ambix) {
+ambix_err_t	ambix_close	(ambix_t*ambix) {
   if(NULL==ambix) {
     return AMBIX_ERR_INVALID_HANDLE;
   }
