@@ -121,6 +121,18 @@ ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambixinfo_t
 ambix_err_t	ambix_close	(ambix_t*ambix);
 
 
+/** @brief get the libsndfile handle associated with the ambix handle
+ *
+ * If possible, require an SNDFILE handle if possible; 
+ * if the ambix handle is not asociated with SNDFILE (e.g. because libambix is compiled without libsndfile support),
+ * NULL is returned
+ *
+ * @param ambix The handle to an ambix file
+ * @return A libsndfile handle or NULL
+ */
+struct SNDFILE*ambix_get_sndfile	(ambix_t*ambix);
+
+
 
 
 

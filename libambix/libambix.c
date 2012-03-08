@@ -43,3 +43,10 @@ ambix_err_t	ambix_close	(ambix_t*ambix) {
   ambix=NULL;
   return AMBIX_ERR_SUCCESS;
 }
+
+struct SNDFILE*ambix_get_sndfile	(ambix_t*ambix) {
+#ifdef HAVE_SNDFILE_H
+  return ambix->sf_file:
+#endif /* HAVE_SNDFILE_H */
+  return NULL;
+}
