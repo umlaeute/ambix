@@ -1,6 +1,6 @@
-/* exportdefs.h -  defines for dll import/export              -*- c -*-
+/* ambix/exportdefs.h -  defines for dll import/export              -*- c -*-
 
-   Copyright (C) 2012 IOhannes m zmölnig <zmoelnig@iem.at>
+   Copyright © 2012 IOhannes m zmölnig <zmoelnig@iem.at>
          Institute of Electronic Music and Acoustics (IEM),
          University of Music and Dramatic Arts, Graz
 
@@ -20,6 +20,16 @@
    License along with this program; if not, see <http://www.gnu.org/licenses/>.
 
 */
+
+
+/** 
+ * @file	ambix/exportdefs.h
+ * @brief	export definitions for various compilers
+ * @details This file is part of libambix
+ * @author IOhannes m zmölnig <zmoelnig@iem.at>
+ * @date 2012
+ * @copyright LGPL-2.1
+ */
 
 #ifndef AMBIX_EXPORTDEFS_H
 #define AMBIX_EXPORTDEFS_H
