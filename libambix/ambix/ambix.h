@@ -71,11 +71,17 @@ typedef enum {
   AMBIX_EXTENDED = 2
 } ambix_fileformat_t;
 
+/** ambix sample formats */
 typedef enum {
+/** unknown (or illegal) sample formats */
   AMBIX_SAMPLEFORMAT_NONE=0,
+  /** signed 16 bit integer */
   AMBIX_SAMPLEFORMAT_PCM16,
+  /** signed 24 bit integer */
   AMBIX_SAMPLEFORMAT_PCM24,
+  /** signed 32 bit integer */
   AMBIX_SAMPLEFORMAT_PCM32,
+  /** 32 bit floating point */
   AMBIX_SAMPLEFORMAT_FLOAT32,
 } ambix_sampleformat_t;
 
@@ -133,6 +139,12 @@ AMBIX_API
 ambix_err_t	ambix_close	(ambix_t*ambix);
 
 
+/**
+ * typedef from libsndfile
+ * @private
+ */
+typedef struct SNDFILE_tag SNDFILE;
+
 /** @brief get the libsndfile handle associated with the ambix handle
  *
  * If possible, require an SNDFILE handle if possible; 
@@ -142,7 +154,6 @@ ambix_err_t	ambix_close	(ambix_t*ambix);
  * @param ambix The handle to an ambix file
  * @return A libsndfile handle or NULL
  */
-typedef struct SNDFILE_tag SNDFILE;
 AMBIX_API
 SNDFILE*ambix_get_sndfile	(ambix_t*ambix);
 
