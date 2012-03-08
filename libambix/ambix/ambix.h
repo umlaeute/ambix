@@ -85,7 +85,7 @@ typedef struct ambixinfo_t {
   /** number of frames in the file */
   unsigned long  frames;
   /** samplerate in Hz */
-  int			samplerate;
+  double			samplerate;
   /** type of the ambix file */
   ambix_sampleformat_t sampleformat;
 
