@@ -12,4 +12,8 @@ AC_HEADER_STDC
 
 AC_CHECK_HEADERS(unistd.h)
 
+
+AC_CHECK_HEADERS(sndfile.h)
+AC_SEARCH_LIBS([sf_open], [sndfile])
+
 AC_OUTPUT(Makefile)
