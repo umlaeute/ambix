@@ -40,6 +40,17 @@
 
 typedef struct ambix_t ambix_t;
 
+
+typedef enum
+{	AMBIX_ERR_SUCCESS			= 0,
+  AMBIX_ERR_INVALID_HANDLE,
+	AMBIX_ERR_UNRECOGNISED_FORMAT,
+	AMBIX_ERR_SYSTEM,
+	AMBIX_ERR_MALFORMED_FILE,
+	AMBIX_ERR_UNSUPPORTED_ENCODING,
+} ambix_err_t;
+
+
 typedef enum {
   AMBIX_READ  = (1<<0),
   AMBIX_WRITE = (1<<1)
@@ -82,9 +93,9 @@ ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambixinfo_t
  * Closes an ambix handle and cleans up all memory allocations associated with it.
  *
  * @param ambix The handle to an ambix file
- * @return an error code (0 == sucess)
+ * @return an error code indicating success
  */
-int	ambix_close	(ambix_t*ambix);
+ambix_err_t	ambix_close	(ambix_t*ambix);
 
 
 
