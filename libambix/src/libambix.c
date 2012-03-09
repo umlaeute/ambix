@@ -55,6 +55,8 @@ SNDFILE*ambix_getSndfile	(ambix_t*ambix) {
 
 
 const ambixmatrix_t*ambix_getReconstructionMatrix	(ambix_t*ambix) {
+  if(AMBIX_EXTENDED==ambix->info.ambixfileformat)
+    return &(ambix->matrix);
   return NULL;
 }
 ambix_err_t ambix_setPremultiplyMatrix	(ambix_t*ambix, const ambixmatrix_t*matrix) {
