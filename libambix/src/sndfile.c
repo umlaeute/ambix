@@ -80,6 +80,7 @@ ambix_read_uuidchunk(ambix_t*ax) {
 	snprintf (chunk_info.id, sizeof (chunk_info.id), id) ;
 	chunk_info.id_size = 4 ;
 	err = sf_get_chunk_size (file, &chunk_info) ;
+
   if(err != SF_ERR_NO_ERROR) {
     result=__LINE__;goto cleanup;
   }
@@ -107,7 +108,7 @@ ambix_read_uuidchunk(ambix_t*ax) {
 
   if(chunk_info.data)
     free(chunk_info.data) ;
-  return 0;
+  return AMBIX_ERR_SUCCESS;
 
  simple:
 
@@ -150,7 +151,7 @@ ambix_err_t _ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t
   isCAF=(SF_FORMAT_CAF & ambix->sf_info.format);
 
   if(isCAF) {
-    if(ambix_read_uuidchunk(ambix) == 0) {
+    if(ambix_read_uuidchunk(ambix) == AMBIX_ERR_SUCCESS) {
       /* check whether channels are (N+1)^2
        * if so, we have a simple-ambix file, else it is just an ordinary caf
        */
