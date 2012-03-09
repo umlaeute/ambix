@@ -4,6 +4,7 @@ INCLUDES = -I$(top_srcdir)
 lib_LTLIBRARIES = libambix.la
 
 libambix_la_SOURCES = libambix.c \
+	adaptor.c \
 	matrix.c \
 	utils.c \
 	uuid_chunk.c \

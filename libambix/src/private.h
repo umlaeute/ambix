@@ -58,6 +58,14 @@ typedef struct ambix_t {
 
   /** reconstruction matrix */
   ambixmatrix_t matrix;
+
+  /** buffer for adaptor signals */
+  void*adaptorbuffer;
+  /** size of the adaptor buffer (in bytes) */
+  int64_t adaptorbuffersize;
+
+  /** default adaptorbuffer size in frames */
+#define DEFAULT_ADAPTORBUFFER_SIZE 64
 } ambix_t;
 
 
@@ -120,6 +128,18 @@ static inline uint32_t swap4(uint32_t n)
   return (((n & 0xff) << 24) | ((n & 0xff00) << 8) |
           ((n & 0xff0000) >> 8) | ((n & 0xff000000) >> 24));
 }
+
+
+/** @brief resize adaptor buffer to given size
+ * @param ambix valid ambix handle
+ * @return error code indicating success
+ */
+ambix_err_t _ambix_adaptorbuffer_resize(ambix_t*ambix, int64_t frames);
+/** @brief free an adapator buffer
+ * @param ambix valid ambix handle
+ * @return error code indicating success
+ */
+ambix_err_t _ambix_adaptorbuffer_destroy(ambix_t*ambix);
 
 
 #define MARK() printf("%s:%d[%s]\n", __FILE__, __LINE__, __FUNCTION__)
