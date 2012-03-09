@@ -158,7 +158,7 @@ ambix_err_t	ambix_close	(ambix_t*ambix);
  * @return A libsndfile handle or NULL
  */
 AMBIX_API
-SNDFILE*ambix_get_sndfile	(ambix_t*ambix);
+SNDFILE*ambix_getSndfile	(ambix_t*ambix);
 
 
 

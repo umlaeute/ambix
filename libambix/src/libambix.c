@@ -49,6 +49,6 @@ ambix_err_t	ambix_close	(ambix_t*ambix) {
   return res;
 }
 
-SNDFILE*ambix_get_sndfile	(ambix_t*ambix) {
+SNDFILE*ambix_getSndfile	(ambix_t*ambix) {
   return _ambix_get_sndfile(ambix);
 }
