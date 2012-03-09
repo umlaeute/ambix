@@ -63,7 +63,7 @@ ambix2sndfile_info(const ambixinfo_t*axinfo, SF_INFO *sfinfo) {
 static void
 sndfile2ambix_info(const SF_INFO*sfinfo, ambixinfo_t*axinfo) {
   axinfo->frames=sfinfo->frames;
-  axinfo->samplerate=axinfo->samplerate;
+  axinfo->samplerate=(double)(sfinfo->samplerate);
   axinfo->otherchannels=sfinfo->channels;
   axinfo->sampleformat=sndfile2ambix_sampleformat(sfinfo->format & SF_FORMAT_SUBMASK);
 }
