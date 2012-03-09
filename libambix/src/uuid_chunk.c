@@ -72,7 +72,7 @@ _ambix_uuid1_to_matrix(const void*data, uint64_t datasize, ambixmatrix_t*orgmtx,
   size=rows*cols;
 
   if(rows<1 || cols<1 || size < 1)
-    rerturn NULL;
+    return NULL;
 
   if(size*sizeof(float32_t) > datasize) {
     return NULL;
