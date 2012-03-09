@@ -31,94 +31,6 @@
 
 #include <math.h>
 
-static int
-ambix_checkuuid(char*data) {
-  const char uuid[]="IEM.AT/AMBIX/XML";
-  unsigned int i;
-  for(i=0; i<16; i++)
-    if(uuid[i]!=data[i])
-      return 0;
-
-  return 1;
-}
-
-static int
-ambix_matrix_destroy(ambix_t*ax) {
-  uint32_t r;
-  for(r=0; r<ax->matrix_rows; r++) {
-    if(ax->matrix[r])
-      free(ax->matrix[r]);
-    ax->matrix[r]=NULL;
-  }
-  free(ax->matrix);
-  ax->matrix=NULL;
-  ax->matrix_rows=0;
-  ax->matrix_cols=0;
-}
-static int
-ambix_matrix_create(ambix_t*ax, uint32_t rows, uint32_t cols) {
-  uint32_t r;
-  ambix_clearmatrix(ax);
-  if(rows<1 || cols<1)
-    return 0;
-
-  ax->matrix_rows=rows;
-  ax->matrix_cols=cols;
-  ax->matrix=(float32_t**)malloc(sizeof(float32_t*)*rows);
-  for(r=0; r<rows; r++) {
-    ax->matrix[r]=(float32_t*)malloc(sizeof(float32_t)*cols);
-  }
-  return 1;
-}
-static int
-ambix_matrix_fill(ambix_t*ax, float32_t*data) {
-  float32_t**matrix=ax->matrix;
-  uint32_t rows=ax->matrix_rows;
-  uint32_t cols=ax->matrix_cols;
-  uint32_t r;
-  for(r=0; r<rows; r++) {
-    uint32_t c;
-    for(c=0; c<cols; c++) {
-      matrix[r][c]=*data++;
-    }
-  }
-  return 0;
-}
-
-
-static int
-ambix_readmatrix(ambix_t*ax, void*data, uint64_t datasize) {
-  uint32_t rows;
-  uint32_t cols;
-  uint64_t size;
-  uint32_t index;
-  ambix_matrix_destroy(ax);
-  if(datasize<(sizeof(rows)+sizeof(cols)))
-    return 0;
-
-  index = 0;
-
-  memcpy(&rows, data+index, sizeof(uint32_t));	
-  index += sizeof(uint32_t);
-			
-  memcpy(&cols, data+index, sizeof(uint32_t));	
-  index += sizeof(uint32_t);
-
-  size=rows*cols;
-  if(size*sizeof(float32_t) > datasize) {
-    return 0;
-  }
-
-  if(!ambix_matrix_create(ax, rows, cols))
-    return 0;
-
-  if(!ambix_matrix_fill(ax, (float32_t*)(data+index)))
-     return 0;
-
-  return 1;
-}
-
-
 #ifdef HAVE_SNDFILE_H
 
 static  ambix_sampleformat_t
@@ -181,7 +93,7 @@ static int ambix_read_uuidchunk(ambix_t*ax) {
     result=__LINE__;goto simple;
   }
   
-  if(!ambix_checkuuid(chunk_info.data)) {
+  if(!_ambix_checkuuid(chunk_info.data)) {
     result=__LINE__;goto simple;
   }
   if(!ambix_readmatrix(ax, chunk_info.data+16, chunk_info.datalen-16)) {
