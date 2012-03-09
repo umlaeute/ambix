@@ -29,8 +29,6 @@
 #include <string.h>
 #endif /* HAVE_STRING_H */
 
-#include <math.h>
-
 static  ambix_sampleformat_t
 sndfile2ambix_sampleformat(int sformat) {
   switch(sformat) {
@@ -150,11 +148,10 @@ ambix_err_t _ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t
       /* check whether channels are (N+1)^2
        * if so, we have a simple-ambix file, else it is just an ordinary caf
        */
-      uint32_t order1=(uint32_t)sqrt((double)ambix->matrix.rows);
       if(ambix->matrix.cols <= channels &&  // reduced set must be fully present
-         order1*order1==ambix->matrix.rows) { // expanded set must be a full set
+         ambix_isFullSet(ambix->matrix.rows)) { // expanded set must be a full set
         /* it's a simple AMBIX! */
-        ambix->ambisonics_order=order1-1;
+        ambix->ambisonics_order=ambix_channels2order(ambix->matrix.rows);
         ambix->info.ambixfileformat=AMBIX_EXTENDED;
         ambix->info.ambichannels=ambix->matrix.cols;
         ambix->info.otherchannels=channels-ambix->matrix.cols;
@@ -171,10 +168,9 @@ ambix_err_t _ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t
       /* check whether channels are (N+1)^2
        * if so, we have a simple-ambix file, else it is just an ordinary caf
        */
-      uint32_t order1=(uint32_t)sqrt((double)channels);
-      if(order1*order1==channels) {
+      if(ambix_isFullSet(channels)) { // expanded set must be a full set
         /* it's a simple AMBIX! */
-        ambix->ambisonics_order=order1-1;
+        ambix->ambisonics_order=ambix_channels2order(channels);
         ambix->info.ambixfileformat=AMBIX_SIMPLE;
         ambix->info.ambichannels=channels;
         ambix->info.otherchannels=0;
