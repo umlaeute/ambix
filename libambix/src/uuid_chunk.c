@@ -26,6 +26,9 @@
 #ifdef HAVE_STRING_H
 # include <string.h>
 #endif /* HAVE_STRING_H */
+#ifdef HAVE_STDLIB_H
+# include <stdlib.h>
+#endif /* HAVE_STDLIB_H */
 
 static int
 _ambix_checkUUID_1(const char*data) {
@@ -48,7 +51,7 @@ _ambix_checkUUID(const char data[16]) {
 
 ambixmatrix_t*
 _ambix_uuid1_to_matrix(const void*data, uint64_t datasize, ambixmatrix_t*orgmtx, int swap) {
-  ambixmatrix_t*mtx;
+  ambixmatrix_t*mtx=orgmtx;
   uint32_t rows;
   uint32_t cols;
   uint64_t size;
@@ -72,28 +75,35 @@ _ambix_uuid1_to_matrix(const void*data, uint64_t datasize, ambixmatrix_t*orgmtx,
   size=rows*cols;
 
   if(rows<1 || cols<1 || size < 1)
-    return NULL;
+    goto cleanup;
 
   if(size*sizeof(float32_t) > datasize) {
-    return NULL;
+    goto cleanup;
   }
-
 
   if(!mtx) {
     mtx=(ambixmatrix_t*)calloc(1, sizeof(ambixmatrix_t));
-    if(!mtx)return NULL;
+    if(!mtx)
+      goto cleanup;
   }
 
   if(!ambix_matrix_init(rows, cols, mtx))
-    return NULL;
+      goto cleanup;
 
   if(swap) {
-    if(!ambix_matrix_fill_swapped(mtx, (number32_t*)(data+index)))
-      return NULL;
+    if(ambix_matrix_fill_swapped(mtx, (number32_t*)(data+index)) != AMBIX_ERR_SUCCESS)
+      goto cleanup;
   } else {
-    if(!ambix_matrix_fill(mtx, (float32_t*)(data+index)))
-      return NULL;
+    if(ambix_matrix_fill(mtx, (float32_t*)(data+index)) != AMBIX_ERR_SUCCESS)
+      goto cleanup;
   }
-
   return mtx;
+
+ cleanup:
+  if(mtx) {
+    ambix_matrix_deinit(mtx);
+    free(mtx);
+    mtx=NULL;
+  }
+  return NULL;
 }
