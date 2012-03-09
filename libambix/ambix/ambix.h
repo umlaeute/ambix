@@ -98,8 +98,17 @@ int ambix_matrix_fill_swapped(ambixmatrix_t*mtx, number32_t*data);
  */
 AMBIX_API
 ambixmatrix_t*ambix_matrix_copy(const ambixmatrix_t*src, ambixmatrix_t*dest);
-
-
+/** @brief Multiplay two matrices
+ *
+ * Multiply matrices dest=A*B, possibly resizing or creating the destination matrix
+ *
+ * @param A left-hand operator
+ * @param B right-hand operator
+ * @param result pointer to the matrix object that will hold the result or NULL
+ * @return pointer to the result matrix, or NULL in case the matrix multiplication did not succeed
+ */
+AMBIX_API
+ambixmatrix_t*ambix_matrix_multiply(const ambixmatrix_t*A, const ambixmatrix_t*B, ambixmatrix_t*result);
 
 /** @brief Calculate the number of channels for a full 3d ambisonics set of a given order
  *

@@ -121,3 +121,40 @@ ambix_matrix_copy(const ambixmatrix_t*src, ambixmatrix_t*dest) {
 
   return dest;
 }
+
+
+ambixmatrix_t*
+ambix_matrix_multiply(const ambixmatrix_t*left, const ambixmatrix_t*right, ambixmatrix_t*dest) {
+  uint32_t r, c, rows, cols, common;
+  float32_t**ldat,**rdat,**ddat;
+  if(!left || !right)
+    return NULL;
+
+  if(left->cols != right->rows)
+    return NULL;
+
+  if(!dest)
+    dest=(ambixmatrix_t*)calloc(1, sizeof(ambixmatrix_t));
+
+  if((dest->rows != left->rows) || (dest->cols != right->cols))
+    ambix_matrix_init(left->rows, right->cols, dest);
+
+  rows=dest->rows;
+  cols=dest->cols;
+  common=left->cols;
+
+  ldat=left->data;
+  rdat=right->data;
+  ddat=dest->data;
+
+  for(r=0; r<rows; r++)
+    for(c=0; c<cols; c++) {
+      float32_t sum=0.;
+      uint32_t i;
+      for(i=0; i<common; i++)
+        sum+=ldat[r][i]*rdat[i][c];
+      ddat[r][c]=sum;
+    }
+
+  return dest;
+}
