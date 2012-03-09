@@ -42,14 +42,15 @@ ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambixinfo_t
 }
 
 ambix_err_t	ambix_close	(ambix_t*ambix) {
+  int res=AMBIX_ERR_SUCCESS;
   if(NULL==ambix) {
     return AMBIX_ERR_INVALID_HANDLE;
   }
-  _ambix_close(ambix);
+  res=_ambix_close(ambix);
 
   free(ambix);
   ambix=NULL;
-  return AMBIX_ERR_SUCCESS;
+  return res;
 }
 
 SNDFILE*ambix_get_sndfile	(ambix_t*ambix) {

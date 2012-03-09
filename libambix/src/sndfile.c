@@ -194,15 +194,10 @@ ambix_err_t _ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t
 }
 
 ambix_err_t	_ambix_close	(ambix_t*ambix) {
-  if(NULL==ambix) {
-    return AMBIX_ERR_INVALID_HANDLE;
-  }
   if(ambix->sf_file)
     sf_close(ambix->sf_file);
   ambix->sf_file=NULL;
 
-  free(ambix);
-  ambix=NULL;
   return AMBIX_ERR_SUCCESS;
 }
 
