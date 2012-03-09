@@ -90,7 +90,7 @@ int ambix_matrix_fill_swapped(ambixmatrix_t*mtx, number32_t*data);
 
 /** @brief Copy a matrix to another matrix
  *
- * Copy a matrix, possibly resizing or creating the destination 
+ * Copy a matrix, possibly resizing or creating the destination
  *
  * @param src the source matrix to copy the data from
  * @param dest the destination matrix (if NULL a new matrix will be created)
@@ -265,6 +265,7 @@ const ambixmatrix_t*ambix_getAdapatorMatrix	(ambix_t*ambix);
  * @param matrix a matrix that will be pre-multiplied to the reconstruction-matrix;
  *          can be freed after this call
  * @return an errorcode indicating success
+ * @remark this is only meaningful for reading files as 'ambix simple'
  */
 AMBIX_API
 ambix_err_t ambix_setPremultiplyMatrix	(ambix_t*ambix, const ambixmatrix_t*matrix);
