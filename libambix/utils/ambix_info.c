@@ -70,7 +70,7 @@ void printinfo(const char*path) {
 
 
 
-  matrix=ambix_getReconstructionMatrix(ambix);
+  matrix=ambix_getAdaptorMatrix(ambix);
   printf("Reconstruction matrix\t: ");
   if(!matrix) {
     printf("**none**");
