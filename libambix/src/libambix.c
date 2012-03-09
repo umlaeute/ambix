@@ -22,14 +22,10 @@
 */
 
 #include "private.h"
+
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h>
 #endif /* HAVE_STDLIB_H */
-#ifdef HAVE_STRING_H
-#include <string.h>
-#endif /* HAVE_STRING_H */
-
-#include <math.h>
 
 ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambixinfo_t*ambixinfo) {
   ambix_t*ambix=calloc(1, sizeof(ambix_t));

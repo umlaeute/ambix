@@ -22,6 +22,7 @@
 */
 
 #include "private.h"
+#include <math.h>
 
 uint32_t ambix_order2channels(uint32_t order) {
   /* L=(N+1)^2 */

@@ -22,7 +22,10 @@
 */
 
 #include "private.h"
-#include <stdlib.h>
+
+#ifdef HAVE_STDLIB_H
+# include <stdlib.h>
+#endif /* HAVE_STDLIB_H */
 
 void
 ambix_matrix_deinit(ambixmatrix_t*mtx) {
