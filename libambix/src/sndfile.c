@@ -143,9 +143,8 @@ ambix_err_t _ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t
   if(!ambix->sf_file)
     return AMBIX_ERR_INVALID_FILE;
 
-  memset(ambixinfo, 0, sizeof(*ambixinfo));
-
-  sndfile2ambix_info(&ambix->sf_info, ambixinfo);
+  memset(&ambix->info, 0, sizeof(*ambixinfo));
+  sndfile2ambix_info(&ambix->sf_info, &ambix->info);
 
   channels=ambix->sf_info.channels;
   isCAF=(SF_FORMAT_CAF & ambix->sf_info.format);
@@ -196,6 +195,8 @@ ambix_err_t _ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t
     ambix->info.ambichannels=0;
     ambix->info.otherchannels=channels;
   }
+
+  memcpy(ambixinfo, &ambix->info, sizeof(ambix->info));
   return AMBIX_ERR_SUCCESS;
 }
 
