@@ -30,8 +30,11 @@
 ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambixinfo_t*ambixinfo) {
   ambix_t*ambix=calloc(1, sizeof(ambix_t));
 
-  if(AMBIX_ERR_SUCCESS == _ambix_open(ambix, path, mode, ambixinfo))
-    return ambix;
+  if(AMBIX_ERR_SUCCESS == _ambix_open(ambix, path, mode, ambixinfo)) {
+    /* successfully opened, initialize common stuff... */
+    if(_ambix_adaptorbuffer_resize(ambix, DEFAULT_ADAPTORBUFFER_SIZE) == AMBIX_ERR_SUCCESS)
+      return ambix;
+  }
 
   ambix_close(ambix);
   return NULL;
