@@ -74,6 +74,7 @@ static int ambix_read_uuidchunk(ambix_t*ax) {
   int result=0;
 	SF_CHUNK_INFO	chunk_info ;
   SNDFILE*file=ax->sf_file;
+  uint32_t chunkver=0;
   const char*id="uuid";
 	memset (&chunk_info, 0, sizeof (chunk_info)) ;
 	snprintf (chunk_info.id, sizeof (chunk_info.id), id) ;
@@ -93,10 +94,13 @@ static int ambix_read_uuidchunk(ambix_t*ax) {
     result=__LINE__;goto simple;
   }
   
-  if(!_ambix_checkuuid(chunk_info.data)) {
-    result=__LINE__;goto simple;
-  }
-  if(!ambix_readmatrix(ax, chunk_info.data+16, chunk_info.datalen-16)) {
+
+  chunkver=_ambix_checkuuid(chunk_info.data);
+  if(1==chunkver) {
+    if(!_ambix_uuid1_to_matrix(&ax->matrix, chunk_info.data+16, chunk_info.datalen-16)) {
+      result=__LINE__;goto simple;
+    }
+  } else {
     result=__LINE__;goto simple;
   }
 

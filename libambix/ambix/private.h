@@ -56,13 +56,8 @@ typedef struct ambix_t {
   /** ambisonics order of the full set */
   uint32_t ambisonics_order;
 
-  /** matrix rows (number of channels in full set; always a square number: matrix_rows=(ambisonics_order+1)^2) */
-  uint32_t matrix_rows;
-  /** matrix columns (number of channels in reduced set) */
-  uint32_t matrix_cols;
-  /** reconstruction matrix (vector of row-vectors) */
-  float32_t**matrix;
-  
+  /** reconstruction matrix */
+  ambixmatrix_t matrix;
 } ambix_t;
 
 
