@@ -135,7 +135,7 @@ static inline uint32_t swap4(uint32_t n)
  * @return error code indicating success
  */
 ambix_err_t _ambix_adaptorbuffer_resize(ambix_t*ambix, int64_t frames);
-/** @brief free an adapator buffer
+/** @brief free an adaptor buffer
  * @param ambix valid ambix handle
  * @return error code indicating success
  */

@@ -235,23 +235,23 @@ AMBIX_API
 SNDFILE*ambix_getSndfile	(ambix_t*ambix);
 
 
-/** @brief get the adapator matrix
+/** @brief get the adaptor matrix
  *
- * the ambix extended fileformat comes with a adapator matrix, that can be used
+ * the ambix extended fileformat comes with a adaptor matrix, that can be used
  * to reconstruct a full 3d ambisonics set from the channels stored in ambix file.
- * in the ambix simple format no adapator matrix is present, the file contains the full set.
- * @remark the adapator matrix can only be obtained for a ambix extended file; if you have opened
- *          an ambix extended file as "ambix simple", the adapator will be done by the library;
- *          in this case, you will not be able to fetch the adapator matrix.
+ * in the ambix simple format no adaptor matrix is present, the file contains the full set.
+ * @remark the adaptor matrix can only be obtained for a ambix extended file; if you have opened
+ *          an ambix extended file as "ambix simple", the adaptor will be done by the library;
+ *          in this case, you will not be able to fetch the adaptor matrix.
  * @remark if you have opened an ambix simple file as ambix extended, this will return a unity matrix
  *
  * @param ambix The handle to an ambix file
- * @return the adapator matrix to restore the full ambisonics set from the reduced set, or NULL
+ * @return the adaptor matrix to restore the full ambisonics set from the reduced set, or NULL
  *          if there is no such matrix; the memory is owned by the library and must neither be freed
  *          nor used after calling ambix_close()
  */
 AMBIX_API
-const ambixmatrix_t*ambix_getAdapatorMatrix	(ambix_t*ambix);
+const ambixmatrix_t*ambix_getAdaptorMatrix	(ambix_t*ambix);
 
 
 /** @brief set a matrix to be pre-multiplied
