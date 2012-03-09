@@ -50,7 +50,7 @@
 # define AMBIX_DEPRECATED __declspec(deprecated)
 
 #elif defined __GNUC__
-# define AMBIX_EXPORT
+# define AMBIX_EXPORT  __attribute__ ((visibility("default")))
 # define AMBIX_IMPORT
 
 # define AMBIX_DEPRECATED __attribute__ ((deprecated))
