@@ -21,7 +21,7 @@
 
 */
 
-/** 
+/**
  * @file	ambix/ambix.h
  * @brief	Ambisonics Xchange Library Interface
  * @details This file is part of libambix
@@ -126,7 +126,7 @@ int ambix_isFullSet(uint32_t channels);
  * @param ambixinfo pointer to a valid ambixinfo_t structure
  * @remark
  *    when opening a file for reading, the structure should be initialized to zero before calling ambix_open():
- *    the fields will be set by the library; if you set the ambixinfo_t.ambixformat field to something else than AMBIX_NONE, 
+ *    the fields will be set by the library; if you set the ambixinfo_t.ambixformat field to something else than AMBIX_NONE,
  *    the library will present the data as if the was written in this format (e.g. if you set ambixinfo_t.ambixformat:=AMBIX_SIMPLE
  *    but the file really is AMBIX_EXTENDED, the library will automatically pre-multiply the reconstruction matrix to
  *    give you the full ambisonics set.
@@ -150,7 +150,7 @@ ambix_err_t	ambix_close	(ambix_t*ambix);
 
 /** @brief get the libsndfile handle associated with the ambix handle
  *
- * If possible, require an SNDFILE handle if possible; 
+ * If possible, require an SNDFILE handle if possible;
  * if the ambix handle is not asociated with SNDFILE (e.g. because libambix is compiled without libsndfile support),
  * NULL is returned
  *
