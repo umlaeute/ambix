@@ -120,3 +120,6 @@ static inline uint32_t swap4(uint32_t n)
   return (((n & 0xff) << 24) | ((n & 0xff00) << 8) |
           ((n & 0xff0000) >> 8) | ((n & 0xff000000) >> 24));
 }
+
+
+#define MARK() printf("%s:%d[%s]\n", __FILE__, __LINE__, __FUNCTION__)
