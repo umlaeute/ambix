@@ -102,6 +102,16 @@ typedef enum {
 } ambix_sampleformat_t;
 
 
+/** a 2-dimensional floating point matrix */
+typedef struct ambixmatrix_t {
+  /** number of rows */
+  uint32_t rows;
+  /** number of columns */
+  uint32_t cols;
+  /** matrix data (as vector (length: rows) of row-vectors (length: cols)) */
+  float32_t**data;
+} ambixmatrix_t;
+
 /** this is for passing data about the opened ambix file between the host application and the library */
 typedef struct ambixinfo_t {
   /** number of frames in the file */
