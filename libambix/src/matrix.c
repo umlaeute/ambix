@@ -74,3 +74,21 @@ ambix_matrix_fill(ambixmatrix_t*mtx, float32_t*data) {
   }
   return 0;
 }
+
+
+ambix_matrix_fill_swapped(ambixmatrix_t*mtx, number32_t*data) {
+  float32_t**matrix=mtx->data;
+  uint32_t rows=mtx->rows;
+  uint32_t cols=mtx->cols;
+  uint32_t r;
+  for(r=0; r<rows; r++) {
+    uint32_t c;
+    for(c=0; c<cols; c++) {
+      number32_t v;
+      number32_t d = *data++;
+      v.i=swap4(d.i);
+      matrix[r][c]=v.f;
+    }
+  }
+  return 0;
+}

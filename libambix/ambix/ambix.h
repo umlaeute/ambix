@@ -54,6 +54,12 @@ typedef signed long int64_t;
 typedef unsigned long uint64_t;
 #endif
 
+typedef union {
+  float32_t f;
+  int32_t   i;
+} number32_t;
+
+
 /** opaque handle to an ambix file */
 typedef struct ambix_t ambix_t;
 
@@ -144,6 +150,18 @@ void ambix_matrix_deinit(ambixmatrix_t*mtx);
  */
 AMBIX_API
 int ambix_matrix_fill(ambixmatrix_t*mtx, float32_t*data);
+
+/** @brief Fill a matrix with byteswapped values
+ *
+ * Fill byteswapped data into a properly initialized matrix
+ *
+ * @param mtx initialized matrix object to copy data into
+ * @param data pointer to at least (mtx->rows*mtx->cols) values; data is ordered row-by-row with no padding (A[0,0], A[0,1], .., A[0,cols-1],  A[1, 0], .. A[rows-1, cols-1])
+ *           each data item has to be byteswapped
+ * @return an error code indicating success
+ */
+AMBIX_API
+int ambix_matrix_fill_swapped(ambixmatrix_t*mtx, number32_t*data);
 
 
 /** @brief Calculate the number of channels for a full 3d ambisonics set of a given order
