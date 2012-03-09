@@ -88,6 +88,19 @@ AMBIX_API
 int ambix_matrix_fill_swapped(ambixmatrix_t*mtx, number32_t*data);
 
 
+/** @brief Copy a matrix to another matrix
+ *
+ * Copy a matrix, possibly resizing or creating the destination 
+ *
+ * @param src the source matrix to copy the data from
+ * @param dest the destination matrix (if NULL a new matrix will be created)
+ * @return pointer to the destination matrix
+ */
+AMBIX_API
+ambixmatrix_t*ambix_matrix_copy(const ambixmatrix_t*src, ambixmatrix_t*dest);
+
+
+
 /** @brief Calculate the number of channels for a full 3d ambisonics set of a given order
  *
  * @param order the order of the full set

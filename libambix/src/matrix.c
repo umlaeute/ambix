@@ -95,3 +95,29 @@ ambix_matrix_fill_swapped(ambixmatrix_t*mtx, number32_t*data) {
   }
   return AMBIX_ERR_SUCCESS;
 }
+
+
+
+ambixmatrix_t*
+ambix_matrix_copy(const ambixmatrix_t*src, ambixmatrix_t*dest) {
+  if(!src)
+    return NULL;
+  if(!dest)
+    dest=(ambixmatrix_t*)calloc(1, sizeof(ambixmatrix_t));
+
+  if((dest->rows != src->rows) || (dest->cols != src->cols))
+    ambix_matrix_init(src->rows, src->cols, dest);
+
+  do {
+    uint32_t r, c;
+    float32_t**s=src->data;
+    float32_t**d=dest->data;
+    for(r=0; r<src->rows; r++) {
+      for(c=0; c<src->cols; c++) {
+        d[r][c]=s[r][c];
+      }
+    }
+  } while(0);
+
+  return dest;
+}
