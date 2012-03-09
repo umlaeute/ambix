@@ -27,8 +27,10 @@
 
 
 void printinfo(const char*path) {
-  ambix_t*ambix;
   ambixinfo_t info;
+  ambix_t*ambix;
+  const ambixmatrix_t*matrix;
+
 
   printf("Open file '%s': ", path);
 
@@ -66,6 +68,24 @@ void printinfo(const char*path) {
   printf("Ambisonics channels\t: %d\n", info.ambichannels); 
   printf("Non-Ambisonics channels\t: %d\n", info.otherchannels);
 
+
+
+  matrix=ambix_getReconstructionMatrix(ambix);
+  printf("Reconstruction matrix\t: ");
+  if(!matrix) {
+    printf("**none**");
+  } else {
+    uint32_t r, c;
+    printf("[%dx%d]\n", matrix->rows, matrix->cols);
+    for(r=0; r<matrix->rows; r++) {
+      printf("\t");
+      for(c=0; c<matrix->cols; c++) {
+        printf("%.6f ", matrix->data[r][c]);
+      }
+      printf("\n");
+    }
+  }
+  printf("\n");
 
   printf("Close file '%s': ", path);
   if(AMBIX_ERR_SUCCESS!=ambix_close(ambix))
