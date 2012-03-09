@@ -3,6 +3,7 @@ lib_LTLIBRARIES = libambix.la
 
 libambix_la_SOURCES = libambix.c \
 	matrix.c \
+	utils.c \
 	uuid_chunk.c
 
 
