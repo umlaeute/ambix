@@ -1,6 +1,6 @@
 /* ambix_info -  display info about an ambix file              -*- c -*-
 
-   Copyright © 2012 IOhannes m zmölnig <zmoelnig@iem.at>.
+   Copyright Â© 2012 IOhannes m zmÃ¶lnig <zmoelnig@iem.at>.
          Institute of Electronic Music and Acoustics (IEM),
          University of Music and Dramatic Arts, Graz
 
