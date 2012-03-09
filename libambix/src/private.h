@@ -98,7 +98,7 @@ SNDFILE*_ambix_get_sndfile	(ambix_t*ambix);
  * @remark currently only one UUID is defined for the ambix format (version 1)
  *         future versions of the standard might add additional UUIDs
  */
-uint32_t _ambix_parseuuid(const char UUID[16]);
+uint32_t _ambix_checkUUID(const char UUID[16]);
 
 /** @brief extract matrix from ambix UUID-chunk (v1)
  * @param data Array holding the payload data (excluding the UUID itself)

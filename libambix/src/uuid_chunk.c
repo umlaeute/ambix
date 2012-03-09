@@ -32,7 +32,7 @@
 #include <math.h>
 
 static int
-_ambix_checkUUID1(char*data) {
+_ambix_checkUUID_1(const char*data) {
   const char uuid[]="IEM.AT/AMBIX/XML";
   unsigned int i;
   for(i=0; i<16; i++)
@@ -43,8 +43,8 @@ _ambix_checkUUID1(char*data) {
 }
 
 uint32_t
-_ambix_checkuuid(char data[16]) {
-  if(_ambix_checkUUID(data))
+_ambix_checkUUID(const char data[16]) {
+  if(_ambix_checkUUID_1(data))
     return 1;
 
   return 0;
@@ -78,7 +78,7 @@ _ambix_uuid1_to_matrix(const void*data, uint64_t datasize, ambixmatrix_t*orgmtx)
     if(!mtx)return NULL;
   }
 
-  if(!ambix_matrix_create(mtx, rows, cols))
+  if(!ambix_matrix_init(rows, cols, mtx))
     return NULL;
 
   if(!ambix_matrix_fill(mtx, (float32_t*)(data+index)))

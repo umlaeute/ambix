@@ -93,7 +93,7 @@ ambix_read_uuidchunk(ambix_t*ax) {
     result=__LINE__;goto simple;
   }
   
-  chunkver=_ambix_checkuuid(chunk_info.data);
+  chunkver=_ambix_checkUUID(chunk_info.data);
   if(1==chunkver) {
     if(!_ambix_uuid1_to_matrix(chunk_info.data+16, chunk_info.datalen-16, &ax->matrix)) {
       result=__LINE__;goto simple;
@@ -127,7 +127,7 @@ ambix_err_t _ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t
   uint32_t channels=0;
   int isCAF=0;
 
-  ambx2sndfile_info(ambixinfo, &ambix->sf_info);
+  ambix2sndfile_info(ambixinfo, &ambix->sf_info);
 
   if((mode & AMBIX_READ) & (mode & AMBIX_WRITE))
     sfmode=	SFM_RDWR;
