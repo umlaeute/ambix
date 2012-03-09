@@ -112,6 +112,37 @@ typedef struct ambixmatrix_t {
   float32_t**data;
 } ambixmatrix_t;
 
+/** @brief Initialize a matrix
+ *
+ * Allocates memory for matrix-data of given dimensions
+ *
+ * @param rows number of rows in the newly initialized matrix
+ * @param cols number of columns in the newly initialized matrix
+ * @param mtx pointer to a matrix object; if NULL a new matrix object will be created, else the given matrix object will be re-initialized
+ * @return pointer to a newly initialized (and/or allocated) matrix, or NULL on error
+ */
+AMBIX_API
+ambixmatrix_t*ambix_matrix_init(uint32_t rows, uint32_t cols, ambixmatrix_t*mtx);
+/** @brief De-initialize a matrix
+ *
+ * Frees associated ressources and sets rows/columns to 0
+ *
+ * @param mtx matrix object to deinitialize
+ */
+AMBIX_API
+void ambix_matrix_deinit(ambixmatrix_t*mtx);
+/** @brief Fill a matrix with values
+ *
+ * Fill data into a properly initialized matrix
+ *
+ * @param mtx initialized matrix object to copy data into
+ * @param data pointer to at least (mtx->rows*mtx->cols) values; data is ordered row-by-row with no padding (A[0,0], A[0,1], .., A[0,cols-1],  A[1, 0], .. A[rows-1, cols-1])
+ * @return an error code indicating success
+ */
+AMBIX_API
+int ambix_matrix_fill(ambixmatrix_t*mtx, float32_t*data);
+
+
 /** this is for passing data about the opened ambix file between the host application and the library */
 typedef struct ambixinfo_t {
   /** number of frames in the file */
