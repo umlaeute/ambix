@@ -75,10 +75,10 @@ ambix_matrix_fill(ambixmatrix_t*mtx, float32_t*data) {
       matrix[r][c]=*data++;
     }
   }
-  return 0;
+  return AMBIX_ERR_SUCCESS;
 }
 
-
+int
 ambix_matrix_fill_swapped(ambixmatrix_t*mtx, number32_t*data) {
   float32_t**matrix=mtx->data;
   uint32_t rows=mtx->rows;
@@ -93,5 +93,5 @@ ambix_matrix_fill_swapped(ambixmatrix_t*mtx, number32_t*data) {
       matrix[r][c]=v.f;
     }
   }
-  return 0;
+  return AMBIX_ERR_SUCCESS;
 }
