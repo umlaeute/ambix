@@ -68,11 +68,11 @@ typedef struct ambix_t {
 
 /** @brief Check data for ambix UUID
  * @param data Array holding the UUID
- * @return ambix-version this UUID is associated with, or 0 of failure
+ * @return ambix-version this UUID is associated with, or 0 on failure
  * @remark currently only one UUID is defined for the ambix format (version 1)
  *         future versions of the standard might add additional UUIDs
  */
-int _ambix_parseuuid(const char UUID[16]);
+uint32_t _ambix_parseuuid(const char UUID[16]);
 
 /** @brief extract matrix from ambix UUID-chunk (v1)
  * @param data Array holding the payload data (excluding the UUID itself)

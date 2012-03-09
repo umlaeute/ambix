@@ -42,7 +42,7 @@ _ambix_checkUUID1(char*data) {
   return 1;
 }
 
-int
+uint32_t
 _ambix_checkuuid(char data[16]) {
   if(_ambix_checkUUID(data))
     return 1;
