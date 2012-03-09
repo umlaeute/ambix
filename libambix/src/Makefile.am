@@ -19,4 +19,5 @@ endif
 
 libambix_la_LDFLAGS = -version-info 0:0:0
 
-libambix_la_CFLAGS = -DAMBIX_INTERNAL
+libambix_la_CFLAGS  = -DAMBIX_INTERNAL
+libambix_la_CFLAGS += -fvisibility=hidden
