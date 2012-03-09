@@ -51,7 +51,7 @@ _ambix_checkUUID(const char data[16]) {
 }
 
 ambixmatrix_t*
-_ambix_uuid1_to_matrix(const void*data, uint64_t datasize, ambixmatrix_t*orgmtx) {
+_ambix_uuid1_to_matrix(const void*data, uint64_t datasize, ambixmatrix_t*orgmtx, int swap) {
   ambixmatrix_t*mtx;
   uint32_t rows;
   uint32_t cols;
@@ -68,10 +68,20 @@ _ambix_uuid1_to_matrix(const void*data, uint64_t datasize, ambixmatrix_t*orgmtx)
   memcpy(&cols, data+index, sizeof(uint32_t));	
   index += sizeof(uint32_t);
 
+  if(swap) {
+    rows=swap4(rows);
+    cols=swap4(cols);
+  }
+
   size=rows*cols;
+
+  if(rows<1 || cols<1 || size < 1)
+    rerturn NULL;
+
   if(size*sizeof(float32_t) > datasize) {
     return NULL;
   }
+
 
   if(!mtx) {
     mtx=(ambixmatrix_t*)calloc(1, sizeof(ambixmatrix_t));
@@ -81,8 +91,13 @@ _ambix_uuid1_to_matrix(const void*data, uint64_t datasize, ambixmatrix_t*orgmtx)
   if(!ambix_matrix_init(rows, cols, mtx))
     return NULL;
 
-  if(!ambix_matrix_fill(mtx, (float32_t*)(data+index)))
-     return NULL;
+  if(swap) {
+    if(!ambix_matrix_fill_swapped(mtx, (number32_t*)(data+index)))
+      return NULL;
+  } else {
+    if(!ambix_matrix_fill(mtx, (float32_t*)(data+index)))
+      return NULL;
+  }
 
   return mtx;
 }

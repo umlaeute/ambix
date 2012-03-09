@@ -95,7 +95,9 @@ ambix_read_uuidchunk(ambix_t*ax) {
   
   chunkver=_ambix_checkUUID(chunk_info.data);
   if(1==chunkver) {
-    if(!_ambix_uuid1_to_matrix(chunk_info.data+16, chunk_info.datalen-16, &ax->matrix)) {
+    int swap=(sf_command(file, SFC_RAW_DATA_NEEDS_ENDSWAP, NULL, 0) == SF_TRUE);
+
+    if(!_ambix_uuid1_to_matrix(chunk_info.data+16, chunk_info.datalen-16, &ax->matrix, swap)) {
       result=__LINE__;goto simple;
     }
   } else {

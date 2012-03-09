@@ -104,10 +104,12 @@ uint32_t _ambix_checkUUID(const char UUID[16]);
  * @param data Array holding the payload data (excluding the UUID itself)
  * @param datasize size of data
  * @param mtx pointer to a matrix object that should be filled (if NULL, this function will allocate a matrix object for you)
+ * @param byteswap TRUE if data has to be byteswapped (e.g. when reading BIG_ENDIAN data on LITTLE_ENDIAN machines)
  * @return a pointer to the filled matrix or NULL on failure
  * @remark only use data from a uuid-chunk for which _ambix_parseuuid() that returned '1' 
  */
-ambixmatrix_t*_ambix_uuid1_to_matrix(const void*data, uint64_t datasize, ambixmatrix_t*mtx);
+ambixmatrix_t*_ambix_uuid1_to_matrix(const void*data, uint64_t datasize, ambixmatrix_t*mtx, int byteswap);
+
 
 /** @brief byte-swap 32bit data
  * @param n a 32bit chunk in the wrong byte order
