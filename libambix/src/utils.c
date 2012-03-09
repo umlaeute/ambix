@@ -1,4 +1,4 @@
-/* libambix.c -  Ambisonics Xchange Library              -*- c -*-
+/* utils.c -  various utilities              -*- c -*-
 
    Copyright © 2012 IOhannes m zmölnig <zmoelnig@iem.at>.
          Institute of Electronic Music and Acoustics (IEM),
@@ -21,37 +21,23 @@
 
 */
 
-#include "ambix/private.h"
-#ifdef HAVE_STDLIB_H
-#include <stdlib.h>
-#endif /* HAVE_STDLIB_H */
-#ifdef HAVE_STRING_H
-#include <string.h>
-#endif /* HAVE_STRING_H */
+#include "private.h"
 
-#include <math.h>
-
-ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambixinfo_t*ambixinfo) {
-  ambix_t*ambix=calloc(1, sizeof(ambix_t));
-
-  if(AMBIX_ERR_SUCCESS == _ambix_open(ambix, path, mode, ambixinfo))
-    return ambix;
-
-  ambix_close(ambix);
-  return NULL;
+uint32_t ambix_order2channels(uint32_t order) {
+  /* L=(N+1)^2 */
+  return (order+1)*(order+1);
 }
-
-ambix_err_t	ambix_close	(ambix_t*ambix) {
-  if(NULL==ambix) {
-    return AMBIX_ERR_INVALID_HANDLE;
+int32_t ambix_channels2order(uint32_t channels) {
+  /* L=(N+1)^2 */
+  int32_t order1=(int32_t)sqrt((double)channels);
+  
+  if(order1*order1==channels) { /* expanded set must be a full set */
+    return order1-1;
   }
-  _ambix_close(ambix);
 
-  free(ambix);
-  ambix=NULL;
-  return AMBIX_ERR_SUCCESS;
+  return -1;
 }
 
-SNDFILE*ambix_get_sndfile	(ambix_t*ambix) {
-  return _ambix_get_sndfile(ambix);
+int ambix_isFullSet(uint32_t channels) {
+  return (ambix_order2channels(ambix_channels2order(channels))==channels);
 }

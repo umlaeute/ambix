@@ -21,7 +21,7 @@
 
 */
 
-#include "ambix/private.h"
+#include "private.h"
 #include <stdlib.h>
 
 void

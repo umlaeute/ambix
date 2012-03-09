@@ -1,4 +1,4 @@
-/* ambix/private.h -  Ambisonics Xchange Library Private Interface              -*- c -*-
+/* private.h -  Ambisonics Xchange Library Private Interface              -*- c -*-
 
    Copyright © 2012 IOhannes m zmölnig <zmoelnig@iem.at>.
          Institute of Electronic Music and Acoustics (IEM),
@@ -22,7 +22,7 @@
 */
 
 /** 
- * @file	ambix/private.h
+ * @file	private.h
  * @brief	Ambisonics Xchange Library Private Interface
  * @details This file is part of libambix
  * @author IOhannes m zmölnig <zmoelnig@iem.at>
@@ -32,7 +32,7 @@
  */
 
 #ifndef AMBIX_INTERNAL
-# error ambix/private.h must only be used from within libambix
+# error private.h must only be used from within libambix
 #endif
 
 

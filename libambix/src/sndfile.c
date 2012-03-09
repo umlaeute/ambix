@@ -21,7 +21,7 @@
 
 */
 
-#include "ambix/private.h"
+#include "private.h"
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h>
 #endif /* HAVE_STDLIB_H */
