@@ -1,4 +1,6 @@
 SUBDIRS=src utils
 
-include_HEADERS = ambix/ambix.h \
-	ambix/exportdefs.h
+nobase_include_HEADERS = \
+	ambix/ambix.h \
+	ambix/exportdefs.h \
+	ambix/types.h

@@ -33,93 +33,12 @@
 #define AMBIX_AMBIX_H
 
 #include "exportdefs.h"
+#include "types.h"
 
 #ifdef __cplusplus
 //extern "C" {
 #endif	/* __cplusplus */
 
-/** 32bit floating point number */
-typedef float float32_t;
-
-#ifdef HAVE_STDINT_H
-# include <stdint.h>
-#else
-/** 32bit signed integer  */
-typedef signed int int32_t;
-/** 32bit unsigned integer  */
-typedef unsigned int uint32_t;
-/** 64bit signed integer  */
-typedef signed long int64_t;
-/** 64bit unsigned integer  */
-typedef unsigned long uint64_t;
-#endif
-
-typedef union {
-  float32_t f;
-  int32_t   i;
-} number32_t;
-
-
-/** opaque handle to an ambix file */
-typedef struct ambix_t ambix_t;
-
-
-/** error codes returned by functions */
-typedef enum
-{	
-  /** no error encountered */
-  AMBIX_ERR_SUCCESS			= 0,
-  /** an invalid ambix handle was passed to the function */
-  AMBIX_ERR_INVALID_HANDLE,
-  /** the file in question is invalid (e.g. doesn't contain audio) */
-  AMBIX_ERR_INVALID_FILE,
-
-} ambix_err_t;
-
-
-/** error codes returned by functions */
-typedef enum {
-  /** open file for reading */
-  AMBIX_READ  = (1<<0),
-  /** open file for writing  */
-  AMBIX_WRITE = (1<<1)
-} ambix_filemode_t;
-
-
-/** ambix file types */
-typedef enum {
-  /** file is not an ambix file (or unknown) */
-  AMBIX_NONE     = 0, 
-  /** simple ambix file   (w/ pre-multiplication matrix) */
-  AMBIX_SIMPLE   = 1,
-  /** extended ambix file (w pre-multiplication matrix ) */
-  AMBIX_EXTENDED = 2
-} ambix_fileformat_t;
-
-/** ambix sample formats */
-typedef enum {
-/** unknown (or illegal) sample formats */
-  AMBIX_SAMPLEFORMAT_NONE=0,
-  /** signed 16 bit integer */
-  AMBIX_SAMPLEFORMAT_PCM16,
-  /** signed 24 bit integer */
-  AMBIX_SAMPLEFORMAT_PCM24,
-  /** signed 32 bit integer */
-  AMBIX_SAMPLEFORMAT_PCM32,
-  /** 32 bit floating point */
-  AMBIX_SAMPLEFORMAT_FLOAT32,
-} ambix_sampleformat_t;
-
-
-/** a 2-dimensional floating point matrix */
-typedef struct ambixmatrix_t {
-  /** number of rows */
-  uint32_t rows;
-  /** number of columns */
-  uint32_t cols;
-  /** matrix data (as vector (length: rows) of row-vectors (length: cols)) */
-  float32_t**data;
-} ambixmatrix_t;
 
 /** @brief Initialize a matrix
  *
@@ -132,6 +51,8 @@ typedef struct ambixmatrix_t {
  */
 AMBIX_API
 ambixmatrix_t*ambix_matrix_init(uint32_t rows, uint32_t cols, ambixmatrix_t*mtx);
+
+
 /** @brief De-initialize a matrix
  *
  * Frees associated ressources and sets rows/columns to 0
@@ -140,6 +61,8 @@ ambixmatrix_t*ambix_matrix_init(uint32_t rows, uint32_t cols, ambixmatrix_t*mtx)
  */
 AMBIX_API
 void ambix_matrix_deinit(ambixmatrix_t*mtx);
+
+
 /** @brief Fill a matrix with values
  *
  * Fill data into a properly initialized matrix
@@ -150,6 +73,7 @@ void ambix_matrix_deinit(ambixmatrix_t*mtx);
  */
 AMBIX_API
 int ambix_matrix_fill(ambixmatrix_t*mtx, float32_t*data);
+
 
 /** @brief Fill a matrix with byteswapped values
  *
@@ -171,12 +95,16 @@ int ambix_matrix_fill_swapped(ambixmatrix_t*mtx, number32_t*data);
  */
 AMBIX_API
 uint32_t ambix_order2channels(uint32_t order);
+
+
 /** @brief Calculate the order of a full 3d ambisonics set fora gien number of channels
  *
  * @param channels the number of channels of the full set
  * @return the order of the full set, or -1 if the channels don't form a full set
  */
 AMBIX_API
+
+
 int32_t ambix_channels2order(uint32_t channels);
 /** @brief Checks whether the channel can form a full 3 ambisonics set
  *
@@ -188,26 +116,6 @@ int ambix_isFullSet(uint32_t channels);
 
 
 
-/** this is for passing data about the opened ambix file between the host application and the library */
-typedef struct ambixinfo_t {
-  /** number of frames in the file */
-  uint64_t  frames;
-  /** samplerate in Hz */
-  double			samplerate;
-  /** type of the ambix file */
-  ambix_sampleformat_t sampleformat;
-
-  /** type of the ambix file */
-  ambix_fileformat_t ambixfileformat;
-  /** number of (raw) ambisonics channels present in the file
-   * if the file contains a full set of ambisonics channels (always true if ambixformat==AMBIX_SIMPLE),
-   * then ambichannels=(ambiorder+1)^2;
-   * if the file contains a reduced set (ambichannels<(ambiorder+1)^2) you can reconstruct the full set by
-   * multiplying the reduced set with the reconstruction matrix */
-	uint32_t			ambichannels;
-  /** number of non-ambisonics channels in the file */
-	uint32_t			otherchannels;
-} ambixinfo_t;
 
 /** @brief Open an ambix file
  *
@@ -239,13 +147,6 @@ ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambixinfo_t
  */
 AMBIX_API
 ambix_err_t	ambix_close	(ambix_t*ambix);
-
-
-/**
- * typedef from libsndfile
- * @private
- */
-typedef struct SNDFILE_tag SNDFILE;
 
 /** @brief get the libsndfile handle associated with the ambix handle
  *
