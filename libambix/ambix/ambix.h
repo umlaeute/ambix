@@ -36,7 +36,7 @@
 #include "types.h"
 
 #ifdef __cplusplus
-//extern "C" {
+extern "C" {
 #endif	/* __cplusplus */
 
 
@@ -161,11 +161,46 @@ AMBIX_API
 SNDFILE*ambix_getSndfile	(ambix_t*ambix);
 
 
+/** @brief get the reconstruction matrix
+ *
+ * the ambix extended fileformat comes with a reconstruction matrix, that can be used 
+ * to reconstruct a full 3d ambisonics set from the channels stored in ambix file.
+ * in the ambix simple format no reconstruction matrix is present, the file contains the full set.
+ * @remark the reconstruction matrix can only be obtained for a ambix extended file; if you have opened 
+ *          an ambix extended file as "ambix simple", the reconstruction will be done by the library; 
+ *          in this case, you will not be able to fetch the reconstruction matrix.
+ * @remark if you have opened an ambix simple file as ambix extended, this will return a unity matrix
+ *
+ * @param ambix The handle to an ambix file
+ * @return the reconstruction matrix to restore the full ambisonics set from the reduced set, or NULL
+ *          if there is no such matrix; the memory is owned by the library and must neither be freed 
+ *          nor used after calling ambix_close()
+ */
+AMBIX_API
+const ambixmatrix_t*ambix_getReconstructionMatrix	(ambix_t*ambix);
+
+
+/** @brief set a matrix to be pre-multiplied 
+ *
+ * tells the library to do an (additional) matrix-multiplication when reconstructing the full ambisonics set (read mode!);
+ * you can use use this to get the ambisonics channels in a format other than SN3D/ACN (e.g. using an ambix to Furse-Malham adaptor matrix)
+ * or getting the loudspeaker feeds directly (by supplying a decoder matrix);
+ * the matrix MUST have ambix->ambichannels columns
+ *
+ * @param ambix The handle to an ambix file
+ * @param matrix a matrix that will be pre-multiplied to the reconstruction-matrix;
+ *          can be freed after this call
+ * @return an errorcode indicating success
+ */
+AMBIX_API
+ambix_err_t ambix_setPremultiplyMatrix	(ambix_t*ambix, const ambixmatrix_t*matrix);
+
+
 
 
 
 
 #ifdef __cplusplus
-//}		/* extern "C" */
+}		/* extern "C" */
 #endif	/* __cplusplus */
 #endif /* AMBIX_AMBIX_H */

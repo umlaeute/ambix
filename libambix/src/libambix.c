@@ -52,3 +52,11 @@ ambix_err_t	ambix_close	(ambix_t*ambix) {
 SNDFILE*ambix_getSndfile	(ambix_t*ambix) {
   return _ambix_get_sndfile(ambix);
 }
+
+
+const ambixmatrix_t*ambix_getReconstructionMatrix	(ambix_t*ambix) {
+  return NULL;
+}
+ambix_err_t ambix_setPremultiplyMatrix	(ambix_t*ambix, const ambixmatrix_t*matrix) {
+  return AMBIX_ERR_UNKNOWN;
+}
