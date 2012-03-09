@@ -10,7 +10,9 @@ AC_PROG_MAKE_SET
 
 AC_HEADER_STDC
 
+/* checks for libsndfile */
 AC_CHECK_HEADERS(sndfile.h)
-AC_SEARCH_LIBS([sf_open], [sndfile])
+AC_SEARCH_LIBS([sf_open], [sndfile], have_sndfile="yes")
+AM_CONDITIONAL(HAVE_SNDFILE, [test "x$have_sndfile" = "xyes"])
 
 AC_OUTPUT(Makefile)

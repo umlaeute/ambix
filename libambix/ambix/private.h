@@ -61,6 +61,37 @@ typedef struct ambix_t {
 } ambix_t;
 
 
+/** @brief Do open an ambix file
+ *
+ * this is implemented by the various backends (currently only libsndfile)
+ *
+ * @param ambix a pointer to an allocated ambix structure, that get's filled by this call
+ * @param path filename of the file to open
+ * @param mode open read/write
+ * @param ambixinfo struct to a valid ambixinfo structure
+ * @return errorcode indicating success
+ */
+ambix_err_t	_ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t mode, ambixinfo_t*ambixinfo);
+/** @brief Do close an ambix file
+ *
+ * this is implemented by the various backends (currently only libsndfile)
+ *
+ * @param ambix a pointer to a valid ambix structure (has to be freed outside)
+ * @return errorcode indicating success
+ */
+ambix_err_t	_ambix_close	(ambix_t*ambix);
+/** @brief Do get an libsndfile handle
+ *
+ * this is implemented by the various backends (currently only libsndfile)
+ *
+ * @param ambix a pointer to a valid ambix structure
+ * @return an SNDFILE handle or NULL if not possible
+ */
+
+SNDFILE*_ambix_get_sndfile	(ambix_t*ambix);
+
+
+
 /** @brief Check data for ambix UUID
  * @param data Array holding the UUID
  * @return ambix-version this UUID is associated with, or 0 on failure

@@ -65,6 +65,9 @@ typedef enum
   AMBIX_ERR_SUCCESS			= 0,
   /** an invalid ambix handle was passed to the function */
   AMBIX_ERR_INVALID_HANDLE,
+  /** the file in question is invalid (e.g. doesn't contain audio) */
+  AMBIX_ERR_INVALID_FILE,
+
 } ambix_err_t;
 
 
@@ -170,7 +173,7 @@ typedef struct ambixinfo_t {
  *
  * @param path filename of the file to open
  * @param mode whether to open the file for reading and/or writing (AMBIX_READ, AMBIX_WRITE, AMBIX_READ | AMBIX_WRITE)
- * @param ambixinfo pointer to a valid ambixinfo_t structure;
+ * @param ambixinfo pointer to a valid ambixinfo_t structure
  * @remark
  *    when opening a file for reading, the structure should be initialized to zero before calling ambix_open():
  *    the fields will be set by the library; if you set the ambixinfo_t.ambixformat field to something else than AMBIX_NONE, 
