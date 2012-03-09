@@ -108,3 +108,13 @@ uint32_t _ambix_checkUUID(const char UUID[16]);
  * @remark only use data from a uuid-chunk for which _ambix_parseuuid() that returned '1' 
  */
 ambixmatrix_t*_ambix_uuid1_to_matrix(const void*data, uint64_t datasize, ambixmatrix_t*mtx);
+
+/** @brief byte-swap 32bit data
+ * @param n a 32bit chunk in the wrong byte order
+ * @return byte-swapped data
+ */
+static inline uint32_t swap4(uint32_t n)
+{
+  return (((n & 0xff) << 24) | ((n & 0xff00) << 8) |
+          ((n & 0xff0000) >> 8) | ((n & 0xff000000) >> 24));
+}
