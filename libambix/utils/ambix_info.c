@@ -23,15 +23,63 @@
 
 #include "ambix/ambix.h"
 
+#include <stdio.h>
+
 
 void printinfo(const char*path) {
+  ambix_t*ambix;
+  ambixinfo_t info;
+
+  printf("Open file '%s': ", path);
+
+  ambix=ambix_open(path, AMBIX_READ, &info);
+  if(!ambix) {
+    printf("failed\n");
+    return;
+  } else
+    printf("OK\n");
+
+  printf("Frames\t: %d\n", info.frames); 
+
+  printf("Samplerate\t: %f\n", info.samplerate); 
+
+  printf("Sampleformat\t: %d (", info.sampleformat);
+  switch(info.sampleformat) {
+  case(AMBIX_SAMPLEFORMAT_NONE): printf("NONE"); break;
+  case(AMBIX_SAMPLEFORMAT_PCM16): printf("PCM16"); break;
+  case(AMBIX_SAMPLEFORMAT_PCM24): printf("PCM24"); break;
+  case(AMBIX_SAMPLEFORMAT_PCM32): printf("PCM32"); break;
+  case(AMBIX_SAMPLEFORMAT_FLOAT32): printf("FLOAT32"); break;
+  default: printf("**unknown**");
+  }
+  printf(")\n");
+
+  printf("ambiXformat\t: %d (", info.ambixfileformat);
+  switch(info.ambixfileformat) {
+  case(AMBIX_NONE): printf("NONE"); break;
+  case(AMBIX_SIMPLE): printf("SIMPLE"); break;
+  case(AMBIX_EXTENDED): printf("EXTENDED"); break;
+  default: printf("**unknown** 0x%04X", info.ambixfileformat);
+  }
+  printf(")\n");
+
+  printf("Ambisonics channels\t: %d\n", info.ambichannels); 
+  printf("Non-Ambisonics channels\t: %d\n", info.otherchannels);
 
 
+  printf("Close file '%s': ", path);
+  if(AMBIX_ERR_SUCCESS!=ambix_close(ambix))
+    printf("failed\n");
+  else 
+    printf("OK\n");
 }
 
 int main(int argc, char**argv) {
-  if(argc>0)
+  if(argc>1)
     printinfo(argv[1]);
+  else {
+    fprintf(stderr, "usage: %s <ambixfilename>\n", argv[0]);
+  }
 
   return 0;
 }
