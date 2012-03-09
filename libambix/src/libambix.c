@@ -62,3 +62,14 @@ const ambixmatrix_t*ambix_getAdaptorMatrix	(ambix_t*ambix) {
 ambix_err_t ambix_setPremultiplyMatrix	(ambix_t*ambix, const ambixmatrix_t*matrix) {
   return AMBIX_ERR_UNKNOWN;
 }
+
+
+int64_t ambix_readf_int16   (ambix_t*ambix, int16_t*ambidata, int16_t*otherdata, int64_t frames) {
+  return 0;
+}
+int64_t ambix_readf_int32   (ambix_t*ambix, int32_t*ambidata, int32_t*otherdata, int64_t frames) {
+  return 0;
+}
+int64_t ambix_readf_float32   (ambix_t*ambix, float32_t*ambidata, float32_t*otherdata, int64_t frames) {
+  return 0;
+}
