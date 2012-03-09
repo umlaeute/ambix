@@ -62,7 +62,23 @@ typedef struct ambix_t {
   uint32_t matrix_cols;
   /** reconstruction matrix (vector of row-vectors) */
   float32_t**matrix;
-
   
 } ambix_t;
 
+
+/** @brief Check data for ambix UUID
+ * @param data Array holding the UUID
+ * @return ambix-version this UUID is associated with, or 0 of failure
+ * @remark currently only one UUID is defined for the ambix format (version 1)
+ *         future versions of the standard might add additional UUIDs
+ */
+int _ambix_parseuuid(const char UUID[16]);
+
+/** @brief extract matrix from ambix UUID-chunk (v1)
+ * @param data Array holding the payload data (excluding the UUID itself)
+ * @param datasize size of data
+ * @param mtx pointer to a matrix object that should be filled (if NULL, this function will allocate a matrix object for you)
+ * @return a pointer to the filled matrix or NULL on failure
+ * @remark only use data from a uuid-chunk for which _ambix_parseuuid() that returned '1' 
+ */
+ambixmatrix_t*_ambix_uuid1_to_matrix(const void*data, uint64_t datasize, ambixmatrix_t*mtx);
