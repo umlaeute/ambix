@@ -242,4 +242,23 @@ int64_t _ambix_writef_int32   (ambix_t*ambix, int32_t*data, int64_t frames) {
 int64_t _ambix_writef_float32   (ambix_t*ambix, float32_t*data, int64_t frames) {
   return sf_writef_float(PRIVATE(ambix)->sf_file, (float*)data, frames) ;
 }
+ambix_err_t _ambix_write_uuidchunk(ambix_t*ax, const void*data, int64_t datasize) {
+	int				err ;
+  SF_CHUNK_INFO*chunk=&PRIVATE(ax)->sf_chunk;
+
+	memset (chunk, 0, sizeof (chunk)) ;
+	snprintf (chunk->id, sizeof (chunk->id), "uuid") ;
+	chunk->id_size = 4 ;
+  if(chunk->data)
+    free(chunk->data);
+	chunk->data = malloc(datasize);
+  memcpy(chunk->data, data, datasize);
+	chunk->datalen = datasize ;
+
+	err = sf_set_chunk (PRIVATE(ax)->sf_file, chunk) ;
+
+  if(SF_ERR_NO_ERROR != err)
+    return AMBIX_ERR_UNKNOWN;
+
+  return AMBIX_ERR_SUCCESS;
 }
