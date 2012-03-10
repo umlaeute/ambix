@@ -191,41 +191,33 @@ ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambixinfo_t
 AMBIX_API
 ambix_err_t	ambix_close	(ambix_t*ambix);
 
-/** @brief Read samples from the ambix file
- *
- * reads samples (as 16bit signed integer values) from an ambix file,
- * possibly expanding a reduced channel set to a full ambisonics set (when reading an 'ambix extended' file as 'ambix simple')
- *
- * @param ambix The handle to an ambix file
- * @param ambidata pointer to user allocated array to retrieve ambisonics channels into;
- *        must be large enough to hold at least (frames*ambix->ambichannels) samples, OR
- *        if you successfully added a pre-multiplication matrix using ambix_setPreMultiplyMatrix()
- *        the array must be large enough to hold at least (frames * premultmatrix.rows) samples
- * @param otherdata pointer to user allocated array to retrieve non-ambisonics channels into
- *        must be large enough to hold at least (frames*ambix->otherchannels) samples
- * @param frames number of sample frames you want to read
- * @return the number of sample frames sucessfully read
+/** @brief Read samples (as 16bit signed integer values) from the ambix file
+ * @see ambix_readf_float32
  */
 AMBIX_API
 int64_t ambix_readf_int16   (ambix_t*ambix, int16_t*ambidata, int16_t*otherdata, int64_t frames) ;
-/** @brief Read samples from the ambix file
+/** @brief Read samples (as 32bit signed integer values) from the ambix file
+ * @see ambix_readf_float32
+ */
+AMBIX_API
+int64_t ambix_readf_int32   (ambix_t*ambix, int32_t *ambidata, int32_t*otherdata, int64_t frames) ;
+/** @brief Read samples (as 32bit floating point values) from the ambix file
  *
- * reads samples (as 32bit signed integer values) from an ambix file,
+ * reads samples (as single precision floating point values) from an ambix file,
  * possibly expanding a reduced channel set to a full ambisonics set (when reading an 'ambix extended' file as 'ambix simple')
  *
  * @param ambix The handle to an ambix file
  * @param ambidata pointer to user allocated array to retrieve ambisonics channels into;
- *        must be large enough to hold at least (frames*ambix->ambichannels) samples, OR
+ *        must be large enough to hold at least (frames*ambix->info.ambichannels) samples, OR
  *        if you successfully added a pre-multiplication matrix using ambix_setPreMultiplyMatrix()
  *        the array must be large enough to hold at least (frames * premultmatrix.rows) samples
  * @param otherdata pointer to user allocated array to retrieve non-ambisonics channels into
- *        must be large enough to hold at least (frames*ambix->otherchannels) samples
+ *        must be large enough to hold at least (frames*ambix->info.otherchannels) samples
  * @param frames number of sample frames you want to read
  * @return the number of sample frames sucessfully read
  */
 AMBIX_API
-int64_t ambix_readf_int32   (ambix_t*ambix, int32_t *ambidata, int32_t*otherdata, int64_t frames) ;
-/** @brief Read samples from the ambix file
+int64_t ambix_readf_float32   (ambix_t*ambix, float32_t *ambidata, float32_t*otherdata, int64_t frames) ;
  *
  * reads samples (as single precision floating point values) from an ambix file,
  * possibly expanding a reduced channel set to a full ambisonics set (when reading an 'ambix extended' file as 'ambix simple')
