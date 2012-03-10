@@ -73,8 +73,9 @@ ambix_err_t ambix_setPremultiplyMatrix	(ambix_t*ambix, const ambixmatrix_t*matri
 #define AMBIX_READF(type) \
   int64_t ambix_readf_##type (ambix_t*ambix, type##_t*ambidata, type##_t*otherdata, int64_t frames) { \
     int64_t realframes;                                                 \
-    type##_t*adaptorbuffer=(type##_t*)ambix->adaptorbuffer;             \
+    type##_t*adaptorbuffer;                                             \
     _ambix_adaptorbuffer_resize(ambix, frames, sizeof(type##_t));       \
+    adaptorbuffer=(type##_t*)ambix->adaptorbuffer;                      \
     realframes=_ambix_readf_##type(ambix, adaptorbuffer, frames);       \
     if(0)                                                               \
       _ambix_splitAdaptormatrix_##type(adaptorbuffer, ambix->info.ambichannels+ambix->info.otherchannels, &ambix->matrix          , ambidata, otherdata, realframes); \
