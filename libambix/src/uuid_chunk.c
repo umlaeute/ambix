@@ -113,7 +113,7 @@ _ambix_uuid1_to_matrix(const void*data, uint64_t datasize, ambixmatrix_t*orgmtx,
   return mtx;
 
  cleanup:
-  if(mtx) {
+  if(mtx && mtx!=orgmtx) {
     ambix_matrix_deinit(mtx);
     free(mtx);
     mtx=NULL;
