@@ -31,7 +31,7 @@
 #endif /* HAVE_STDLIB_H */
 
 
-static const char _ambix_uuid_v1[]="IEM.AT/AMBIX/XML";
+static const char _ambix_uuid_v1[]="IEM.AT/AMBIX/XML"; /* uarg, this is not a UUID! */
 const char* _ambix_getUUID(uint32_t version) {
   switch(version) {
   default:
