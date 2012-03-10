@@ -96,8 +96,14 @@ void printinfo(const char*path) {
 }
 
 int main(int argc, char**argv) {
-  if(argc>1)
-    printinfo(argv[1]);
+  if(argc>1) {
+    int i;
+    for(i=1; i<argc; i++) {
+      printinfo(argv[i]);
+      printf("\n");
+    }
+
+  }
   else {
     fprintf(stderr, "usage: %s <ambixfilename>\n", argv[0]);
   }
