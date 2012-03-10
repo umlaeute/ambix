@@ -77,9 +77,9 @@ ambix_err_t ambix_setPremultiplyMatrix	(ambix_t*ambix, const ambixmatrix_t*matri
     _ambix_adaptorbuffer_resize(ambix, frames, sizeof(type##_t));       \
     realframes=_ambix_readf_##type(ambix, adaptorbuffer, frames);       \
     if(0)                                                               \
-      _ambix_adaptormatrix_##type(adaptorbuffer, ambix->info.ambichannels+ambix->info.otherchannels, &ambix->matrix          , ambidata, otherdata, realframes); \
+      _ambix_splitAdaptormatrix_##type(adaptorbuffer, ambix->info.ambichannels+ambix->info.otherchannels, &ambix->matrix          , ambidata, otherdata, realframes); \
     else                                                                \
-      _ambix_adaptor_##type      (adaptorbuffer, ambix->info.ambichannels+ambix->info.otherchannels, ambix->info.ambichannels, ambidata, otherdata, realframes); \
+      _ambix_splitAdaptor_##type      (adaptorbuffer, ambix->info.ambichannels+ambix->info.otherchannels, ambix->info.ambichannels, ambidata, otherdata, realframes); \
     return realframes;                                                  \
   }
 

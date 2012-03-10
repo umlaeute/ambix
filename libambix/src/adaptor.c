@@ -62,8 +62,8 @@ ambix_err_t _ambix_adaptorbuffer_destroy(ambix_t*ambix) {
 }
 
 
-#define _AMBIX_ADAPTOR(type) \
-  ambix_err_t _ambix_adaptor_##type(type##_t*source, uint32_t sourcechannels, uint32_t ambichannels, type##_t*dest_ambi, type##_t*dest_other, int64_t frames) { \
+#define _AMBIX_SPLITADAPTOR(type) \
+  ambix_err_t _ambix_splitAdaptor_##type(type##_t*source, uint32_t sourcechannels, uint32_t ambichannels, type##_t*dest_ambi, type##_t*dest_other, int64_t frames) { \
     int64_t frame;                                                      \
     for(frame=0; frame<frames; frame++) {                               \
       uint32_t chan;                                                    \
@@ -75,11 +75,11 @@ ambix_err_t _ambix_adaptorbuffer_destroy(ambix_t*ambix) {
     return AMBIX_ERR_SUCCESS;                                           \
   }
 
-_AMBIX_ADAPTOR(float32);
-_AMBIX_ADAPTOR(int32);
-_AMBIX_ADAPTOR(int16);
+_AMBIX_SPLITADAPTOR(float32);
+_AMBIX_SPLITADAPTOR(int32);
+_AMBIX_SPLITADAPTOR(int16);
 
-ambix_err_t _ambix_adaptormatrix_float32(float32_t*source, uint32_t sourcechannels, ambixmatrix_t*matrix, float32_t*dest_ambi, float32_t*dest_other, int64_t frames) {
+ambix_err_t _ambix_splitAdaptormatrix_float32(float32_t*source, uint32_t sourcechannels, ambixmatrix_t*matrix, float32_t*dest_ambi, float32_t*dest_other, int64_t frames) {
   float32_t**mtx=matrix->data;
   const uint32_t rows=matrix->rows;
   const uint32_t cols=matrix->cols;
@@ -103,7 +103,7 @@ ambix_err_t _ambix_adaptormatrix_float32(float32_t*source, uint32_t sourcechanne
 }
 /* both _int16 and _int32 are highly unoptimized! */
 /* LATER: add some fixed point magic to speed things up */
-ambix_err_t _ambix_adaptormatrix_int16(int16_t*source, uint32_t sourcechannels, ambixmatrix_t*matrix, int16_t*dest_ambi, int16_t*dest_other, int64_t frames) {
+ambix_err_t _ambix_splitAdaptormatrix_int16(int16_t*source, uint32_t sourcechannels, ambixmatrix_t*matrix, int16_t*dest_ambi, int16_t*dest_other, int64_t frames) {
   float32_t**mtx=matrix->data;
   const uint32_t rows=matrix->rows;
   const uint32_t cols=matrix->cols;
@@ -125,7 +125,7 @@ ambix_err_t _ambix_adaptormatrix_int16(int16_t*source, uint32_t sourcechannels, 
   }
   return AMBIX_ERR_UNKNOWN;
 }
-ambix_err_t _ambix_adaptormatrix_int32(int32_t*source, uint32_t sourcechannels, ambixmatrix_t*matrix, int32_t*dest_ambi, int32_t*dest_other, int64_t frames) {
+ambix_err_t _ambix_splitAdaptormatrix_int32(int32_t*source, uint32_t sourcechannels, ambixmatrix_t*matrix, int32_t*dest_ambi, int32_t*dest_other, int64_t frames) {
   float32_t**mtx=matrix->data;
   const uint32_t rows=matrix->rows;
   const uint32_t cols=matrix->cols;
