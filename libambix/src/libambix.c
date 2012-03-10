@@ -32,6 +32,7 @@
 
 
 static ambix_err_t _check_write_ambixinfo(ambixinfo_t*info) {
+  /* FIXXME: rather than failing, we could force the values to be correct */
   switch(info->ambixfileformat) {
   case AMBIX_NONE:
     if(info->ambichannels>0)
