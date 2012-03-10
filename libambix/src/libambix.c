@@ -66,9 +66,10 @@ const ambixmatrix_t*ambix_getAdaptorMatrix	(ambix_t*ambix) {
     return &(ambix->matrix);
   return NULL;
 }
-ambix_err_t ambix_setPremultiplyMatrix	(ambix_t*ambix, const ambixmatrix_t*matrix) {
+ambix_err_t ambix_setAdaptorMatrix	(ambix_t*ambix, const ambixmatrix_t*matrix) {
   return AMBIX_ERR_UNKNOWN;
 }
+
 
 #define AMBIX_READF(type) \
   int64_t ambix_readf_##type (ambix_t*ambix, type##_t*ambidata, type##_t*otherdata, int64_t frames) { \

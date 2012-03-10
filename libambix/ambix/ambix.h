@@ -282,19 +282,22 @@ const ambixmatrix_t*ambix_getAdaptorMatrix	(ambix_t*ambix);
 
 /** @brief set a matrix to be pre-multiplied
  *
- * tells the library to do an (additional) matrix-multiplication when reconstructing the full ambisonics set (read mode!);
- * you can use use this to get the ambisonics channels in a format other than SN3D/ACN (e.g. using an ambix to Furse-Malham adaptor matrix)
- * or getting the loudspeaker feeds directly (by supplying a decoder matrix);
- * the matrix MUST have ambix->ambichannels columns
+ * adds an (additional) adaptor matrix to the processing.
+ * depending on the mode of operation this canhave different meanings!
+ * when READing an ambix 'SIMPLE' file, this tells the library to do an (additional) matrix-multiplication
+ * when reconstructing the full ambisonics set; you can use use this to get the ambisonics channels in a format
+ * other than SN3D/ACN (e.g. using an ambix to Furse-Malham adaptor matrix) or getting the loudspeaker feeds
+ * directly (by supplying a decoder matrix); in this case, the matrix MUST have ambix->ambichannels columns.
+ * when WRITEing an ambix 'EXTENDED' file, this tells the library to store the matrix as the adaptor matrix within the file;
  *
  * @param ambix The handle to an ambix file
  * @param matrix a matrix that will be pre-multiplied to the reconstruction-matrix;
- *          can be freed after this call
+ *              can be freed after this call
  * @return an errorcode indicating success
- * @remark this is only meaningful for reading files as 'ambix simple'
+ * @remark using this on ambix handles other than READ/SIMPLE or WRITE/EXTENDED is an error
  */
 AMBIX_API
-ambix_err_t ambix_setPremultiplyMatrix	(ambix_t*ambix, const ambixmatrix_t*matrix);
+ambix_err_t ambix_setAdaptorMatrix	(ambix_t*ambix, const ambixmatrix_t*matrix);
 
 
 #ifdef __cplusplus
