@@ -47,6 +47,10 @@ ambix_err_t	ambix_close	(ambix_t*ambix) {
   }
   res=_ambix_close(ambix);
 
+
+  _ambix_adaptorbuffer_destroy(ambix);
+  ambix_matrix_deinit(&ambix->matrix);
+
   free(ambix);
   ambix=NULL;
   return res;
