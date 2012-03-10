@@ -31,6 +31,8 @@ void createfile_simple(const char*path, uint32_t ambichannels, uint32_t othercha
   ambix_t*ambix;
   const ambixmatrix_t*matrix;
 
+  otherchannels=0;
+
   memset(&info, 0, sizeof(info));
   info.frames=frames;
   info.samplerate=44100;
@@ -102,7 +104,7 @@ void createfile_simple(const char*path, uint32_t ambichannels, uint32_t othercha
 
 int main(int argc, char**argv) {
   if(argc>1)
-    createfile_simple(argv[1], 9, 2, 44100);
+    createfile_simple(argv[1], 9, 3, 44100);
   else {
     fprintf(stderr, "usage: %s <ambixfilename>\n", argv[0]);
   }
