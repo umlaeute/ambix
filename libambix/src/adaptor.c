@@ -60,3 +60,90 @@ ambix_err_t _ambix_adaptorbuffer_destroy(ambix_t*ambix) {
   ambix->adaptorbuffersize=0;
   return AMBIX_ERR_SUCCESS;
 }
+
+
+#define _AMBIX_ADAPTOR(type) \
+  ambix_err_t _ambix_adaptor_##type(type##_t*source, uint32_t sourcechannels, uint32_t ambichannels, type##_t*dest_ambi, type##_t*dest_other, int64_t frames) { \
+    int64_t frame;                                                      \
+    for(frame=0; frame<frames; frame++) {                               \
+      uint32_t chan;                                                    \
+      for(chan=0; chan<ambichannels; chan++)                            \
+        *dest_ambi++=*source++;                                         \
+      for(chan=ambichannels; chan<sourcechannels; chan++)               \
+        *dest_other++=*source++;                                        \
+    }                                                                   \
+    return AMBIX_ERR_SUCCESS;                                           \
+  }
+
+_AMBIX_ADAPTOR(float32);
+_AMBIX_ADAPTOR(int32);
+_AMBIX_ADAPTOR(int16);
+
+ambix_err_t _ambix_adaptormatrix_float32(float32_t*source, uint32_t sourcechannels, ambixmatrix_t*matrix, float32_t*dest_ambi, float32_t*dest_other, int64_t frames) {
+  float32_t**mtx=matrix->data;
+  const uint32_t rows=matrix->rows;
+  const uint32_t cols=matrix->cols;
+  int64_t f;
+  for(f=0; f<frames; f++) {
+    uint32_t chan;
+    for(chan=0; chan<rows; chan++) {
+      float32_t*src=source;
+      float32_t sum=0.;
+      uint32_t c;
+      for(c=0; c<cols; c++) {
+        sum+=mtx[chan][c] * src[c];
+      }
+      *dest_ambi++=sum;
+      source+=cols;
+    }
+    for(chan=cols; chan<sourcechannels; chan++)
+      *dest_other++=*source++;
+  }
+  return AMBIX_ERR_UNKNOWN;
+}
+/* both _int16 and _int32 are highly unoptimized! */
+/* LATER: add some fixed point magic to speed things up */
+ambix_err_t _ambix_adaptormatrix_int16(int16_t*source, uint32_t sourcechannels, ambixmatrix_t*matrix, int16_t*dest_ambi, int16_t*dest_other, int64_t frames) {
+  float32_t**mtx=matrix->data;
+  const uint32_t rows=matrix->rows;
+  const uint32_t cols=matrix->cols;
+  int64_t f;
+  for(f=0; f<frames; f++) {
+    uint32_t chan;
+    for(chan=0; chan<rows; chan++) {
+      int16_t*src=source;
+      float32_t sum=0.;
+      uint32_t c;
+      for(c=0; c<cols; c++) {
+        sum+=mtx[chan][c] * src[c];
+      }
+      *dest_ambi++=sum;
+      source+=cols;
+    }
+    for(chan=cols; chan<sourcechannels; chan++)
+      *dest_other++=*source++;
+  }
+  return AMBIX_ERR_UNKNOWN;
+}
+ambix_err_t _ambix_adaptormatrix_int32(int32_t*source, uint32_t sourcechannels, ambixmatrix_t*matrix, int32_t*dest_ambi, int32_t*dest_other, int64_t frames) {
+  float32_t**mtx=matrix->data;
+  const uint32_t rows=matrix->rows;
+  const uint32_t cols=matrix->cols;
+  int64_t f;
+  for(f=0; f<frames; f++) {
+    uint32_t chan;
+    for(chan=0; chan<rows; chan++) {
+      int32_t*src=source;
+      float32_t sum=0.;
+      uint32_t c;
+      for(c=0; c<cols; c++) {
+        sum+=mtx[chan][c] * src[c];
+      }
+      *dest_ambi++=sum;
+      source+=cols;
+    }
+    for(chan=cols; chan<sourcechannels; chan++)
+      *dest_other++=*source++;
+  }
+  return AMBIX_ERR_UNKNOWN;
+}

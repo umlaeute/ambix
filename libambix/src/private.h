@@ -148,4 +148,44 @@ ambix_err_t _ambix_adaptorbuffer_resize(ambix_t*ambix, uint64_t frames, uint16_t
 ambix_err_t _ambix_adaptorbuffer_destroy(ambix_t*ambix);
 
 
+/** @brief extract ambisonics and non-ambisonics channels from interleaved data
+ *
+ * extract the first ambichannels channels from the source into dest_ambi
+ * the remaining source channels are written into dest_other
+ * it is an error if ambichannels>sourcechannels (resulting in a negative number of non-ambisonics channels)
+ *
+ * @param source the interleaved samplebuffer to read from
+ * @param sourcechannels the number of channels in the source
+ * @param dest_ambi the ambisonics channels (interleaved)
+ * @param ambichannels the number of ambisonics channels to extract
+ * @param dest_other the non-ambisonics channels (interleaved)
+ * @param frames number of frames to extract
+ * @return error code indicating success
+ */
+ambix_err_t _ambix_adaptor_float32(float32_t*source, uint32_t sourcechannels, uint32_t ambichannels, float32_t*dest_ambi, float32_t*dest_other, int64_t frames);
+/** @see _ambix_adapator_float32 */
+ambix_err_t _ambix_adaptor_int32(int32_t*source, uint32_t sourcechannels, uint32_t ambichannels, int32_t*dest_ambi, int32_t*dest_other, int64_t frames);
+/** @see _ambix_adapator_float32 */
+ambix_err_t _ambix_adaptor_int16(int16_t*source, uint32_t sourcechannels, uint32_t ambichannels, int16_t*dest_ambi, int16_t*dest_other, int64_t frames);
+
+/** @brief extract ambisonics and non-ambisonics channels from interleaved data using matrix operations
+ *
+ * extract matrix.rows ambisonics channels into dest_ambi by multiplying the matrix with matrix.cols source channels
+ * the remaining source channels are written into dest_other
+ * it is an error if matrix.cols>sourcechannels (resulting in a negative number of non-ambisonics channels)
+ *
+ * @param source the interleaved samplebuffer to read from
+ * @param sourcechannels the number of channels in the source
+ * @param dest_ambi the ambisonics channels (interleaved)
+ * @param dest_other the non-ambisonics channels (interleaved)
+ * @param frames number of frames to extract
+ * @return error code indicating success
+ */
+ambix_err_t _ambix_adaptormatrix_float32(float32_t*source, uint32_t sourcechannels, ambixmatrix_t*matrix, float32_t*dest_ambi, float32_t*dest_other, int64_t frames);
+/* @see _ambix_adaptormatrix_float32 */
+ambix_err_t _ambix_adaptormatrix_int32(int32_t*source, uint32_t sourcechannels, ambixmatrix_t*matrix, int32_t*dest_ambi, int32_t*dest_other, int64_t frames);
+/* @see _ambix_adaptormatrix_float32 */
+ambix_err_t _ambix_adaptormatrix_int16(int16_t*source, uint32_t sourcechannels, ambixmatrix_t*matrix, int16_t*dest_ambi, int16_t*dest_other, int64_t frames);
+
+
 #define MARK() printf("%s:%d[%s]\n", __FILE__, __LINE__, __FUNCTION__)
