@@ -42,3 +42,15 @@ int32_t ambix_channels2order(uint32_t channels) {
 int ambix_isFullSet(uint32_t channels) {
   return (ambix_order2channels(ambix_channels2order(channels))==channels);
 }
+
+
+void _ambix_print_info(const ambixinfo_t*info) {
+  printf("AMBIX_INFO 0x%X\n", info);
+  if(!info)return;
+  printf("  frames\t: %d\n", info->frames);
+  printf("  samplerate\t: %f\n", info->samplerate);
+  printf("  sampleformat\t: %d\n", info->sampleformat);
+  printf("  ambixfileformat\t: %d\n", info->ambixfileformat);
+  printf("  ambichannels\t: %d\n", info->ambichannels);
+  printf("  otherchannels\t: %d\n", info->otherchannels);
+}

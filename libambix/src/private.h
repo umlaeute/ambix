@@ -283,5 +283,9 @@ ambix_err_t _ambix_mergeAdaptor_int32(int32_t*source1, uint32_t source1channels,
 ambix_err_t _ambix_mergeAdaptor_int16(int16_t*source1, uint32_t source1channels, int16_t*source2, uint32_t source2channels, int16_t*destination, int64_t frames);
 
 
+/** @brief debugging printout for ambixinfo_t
+ * @param info an ambixinfo struct
+ */
+void _ambix_print_info(const ambixinfo_t*info);
 
 #define MARK() printf("%s:%d[%s]\n", __FILE__, __LINE__, __FUNCTION__)
