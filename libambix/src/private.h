@@ -158,6 +158,15 @@ uint32_t _ambix_checkUUID(const char UUID[16]);
  */
 ambixmatrix_t*_ambix_uuid1_to_matrix(const void*data, uint64_t datasize, ambixmatrix_t*mtx, int byteswap);
 
+/** @brief generate UUID-chunk (v1) from matrix
+ * @param matrix data to store in chunk
+ * @param data pointer to memory to store the UUID-chunk in (or NULL)
+ * @param byteswap TRUE if data has to be byteswapped (e.g. when reading BIG_ENDIAN data on LITTLE_ENDIAN machines)
+ * @return datasize needed for the UUID-chunk
+ * @remark you should call this two times: first with data=NULL, which will return the datasize you need to allocate;
+ *         then you allocate enough data (datasize bytes) and call the function again
+ */
+uint64_t _ambix_matrix_to_uuid1(const ambixmatrix_t*matrix, void*data, int byteswap);
 
 /** @brief byte-swap 32bit data
  * @param n a 32bit chunk in the wrong byte order
