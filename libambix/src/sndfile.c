@@ -97,9 +97,7 @@ ambix_read_uuidchunk(ambix_t*ax) {
   
   chunkver=_ambix_checkUUID(chunk_info.data);
   if(1==chunkver) {
-    int swap=(sf_command(file, SFC_RAW_DATA_NEEDS_ENDSWAP, NULL, 0) == SF_TRUE);
-
-    if(!_ambix_uuid1_to_matrix(chunk_info.data+16, chunk_info.datalen-16, &ax->matrix, swap)) {
+    if(!_ambix_uuid1_to_matrix(chunk_info.data+16, chunk_info.datalen-16, &ax->matrix, ax->byteswap)) {
       result=__LINE__;goto simple;
     }
   } else {
@@ -149,7 +147,7 @@ ambix_err_t _ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t
 
   channels=ambix->sf_info.channels;
   isCAF=(SF_FORMAT_CAF & ambix->sf_info.format);
-
+  ambix->byteswap=(sf_command(ambix->sf_file, SFC_RAW_DATA_NEEDS_ENDSWAP, NULL, 0) == SF_TRUE);
   if(isCAF) {
     if(ambix_read_uuidchunk(ambix) == AMBIX_ERR_SUCCESS) {
       /* check whether channels are (N+1)^2
