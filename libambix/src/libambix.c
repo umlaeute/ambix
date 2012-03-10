@@ -30,9 +30,35 @@
 # include <string.h>
 #endif /* HAVE_STRING_H */
 
-ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambixinfo_t*ambixinfo) {
-  ambix_t*ambix=calloc(1, sizeof(ambix_t));
 
+static ambix_err_t _check_write_ambixinfo(ambixinfo_t*info) {
+  switch(info->ambixfileformat) {
+  case AMBIX_NONE:
+    if(info->ambichannels>0)
+      return AMBIX_ERR_INVALID_FORMAT;
+    break;
+  case AMBIX_SIMPLE:
+    if(info->otherchannels>0)
+      return AMBIX_ERR_INVALID_FORMAT;
+    if(!ambix_isFullSet(info->ambichannels))
+      return AMBIX_ERR_INVALID_FORMAT;
+    break;
+  }
+
+  return AMBIX_ERR_SUCCESS;
+}
+
+ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambixinfo_t*ambixinfo) {
+  ambix_t*ambix=NULL;
+  ambix_err_t err;
+
+  if(AMBIX_WRITE & mode) {
+    err=_check_write_ambixinfo(ambixinfo);
+    if(err!=AMBIX_ERR_SUCCESS)
+      return NULL;
+  }
+
+  ambix=calloc(1, sizeof(ambix_t));
   if(AMBIX_ERR_SUCCESS == _ambix_open(ambix, path, mode, ambixinfo)) {
     const ambix_fileformat_t wantformat=ambixinfo->ambixfileformat;
     const ambix_fileformat_t haveformat=ambix->realinfo.ambixfileformat;
