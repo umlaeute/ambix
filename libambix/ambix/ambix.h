@@ -191,6 +191,18 @@ ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambixinfo_t
 AMBIX_API
 ambix_err_t	ambix_close	(ambix_t*ambix);
 
+/** @brief write the ambix header
+ *
+ * Writes the ambix specific header to the soundfile (e.g adaptor matrix,...)
+ *
+ * @param ambix The handle to an ambix file
+ * @return an error code indicating success
+ * @remark should only be called once, after opening the file and before writing sample frames to it
+ * @remark only valid for files that are opened for writing
+ */
+AMBIX_API
+ambix_err_t	ambix_write_header	(ambix_t*ambix);
+
 /** @brief Read samples (as 16bit signed integer values) from the ambix file
  * @see ambix_readf_float32
  */

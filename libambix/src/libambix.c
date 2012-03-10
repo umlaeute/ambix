@@ -71,6 +71,10 @@ ambix_err_t ambix_setAdaptorMatrix	(ambix_t*ambix, const ambixmatrix_t*matrix) {
   return AMBIX_ERR_UNKNOWN;
 }
 
+ambix_err_t	ambix_write_header	(ambix_t*ambix) {
+  return AMBIX_ERR_UNKNOWN;
+}
+
 
 #define AMBIX_READF(type) \
   int64_t ambix_readf_##type (ambix_t*ambix, type##_t*ambidata, type##_t*otherdata, int64_t frames) { \
