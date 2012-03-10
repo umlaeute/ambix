@@ -148,8 +148,6 @@ ambix_read_uuidchunk(ambix_t*ax) {
 
 ambix_err_t _ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t mode, const ambixinfo_t*ambixinfo) {
   int sfmode=0;
-  uint32_t channels=0;
-  int isCAF=0;
 
   ambix->private=calloc(1, sizeof(ambixsndfile_private_t));
   ambix2sndfile_info(ambixinfo, &PRIVATE(ambix)->sf_info);
@@ -168,61 +166,16 @@ ambix_err_t _ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t
   memset(&ambix->realinfo, 0, sizeof(*ambixinfo));
   sndfile2ambix_info(&PRIVATE(ambix)->sf_info, &ambix->realinfo);
 
-  channels=PRIVATE(ambix)->sf_info.channels;
-  isCAF=(SF_FORMAT_CAF & PRIVATE(ambix)->sf_info.format);
   ambix->byteswap=(sf_command(PRIVATE(ambix)->sf_file, SFC_RAW_DATA_NEEDS_ENDSWAP, NULL, 0) == SF_TRUE);
+  ambix->channels = PRIVATE(ambix)->sf_info.channels;
 
-  /* FIXXXME most of this should go into libambix.c */
-  if(isCAF) {
-    if(ambix_read_uuidchunk(ambix) == AMBIX_ERR_SUCCESS) {
-      /* check whether channels are (N+1)^2
-       * if so, we have a simple-ambix file, else it is just an ordinary caf
-       */
-      if(ambix->matrix.cols <= channels &&  /* reduced set must be fully present */
-         ambix_isFullSet(ambix->matrix.rows)) { /* expanded set must be a full set */
-        /* it's a simple AMBIX! */
-        ambix->ambisonics_order=ambix_channels2order(ambix->matrix.rows);
-        ambix->realinfo.ambixfileformat=AMBIX_EXTENDED;
-        ambix->realinfo.ambichannels=ambix->matrix.cols;
-        ambix->realinfo.otherchannels=channels-ambix->matrix.cols;
-      } else {
-        /* ouch! matrix is not valid! */
-        ambix->ambisonics_order=0;
-        ambix->realinfo.ambixfileformat=AMBIX_NONE;
-        ambix->realinfo.ambichannels=0;
-        ambix->realinfo.otherchannels=channels;
-      }
-    } else {
-      /* no uuid chunk found, it's probably a SIMPLE ambix file */
+  ambix->is_CAF=(SF_FORMAT_CAF & PRIVATE(ambix)->sf_info.format);
 
-      /* check whether channels are (N+1)^2
-       * if so, we have a simple-ambix file, else it is just an ordinary caf
-       */
-      if(ambix_isFullSet(channels)) { /* expanded set must be a full set */
-        /* it's a simple AMBIX! */
-        ambix->ambisonics_order=ambix_channels2order(channels);
-        ambix->realinfo.ambixfileformat=AMBIX_SIMPLE;
-        ambix->realinfo.ambichannels=channels;
-        ambix->realinfo.otherchannels=0;
-      } else {
-        /* it's an ordinary CAF file */
-        ambix->ambisonics_order=0;
-        ambix->realinfo.ambixfileformat=AMBIX_NONE;
-        ambix->realinfo.ambichannels=0;
-        ambix->realinfo.otherchannels=channels;
-      }
-    }
+  if((ambix->is_CAF) && (ambix_read_uuidchunk(ambix) == AMBIX_ERR_SUCCESS)) {
+    ambix->has_UUID=1;
   } else {
-    /* it's not a CAF file.... */
-    ambix->ambisonics_order=0;
-    ambix->realinfo.ambixfileformat=AMBIX_NONE;
-    ambix->realinfo.ambichannels=0;
-    ambix->realinfo.otherchannels=channels;
+    ambix->has_UUID=0;
   }
-
-  //print_sfinfo(&PRIVATE(ambix)->sf_info);
-  //_ambix_print_info(&ambix->realinfo);
-
 
   return AMBIX_ERR_SUCCESS;
 }

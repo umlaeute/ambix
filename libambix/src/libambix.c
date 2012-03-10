@@ -49,9 +49,36 @@ static ambix_err_t _check_write_ambixinfo(ambixinfo_t*info) {
   return AMBIX_ERR_SUCCESS;
 }
 
+static _ambix_info_set(ambix_t*ambix
+                       , ambix_fileformat_t format
+                       , int32_t otherchannels
+                       , int32_t ambichannels
+                       , int32_t fullambichannels
+                       ) {
+  switch(format) {
+  case AMBIX_NONE:
+    ambichannels=fullambichannels=0;
+    break;
+  case AMBIX_SIMPLE:
+    otherchannels=0;
+    break;
+  default:
+    break;
+  }
+  ambix->realinfo.ambixfileformat=format;
+  ambix->realinfo.ambichannels=ambichannels;
+  ambix->realinfo.otherchannels=otherchannels;
+  ambix->ambisonics_order==fullambichannels>0?ambix_channels2order(fullambichannels):0;
+}
+
 ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambixinfo_t*ambixinfo) {
   ambix_t*ambix=NULL;
   ambix_err_t err;
+
+  if((AMBIX_WRITE & mode) && (AMBIX_READ & mode)) {
+    /* RDRW not yet implemented */
+    return NULL;
+  }
 
   if(AMBIX_WRITE & mode) {
     err=_check_write_ambixinfo(ambixinfo);
@@ -62,9 +89,59 @@ ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambixinfo_t
   ambix=calloc(1, sizeof(ambix_t));
   if(AMBIX_ERR_SUCCESS == _ambix_open(ambix, path, mode, ambixinfo)) {
     const ambix_fileformat_t wantformat=ambixinfo->ambixfileformat;
-    const ambix_fileformat_t haveformat=ambix->realinfo.ambixfileformat;
-
+    ambix_fileformat_t haveformat;
+    uint32_t channels = ambix->channels;
     /* successfully opened, initialize common stuff... */
+    if(ambix->is_CAF) {
+      if(AMBIX_WRITE & mode) {
+        switch(wantformat) {
+        case(AMBIX_NONE):
+          _ambix_info_set(ambix, AMBIX_NONE, channels, 0, 0);
+          break;
+        case(AMBIX_SIMPLE):
+          _ambix_info_set(ambix, AMBIX_SIMPLE, 0, channels, channels);
+          break;
+        case(AMBIX_EXTENDED):
+          /* the number of fulll channels is not clear yet!
+           * the user has to call setAdaptorMatrix() first */
+          _ambix_info_set(ambix, AMBIX_EXTENDED, otherchannels, ambichannels, 0);
+          break;
+        }
+      } else {
+        if(ambix->has_UUID) {
+          /* check whether channels are (N+1)^2
+           * if so, we have a simple-ambix file, else it is just an ordinary caf
+           */
+          if(ambix->matrix.cols <= channels &&  /* reduced set must be fully present */
+             ambix_isFullSet(ambix->matrix.rows)) { /* expanded set must be a full set */
+            /* it's a simple AMBIX! */
+            _ambix_info_set(ambix, AMBIX_EXTENDED, channels-ambix->matrix.cols, ambix->matrix.cols, ambix->matrix.rows);
+          } else {
+            /* ouch! matrix is not valid! */
+            _ambix_info_set(ambix, AMBIX_NONE, channels, 0, 0);
+          }
+        } else {
+          /* no uuid chunk found, it's probably a SIMPLE ambix file */
+
+          /* check whether channels are (N+1)^2
+           * if so, we have a simple-ambix file, else it is just an ordinary caf
+           */
+          if(ambix_isFullSet(channels)) { /* expanded set must be a full set */
+            /* it's a simple AMBIX! */
+            _ambix_info_set(ambix, AMBIX_SIMPLE, 0, channels, channels);
+          } else {
+            /* it's an ordinary CAF file */
+            _ambix_info_set(ambix, AMBIX_NONE, channels, 0, 0);
+          }
+        }
+      }
+    } else {
+      /* it's not a CAF file.... */
+      _ambix_info_set(ambix, AMBIX_NONE, channels, 0, 0);
+    }
+
+    haveformat=ambix->realinfo.ambixfileformat;
+
     ambix->filemode=mode;
     memcpy(&ambix->info, &ambix->realinfo, sizeof(ambix->info));
 

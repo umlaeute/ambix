@@ -43,7 +43,16 @@
 
 /** this is for passing data about the opened ambix file between the host application and the library */
 typedef struct ambix_t {
+  /** private data by the actual backend */
   void*private;
+
+  /** whether the file has an UUID-chunk */
+  int has_UUID;
+  /** whether the file is a CAF file */
+  int is_CAF;
+
+  /** full number of channels in the file */
+  int32_t channels;
 
   /** ambisonics info chunk as presented to the outside world */
   ambixinfo_t info;
