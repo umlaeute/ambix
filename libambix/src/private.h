@@ -64,6 +64,9 @@ typedef struct ambix_t {
   /** size of the adaptor buffer (in bytes) */
   int64_t adaptorbuffersize;
 
+  /** read/write mode */
+  ambix_filemode_t filemode;
+
   /** default adaptorbuffer size in frames */
 #define DEFAULT_ADAPTORBUFFER_SIZE 64
 } ambix_t;
