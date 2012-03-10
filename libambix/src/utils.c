@@ -55,6 +55,49 @@ void _ambix_print_info(const ambixinfo_t*info) {
   printf("  otherchannels\t: %d\n", info->otherchannels);
 }
 
+void _ambix_print_matrix(const ambixmatrix_t*mtx) {
+  printf("matrix 0x%X", mtx);
+  if(mtx) {
+    float32_t**data=mtx->data;
+    uint32_t r, c;
+    printf(" [%dx%d] = %p\n", mtx->rows, mtx->cols, mtx->data);
+    for(r=0; r<mtx->rows; r++) {
+      for(c=0; c<mtx->cols; c++) {
+        printf("%03g ", data[r][c]);
+      }
+      printf("\n");
+    }
+  }
+  printf("\n");
+
+}
+
+void _ambix_print_ambix(const ambix_t*ambix) {
+  printf("AMBIX 0x%X\n", ambix);
+  if(!ambix)return;
+
+  printf("  private\t: %p\n", ambix->private);
+  printf("  has_UUID\t: %d\n", ambix->has_UUID);
+  printf("  is_CAF\t: %d\n", ambix->is_CAF);
+  printf("  filemode\t: %d\n", ambix->filemode);
+  printf("  byteswap\t: %d\n", ambix->byteswap);
+  printf("  channels\t: %d\n", ambix->channels);
+  printf("  info\t:\n");
+  _ambix_print_info(&ambix->info);
+  printf("  realinfo\t:\n");
+  _ambix_print_info(&ambix->realinfo);
+  printf("  matrix\t:\n");
+  _ambix_print_matrix(&ambix->matrix);
+  printf("  matrix2\t:\n");
+  _ambix_print_matrix(&ambix->matrix2);
+  printf("  use_matrix\t: %d\n", ambix->use_matrix);
+  printf("  adaptorbuffer\t: %p\n", ambix->adaptorbuffer);
+  printf("  adaptorbuffersize\t: %d\n", ambix->adaptorbuffersize);
+  printf("  ambisonics_order\t: %d\n", ambix->ambisonics_order);
+  printf("  startedReading\t: %d\n", ambix->startedReading);
+  printf("  startedWriting\t: %d\n", ambix->startedWriting);
+}
+
 
 void _ambix_swap4array(uint32_t*data, uint64_t datasize) {
   uint64_t i;
