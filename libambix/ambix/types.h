@@ -38,7 +38,7 @@
 #define AMBIX_TYPES_H
 
 #ifdef __cplusplus
-//extern "C" {
+extern "C" {
 #endif	/* __cplusplus */
 
 /** 32bit floating point number */
@@ -162,6 +162,6 @@ typedef struct ambixinfo_t {
 typedef struct SNDFILE_tag SNDFILE;
 
 #ifdef __cplusplus
-//}		/* extern "C" */
+}		/* extern "C" */
 #endif	/* __cplusplus */
 #endif /* AMBIX_AMBIX_H */
