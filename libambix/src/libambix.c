@@ -34,15 +34,18 @@ ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambixinfo_t
   ambix_t*ambix=calloc(1, sizeof(ambix_t));
 
   if(AMBIX_ERR_SUCCESS == _ambix_open(ambix, path, mode, ambixinfo)) {
+    const ambix_fileformat_t wantformat=ambixinfo->ambixfileformat;
+    const ambix_fileformat_t haveformat=ambix->realinfo.ambixfileformat;
+
     /* successfully opened, initialize common stuff... */
     ambix->filemode=mode;
     memcpy(&ambix->info, &ambix->realinfo, sizeof(ambix->info));
 
     if(0) {
-    } else if(AMBIX_SIMPLE==ambixinfo->ambixfileformat && AMBIX_EXTENDED==ambix->realinfo.ambixfileformat) {
+    } else if(AMBIX_SIMPLE==wantformat && AMBIX_EXTENDED==haveformat) {
       ambix->info.ambixfileformat=AMBIX_SIMPLE;
       ambix->use_matrix=1;
-    } else if(AMBIX_EXTENDED==ambixinfo->ambixfileformat && AMBIX_SIMPLE==ambix->realinfo.ambixfileformat) {
+    } else if(AMBIX_EXTENDED==wantformat && AMBIX_SIMPLE==haveformat) {
       ambix_matrix_init(ambix->realinfo.ambichannels, ambix->realinfo.ambichannels, &ambix->matrix);
       ambix_matrix_eye(&ambix->matrix);
       ambix->info.ambixfileformat=AMBIX_EXTENDED;
