@@ -74,6 +74,7 @@ static _ambix_info_set(ambix_t*ambix
 ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambixinfo_t*ambixinfo) {
   ambix_t*ambix=NULL;
   ambix_err_t err;
+  int32_t ambichannels, otherchannels;
 
   if((AMBIX_WRITE & mode) && (AMBIX_READ & mode)) {
     /* RDRW not yet implemented */
@@ -84,6 +85,8 @@ ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambixinfo_t
     err=_check_write_ambixinfo(ambixinfo);
     if(err!=AMBIX_ERR_SUCCESS)
       return NULL;
+    ambichannels=ambixinfo->ambichannels;
+    otherchannels=ambixinfo->otherchannels;
   }
 
   ambix=calloc(1, sizeof(ambix_t));
@@ -102,7 +105,7 @@ ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambixinfo_t
           _ambix_info_set(ambix, AMBIX_SIMPLE, 0, channels, channels);
           break;
         case(AMBIX_EXTENDED):
-          /* the number of fulll channels is not clear yet!
+          /* the number of full channels is not clear yet!
            * the user has to call setAdaptorMatrix() first */
           _ambix_info_set(ambix, AMBIX_EXTENDED, otherchannels, ambichannels, 0);
           break;
