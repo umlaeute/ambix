@@ -52,7 +52,8 @@ ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambixinfo_t
       ambix->use_matrix=0;
     }
 
-    memcpy(ambixinfo, &ambix->info, sizeof(ambixinfo));
+    memcpy(ambixinfo, &ambix->info, sizeof(ambix->info));
+
     if(_ambix_adaptorbuffer_resize(ambix, DEFAULT_ADAPTORBUFFER_SIZE, sizeof(float32_t)) == AMBIX_ERR_SUCCESS)
       return ambix;
   }
