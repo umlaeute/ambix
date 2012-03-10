@@ -211,9 +211,17 @@ ambix_err_t ambix_setAdaptorMatrix	(ambix_t*ambix, const ambixmatrix_t*matrix) {
       ambix->use_matrix=2;
     }
   } else if((ambix->filemode & AMBIX_WRITE) && (AMBIX_EXTENDED == ambix->info.ambixfileformat)) {
-     if(!ambix_matrix_copy(matrix, &ambix->matrix))
+    /* too late, writing started already */
+    if(ambix->startedWriting)
       return AMBIX_ERR_UNKNOWN;
-     /* ready to write it to file */
+
+    /* check whether the matrix will expand to a full set */
+    if(!ambix_isFullSet(matrix->rows))
+      return AMBIX_ERR_INVALID_DIMENSION;
+
+    if(!ambix_matrix_copy(matrix, &ambix->matrix))
+      return AMBIX_ERR_UNKNOWN;
+    /* ready to write it to file */
     return AMBIX_ERR_SUCCESS;
   }
 
@@ -252,12 +260,17 @@ ambix_err_t	ambix_write_header	(ambix_t*ambix) {
 static ambix_err_t _ambix_check_write(ambix_t*ambix, const void*ambidata, const void*otherdata, int64_t frames) {
   /* TODO: add some checks whether writing is feasible
    * e.g. format=extended but no (or wrong) matrix present */
+  if((ambix->realinfo.ambixfileformat==AMBIX_EXTENDED) && !ambix_isFullSet(ambix->matrix.rows))
+    return AMBIX_ERR_INVALID_DIMENSION;
+
+  ambix->startedWriting=1;
   return AMBIX_ERR_SUCCESS;
 }
 
 static ambix_err_t _ambix_check_read(ambix_t*ambix, const void*ambidata, const void*otherdata, int64_t frames) {
   /* TODO: add some checks whether writing is feasible
    * e.g. format=extended but no (or wrong) matrix present */
+  ambix->startedReading=1;
   return AMBIX_ERR_SUCCESS;
 }
 

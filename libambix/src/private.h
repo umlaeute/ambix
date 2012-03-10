@@ -81,6 +81,11 @@ typedef struct ambix_t {
 
   /** ambisonics order of the full set */
   uint32_t ambisonics_order;
+
+  /** whether we already started reading samples */
+  int startedReading;
+  /** whether we alwrity started writing samples */
+  int startedWriting;
 } ambix_t;
 
 
