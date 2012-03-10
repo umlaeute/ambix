@@ -224,5 +224,28 @@ ambix_err_t _ambix_splitAdaptormatrix_int32(int32_t*source, uint32_t sourcechann
 ambix_err_t _ambix_splitAdaptormatrix_int16(int16_t*source, uint32_t sourcechannels, ambixmatrix_t*matrix, int16_t*dest_ambi, int16_t*dest_other, int64_t frames);
 
 
+/** @brief merge two separate interleaved (32bit floating point) audio data blocks into one
+ *
+ * append ambisonics and non-ambisonics channels into one big interleaved chunk
+ *
+ * @param source1 the first interleaved samplebuffer to read from
+ * @param source1channels the number of channels in source1
+ * @param source2 the second interleaved samplebuffer to read from
+ * @param source2channels the number of channels in source2
+ * @param destination the samplebuffer to merge the data info; must be big enough to hold frames*(source1channels+source2channels) samples
+ * @param frames number of frames to extract
+ * @return error code indicating success
+ */
+ambix_err_t _ambix_mergeAdaptor_float32(float32_t*source1, uint32_t source1channels, float32_t*source2, uint32_t source2channels, float32_t*destination, int64_t frames);
+/** @brief merge two separate interleaved (32bit signed integer) audio data blocks into one
+ * @see _ambix_mergeAdapator_float32
+ */
+ambix_err_t _ambix_mergeAdaptor_int32(int32_t*source1, uint32_t source1channels, int32_t*source2, uint32_t source2channels, int32_t*destination, int64_t frames);
+/** @brief merge two separate interleaved (16bit signed integer) audio data blocks into one
+ * @see _ambix_mergeAdapator_float32
+ */
+ambix_err_t _ambix_mergeAdaptor_int16(int16_t*source1, uint32_t source1channels, int16_t*source2, uint32_t source2channels, int16_t*destination, int64_t frames);
+
+
 
 #define MARK() printf("%s:%d[%s]\n", __FILE__, __LINE__, __FUNCTION__)

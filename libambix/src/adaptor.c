@@ -147,3 +147,23 @@ ambix_err_t _ambix_splitAdaptormatrix_int32(int32_t*source, uint32_t sourcechann
   }
   return AMBIX_ERR_UNKNOWN;
 }
+
+
+#define _AMBIX_MERGEADAPTOR(type)                                       \
+  ambix_err_t _ambix_mergeAdaptor_##type(type##_t*source1, uint32_t source1channels, type##_t*source2, uint32_t source2channels, type##_t*destination, int64_t frames) { \
+    int64_t frame;                                                      \
+    for(frame=0; frame<frames; frame++) {                               \
+      uint32_t chan;                                                    \
+      for(chan=0; chan<source1channels; chan++)                         \
+        *destination++=*source1++;                                      \
+      for(chan=0; chan<source2channels; chan++)                         \
+        *destination++=*source2++;                                      \
+    }                                                                   \
+    return AMBIX_ERR_SUCCESS;                                           \
+  }
+
+_AMBIX_MERGEADAPTOR(float32);
+
+_AMBIX_MERGEADAPTOR(int32);
+
+_AMBIX_MERGEADAPTOR(int16);
