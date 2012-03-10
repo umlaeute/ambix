@@ -38,9 +38,15 @@ ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambixinfo_t
     ambix->filemode=mode;
     memcpy(&ambix->info, &ambix->realinfo, sizeof(ambix->info));
 
-    if(AMBIX_SIMPLE==ambixinfo->ambixfileformat && AMBIX_EXTENDED==ambix->realinfo.ambixfileformat) {
+    if(0) {
+    } else if(AMBIX_SIMPLE==ambixinfo->ambixfileformat && AMBIX_EXTENDED==ambix->realinfo.ambixfileformat) {
       ambix->info.ambixfileformat=AMBIX_SIMPLE;
       ambix->use_matrix=1;
+    } else if(AMBIX_EXTENDED==ambixinfo->ambixfileformat && AMBIX_SIMPLE==ambix->realinfo.ambixfileformat) {
+      ambix_matrix_init(ambix->realinfo.ambichannels, ambix->realinfo.ambichannels, &ambix->matrix);
+      ambix_matrix_eye(&ambix->matrix);
+      ambix->info.ambixfileformat=AMBIX_EXTENDED;
+      ambix->use_matrix=0;
     }
 
     memcpy(ambixinfo, &ambix->info, sizeof(ambixinfo));
