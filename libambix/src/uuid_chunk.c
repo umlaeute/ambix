@@ -30,10 +30,23 @@
 # include <stdlib.h>
 #endif /* HAVE_STDLIB_H */
 
+
+static const char _ambix_uuid_v1[]="IEM.AT/AMBIX/XML";
+const char* _ambix_getUUID(uint32_t version) {
+  switch(version) {
+  default:
+    break;
+  case 1:
+    return _ambix_uuid_v1;
+  }
+  return NULL;
+}
+
 static int
 _ambix_checkUUID_1(const char*data) {
-  const char uuid[]="IEM.AT/AMBIX/XML";
   unsigned int i;
+  const char*uuid=_ambix_getUUID(1);
+  if(!uuid) return 0;
   for(i=0; i<16; i++)
     if(uuid[i]!=data[i])
       return 0;

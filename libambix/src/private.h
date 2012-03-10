@@ -132,6 +132,13 @@ int64_t _ambix_writef_int32   (ambix_t*ambix, int32_t*data, int64_t frames);
  */
 int64_t _ambix_writef_int16   (ambix_t*ambix, int16_t*data, int64_t frames);
 
+/** @brief Get UUID for ambix
+ * @param ambix version
+ * @return a pointer to the UUID for the given version or NULL
+ * @remark currently only one UUID is defined for the ambix format (version 1)
+ *         future versions of the standard might add additional UUIDs
+ */
+const char* _ambix_getUUID(uint32_t version);
 
 /** @brief Check data for ambix UUID
  * @param data Array holding the UUID
