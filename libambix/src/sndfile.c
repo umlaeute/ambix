@@ -63,6 +63,16 @@ ambix2sndfile_sampleformat(ambix_sampleformat_t asformat) {
   }
   return SF_FORMAT_PCM_24;
 }
+static void print_sfinfo(SF_INFO*info) {
+  printf("SF_INFO 0x%X\n", info);
+  printf("  frames\t: %d\n", info->frames);
+  printf("  samplerate\t: %d\n", info->samplerate);
+  printf("  channels\t: %d\n", info->channels);
+  printf("  format\t: %d\n", info->format);
+  printf("  sections\t: %d\n", info->sections);
+  printf("  seekable\t: %d\n", info->seekable);
+}
+
 static void
 ambix2sndfile_info(const ambixinfo_t*axinfo, SF_INFO *sfinfo) {
   sfinfo->frames=axinfo->frames;
@@ -207,6 +217,11 @@ ambix_err_t _ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t
     ambix->realinfo.ambichannels=0;
     ambix->realinfo.otherchannels=channels;
   }
+
+  //print_sfinfo(&PRIVATE(ambix)->sf_info);
+  //_ambix_print_info(&ambix->realinfo);
+
+
   return AMBIX_ERR_SUCCESS;
 }
 
