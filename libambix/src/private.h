@@ -174,6 +174,16 @@ ambixmatrix_t*_ambix_uuid1_to_matrix(const void*data, uint64_t datasize, ambixma
  */
 uint64_t _ambix_matrix_to_uuid1(const ambixmatrix_t*matrix, void*data, int byteswap);
 
+
+/** @brief write UUID chunk to file
+ * @param ambix valid ambix handle
+ * @param data pointer to memory holding the UUID-chunk
+ * @param datasize size of data
+ * @return error code indicating success
+ * @remark you should only call this once, after opening the file and before writing sample frames to it
+ */
+ambix_err_t _ambix_write_uuidchunk(ambix_t*ax, const void*data, int64_t datasize);
+
 /** @brief byte-swap 32bit data
  * @param n a 32bit chunk in the wrong byte order
  * @return byte-swapped data
