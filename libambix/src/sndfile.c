@@ -70,7 +70,7 @@ ambix2sndfile_info(const ambixinfo_t*axinfo, SF_INFO *sfinfo) {
   sfinfo->channels=axinfo->ambichannels+axinfo->otherchannels;
   sfinfo->format=SF_FORMAT_CAF | ambix2sndfile_sampleformat(axinfo->sampleformat);
   sfinfo->sections=0;//axinfo->sections;
-  sfinfo->seekable=1;//axinfo->seekable;
+  sfinfo->seekable=0;//axinfo->seekable;
 }
 static void
 sndfile2ambix_info(const SF_INFO*sfinfo, ambixinfo_t*axinfo) {
@@ -141,8 +141,7 @@ ambix_err_t _ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t
   uint32_t channels=0;
   int isCAF=0;
 
-  ambix->private=malloc(sizeof(ambixsndfile_private_t));
-
+  ambix->private=calloc(1, sizeof(ambixsndfile_private_t));
   ambix2sndfile_info(ambixinfo, &PRIVATE(ambix)->sf_info);
 
   if((mode & AMBIX_READ) & (mode & AMBIX_WRITE))
