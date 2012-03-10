@@ -69,6 +69,7 @@ _ambix_uuid1_to_matrix(const void*data, uint64_t datasize, ambixmatrix_t*orgmtx,
   uint32_t cols;
   uint64_t size;
   uint32_t index;
+
   if(datasize<(sizeof(rows)+sizeof(cols)))
     return NULL;
 
@@ -143,26 +144,26 @@ _ambix_matrix_to_uuid1(const ambixmatrix_t*matrix, void*data, int swap) {
 
   if(data) {
     uint64_t i, r, c;
-    uint32_t*idata;
+    uint32_t*swapdata;
     uint64_t elements=(uint64_t)rows*(uint64_t)cols;
     memcpy(data, uuid, 16);
     index+=16;
 
+    swapdata=data+index;
+
     memcpy(data+index, &rows, sizeof(uint32_t));
     index+=sizeof(uint32_t);
-
 
     memcpy(data+index, &cols, sizeof(uint32_t));
     index+=sizeof(uint32_t);
 
-    idata=data+index;
     for(r=0; r<rows; r++) {
       memcpy(data+index, mtx[r], cols*sizeof(float32_t));
       index+=cols*sizeof(float32_t);
     }
 
     if(swap) {
-      _ambix_swap4array(idata, elements);
+      _ambix_swap4array(swapdata, elements+2);
     }
   }
   return datasize;
