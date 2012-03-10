@@ -218,22 +218,37 @@ int64_t ambix_readf_int32   (ambix_t*ambix, int32_t *ambidata, int32_t*otherdata
  */
 AMBIX_API
 int64_t ambix_readf_float32   (ambix_t*ambix, float32_t *ambidata, float32_t*otherdata, int64_t frames) ;
- *
- * reads samples (as single precision floating point values) from an ambix file,
- * possibly expanding a reduced channel set to a full ambisonics set (when reading an 'ambix extended' file as 'ambix simple')
- *
- * @param ambix The handle to an ambix file
- * @param ambidata pointer to user allocated array to retrieve ambisonics channels into;
- *        must be large enough to hold at least (frames*ambix->ambichannels) samples, OR
- *        if you successfully added a pre-multiplication matrix using ambix_setPreMultiplyMatrix()
- *        the array must be large enough to hold at least (frames * premultmatrix.rows) samples
- * @param otherdata pointer to user allocated array to retrieve non-ambisonics channels into
- *        must be large enough to hold at least (frames*ambix->otherchannels) samples
- * @param frames number of sample frames you want to read
- * @return the number of sample frames sucessfully read
+
+/** @brief Write (16bit signed integer) samples to the ambix file
+ * @see ambix_writef_float32
  */
 AMBIX_API
-int64_t ambix_readf_float32   (ambix_t*ambix, float32_t *ambidata, float32_t*otherdata, int64_t frames) ;
+int64_t ambix_writef_int16   (ambix_t*ambix, int16_t*ambidata, int16_t*otherdata, int64_t frames) ;
+/** @brief Write (32bit signed integer) samples to the ambix file
+ * @see ambix_writef_float32
+ */
+AMBIX_API
+int64_t ambix_writef_int32   (ambix_t*ambix, int32_t *ambidata, int32_t*otherdata, int64_t frames) ;
+/** @brief Write (32bit floating point) samples to the ambix file
+ *
+ * writes samples (as single precision floating point values) to an ambix file,
+ * possibly expanding a reduced channel set to a full ambisonics set (when writeing an 'ambix extended' file as 'ambix simple').
+ *
+ * data will be stored on harddisk in the format specified when opening the file for writing which need not be float32,
+ * in which case the data is automatically converted by the library to the appropriate format.
+ *
+ * @param ambix The handle to an ambix file
+ * @param ambidata pointer to user allocated array to retrieve ambisonics channels from;
+ *        must be large enough to hold (frames*ambix->info.ambichannels) samples
+ * @param otherdata pointer to user allocated array to retrieve non-ambisonics channels into
+ *        must be large enough to hold (frames*ambix->info.otherchannels) samples
+ * @param frames number of sample frames you want to write
+ * @return the number of sample frames sucessfully written
+ */
+AMBIX_API
+int64_t ambix_writef_float32   (ambix_t*ambix, float32_t *ambidata, float32_t*otherdata, int64_t frames) ;
+
+
 
 /** @brief get the libsndfile handle associated with the ambix handle
  *
@@ -246,7 +261,6 @@ int64_t ambix_readf_float32   (ambix_t*ambix, float32_t *ambidata, float32_t*oth
  */
 AMBIX_API
 SNDFILE*ambix_getSndfile	(ambix_t*ambix);
-
 
 /** @brief get the adaptor matrix
  *
@@ -266,7 +280,6 @@ SNDFILE*ambix_getSndfile	(ambix_t*ambix);
 AMBIX_API
 const ambixmatrix_t*ambix_getAdaptorMatrix	(ambix_t*ambix);
 
-
 /** @brief set a matrix to be pre-multiplied
  *
  * tells the library to do an (additional) matrix-multiplication when reconstructing the full ambisonics set (read mode!);
@@ -282,10 +295,6 @@ const ambixmatrix_t*ambix_getAdaptorMatrix	(ambix_t*ambix);
  */
 AMBIX_API
 ambix_err_t ambix_setPremultiplyMatrix	(ambix_t*ambix, const ambixmatrix_t*matrix);
-
-
-
-
 
 
 #ifdef __cplusplus
