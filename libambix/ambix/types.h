@@ -92,7 +92,10 @@ typedef enum {
   /** open file for reading */
   AMBIX_READ  = (1<<0),
   /** open file for writing  */
-  AMBIX_WRITE = (1<<1)
+  AMBIX_WRITE = (1<<1),
+  /** open file for reading&writing  */
+  AMBIX_RRW = (AMBIX_READ|AMBIX_WRITE)
+
 } ambix_filemode_t;
 
 
