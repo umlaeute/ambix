@@ -70,13 +70,21 @@ ambix_err_t ambix_setPremultiplyMatrix	(ambix_t*ambix, const ambixmatrix_t*matri
   return AMBIX_ERR_UNKNOWN;
 }
 
+#define AMBIX_READF(type) \
+  int64_t ambix_readf_##type (ambix_t*ambix, type##_t*ambidata, type##_t*otherdata, int64_t frames) { \
+    int64_t realframes;                                                 \
+    type##_t*adaptorbuffer=(type##_t*)ambix->adaptorbuffer;             \
+    _ambix_adaptorbuffer_resize(ambix, frames, sizeof(type##_t));       \
+    realframes=_ambix_readf_##type(ambix, adaptorbuffer, frames);       \
+    if(0)                                                               \
+      _ambix_adaptormatrix_##type(adaptorbuffer, ambix->info.ambichannels+ambix->info.otherchannels, &ambix->matrix          , ambidata, otherdata, realframes); \
+    else                                                                \
+      _ambix_adaptor_##type      (adaptorbuffer, ambix->info.ambichannels+ambix->info.otherchannels, ambix->info.ambichannels, ambidata, otherdata, realframes); \
+    return realframes;                                                  \
+  }
 
-int64_t ambix_readf_int16   (ambix_t*ambix, int16_t*ambidata, int16_t*otherdata, int64_t frames) {
-  return 0;
-}
-int64_t ambix_readf_int32   (ambix_t*ambix, int32_t*ambidata, int32_t*otherdata, int64_t frames) {
-  return 0;
-}
-int64_t ambix_readf_float32   (ambix_t*ambix, float32_t*ambidata, float32_t*otherdata, int64_t frames) {
-  return 0;
-}
+AMBIX_READF(int16);
+
+AMBIX_READF(int32);
+
+AMBIX_READF(float32);

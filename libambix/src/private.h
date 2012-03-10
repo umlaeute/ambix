@@ -164,7 +164,6 @@ ambix_err_t _ambix_adaptorbuffer_resize(ambix_t*ambix, uint64_t frames, uint16_t
  */
 ambix_err_t _ambix_adaptorbuffer_destroy(ambix_t*ambix);
 
-
 /** @brief extract ambisonics and non-ambisonics channels from interleaved data
  *
  * extract the first ambichannels channels from the source into dest_ambi
