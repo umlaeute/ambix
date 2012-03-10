@@ -147,8 +147,8 @@ ambix_err_t _ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t
 
   if((mode & AMBIX_READ) & (mode & AMBIX_WRITE))
     sfmode=	SFM_RDWR;
-  else if (mode & AMBIX_READ)
-    sfmode=	SFM_READ;
+  else if (mode & AMBIX_WRITE)
+    sfmode=	SFM_WRITE;
   else if (mode & AMBIX_READ)
     sfmode=	SFM_READ;
 
