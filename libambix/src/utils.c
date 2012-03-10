@@ -54,3 +54,12 @@ void _ambix_print_info(const ambixinfo_t*info) {
   printf("  ambichannels\t: %d\n", info->ambichannels);
   printf("  otherchannels\t: %d\n", info->otherchannels);
 }
+
+
+void _ambix_swap4array(uint32_t*data, uint64_t datasize) {
+  uint64_t i;
+  for(i=0; i<datasize; i++) {
+    uint32_t v=*data;
+    *data++=swap4(v);
+  }
+}

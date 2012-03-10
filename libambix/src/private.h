@@ -207,7 +207,11 @@ static inline uint32_t swap4(uint32_t n)
   return (((n & 0xff) << 24) | ((n & 0xff00) << 8) |
           ((n & 0xff0000) >> 8) | ((n & 0xff000000) >> 24));
 }
-
+/** @brief byte-swap arrays of 32bit data
+ * @param data a pointer to an array of 32bit data to be byteswapped
+ * @param datasize the size of the array
+ */
+void _ambix_swap4array(uint32_t*data, uint64_t datasize);
 
 /** @brief resize adaptor buffer to given size
  *
