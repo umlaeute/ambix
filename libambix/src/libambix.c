@@ -238,9 +238,12 @@ ambix_err_t	ambix_write_header	(ambix_t*ambix) {
       ambix_err_t res;
       /* generate UUID-chunk */
       uint64_t datalen=_ambix_matrix_to_uuid1(&ambix->matrix, NULL, ambix->byteswap);
+      uint64_t usedlen=1+datalen/sizeof(float32_t);
+
       if(datalen<1)
         return AMBIX_ERR_UNKNOWN;
-      data=calloc(sizeof(float32_t), 1+datalen/sizeof(float32_t));
+
+      data=calloc(usedlen, sizeof(float32_t));
       if(_ambix_matrix_to_uuid1(&ambix->matrix, data, ambix->byteswap)!=datalen)
         goto cleanup;
 
