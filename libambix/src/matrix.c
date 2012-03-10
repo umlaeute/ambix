@@ -27,6 +27,16 @@
 # include <stdlib.h>
 #endif /* HAVE_STDLIB_H */
 
+ambixmatrix_t*
+ambix_matrix_create(void) {
+  return ambix_matrix_init(0, 0, NULL);
+}
+void
+ambix_matrix_destroy(ambixmatrix_t*mtx) {
+  ambix_matrix_deinit(mtx);
+  free(mtx);
+  mtx=NULL;
+}
 void
 ambix_matrix_deinit(ambixmatrix_t*mtx) {
   uint32_t r;

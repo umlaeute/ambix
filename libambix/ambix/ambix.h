@@ -40,6 +40,26 @@ extern "C" {
 #endif	/* __cplusplus */
 
 
+/** @brief Create a matrix
+ *
+ * Allocates a new (empty) matrix object.
+ * It's equivalent to calling ambix_matrix_init(0, 0, NULL);
+ *
+ * @return a new matrix object or NULL
+ */
+AMBIX_API
+ambixmatrix_t*ambix_matrix_create(void);
+
+/** @brief Destroy a matrix
+ *
+ * Frees all ressources allocated for the matrix object.
+ * It's a shortcut for ambix_matrix_deinit(mtx), free(mtx)
+ *
+ * @param mtx matrix object to destroy
+ */
+AMBIX_API
+void ambix_matrix_destroy(ambixmatrix_t*mtx);
+
 /** @brief Initialize a matrix
  *
  * Allocates memory for matrix-data of given dimensions
@@ -106,6 +126,7 @@ ambixmatrix_t*ambix_matrix_copy(const ambixmatrix_t*src, ambixmatrix_t*dest);
  * @param B right-hand operator
  * @param result pointer to the matrix object that will hold the result or NULL
  * @return pointer to the result matrix, or NULL in case the matrix multiplication did not succeed
+ * @remark if this returns a newly allocated matrix object (result!=return value), the host has to take care of calling ambix_matrix_destroy()
  */
 AMBIX_API
 ambixmatrix_t*ambix_matrix_multiply(const ambixmatrix_t*A, const ambixmatrix_t*B, ambixmatrix_t*result);
