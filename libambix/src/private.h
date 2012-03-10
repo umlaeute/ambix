@@ -21,7 +21,7 @@
 
 */
 
-/** 
+/**
  * @file	private.h
  * @brief	Ambisonics Xchange Library Private Interface
  * @details This file is part of libambix
@@ -88,6 +88,7 @@ ambix_err_t	_ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t
  * @return errorcode indicating success
  */
 ambix_err_t	_ambix_close	(ambix_t*ambix);
+
 /** @brief Do get an libsndfile handle
  *
  * this is implemented by the various backends (currently only libsndfile)
@@ -95,9 +96,25 @@ ambix_err_t	_ambix_close	(ambix_t*ambix);
  * @param ambix a pointer to a valid ambix structure
  * @return an SNDFILE handle or NULL if not possible
  */
-
 SNDFILE*_ambix_get_sndfile	(ambix_t*ambix);
 
+
+
+/** @brief read 32bit float data from file
+ * @param ambix a pointer to a valid ambix structure
+ * @param data pointer to an float32_t array that can hold at least frames*channels values
+ * @param frames number of sample frames to read
+ * @return number of sample frames successfully read
+ */
+int64_t _ambix_readf_float32   (ambix_t*ambix, float32_t*data, int64_t frames);
+/** @see _ambix_readf_float32
+ * @remark this operates on 32bit integer data
+ */
+int64_t _ambix_readf_int32   (ambix_t*ambix, int32_t*data, int64_t frames);
+/** @see _ambix_readf_float32
+ * @remark this operates on 16bit integer data
+ */
+int64_t _ambix_readf_int16   (ambix_t*ambix, int16_t*data, int64_t frames);
 
 
 /** @brief Check data for ambix UUID
@@ -114,7 +131,7 @@ uint32_t _ambix_checkUUID(const char UUID[16]);
  * @param mtx pointer to a matrix object that should be filled (if NULL, this function will allocate a matrix object for you)
  * @param byteswap TRUE if data has to be byteswapped (e.g. when reading BIG_ENDIAN data on LITTLE_ENDIAN machines)
  * @return a pointer to the filled matrix or NULL on failure
- * @remark only use data from a uuid-chunk for which _ambix_parseuuid() that returned '1' 
+ * @remark only use data from a uuid-chunk for which _ambix_parseuuid() that returned '1'
  */
 ambixmatrix_t*_ambix_uuid1_to_matrix(const void*data, uint64_t datasize, ambixmatrix_t*mtx, int byteswap);
 

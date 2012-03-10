@@ -212,3 +212,13 @@ ambix_err_t	_ambix_close	(ambix_t*ambix) {
 SNDFILE*_ambix_get_sndfile	(ambix_t*ambix) {
   return ambix->sf_file;
 }
+
+int64_t _ambix_readf_int16   (ambix_t*ambix, int16_t*data, int64_t frames) {
+  return sf_readf_short(ambix->sf_file, (short*)data, frames) ;
+}
+int64_t _ambix_readf_int32   (ambix_t*ambix, int32_t*data, int64_t frames) {
+  return sf_readf_int(ambix->sf_file, (int*)data, frames) ;
+}
+int64_t _ambix_readf_float32   (ambix_t*ambix, float32_t*data, int64_t frames) {
+  return sf_readf_float(ambix->sf_file, (float*)data, frames) ;
+}
