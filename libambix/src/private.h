@@ -116,6 +116,22 @@ int64_t _ambix_readf_int32   (ambix_t*ambix, int32_t*data, int64_t frames);
  */
 int64_t _ambix_readf_int16   (ambix_t*ambix, int16_t*data, int64_t frames);
 
+/** @brief write 32bit float data to file
+ * @param ambix a pointer to a valid ambix structure
+ * @param data pointer to an float32_t array that holds frames*channels values
+ * @param frames number of sample frames to write
+ * @return number of sample frames successfully written
+ */
+int64_t _ambix_writef_float32   (ambix_t*ambix, float32_t*data, int64_t frames);
+/** @see _ambix_writef_float32
+ * @remark this operates on 32bit integer data
+ */
+int64_t _ambix_writef_int32   (ambix_t*ambix, int32_t*data, int64_t frames);
+/** @see _ambix_writef_float32
+ * @remark this operates on 16bit integer data
+ */
+int64_t _ambix_writef_int16   (ambix_t*ambix, int16_t*data, int64_t frames);
+
 
 /** @brief Check data for ambix UUID
  * @param data Array holding the UUID
