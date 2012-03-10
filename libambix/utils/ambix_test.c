@@ -106,6 +106,8 @@ void createfile_extended(const char*path, uint32_t ambichannels, uint32_t otherc
   ambixinfo_t info;
   ambix_t*ambix;
   const ambixmatrix_t*matrix;
+  ambixmatrix_t adaptmatrix;
+  ambix_err_t err;
 
   memset(&info, 0, sizeof(info));
   info.frames=frames;
@@ -151,20 +153,36 @@ void createfile_extended(const char*path, uint32_t ambichannels, uint32_t otherc
   printf("Ambisonics channels\t: %d\n", info.ambichannels);
   printf("Non-Ambisonics channels\t: %d\n", info.otherchannels);
 
+  memset(&adaptmatrix, 0, sizeof(adaptmatrix));
+  ambix_matrix_init(25, ambichannels,&adaptmatrix);
+  err=ambix_setAdaptorMatrix(ambix, &adaptmatrix);
+  if(err!=AMBIX_ERR_SUCCESS) {
+    printf("failed setting adaptor matrix\n");
+  }
+  err=ambix_write_header(ambix);
+  if(err!=AMBIX_ERR_SUCCESS) {
+    printf("failed writing header\n");
+  }
 
 
   /* no write some data... */
+  printf("Writing %d frames\n", frames);
   do {
+    const int blocksize=64;
     uint64_t res;
-    float32_t ambidata[64*ambichannels];
-    float32_t otherdata[64*otherchannels];
-    while(frames>64) {
-      res=ambix_writef_float32(ambix, ambidata, otherdata, 64);
-      frames-=64;
+    float32_t ambidata[blocksize*ambichannels];
+    float32_t otherdata[blocksize*otherchannels];
+    while(frames>blocksize) {
+      res=ambix_writef_float32(ambix, ambidata, otherdata, blocksize);
+      if(res!=blocksize)
+        printf("write returned %d!=%d\n", res, blocksize);
+      frames-=blocksize;
     }
-    if(frames>0)
+    if(frames>0) {
       res=ambix_writef_float32(ambix, ambidata, otherdata, frames);
-
+      if(res!=frames)
+        printf("write returned %d!=%d\n", res, frames);
+    }
   } while(0);
 
 
@@ -174,6 +192,8 @@ void createfile_extended(const char*path, uint32_t ambichannels, uint32_t otherc
     printf("failed\n");
   else
     printf("OK\n");
+
+  ambix_matrix_deinit(&adaptmatrix);
 }
 
 
