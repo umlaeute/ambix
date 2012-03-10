@@ -144,11 +144,24 @@ ambix_err_t	ambix_write_header	(ambix_t*ambix) {
   return AMBIX_ERR_UNKNOWN;
 }
 
+static ambix_err_t _ambix_check_write(ambix_t*ambix, const void*ambidata, const void*otherdata, int64_t frames) {
+  // TODO: add some checks whether writing is feasible
+  // e.g. format=extended but no (or wrong) matrix present
+  return AMBIX_ERR_SUCCESS;
+}
+
+static ambix_err_t _ambix_check_read(ambix_t*ambix, const void*ambidata, const void*otherdata, int64_t frames) {
+  // TODO: add some checks whether writing is feasible
+  // e.g. format=extended but no (or wrong) matrix present
+  return AMBIX_ERR_SUCCESS;
+}
+
 
 #define AMBIX_READF(type) \
   int64_t ambix_readf_##type (ambix_t*ambix, type##_t*ambidata, type##_t*otherdata, int64_t frames) { \
     int64_t realframes;                                                 \
     type##_t*adaptorbuffer;                                             \
+    if(AMBIX_ERR_SUCCESS != _ambix_check_read(ambix, (const void*)ambidata, (const void*)otherdata, frames)) return -1; \
     _ambix_adaptorbuffer_resize(ambix, frames, sizeof(type##_t));       \
     adaptorbuffer=(type##_t*)ambix->adaptorbuffer;                      \
     realframes=_ambix_readf_##type(ambix, adaptorbuffer, frames);       \
@@ -168,6 +181,7 @@ ambix_err_t	ambix_write_header	(ambix_t*ambix) {
 #define AMBIX_WRITEF(type) \
   int64_t ambix_writef_##type (ambix_t*ambix, type##_t *ambidata, type##_t*otherdata, int64_t frames) { \
     type##_t*adaptorbuffer;                                             \
+    if(AMBIX_ERR_SUCCESS != _ambix_check_write(ambix, (const void*)ambidata, (const void*)otherdata, frames)) return -1; \
     _ambix_adaptorbuffer_resize(ambix, frames, sizeof(type##_t));       \
     adaptorbuffer=(type##_t*)ambix->adaptorbuffer;                      \
     _ambix_mergeAdaptor_##type(ambidata, ambix->info.ambichannels, otherdata, ambix->info.otherchannels, adaptorbuffer, frames); \
