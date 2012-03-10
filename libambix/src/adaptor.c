@@ -27,10 +27,10 @@
 # include <stdlib.h>
 #endif /* HAVE_STDLIB_H */
 
-ambix_err_t _ambix_adaptorbuffer_resize(ambix_t*ambix, int64_t frames) {
+ambix_err_t _ambix_adaptorbuffer_resize(ambix_t*ambix, uint64_t frames, uint16_t itemsize) {
   uint32_t channels=ambix->info.ambichannels + ambix->info.otherchannels;
 
-  uint64_t size=channels*frames*sizeof(float32_t);
+  uint64_t size=channels*frames*itemsize;
 
   if(frames<1 || channels<1)
     return AMBIX_ERR_SUCCESS;

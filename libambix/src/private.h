@@ -131,10 +131,16 @@ static inline uint32_t swap4(uint32_t n)
 
 
 /** @brief resize adaptor buffer to given size
+ *
+ * makes sure that the internal adaptorbuffer of ambix can hold at least
+ *  frames*(ambichannels+otherchannels) samples of size typesize
+ *
  * @param ambix valid ambix handle
+ * @param frames number of frames target buffer must be able to hold
+ * @param typesize sizeof(sampletype)
  * @return error code indicating success
  */
-ambix_err_t _ambix_adaptorbuffer_resize(ambix_t*ambix, int64_t frames);
+ambix_err_t _ambix_adaptorbuffer_resize(ambix_t*ambix, uint64_t frames, uint16_t typesize);
 /** @brief free an adaptor buffer
  * @param ambix valid ambix handle
  * @return error code indicating success
