@@ -84,8 +84,24 @@ ambix_err_t ambix_setPremultiplyMatrix	(ambix_t*ambix, const ambixmatrix_t*matri
     return realframes;                                                  \
   }
 
+#define AMBIX_WRITEF(type) \
+  int64_t ambix_writef_##type (ambix_t*ambix, type##_t *ambidata, type##_t*otherdata, int64_t frames) { \
+    type##_t*adaptorbuffer;                                             \
+    _ambix_adaptorbuffer_resize(ambix, frames, sizeof(type##_t));       \
+    adaptorbuffer=(type##_t*)ambix->adaptorbuffer;                      \
+    _ambix_mergeAdaptor_##type(ambidata, ambix->info.ambichannels, otherdata, ambix->info.otherchannels, adaptorbuffer, frames); \
+    return _ambix_writef_##type(ambix, adaptorbuffer, frames);          \
+  }
+
+
 AMBIX_READF(int16);
 
 AMBIX_READF(int32);
 
 AMBIX_READF(float32);
+
+AMBIX_WRITEF(int16);
+
+AMBIX_WRITEF(int32);
+
+AMBIX_WRITEF(float32);
