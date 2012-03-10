@@ -61,6 +61,7 @@ typedef unsigned long uint64_t;
 typedef union {
   float32_t f;
   int32_t   i;
+  uint32_t  u;
 } number32_t;
 
 
