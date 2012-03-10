@@ -72,6 +72,26 @@ ambix_err_t ambix_setAdaptorMatrix	(ambix_t*ambix, const ambixmatrix_t*matrix) {
 }
 
 ambix_err_t	ambix_write_header	(ambix_t*ambix) {
+  void*data=NULL;
+  ambix_err_t res;
+
+  // generate UUID-chunk
+  uint64_t datalen=_ambix_matrix_to_uuid1(&ambix->matrix, NULL, ambix->byteswap);
+  if(datalen<1)
+    return AMBIX_ERR_UNKNOWN;
+  data=calloc(sizeof(float32_t), 1+datalen/sizeof(float32_t));
+  if(_ambix_matrix_to_uuid1(&ambix->matrix, data, ambix->byteswap)!=datalen)
+    goto cleanup;
+
+  // and write it to file
+  res=_ambix_write_uuidchunk(ambix, data, datalen);
+  if(data)
+    free(data);
+  return res;
+
+ cleanup:
+  if(data)
+    free(data);
   return AMBIX_ERR_UNKNOWN;
 }
 
