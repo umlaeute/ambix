@@ -68,6 +68,24 @@ const ambixmatrix_t*ambix_getAdaptorMatrix	(ambix_t*ambix) {
   return NULL;
 }
 ambix_err_t ambix_setAdaptorMatrix	(ambix_t*ambix, const ambixmatrix_t*matrix) {
+  if(0) {
+  } else if((ambix->filemode & AMBIX_READ ) && (AMBIX_SIMPLE   == ambix->info.ambixfileformat)) {
+    /* multiply the matrix with the previous adaptor matrix */
+    if(ambix->matrix.data) {
+      ambixmatrix_t*mtx=ambix_matrix_multiply(matrix, &ambix->matrix, &ambix->finalmatrix);
+      if(mtx != &ambix->finalmatrix)
+        return AMBIX_ERR_UNKNOWN;
+      ambix->use_finalmatrix=1;
+      return AMBIX_ERR_SUCCESS;
+    }
+
+  } else if((ambix->filemode & AMBIX_WRITE) && (AMBIX_EXTENDED == ambix->info.ambixfileformat)) {
+     if(!ambix_matrix_copy(matrix, &ambix->matrix))
+      return AMBIX_ERR_UNKNOWN;
+    // ready to write it to file
+    return AMBIX_ERR_SUCCESS;
+  }
+
   return AMBIX_ERR_UNKNOWN;
 }
 

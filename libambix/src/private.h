@@ -59,6 +59,11 @@ typedef struct ambix_t {
   /** reconstruction matrix */
   ambixmatrix_t matrix;
 
+  /** final reconstruction matrix (potentially includes another adaptor matrix) */
+  ambixmatrix_t finalmatrix;
+  /** whether to use the finalmatrix */
+  int use_finalmatrix;
+
   /** buffer for adaptor signals */
   void*adaptorbuffer;
   /** size of the adaptor buffer (in bytes) */
