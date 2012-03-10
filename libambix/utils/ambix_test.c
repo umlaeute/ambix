@@ -24,13 +24,14 @@
 #include "ambix/ambix.h"
 
 #include <stdio.h>
-
+#include <string.h>
 
 void createfile_simple(const char*path, uint32_t ambichannels, uint32_t otherchannels, uint64_t frames) {
   ambixinfo_t info;
   ambix_t*ambix;
   const ambixmatrix_t*matrix;
 
+  memset(&info, 0, sizeof(info));
   info.frames=frames;
   info.samplerate=44100;
   info.sampleformat=AMBIX_SAMPLEFORMAT_FLOAT32;
