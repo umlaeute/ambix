@@ -79,7 +79,7 @@ typedef enum
   AMBIX_ERR_INVALID_FILE,
   /** matrix dimension mismatch */
   AMBIX_ERR_INVALID_DIMENSION,
-  /** the ambix handle is in a format that does not allow the function (e.g. setting a premultiply matrix for a format other than AMBIX_SIMPLE)
+  /** the ambix handle is in a format that does not allow the function (e.g. setting a premultiply matrix for a format other than AMBIX_SIMPLE) */
   AMBIX_ERR_INVALID_FORMAT,
   /** an unknown error */
   AMBIX_ERR_UNKNOWN=-1
