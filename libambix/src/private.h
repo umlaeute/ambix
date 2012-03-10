@@ -43,12 +43,7 @@
 
 /** this is for passing data about the opened ambix file between the host application and the library */
 typedef struct ambix_t {
-#ifdef HAVE_SNDFILE_H
-  /** handle to the libsndfile object */
-  SNDFILE*sf_file;
-  /** libsndfile info as returned by sf_open() */
-  SF_INFO sf_info;
-#endif /* HAVE_SNDFILE_H */
+  void*private;
 
   /** ambisonics info chunk as presented to the outside world */
   ambixinfo_t info;

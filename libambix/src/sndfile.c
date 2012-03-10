@@ -30,6 +30,18 @@
 # include <string.h>
 #endif /* HAVE_STRING_H */
 
+
+typedef struct ambixsndfile_private_t {
+  /** handle to the libsndfile object */
+  SNDFILE*sf_file;
+  /** libsndfile info as returned by sf_open() */
+  SF_INFO sf_info;
+  /** for writing uuid chunks */
+  SF_CHUNK_INFO sf_chunk;
+}ambixsndfile_private_t;
+static inline ambixsndfile_private_t*PRIVATE(ambix_t*ax) { return ((ambixsndfile_private_t*)(ax->private)); }
+
+
 static  ambix_sampleformat_t
 sndfile2ambix_sampleformat(int sformat) {
   switch(sformat) {
@@ -73,7 +85,7 @@ ambix_read_uuidchunk(ambix_t*ax) {
 	int				err ;
   int result=0;
 	SF_CHUNK_INFO	chunk_info ;
-  SNDFILE*file=ax->sf_file;
+  SNDFILE*file=PRIVATE(ax)->sf_file;
   uint32_t chunkver=0;
   const char*id="uuid";
 	memset (&chunk_info, 0, sizeof (chunk_info)) ;
@@ -129,7 +141,9 @@ ambix_err_t _ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t
   uint32_t channels=0;
   int isCAF=0;
 
-  ambix2sndfile_info(ambixinfo, &ambix->sf_info);
+  ambix->private=malloc(sizeof(ambixsndfile_private_t));
+
+  ambix2sndfile_info(ambixinfo, &PRIVATE(ambix)->sf_info);
 
   if((mode & AMBIX_READ) & (mode & AMBIX_WRITE))
     sfmode=	SFM_RDWR;
@@ -138,16 +152,16 @@ ambix_err_t _ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t
   else if (mode & AMBIX_READ)
     sfmode=	SFM_READ;
 
-  ambix->sf_file=sf_open(path, sfmode, &ambix->sf_info) ;
-  if(!ambix->sf_file)
+  PRIVATE(ambix)->sf_file=sf_open(path, sfmode, &PRIVATE(ambix)->sf_info) ;
+  if(!PRIVATE(ambix)->sf_file)
     return AMBIX_ERR_INVALID_FILE;
 
   memset(&ambix->realinfo, 0, sizeof(*ambixinfo));
-  sndfile2ambix_info(&ambix->sf_info, &ambix->realinfo);
+  sndfile2ambix_info(&PRIVATE(ambix)->sf_info, &ambix->realinfo);
 
-  channels=ambix->sf_info.channels;
-  isCAF=(SF_FORMAT_CAF & ambix->sf_info.format);
-  ambix->byteswap=(sf_command(ambix->sf_file, SFC_RAW_DATA_NEEDS_ENDSWAP, NULL, 0) == SF_TRUE);
+  channels=PRIVATE(ambix)->sf_info.channels;
+  isCAF=(SF_FORMAT_CAF & PRIVATE(ambix)->sf_info.format);
+  ambix->byteswap=(sf_command(PRIVATE(ambix)->sf_file, SFC_RAW_DATA_NEEDS_ENDSWAP, NULL, 0) == SF_TRUE);
   if(isCAF) {
     if(ambix_read_uuidchunk(ambix) == AMBIX_ERR_SUCCESS) {
       /* check whether channels are (N+1)^2
@@ -198,33 +212,34 @@ ambix_err_t _ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t
 }
 
 ambix_err_t	_ambix_close	(ambix_t*ambix) {
-  if(ambix->sf_file)
-    sf_close(ambix->sf_file);
-  ambix->sf_file=NULL;
-
+  if(PRIVATE(ambix)->sf_file)
+    sf_close(PRIVATE(ambix)->sf_file);
+  PRIVATE(ambix)->sf_file=NULL;
+  free(PRIVATE(ambix));
   return AMBIX_ERR_SUCCESS;
 }
 
 SNDFILE*_ambix_get_sndfile	(ambix_t*ambix) {
-  return ambix->sf_file;
+  return PRIVATE(ambix)->sf_file;
 }
 
 int64_t _ambix_readf_int16   (ambix_t*ambix, int16_t*data, int64_t frames) {
-  return sf_readf_short(ambix->sf_file, (short*)data, frames) ;
+  return sf_readf_short(PRIVATE(ambix)->sf_file, (short*)data, frames) ;
 }
 int64_t _ambix_readf_int32   (ambix_t*ambix, int32_t*data, int64_t frames) {
-  return sf_readf_int(ambix->sf_file, (int*)data, frames) ;
+  return sf_readf_int(PRIVATE(ambix)->sf_file, (int*)data, frames) ;
 }
 int64_t _ambix_readf_float32   (ambix_t*ambix, float32_t*data, int64_t frames) {
-  return sf_readf_float(ambix->sf_file, (float*)data, frames) ;
+  return sf_readf_float(PRIVATE(ambix)->sf_file, (float*)data, frames) ;
 }
 
 int64_t _ambix_writef_int16   (ambix_t*ambix, int16_t*data, int64_t frames) {
-  return sf_writef_short(ambix->sf_file, (short*)data, frames) ;
+  return sf_writef_short(PRIVATE(ambix)->sf_file, (short*)data, frames) ;
 }
 int64_t _ambix_writef_int32   (ambix_t*ambix, int32_t*data, int64_t frames) {
-  return sf_writef_int(ambix->sf_file, (int*)data, frames) ;
+  return sf_writef_int(PRIVATE(ambix)->sf_file, (int*)data, frames) ;
 }
 int64_t _ambix_writef_float32   (ambix_t*ambix, float32_t*data, int64_t frames) {
-  return sf_writef_float(ambix->sf_file, (float*)data, frames) ;
+  return sf_writef_float(PRIVATE(ambix)->sf_file, (float*)data, frames) ;
+}
 }
