@@ -155,6 +155,17 @@ void createfile_extended(const char*path, uint32_t ambichannels, uint32_t otherc
 
   memset(&adaptmatrix, 0, sizeof(adaptmatrix));
   ambix_matrix_init(25, ambichannels,&adaptmatrix);
+
+  do {
+    uint32_t r, c, rows=adaptmatrix.rows, cols=adaptmatrix.cols;
+    float32_t**data=adaptmatrix.data;
+    for(r=0; r<rows; r++) {
+      for(c=0; c<cols; c++) {
+        data[r][c]=(float32_t)r+((float32_t)c)/25.;
+      }
+    }
+  } while(0);
+
   err=ambix_setAdaptorMatrix(ambix, &adaptmatrix);
   if(err!=AMBIX_ERR_SUCCESS) {
     printf("failed setting adaptor matrix\n");
