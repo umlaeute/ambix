@@ -221,8 +221,8 @@ int64_t ambix_readf_int32   (ambix_t*ambix, int32_t *ambidata, int32_t*otherdata
  * @param ambix The handle to an ambix file
  * @param ambidata pointer to user allocated array to retrieve ambisonics channels into;
  *        must be large enough to hold at least (frames*ambix->info.ambichannels) samples, OR
- *        if you successfully added a pre-multiplication matrix using ambix_setPreMultiplyMatrix()
- *        the array must be large enough to hold at least (frames * premultmatrix.rows) samples
+ *        if you are reading the file as 'ambix simple' and you successfully added an adaptor matrix using ambix_setAdaptorMatrix()
+ *        the array must be large enough to hold at least (frames * adaptormatrix.rows) samples
  * @param otherdata pointer to user allocated array to retrieve non-ambisonics channels into
  *        must be large enough to hold at least (frames*ambix->info.otherchannels) samples
  * @param frames number of sample frames you want to read
