@@ -184,6 +184,11 @@ ambix_err_t	_ambix_close	(ambix_t*ambix) {
   if(PRIVATE(ambix)->sf_file)
     sf_close(PRIVATE(ambix)->sf_file);
   PRIVATE(ambix)->sf_file=NULL;
+
+  if((PRIVATE(ambix)->sf_chunk).data)
+    free((PRIVATE(ambix)->sf_chunk).data);
+
+
   free(PRIVATE(ambix));
   return AMBIX_ERR_SUCCESS;
 }
