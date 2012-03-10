@@ -136,7 +136,7 @@ ambix_err_t ambix_setAdaptorMatrix	(ambix_t*ambix, const ambixmatrix_t*matrix) {
   } else if((ambix->filemode & AMBIX_WRITE) && (AMBIX_EXTENDED == ambix->info.ambixfileformat)) {
      if(!ambix_matrix_copy(matrix, &ambix->matrix))
       return AMBIX_ERR_UNKNOWN;
-    // ready to write it to file
+     /* ready to write it to file */
     return AMBIX_ERR_SUCCESS;
   }
 
@@ -148,7 +148,7 @@ ambix_err_t	ambix_write_header	(ambix_t*ambix) {
   if(ambix->filemode & AMBIX_WRITE) {
     if((AMBIX_EXTENDED == ambix->info.ambixfileformat)) {
       ambix_err_t res;
-      // generate UUID-chunk
+      /* generate UUID-chunk */
       uint64_t datalen=_ambix_matrix_to_uuid1(&ambix->matrix, NULL, ambix->byteswap);
       if(datalen<1)
         return AMBIX_ERR_UNKNOWN;
@@ -156,7 +156,7 @@ ambix_err_t	ambix_write_header	(ambix_t*ambix) {
       if(_ambix_matrix_to_uuid1(&ambix->matrix, data, ambix->byteswap)!=datalen)
         goto cleanup;
 
-      // and write it to file
+      /* and write it to file */
       res=_ambix_write_uuidchunk(ambix, data, datalen);
       if(data)
         free(data);
@@ -173,14 +173,14 @@ ambix_err_t	ambix_write_header	(ambix_t*ambix) {
 }
 
 static ambix_err_t _ambix_check_write(ambix_t*ambix, const void*ambidata, const void*otherdata, int64_t frames) {
-  // TODO: add some checks whether writing is feasible
-  // e.g. format=extended but no (or wrong) matrix present
+  /* TODO: add some checks whether writing is feasible
+   * e.g. format=extended but no (or wrong) matrix present */
   return AMBIX_ERR_SUCCESS;
 }
 
 static ambix_err_t _ambix_check_read(ambix_t*ambix, const void*ambidata, const void*otherdata, int64_t frames) {
-  // TODO: add some checks whether writing is feasible
-  // e.g. format=extended but no (or wrong) matrix present
+  /* TODO: add some checks whether writing is feasible
+   * e.g. format=extended but no (or wrong) matrix present */
   return AMBIX_ERR_SUCCESS;
 }
 

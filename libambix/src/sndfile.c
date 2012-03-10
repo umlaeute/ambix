@@ -79,8 +79,8 @@ ambix2sndfile_info(const ambixinfo_t*axinfo, SF_INFO *sfinfo) {
   sfinfo->samplerate=axinfo->samplerate;
   sfinfo->channels=axinfo->ambichannels+axinfo->otherchannels;
   sfinfo->format=SF_FORMAT_CAF | ambix2sndfile_sampleformat(axinfo->sampleformat);
-  sfinfo->sections=0;//axinfo->sections;
-  sfinfo->seekable=0;//axinfo->seekable;
+  sfinfo->sections=0;
+  sfinfo->seekable=0;
 }
 static void
 sndfile2ambix_info(const SF_INFO*sfinfo, ambixinfo_t*axinfo) {
@@ -171,13 +171,15 @@ ambix_err_t _ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t
   channels=PRIVATE(ambix)->sf_info.channels;
   isCAF=(SF_FORMAT_CAF & PRIVATE(ambix)->sf_info.format);
   ambix->byteswap=(sf_command(PRIVATE(ambix)->sf_file, SFC_RAW_DATA_NEEDS_ENDSWAP, NULL, 0) == SF_TRUE);
+
+  /* FIXXXME most of this should go into libambix.c */
   if(isCAF) {
     if(ambix_read_uuidchunk(ambix) == AMBIX_ERR_SUCCESS) {
       /* check whether channels are (N+1)^2
        * if so, we have a simple-ambix file, else it is just an ordinary caf
        */
-      if(ambix->matrix.cols <= channels &&  // reduced set must be fully present
-         ambix_isFullSet(ambix->matrix.rows)) { // expanded set must be a full set
+      if(ambix->matrix.cols <= channels &&  /* reduced set must be fully present */
+         ambix_isFullSet(ambix->matrix.rows)) { /* expanded set must be a full set */
         /* it's a simple AMBIX! */
         ambix->ambisonics_order=ambix_channels2order(ambix->matrix.rows);
         ambix->realinfo.ambixfileformat=AMBIX_EXTENDED;
@@ -196,7 +198,7 @@ ambix_err_t _ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t
       /* check whether channels are (N+1)^2
        * if so, we have a simple-ambix file, else it is just an ordinary caf
        */
-      if(ambix_isFullSet(channels)) { // expanded set must be a full set
+      if(ambix_isFullSet(channels)) { /* expanded set must be a full set */
         /* it's a simple AMBIX! */
         ambix->ambisonics_order=ambix_channels2order(channels);
         ambix->realinfo.ambixfileformat=AMBIX_SIMPLE;

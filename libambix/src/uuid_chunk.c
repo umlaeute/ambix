@@ -133,11 +133,11 @@ _ambix_matrix_to_uuid1(const ambixmatrix_t*matrix, void*data, int swap) {
   if(!uuid)
     return 0;
 
-  datasize+=16; // reserved for the UUID
+  datasize+=16; /* reserved for the UUID */
 
-  datasize+=sizeof(uint32_t); // rows
-  datasize+=sizeof(uint32_t); // cols
-  datasize+=(uint64_t)rows*(uint64_t)cols*sizeof(float32_t); // data
+  datasize+=sizeof(uint32_t); /* rows */
+  datasize+=sizeof(uint32_t); /* cols */
+  datasize+=(uint64_t)rows*(uint64_t)cols*sizeof(float32_t); /* data */
 
 
   if(data) {

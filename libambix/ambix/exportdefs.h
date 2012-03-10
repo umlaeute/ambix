@@ -41,9 +41,10 @@
 
 
 #ifdef DLL_EXPORT
-// Windows requires explicit import and exporting of functions and classes.
-// While this is a pain to do sometimes, in large software development
-//      projects, it is very usefull.
+/* Windows requires explicit import and exporting of functions and classes.
+ * While this is a pain to do sometimes, in large software development
+ *      projects, it is very usefull.
+ */
 # define AMBIX_EXPORT __declspec(dllexport)
 # define AMBIX_IMPORT __declspec(dllimport)
 

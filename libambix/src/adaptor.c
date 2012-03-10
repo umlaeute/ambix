@@ -48,9 +48,6 @@ ambix_err_t _ambix_adaptorbuffer_resize(ambix_t*ambix, uint64_t frames, uint16_t
     }
   }
   return AMBIX_ERR_SUCCESS;
-
-  //    DEFAULT_ADAPTORBUFFER_SIZE
-  return AMBIX_ERR_UNKNOWN;
 }
 
 ambix_err_t _ambix_adaptorbuffer_destroy(ambix_t*ambix) {
