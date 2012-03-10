@@ -125,6 +125,7 @@ _ambix_uuid1_to_matrix(const void*data, uint64_t datasize, ambixmatrix_t*orgmtx,
 uint64_t
 _ambix_matrix_to_uuid1(const ambixmatrix_t*matrix, void*data, int swap) {
   const char*uuid=_ambix_getUUID(1);
+  uint64_t index=0;
   uint64_t datasize=0;
   uint32_t rows=matrix->rows;
   uint32_t cols=matrix->cols;
@@ -141,41 +142,28 @@ _ambix_matrix_to_uuid1(const ambixmatrix_t*matrix, void*data, int swap) {
 
 
   if(data) {
-    uint32_t*idata;
-    uint64_t elements=(uint64_t)rows * (uint64_t)cols;
     uint64_t i, r, c;
-
+    uint32_t*idata;
+    uint64_t elements=(uint64_t)rows*(uint64_t)cols;
     memcpy(data, uuid, 16);
-    data+=16;
-    idata=(uint32_t*)(data+16);
+    index+=16;
+
+    memcpy(data+index, &rows, sizeof(uint32_t));
+    index+=sizeof(uint32_t);
 
 
-    r=swap?swap4(rows):rows;
-    c=swap?swap4(cols):cols;
+    memcpy(data+index, &cols, sizeof(uint32_t));
+    index+=sizeof(uint32_t);
 
-    memcpy(idata, &r, sizeof(uint32_t));
-    idata++;
-    memcpy(idata, &c, sizeof(uint32_t));
-    idata++;
+    idata=data+index;
+    for(r=0; r<rows; r++) {
+      memcpy(data+index, mtx[r], cols*sizeof(float32_t));
+      index+=cols*sizeof(float32_t);
+    }
 
     if(swap) {
-      number32_t num;
-      for(r=0; r<rows; r++) {
-        for(c=0; c<cols; c++) {
-          num.f=mtx[r][c];
-          *idata++=swap4(num.i);
-        }
-      }
-    } else {
-      number32_t num;
-      for(r=0; r<rows; r++) {
-        for(c=0; c<cols; c++) {
-          num.f=mtx[r][c];
-          *idata++=num.i;
-        }
-      }
+      _ambix_swap4array(idata, elements);
     }
   }
-
   return datasize;
 }
