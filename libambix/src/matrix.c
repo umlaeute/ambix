@@ -168,3 +168,18 @@ ambix_matrix_multiply(const ambixmatrix_t*left, const ambixmatrix_t*right, ambix
 
   return dest;
 }
+
+
+ambixmatrix_t*
+ambix_matrix_eye(ambixmatrix_t*matrix) {
+  int32_t rows=matrix->rows;
+  int32_t cols=matrix->cols;
+  float32_t**mtx=matrix->data;
+
+  int32_t r, c;
+  for(r=0; r<rows; r++)
+    for(c=0; c<cols; c++)
+      mtx[r][c]=(r==c)?1.:0.;
+
+  return matrix;
+}

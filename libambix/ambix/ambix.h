@@ -94,7 +94,15 @@ void ambix_matrix_deinit(ambixmatrix_t*mtx);
 AMBIX_API
 int ambix_matrix_fill(ambixmatrix_t*mtx, float32_t*data);
 
-
+/** @brief fill matrix with unity matrix
+ *
+ * zero out the matrix and fill the diagonally with ones
+ *
+ * @param mtx initialized matrix object to initialize
+ * @return pointer to the matrix object
+ */
+AMBIX_API
+ambixmatrix_t*ambix_matrix_eye(ambixmatrix_t*matrix);
 /** @brief Fill a matrix with byteswapped values
  *
  * Fill byteswapped data into a properly initialized matrix
