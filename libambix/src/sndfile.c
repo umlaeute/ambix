@@ -219,13 +219,19 @@ int64_t _ambix_writef_float32   (ambix_t*ambix, float32_t*data, int64_t frames) 
 ambix_err_t _ambix_write_uuidchunk(ambix_t*ax, const void*data, int64_t datasize) {
 	int				err ;
   SF_CHUNK_INFO*chunk=&PRIVATE(ax)->sf_chunk;
+  int64_t datasize4 = datasize>>2;
+
+  if(datasize4*4 < datasize)
+    datasize4++;
 
 	memset (chunk, 0, sizeof (chunk)) ;
 	snprintf (chunk->id, sizeof (chunk->id), "uuid") ;
 	chunk->id_size = 4 ;
   if(chunk->data)
     free(chunk->data);
-	chunk->data = malloc(datasize);
+
+	chunk->data = calloc(4, datasize4);
+
   memcpy(chunk->data, data, datasize);
 	chunk->datalen = datasize ;
 
