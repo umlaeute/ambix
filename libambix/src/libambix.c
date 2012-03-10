@@ -72,10 +72,10 @@ ambix_err_t ambix_setAdaptorMatrix	(ambix_t*ambix, const ambixmatrix_t*matrix) {
   } else if((ambix->filemode & AMBIX_READ ) && (AMBIX_SIMPLE   == ambix->info.ambixfileformat)) {
     /* multiply the matrix with the previous adaptor matrix */
     if(ambix->matrix.data) {
-      ambixmatrix_t*mtx=ambix_matrix_multiply(matrix, &ambix->matrix, &ambix->finalmatrix);
-      if(mtx != &ambix->finalmatrix)
+      ambixmatrix_t*mtx=ambix_matrix_multiply(matrix, &ambix->matrix, &ambix->matrix2);
+      if(mtx != &ambix->matrix2)
         return AMBIX_ERR_UNKNOWN;
-      ambix->use_finalmatrix=1;
+      ambix->use_matrix=2;
       return AMBIX_ERR_SUCCESS;
     }
 
@@ -126,10 +126,16 @@ ambix_err_t	ambix_write_header	(ambix_t*ambix) {
     _ambix_adaptorbuffer_resize(ambix, frames, sizeof(type##_t));       \
     adaptorbuffer=(type##_t*)ambix->adaptorbuffer;                      \
     realframes=_ambix_readf_##type(ambix, adaptorbuffer, frames);       \
-    if(0)                                                               \
+    switch(ambix->use_matrix) {                                         \
+    case 1:                                                             \
       _ambix_splitAdaptormatrix_##type(adaptorbuffer, ambix->info.ambichannels+ambix->info.otherchannels, &ambix->matrix          , ambidata, otherdata, realframes); \
-    else                                                                \
+      break;                                                            \
+    case 2:                                                             \
+      _ambix_splitAdaptormatrix_##type(adaptorbuffer, ambix->info.ambichannels+ambix->info.otherchannels, &ambix->matrix2         , ambidata, otherdata, realframes); \
+      break;                                                            \
+    default:                                                            \
       _ambix_splitAdaptor_##type      (adaptorbuffer, ambix->info.ambichannels+ambix->info.otherchannels, ambix->info.ambichannels, ambidata, otherdata, realframes); \
+    };                                                                  \
     return realframes;                                                  \
   }
 
