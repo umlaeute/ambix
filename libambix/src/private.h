@@ -51,22 +51,22 @@ typedef struct ambix_t {
   /** whether the file is a CAF file */
   int is_CAF;
 
+  /** read/write mode */
+  ambix_filemode_t filemode;
+
+  /** whether the file is byteswapped in relation to host */
+  int byteswap;
+
   /** full number of channels in the file */
   int32_t channels;
 
   /** ambisonics info chunk as presented to the outside world */
   ambixinfo_t info;
-
   /** ambisonics info chunk as read from disk */
   ambixinfo_t realinfo;
 
-
-  /** ambisonics order of the full set */
-  uint32_t ambisonics_order;
-
   /** reconstruction matrix */
   ambixmatrix_t matrix;
-
   /** final reconstruction matrix (potentially includes another adaptor matrix) */
   ambixmatrix_t matrix2;
   /** whether to use the matrix(1), the finalmatrix(2), or no matrix when decoding */
@@ -76,15 +76,11 @@ typedef struct ambix_t {
   void*adaptorbuffer;
   /** size of the adaptor buffer (in bytes) */
   int64_t adaptorbuffersize;
-
-  /** read/write mode */
-  ambix_filemode_t filemode;
-
-  /** whether the file is byteswapped in relation to host */
-  int byteswap;
-
   /** default adaptorbuffer size in frames */
 #define DEFAULT_ADAPTORBUFFER_SIZE 64
+
+  /** ambisonics order of the full set */
+  uint32_t ambisonics_order;
 } ambix_t;
 
 
