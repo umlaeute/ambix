@@ -50,8 +50,12 @@ typedef struct ambix_t {
   SF_INFO sf_info;
 #endif /* HAVE_SNDFILE_H */
 
-  /** ambisonics info chunk */
+  /** ambisonics info chunk as presented to the outside world */
   ambixinfo_t info;
+
+  /** ambisonics info chunk as read from disk */
+  ambixinfo_t realinfo;
+
 
   /** ambisonics order of the full set */
   uint32_t ambisonics_order;
@@ -90,7 +94,7 @@ typedef struct ambix_t {
  * @param ambixinfo struct to a valid ambixinfo structure
  * @return errorcode indicating success
  */
-ambix_err_t	_ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t mode, ambixinfo_t*ambixinfo);
+ambix_err_t	_ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t mode, const ambixinfo_t*ambixinfo);
 /** @brief Do close an ambix file
  *
  * this is implemented by the various backends (currently only libsndfile)

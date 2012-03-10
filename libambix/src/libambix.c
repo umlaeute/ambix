@@ -26,6 +26,9 @@
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h>
 #endif /* HAVE_STDLIB_H */
+#ifdef HAVE_STRING_H
+# include <string.h>
+#endif /* HAVE_STRING_H */
 
 ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambixinfo_t*ambixinfo) {
   ambix_t*ambix=calloc(1, sizeof(ambix_t));
@@ -33,6 +36,14 @@ ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambixinfo_t
   if(AMBIX_ERR_SUCCESS == _ambix_open(ambix, path, mode, ambixinfo)) {
     /* successfully opened, initialize common stuff... */
     ambix->filemode=mode;
+    memcpy(&ambix->info, &ambix->realinfo, sizeof(ambix->info));
+
+    if(AMBIX_SIMPLE==ambixinfo->ambixfileformat && AMBIX_EXTENDED==ambix->realinfo.ambixfileformat) {
+      ambix->info.ambixfileformat=AMBIX_SIMPLE;
+      ambix->use_matrix=1;
+    }
+
+    memcpy(ambixinfo, &ambix->info, sizeof(ambixinfo));
     if(_ambix_adaptorbuffer_resize(ambix, DEFAULT_ADAPTORBUFFER_SIZE, sizeof(float32_t)) == AMBIX_ERR_SUCCESS)
       return ambix;
   }
@@ -71,14 +82,20 @@ ambix_err_t ambix_setAdaptorMatrix	(ambix_t*ambix, const ambixmatrix_t*matrix) {
   if(0) {
   } else if((ambix->filemode & AMBIX_READ ) && (AMBIX_SIMPLE   == ambix->info.ambixfileformat)) {
     /* multiply the matrix with the previous adaptor matrix */
-    if(ambix->matrix.data) {
+    if(AMBIX_EXTENDED == ambix->realinfo.ambixfileformat) {
       ambixmatrix_t*mtx=ambix_matrix_multiply(matrix, &ambix->matrix, &ambix->matrix2);
       if(mtx != &ambix->matrix2)
         return AMBIX_ERR_UNKNOWN;
       ambix->use_matrix=2;
       return AMBIX_ERR_SUCCESS;
+    } else {
+      ambixmatrix_t*mtx=NULL;
+      if(matrix->cols != ambix->realinfo.ambichannels) {
+        return AMBIX_ERR_INVALID_DIMENSION;
+      }
+      mtx=ambix_matrix_copy(matrix, &ambix->matrix2);
+      ambix->use_matrix=2;
     }
-
   } else if((ambix->filemode & AMBIX_WRITE) && (AMBIX_EXTENDED == ambix->info.ambixfileformat)) {
      if(!ambix_matrix_copy(matrix, &ambix->matrix))
       return AMBIX_ERR_UNKNOWN;

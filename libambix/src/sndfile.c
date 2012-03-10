@@ -124,7 +124,7 @@ ambix_read_uuidchunk(ambix_t*ax) {
 
 
 
-ambix_err_t _ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t mode, ambixinfo_t*ambixinfo) {
+ambix_err_t _ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t mode, const ambixinfo_t*ambixinfo) {
   int sfmode=0;
   uint32_t channels=0;
   int isCAF=0;
@@ -142,8 +142,8 @@ ambix_err_t _ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t
   if(!ambix->sf_file)
     return AMBIX_ERR_INVALID_FILE;
 
-  memset(&ambix->info, 0, sizeof(*ambixinfo));
-  sndfile2ambix_info(&ambix->sf_info, &ambix->info);
+  memset(&ambix->realinfo, 0, sizeof(*ambixinfo));
+  sndfile2ambix_info(&ambix->sf_info, &ambix->realinfo);
 
   channels=ambix->sf_info.channels;
   isCAF=(SF_FORMAT_CAF & ambix->sf_info.format);
@@ -157,15 +157,15 @@ ambix_err_t _ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t
          ambix_isFullSet(ambix->matrix.rows)) { // expanded set must be a full set
         /* it's a simple AMBIX! */
         ambix->ambisonics_order=ambix_channels2order(ambix->matrix.rows);
-        ambix->info.ambixfileformat=AMBIX_EXTENDED;
-        ambix->info.ambichannels=ambix->matrix.cols;
-        ambix->info.otherchannels=channels-ambix->matrix.cols;
+        ambix->realinfo.ambixfileformat=AMBIX_EXTENDED;
+        ambix->realinfo.ambichannels=ambix->matrix.cols;
+        ambix->realinfo.otherchannels=channels-ambix->matrix.cols;
       } else {
         /* ouch! matrix is not valid! */
         ambix->ambisonics_order=0;
-        ambix->info.ambixfileformat=AMBIX_NONE;
-        ambix->info.ambichannels=0;
-        ambix->info.otherchannels=channels;
+        ambix->realinfo.ambixfileformat=AMBIX_NONE;
+        ambix->realinfo.ambichannels=0;
+        ambix->realinfo.otherchannels=channels;
       }
     } else {
       /* no uuid chunk found, it's probably a SIMPLE ambix file */
@@ -176,26 +176,24 @@ ambix_err_t _ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t
       if(ambix_isFullSet(channels)) { // expanded set must be a full set
         /* it's a simple AMBIX! */
         ambix->ambisonics_order=ambix_channels2order(channels);
-        ambix->info.ambixfileformat=AMBIX_SIMPLE;
-        ambix->info.ambichannels=channels;
-        ambix->info.otherchannels=0;
+        ambix->realinfo.ambixfileformat=AMBIX_SIMPLE;
+        ambix->realinfo.ambichannels=channels;
+        ambix->realinfo.otherchannels=0;
       } else {
         /* it's an ordinary CAF file */
         ambix->ambisonics_order=0;
-        ambix->info.ambixfileformat=AMBIX_NONE;
-        ambix->info.ambichannels=0;
-        ambix->info.otherchannels=channels;
+        ambix->realinfo.ambixfileformat=AMBIX_NONE;
+        ambix->realinfo.ambichannels=0;
+        ambix->realinfo.otherchannels=channels;
       }
     }
   } else {
     /* it's not a CAF file.... */
     ambix->ambisonics_order=0;
-    ambix->info.ambixfileformat=AMBIX_NONE;
-    ambix->info.ambichannels=0;
-    ambix->info.otherchannels=channels;
+    ambix->realinfo.ambixfileformat=AMBIX_NONE;
+    ambix->realinfo.ambichannels=0;
+    ambix->realinfo.otherchannels=channels;
   }
-
-  memcpy(ambixinfo, &ambix->info, sizeof(ambix->info));
   return AMBIX_ERR_SUCCESS;
 }
 
