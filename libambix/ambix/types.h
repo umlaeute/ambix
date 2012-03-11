@@ -31,7 +31,7 @@
  */
 
 #ifndef AMBIX_AMBIX_H
-# error please dont include <ambix/types.h>! instead use <ambix/ambix.h>
+# error please dont include <ambix/types.h>...use <ambix/ambix.h> instead!
 #endif
 
 #ifndef AMBIX_TYPES_H
@@ -165,4 +165,4 @@ typedef struct SNDFILE_tag SNDFILE;
 #ifdef __cplusplus
 }		/* extern "C" */
 #endif	/* __cplusplus */
-#endif /* AMBIX_AMBIX_H */
+#endif /* AMBIX_TYPES_H */

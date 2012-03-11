@@ -1,3 +1,4 @@
+
 /* ambix/ambix.h -  Ambisonics Xchange Library Interface              -*- c -*-
 
    Copyright © 2012 IOhannes m zmölnig <zmoelnig@iem.at>.
@@ -34,110 +35,12 @@
 
 #include "exportdefs.h"
 #include "types.h"
+#include "matrix.h"
+#include "utils.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif	/* __cplusplus */
-
-
-/** @brief Create a matrix
- *
- * Allocates a new (empty) matrix object.
- * It's equivalent to calling ambix_matrix_init(0, 0, NULL);
- *
- * @return a new matrix object or NULL
- */
-AMBIX_API
-ambixmatrix_t*ambix_matrix_create(void);
-
-/** @brief Destroy a matrix
- *
- * Frees all ressources allocated for the matrix object.
- * It's a shortcut for ambix_matrix_deinit(mtx), free(mtx)
- *
- * @param mtx matrix object to destroy
- */
-AMBIX_API
-void ambix_matrix_destroy(ambixmatrix_t*mtx);
-
-/** @brief Initialize a matrix
- *
- * Allocates memory for matrix-data of given dimensions
- *
- * @param rows number of rows in the newly initialized matrix
- * @param cols number of columns in the newly initialized matrix
- * @param mtx pointer to a matrix object; if NULL a new matrix object will be created, else the given matrix object will be re-initialized
- * @return pointer to a newly initialized (and/or allocated) matrix, or NULL on error
- */
-AMBIX_API
-ambixmatrix_t*ambix_matrix_init(uint32_t rows, uint32_t cols, ambixmatrix_t*mtx);
-
-
-/** @brief De-initialize a matrix
- *
- * Frees associated ressources and sets rows/columns to 0
- *
- * @param mtx matrix object to deinitialize
- */
-AMBIX_API
-void ambix_matrix_deinit(ambixmatrix_t*mtx);
-
-
-/** @brief Fill a matrix with values
- *
- * Fill data into a properly initialized matrix
- *
- * @param mtx initialized matrix object to copy data into
- * @param data pointer to at least (mtx->rows*mtx->cols) values; data is ordered row-by-row with no padding (A[0,0], A[0,1], .., A[0,cols-1],  A[1, 0], .. A[rows-1, cols-1])
- * @return an error code indicating success
- */
-AMBIX_API
-int ambix_matrix_fill(ambixmatrix_t*mtx, float32_t*data);
-
-/** @brief fill matrix with unity matrix
- *
- * zero out the matrix and fill the diagonally with ones
- *
- * @param mtx initialized matrix object to initialize
- * @return pointer to the matrix object
- */
-AMBIX_API
-ambixmatrix_t*ambix_matrix_eye(ambixmatrix_t*matrix);
-/** @brief Fill a matrix with byteswapped values
- *
- * Fill byteswapped data into a properly initialized matrix
- *
- * @param mtx initialized matrix object to copy data into
- * @param data pointer to at least (mtx->rows*mtx->cols) values; data is ordered row-by-row with no padding (A[0,0], A[0,1], .., A[0,cols-1],  A[1, 0], .. A[rows-1, cols-1])
- *           each data item has to be byteswapped
- * @return an error code indicating success
- */
-AMBIX_API
-int ambix_matrix_fill_swapped(ambixmatrix_t*mtx, number32_t*data);
-
-
-/** @brief Copy a matrix to another matrix
- *
- * Copy a matrix, possibly resizing or creating the destination
- *
- * @param src the source matrix to copy the data from
- * @param dest the destination matrix (if NULL a new matrix will be created)
- * @return pointer to the destination matrix
- */
-AMBIX_API
-ambixmatrix_t*ambix_matrix_copy(const ambixmatrix_t*src, ambixmatrix_t*dest);
-/** @brief Multiplay two matrices
- *
- * Multiply matrices dest=A*B, possibly resizing or creating the destination matrix
- *
- * @param A left-hand operator
- * @param B right-hand operator
- * @param result pointer to the matrix object that will hold the result or NULL
- * @return pointer to the result matrix, or NULL in case the matrix multiplication did not succeed
- * @remark if this returns a newly allocated matrix object (result!=return value), the host has to take care of calling ambix_matrix_destroy()
- */
-AMBIX_API
-ambixmatrix_t*ambix_matrix_multiply(const ambixmatrix_t*A, const ambixmatrix_t*B, ambixmatrix_t*result);
 
 /** @brief Calculate the number of channels for a full 3d ambisonics set of a given order
  *
