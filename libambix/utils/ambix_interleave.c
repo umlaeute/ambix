@@ -43,6 +43,9 @@
 #include <string.h>
 #include <stdlib.h>
 
+
+#define MARK() printf("%s:%d[%s]\n", __FILE__, __LINE__, __FUNCTION__)
+
 typedef struct ai_t {
   ambixinfo_t info;
 
@@ -122,23 +125,31 @@ static ai_t*ai_cmdline(int argc, char**argv) {
 static ai_t*ai_close(ai_t*ai) {
   uint32_t i;
   if(!ai)return NULL;
-  for(i=0; i<ai->numIns; i++) {
-    SNDFILE*inhandle=ai->inhandles[i];
-    if(inhandle) {
-      sf_close(inhandle);
+
+  if(ai->inhandles) {
+    for(i=0; i<ai->numIns; i++) {
+      SNDFILE*inhandle=ai->inhandles[i];
+      if(inhandle) {
+        sf_close(inhandle);
+      }
+      ai->inhandles[i]=NULL;
     }
-    ai->inhandles[i]=NULL;
+    free(ai->inhandles);
   }
-  free(ai->inhandles);
-  free(ai->ininfo);
+  ai->inhandles=NULL;
+  if(ai->ininfo)
+    free(ai->ininfo);
+  ai->ininfo=NULL;
 
   if(ai->outhandle) {
     ambix_close(ai->outhandle);
   }
   ai->outhandle=NULL;
 
-  if(ai->matrix)
+  if(ai->matrix) {
     ambix_matrix_destroy(ai->matrix);
+  }
+
   ai->matrix=NULL;
 
   return NULL;
@@ -191,13 +202,12 @@ static ai_t*ai_open_input(ai_t*ai) {
     ai->info.ambichannels=ai->matrix->cols;
     ai->info.otherchannels=channels-ai->matrix->cols;
   } else if (ai->channels > 0) {
-    printf("wanted %d channels, got %d\n", ai->channels, channels);
     if(ai->channels < channels) {
       ai->info.ambixfileformat=AMBIX_EXTENDED;
       ai->info.ambichannels=(ai->channels);
       ai->info.otherchannels=channels-(ai->channels);
 
-      ai->matrix=ambix_matrix_init(channels, channels, NULL);
+      ai->matrix=ambix_matrix_init(ai->channels, ai->channels, NULL);
       ai->matrix=ambix_matrix_eye (ai->matrix);
     } else if (ai->channels == channels) {
       /* simple format */
@@ -208,7 +218,6 @@ static ai_t*ai_open_input(ai_t*ai) {
       return ai_close(ai);
     }
   } else {
-    printf("trying %d channels\n", channels);
     if(!ambix_isFullSet(channels)) {
       return ai_close(ai);
     }
@@ -241,9 +250,15 @@ static ai_t*ai_open_output(ai_t*ai) {
 
   if(!ai) return ai_close(ai);  
   if(AMBIX_EXTENDED==ai->info.ambixfileformat) {
-    ambix_setAdaptorMatrix(ai->outhandle, ai->matrix);
-    ambix_write_header(ai->outhandle);
+    ambix_err_t err=ambix_setAdaptorMatrix(ai->outhandle, ai->matrix);
+    if(err==AMBIX_ERR_SUCCESS) {
+      ambix_write_header(ai->outhandle);
+    } else {
+      printf("setting adapator matrix [%dx%d]=%d returned %d\n", ai->matrix->rows, ai->matrix->cols, ambix_isFullSet(ai->matrix->rows), err);
+      return ai_close(ai);
+    }
   }
+  return ai;
 }
 
 static ai_t*ai_copy_block(ai_t*ai, 
@@ -270,9 +285,11 @@ static ai_t*ai_copy_block(ai_t*ai,
 
 static ai_t*ai_copy(ai_t*ai) {
   const uint64_t blocksize=64;
-  uint64_t f, frames=ai->info.frames;
-  float32_t*tmpdata=malloc(sizeof(float32_t)*(ai->info.ambichannels*ai->info.otherchannels)*blocksize);
+  uint64_t f, frames=0;
+  float32_t*tmpdata=NULL;
   if(!ai)return ai;
+  frames=ai->info.frames;
+  tmpdata=malloc(sizeof(float32_t)*(ai->info.ambichannels*ai->info.otherchannels)*blocksize);
   while(frames>blocksize) {
     if(!ai_copy_block(ai, tmpdata, blocksize))
       return ai_close(ai);
@@ -285,8 +302,14 @@ static ai_t*ai_copy(ai_t*ai) {
 
 
 static int ambix_interleave(ai_t*ai) {
-  ai_t*result=ai_copy(ai_open_output(ai_open_input(ai)));
+  ai_t*result=ai_open_input(ai);
+  //  if(result)printf("success @ %d!\n", __LINE__);
+  result=ai_open_output(result);
+  //if(result)printf("success @ %d!\n", __LINE__);
+  result=ai_copy(result);
+  //if(result)printf("success @ %d!\n", __LINE__);
   ai_close(ai);
+  //if(result)printf("success @ %d!\n", __LINE__);
   return (result!=NULL);
 }
 
