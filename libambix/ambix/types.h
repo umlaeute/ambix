@@ -47,6 +47,10 @@ typedef float float32_t;
 #ifdef HAVE_STDINT_H
 # include <stdint.h>
 #else
+/** 16bit signed integer  */
+typedef signed short int16_t;
+/** 16bit unsigned integer  */
+typedef unsigned short uint16_t;
 /** 32bit signed integer  */
 typedef signed int int32_t;
 /** 32bit unsigned integer  */
