@@ -1,4 +1,4 @@
-AC_INIT(src/libambix.c)
+AC_INIT(libambix/src/libambix.c)
 AM_INIT_AUTOMAKE(libambix,0.0.1)
 AM_PROG_LIBTOOL
 
@@ -15,4 +15,5 @@ AC_CHECK_HEADERS(sndfile.h)
 AC_SEARCH_LIBS([sf_open], [sndfile], have_sndfile="yes")
 AM_CONDITIONAL(HAVE_SNDFILE, [test "x$have_sndfile" = "xyes"])
 
-AC_OUTPUT(Makefile src/Makefile utils/Makefile)
+AC_OUTPUT(Makefile utils/Makefile)
+AC_OUTPUT(libambix/Makefile libambix/src/Makefile)

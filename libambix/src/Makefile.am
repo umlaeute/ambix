@@ -1,5 +1,5 @@
 AUTOMAKE_OPTIONS = foreign
-INCLUDES = -I$(top_srcdir)
+INCLUDES = -I$(top_srcdir)/libambix
 
 lib_LTLIBRARIES = libambix.la
 

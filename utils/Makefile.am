@@ -4,8 +4,8 @@ bin_PROGRAMS = \
 	ambix_test
 
 
-INCLUDES = -I$(top_srcdir)
-LDADD = $(top_builddir)/src/libambix.la
+INCLUDES = -I$(top_srcdir)/libambix
+LDADD = $(top_builddir)/libambix/src/libambix.la
 
 ambix_info_SOURCES = ambix_info.c
 ambix_interleave_SOURCES = ambix_interleave.c

@@ -1,4 +1,4 @@
-SUBDIRS=src utils
+SUBDIRS=src
 
 nobase_include_HEADERS = \
 	ambix/ambix.h \
