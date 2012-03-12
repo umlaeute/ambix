@@ -63,6 +63,8 @@ typedef struct ai_t {
 
   ambixmatrix_t*matrix;
   uint32_t channels;
+
+  uint32_t blocksize;
 } ai_t;
 static void usage(const char*path);
 
@@ -75,6 +77,7 @@ static ai_t*ai_cmdline(int argc, char**argv) {
   ai_t*ai=calloc(1, sizeof(ai_t));
   uint32_t channels=0;
   uint32_t order=0;
+  uint32_t blocksize=0;
   while(argc) {
     if(!strcmp(argv[0], "-o")) {
       if(argc>1) {
@@ -89,6 +92,15 @@ static ai_t*ai_cmdline(int argc, char**argv) {
       if(argc>1) {
         order=atoi(argv[1]);
         channels=ambix_order2channels(order);
+        argv+=2;
+        argc-=2;
+        continue;
+      }
+      return NULL;
+    }
+    if(!strcmp(argv[0], "-b")) {
+      if(argc>1) {
+        blocksize=atoi(argv[1]);
         argv+=2;
         argc-=2;
         continue;
@@ -115,6 +127,10 @@ static ai_t*ai_cmdline(int argc, char**argv) {
   if(channels>0) {
     ai->channels = channels;
   }
+  if(blocksize>0)
+    ai->blocksize=blocksize;
+  else
+    ai->blocksize=1024;
 
   if((channels > 0) && ai->matrix) {
     if(channels != ai->matrix->rows) {
