@@ -47,6 +47,7 @@
 #include <string.h>
 #include <stdlib.h>
 
+#define AMBIX_INTERLEAVE_VERSION "0.1"
 
 #define MARK() printf("%s:%d[%s]\n", __FILE__, __LINE__, __FUNCTION__)
 
@@ -65,21 +66,31 @@ typedef struct ai_t {
   uint32_t channels;
 
   uint32_t blocksize;
+#define DEFAULT_BLOCKSIZE 1024
 } ai_t;
-static void usage(const char*path);
+static void print_usage(const char*path);
+static void print_version(const char*path);
 
 static ai_t*ai_matrix(ai_t*ai, const char*path) {
   fprintf(stderr, "ambix_interleave: matrices not yet supported\n");
   return NULL;
 }
 
-static ai_t*ai_cmdline(int argc, char**argv) {
+static ai_t*ai_cmdline(const char*name, int argc, char**argv) {
   ai_t*ai=calloc(1, sizeof(ai_t));
   uint32_t channels=0;
   uint32_t order=0;
   uint32_t blocksize=0;
   while(argc) {
-    if(!strcmp(argv[0], "-o")) {
+    if(!strcmp(argv[0], "-h") || !strcmp(argv[0], "--help")) {
+      print_usage(name);
+      exit(0);
+    }
+    if(!strcmp(argv[0], "-v") || !strcmp(argv[0], "--version")) {
+      print_version(name);
+      exit(0);
+    }
+    if(!strcmp(argv[0], "-o") || !strcmp(argv[0], "--output")) {
       if(argc>1) {
         ai->outfilename=strdup(argv[1]);
         argv+=2;
@@ -88,7 +99,7 @@ static ai_t*ai_cmdline(int argc, char**argv) {
       }
       return NULL;
     }
-    if(!strcmp(argv[0], "-O")) {
+    if(!strcmp(argv[0], "-O") || !strcmp(argv[0], "--order")) {
       if(argc>1) {
         order=atoi(argv[1]);
         channels=ambix_order2channels(order);
@@ -98,7 +109,7 @@ static ai_t*ai_cmdline(int argc, char**argv) {
       }
       return NULL;
     }
-    if(!strcmp(argv[0], "-b")) {
+    if(!strcmp(argv[0], "-b") || !strcmp(argv[0], "--blocksize")) {
       if(argc>1) {
         blocksize=atoi(argv[1]);
         argv+=2;
@@ -107,7 +118,7 @@ static ai_t*ai_cmdline(int argc, char**argv) {
       }
       return NULL;
     }
-    if(!strcmp(argv[0], "-X")) {
+    if(!strcmp(argv[0], "-X") || !strcmp(argv[0], "--matrix")) {
       if(argc>1) {
         if(!ai_matrix(ai, argv[1]))
           return NULL;
@@ -124,13 +135,16 @@ static ai_t*ai_cmdline(int argc, char**argv) {
   if(!ai->infilenames)
     return NULL;
 
+  if(!ai->outfilename)
+    return NULL;
+
   if(channels>0) {
     ai->channels = channels;
   }
   if(blocksize>0)
     ai->blocksize=blocksize;
   else
-    ai->blocksize=1024;
+    ai->blocksize=DEFAULT_BLOCKSIZE;
 
   if((channels > 0) && ai->matrix) {
     if(channels != ai->matrix->rows) {
@@ -312,7 +326,7 @@ static ai_t*ai_copy(ai_t*ai) {
   if(!ai)return ai;
   blocksize=ai->blocksize;
   if(blocksize<1)
-    blocksize=64;
+    blocksize=DEFAULT_BLOCKSIZE;
   frames=ai->info.frames;
   channels=(ai->info.ambichannels+ai->info.otherchannels);
   tmpdata=malloc(sizeof(float32_t)*channels*blocksize);
@@ -346,14 +360,55 @@ static int ambix_interleave(ai_t*ai) {
 
 
 int main(int argc, char**argv) {
-  ai_t*ai=ai_cmdline(argc-1, argv+1);
+  ai_t*ai=ai_cmdline(argv[0], argc-1, argv+1);
   if(!ai) {
-    usage("ambix_interleave");
+    print_usage(argv[0]);//"ambix_interleave");
     return 1;
   }
 
   return ambix_interleave(ai);
 }
-void usage(const char*path) {
-  printf("%s - merge several audio files into an ambix file\n", path);
+void print_usage(const char*name) {
+  printf("\n");
+  printf("Usage: %s -o outfile [options] infile1...\n", name);
+  printf("Merges several audio files into an ambix file\n");
+
+  printf("\n");
+  printf("Options:\n");
+  printf("  -h, --help                       print this help\n");
+  printf("  -o, --output                     output filename\n");
+  printf("  -O, --order                      force ambisonics order (default: autodetect)\n");
+  printf("  -X, --matrix                     specify adaptor matrix file\n");
+  printf("  -b, --blocksize                  blocksize for copying (default: %d)\n", DEFAULT_BLOCKSIZE);
+  printf("\n");
+
+  printf(
+         "\nIn it's simplest form, you pass it a number of input files,"
+         "\nthe accumulated channels of which form a full 3d ambisonics set"
+         "\n(channel #0 becomes the W-channel,...)."
+         "\nThe ambisonics order is calculated from the number of channels using N=(O+1)^2."
+         "\n"
+         "\nIf you specify the 'order', then all extranous channels will be stored as 'extra' channels."
+         "\n"
+         "\nYou can also write extended ambix files, by specifying an adaptor matrix"
+         "\n(a soundfile where the channels are read as rows and the frames as columns),"
+         "\nin which case the columns of the matrix define the number of (reduced) ambisonics channels read from the input"
+         "\nand the rows of the matrix must form a full 3d ambisonics set."
+         "\nInput channels exceeding the number of matrix columns are stored as 'extra' channels."
+         "\n"
+         );
+
+  printf("Report bugs to: zmoelnig@iem.at\n\n");
+  printf("Home page: http://ambisonics.iem.at/xchange/products/libambix\n", name);
+}
+void print_version(const char*name) {
+  printf("%s %s\n", name, AMBIX_INTERLEAVE_VERSION);
+  printf("\n");
+  printf("Copyright (C) 2012 Institute of Electronic Music and Acoustics (IEM), University of Music and Dramatic Arts (KUG), Graz, Austria.\n");
+  printf("\n");
+  printf("License LGPLv2.1: GNU Lesser GPL version 2.1 or later <http://gnu.org/licenses/lgpl.html>\n");
+  printf("This is free software: you are free to change and redistribute it.\n");
+  printf("There is NO WARRANTY, to the extent permitted by law.\n");
+  printf("\n");
+  printf("Written by IOhannes m zmoelnig <zmoelnig@iem.at>\n");
 }
