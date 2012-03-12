@@ -306,15 +306,22 @@ static ai_t*ai_copy_block(ai_t*ai,
 }
 
 static ai_t*ai_copy(ai_t*ai) {
-  const uint64_t blocksize=64;
-  uint64_t f, frames=0;
+  uint64_t blocksize=0, blocks=0;
+  uint64_t f, frames=0, channels=0;
   float32_t*tmpdata=NULL;
   if(!ai)return ai;
+  blocksize=ai->blocksize;
+  if(blocksize<1)
+    blocksize=64;
   frames=ai->info.frames;
-  tmpdata=malloc(sizeof(float32_t)*(ai->info.ambichannels*ai->info.otherchannels)*blocksize);
+  channels=(ai->info.ambichannels+ai->info.otherchannels);
+  tmpdata=malloc(sizeof(float32_t)*channels*blocksize);
   while(frames>blocksize) {
-    if(!ai_copy_block(ai, tmpdata, blocksize))
+    blocks++;
+    if(!ai_copy_block(ai, tmpdata, blocksize)) {
       return ai_close(ai);
+    }
+    frames-=blocksize;
   }
   if(!ai_copy_block(ai, tmpdata, frames))
     return ai_close(ai);
