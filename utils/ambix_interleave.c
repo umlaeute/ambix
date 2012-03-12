@@ -21,7 +21,6 @@
 
 */
 
-
 /**
  * @brief ambix_interleave - merge several (multi-channel) audio files into a single ambix file
  *
@@ -36,6 +35,11 @@
  * if 'matrix' is specified, all inchannels not needed to reconstruct to a full set are 'extrachannels'
  * if both 'order' and 'matrix' are specified they must match
  */
+
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif /* HAVE_CONFIG_H */
+
 #include "ambix/ambix.h"
 #include "sndfile.h"
 
