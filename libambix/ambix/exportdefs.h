@@ -60,20 +60,20 @@
 /* unknown compiler */
 # warning set up compiler specific defines
 
-/** flag symbols to be exported from libambix */
+/** mark symbols to be exported from libambix */
 # define AMBIX_EXPORT
-/** flag symbols to be imported from libambix */
+/** mark symbols to be imported from libambix */
 # define AMBIX_IMPORT
-/** flag symbols to be deprecated */
+/** mark symbols to be deprecated */
 # define AMBIX_DEPRECATED
 #endif
 
 
 #ifdef AMBIX_INTERNAL
-/** flag symbols to be useable outside the library */
+/** mark symbols to be useable outside the library */
 # define AMBIX_API AMBIX_EXPORT
 #else
-/** flag symbols to be useable outside the library */
+/** mark symbols to be useable outside the library */
 # define AMBIX_API AMBIX_IMPORT
 #endif
 
