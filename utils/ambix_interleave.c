@@ -265,8 +265,10 @@ static ai_t*ai_open_input(ai_t*ai) {
 }
 
 static ai_t*ai_open_output(ai_t*ai) {
+  ambixinfo_t info;
   if(!ai)return ai;
-  ai->outhandle=ambix_open(ai->outfilename, AMBIX_WRITE, &ai->info);
+  memcpy(&info, &ai->info, sizeof(info));
+  ai->outhandle=ambix_open(ai->outfilename, AMBIX_WRITE, &info);
 
   if(!ai) return ai_close(ai);  
   if(AMBIX_EXTENDED==ai->info.ambixfileformat) {
