@@ -42,9 +42,6 @@
 #endif /* HAVE_CONFIG_H */
 
 #include <ambix/ambix.h>
-#ifdef HAVE_SNDFILE_H
-# include <sndfile.h>
-#endif /* HAVE_SNDFILE_H */
 
 /** this is for passing data about the opened ambix file between the host application and the library */
 typedef struct ambix_t {

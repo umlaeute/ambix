@@ -29,7 +29,9 @@
 #ifdef HAVE_STRING_H
 # include <string.h>
 #endif /* HAVE_STRING_H */
-
+#ifdef HAVE_SNDFILE_H
+# include <sndfile.h>
+#endif /* HAVE_SNDFILE_H */
 
 typedef struct ambixsndfile_private_t {
   /** handle to the libsndfile object */
