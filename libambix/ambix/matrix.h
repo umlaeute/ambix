@@ -100,7 +100,7 @@ int ambix_matrix_fill(ambixmatrix_t*mtx, float32_t*data);
  *
  * zero out the matrix and fill the diagonally with ones
  *
- * @param mtx initialized matrix object to initialize
+ * @param matrix initialized matrix object to initialize
  * @return pointer to the matrix object
  */
 AMBIX_API

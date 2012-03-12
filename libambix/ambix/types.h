@@ -59,8 +59,11 @@ typedef unsigned long uint64_t;
 
 /** a 32bit number (either float or int), useful for endianess operations */
 typedef union {
+  /** 32bit floating point */
   float32_t f;
+  /** 32bit signed integer */
   int32_t   i;
+  /** 32bit unsigned integer */
   uint32_t  u;
 } number32_t;
 
