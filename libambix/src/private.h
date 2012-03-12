@@ -30,13 +30,18 @@
  * @copyright LGPL-2.1
  * @internal
  */
+#ifndef AMBIX_PRIVATE_H
+#define AMBIX_PRIVATE_H
 
 #ifndef AMBIX_INTERNAL
 # error private.h must only be used from within libambix
 #endif
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif /* HAVE_CONFIG_H */
 
-#include "ambix/ambix.h"
+#include <ambix/ambix.h>
 #ifdef HAVE_SNDFILE_H
 # include <sndfile.h>
 #endif /* HAVE_SNDFILE_H */
@@ -303,3 +308,5 @@ ambix_err_t _ambix_mergeAdaptor_int16(int16_t*source1, uint32_t source1channels,
 void _ambix_print_info(const ambixinfo_t*info);
 
 #define MARK() printf("%s:%d[%s]\n", __FILE__, __LINE__, __FUNCTION__)
+
+#endif /* AMBIX_PRIVATE_H */
