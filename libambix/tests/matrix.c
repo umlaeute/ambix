@@ -138,6 +138,37 @@ void datamul_tests(float32_t eps) {
   free(resultdata);
 }
 
+void datamul_eye_tests(float32_t eps) {
+  float32_t errf;
+  uint64_t frames=4096;
+  uint32_t channels=16;
+  float32_t*inputdata;
+  float32_t*outputdata;
+  ambixmatrix_t eye = {0, 0, NULL};
+  inputdata =data_sine(frames, channels, 500);
+  outputdata=malloc(sizeof(float32_t)*frames*channels);
+  ambix_matrix_init(channels, channels, &eye);
+  ambix_matrix_eye(&eye);
+
+  fail_if(AMBIX_ERR_SUCCESS!=ambix_matrix_multiply_float32(outputdata, &eye, inputdata, frames),
+          __LINE__, "data multilplication failed");
+  STARTTEST();
+
+  errf=data_diff(__LINE__, inputdata, outputdata, frames*channels, eps);
+  fail_if(!(errf<eps), __LINE__, "diffing data multiplication returned %f (>%f)", errf, eps);
+
+#if 0
+  printf("matrix:\n");  matrix_print(&eye);
+  printf("input :\n");  data_print(inputdata, frames*channels);
+  printf("output:\n");  data_print(outputdata,frames*channels);
+#endif
+
+  free(inputdata);
+  free(outputdata);
+}
+
+
+
 void create_tests(float32_t eps) {
   int rows=4;
   int cols=3;
@@ -179,6 +210,7 @@ int main(int argc, char**argv) {
   mtxmul_tests(1e-7);
   mtxmul_eye_tests(1e-7);
   datamul_tests(1e-7);
+  datamul_eye_tests(1e-7);
 
   pass();
   return 0;
