@@ -4,9 +4,50 @@
 #include <ambix/ambix.h>
 
 #include <stdlib.h>
-static void pass(void) {exit(0); }
-static void fail(void) {exit(1); }
-static void skip(void) {exit(77); }
+static inline void pass(void) {exit(0); }
+static inline void fail(void) {exit(1); }
+static inline void skip(void) {exit(77); }
+
+#include <stdio.h>
+#include <stdarg.h>
+static inline void pass_if (int test, int line, const char *format, ...)
+{
+  if (test) {
+    va_list argptr ;
+    printf("@%d: ", line);
+    va_start (argptr, format) ;
+    vprintf (format, argptr) ;
+    va_end (argptr) ;
+    printf("\n");
+    pass();
+  } ;
+} /* pass_if */
+static inline void skip_if (int test, int line, const char *format, ...)
+{
+  if (test) {
+    va_list argptr ;
+    printf("@%d: ", line);
+    va_start (argptr, format) ;
+    vprintf (format, argptr) ;
+    va_end (argptr) ;
+    printf("\n");
+    skip();
+  } ;
+} /* skip_if */
+static inline void fail_if (int test, int line, const char *format, ...)
+{
+  if (test) {
+    va_list argptr ;
+    printf("@%d: ", line);
+    va_start (argptr, format) ;
+    vprintf (format, argptr) ;
+    va_end (argptr) ;
+    printf("\n");
+    fail();
+  } ;
+} /* fail_if */
+
+
 
 #endif /* TESTS_COMMON_H */
 
