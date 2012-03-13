@@ -22,6 +22,7 @@
 */
 
 #include "common.h"
+#include <string.h>
 
 static float32_t leftdata_4_3[]= {
 0.983520, 0.034607, 0.648430,
@@ -44,77 +45,137 @@ static float32_t resultdata_4_2[]= {
   0.81267,   0.87390,
 };
 
-void create_tests(void) {
-  int rows=4;
-  int cols=3;
-  int cols2=2;
-  ambixmatrix_t matrix, *left, *right, *result, *eye;
-  float32_t eps=1e-10;
+void mtxmul_tests(void) {
   float32_t errf;
+  float32_t eps=1e-7;
+  ambixmatrix_t *left, *right, *result, *testresult;
 
-  float32_t*resultdata;
-
-  memset(&matrix, 0, sizeof(matrix));
-  resultdata=calloc(4*2, sizeof(float32_t));
-  
-  left=ambix_matrix_create();
-  fail_if((left==NULL), __LINE__, "failed to create matrix");
-  fail_if((left->rows || left->cols), __LINE__, "created empty matrix has non-zero size");
-  fail_if((left!=ambix_matrix_init(rows, cols, left)), __LINE__, "initializing existing matrix* returned new matrix");
-  fail_if((left->rows!=rows || left->cols!=cols), __LINE__, "created matrix [%dx%d] does not match [%dx%d]", left->rows, left->cols, cols, cols2);
-
-  right=ambix_matrix_init(cols, cols2, NULL);
-  fail_if((right->rows!=cols || right->cols!=cols2), __LINE__, "created matrix [%dx%d] does not match [%dx%d]", right->rows, right->cols, cols, cols2);
-
-  fail_if((&matrix!=ambix_matrix_init(rows, cols2, &matrix)), __LINE__, "initializing existing matrix returned new matrix");
-  fail_if((matrix.rows!=rows || matrix.cols!=cols2), __LINE__, "initialized matrix [%dx%d] does not match [%dx%d]", matrix.rows, matrix.cols, rows, cols2);
-  
-  eye=ambix_matrix_init(rows, rows, NULL);
-  fail_if((eye!=ambix_matrix_eye(eye)), __LINE__, "filling unity matrix %p did not return original matrix %p", eye);
-
-
-  /* fill in some test data */
+ /* fill in some test data */
+  left=ambix_matrix_init(4, 3, NULL);
   ambix_matrix_fill(left, leftdata_4_3);
+  right=ambix_matrix_init(3, 2, NULL);
   ambix_matrix_fill(right, rightdata_3_2);
+  testresult=ambix_matrix_init(4, 2, NULL);
+  ambix_matrix_fill(testresult, resultdata_4_2);
+
+  errf=matrix_diff(__LINE__, left, left, eps);
+  fail_if(!(errf<eps), __LINE__, "diffing matrix with itself returned %f (>%f)", errf, eps);
 
   /* do some matrix multiplication */
   result=ambix_matrix_multiply(left, right, NULL);
   fail_if((NULL==result), __LINE__, "multiply into NULL did not create matrix");
 
-  fail_if((&matrix!=ambix_matrix_multiply(left, right, &matrix)), __LINE__, "multiply into existing matrix returned new matrix");
+  fail_if((result!=ambix_matrix_multiply(left, right, result)), __LINE__, "multiply into existing matrix returned new matrix");
 
-  errf=matrix_diff(__LINE__, left, left);
-  fail_if((errf>eps), __LINE__, "diffing matrix with itself returned %f (>%f)", errf, eps);
+  matrix_print(left);
+  matrix_print(right);
+  matrix_print(result);
+  printf("------------\n");
 
-  errf=matrix_diff(__LINE__, &matrix, result);
+  errf=matrix_diff(__LINE__, testresult, result, eps);
   fail_if((errf>eps), __LINE__, "diffing two results of same multiplication returned %f (>%f)", errf, eps);
-
-
-  fail_if((left!=ambix_matrix_multiply(eye, result, left)), __LINE__, "multiplication into matrix did not return original matrix");
-  errf=matrix_diff(__LINE__, left, result);
-  fail_if((errf>eps), __LINE__, "diffing matrix M with E*M returned %f (>%f)", errf, eps);
-
-
-  /* do some data multiplication */
-  fail_if(AMBIX_ERR_SUCCESS!=ambix_matrix_multiply_float32(resultdata, left, rightdata_3_2, 2), __LINE__,
-          "data multilplication failed");
-  fail_if(AMBIX_ERR_SUCCESS!=ambix_matrix_fill(result, resultdata), __LINE__,
-          "filling result data failed");
-
-   errf=matrix_diff(__LINE__, &matrix, result);
-  fail_if((errf>eps), __LINE__, "diffing matrix multiplication with data multiplication returned %f (>%f)", errf, eps);
-
-  ambix_matrix_deinit(&matrix);
-  fail_if((matrix.rows || matrix.cols), __LINE__, "deinitialized matrix is non-zero");
-
-  ambix_matrix_deinit(result);
-  fail_if((result->rows || result->cols), __LINE__, "deinitialized matrix is non-zero");
 
   ambix_matrix_destroy(left);
   ambix_matrix_destroy(right);
   ambix_matrix_destroy(result);
+  ambix_matrix_destroy(testresult);
+}
+void mtxmul_eye_tests(void) {
+  float32_t errf;
+  float32_t eps=1e-7;
+  ambixmatrix_t *left, *result, *eye;
+
+  eye=ambix_matrix_init(4, 4, NULL);
+  fail_if((eye!=ambix_matrix_eye(eye)), __LINE__, "filling unity matrix %p did not return original matrix %p", eye);
+
+  left=ambix_matrix_init(4, 2, NULL);
+  fail_if(AMBIX_ERR_SUCCESS!=ambix_matrix_fill(left, resultdata_4_2), __LINE__,
+          "filling left data failed");
+
+  result=ambix_matrix_init(4, 2, NULL);
+  fail_if(AMBIX_ERR_SUCCESS!=ambix_matrix_fill(result, resultdata_4_2), __LINE__,
+          "filling result data failed");
+
+  fail_if((result!=ambix_matrix_multiply(eye, left, result)), __LINE__, "multiplication into matrix did not return original matrix");
+  matrix_print(eye);
+  matrix_print(result);
+  matrix_print(left);
+  errf=matrix_diff(__LINE__, left, result, eps);
+  fail_if((errf>eps), __LINE__, "diffing matrix M with E*M returned %f (>%f)", errf, eps);
+
+  ambix_matrix_destroy(left);
+  ambix_matrix_destroy(result);
+  ambix_matrix_destroy(eye);
+}
+void datamul_tests(void) {
+  float32_t errf;
+  float32_t eps=1e-7;
+  float32_t*resultdata = calloc(4*2, sizeof(float32_t));
+
+  ambixmatrix_t*left, *result;
+
+  left=ambix_matrix_init(4, 3, NULL);
+  ambix_matrix_fill(left, leftdata_4_3);
+
+  result=ambix_matrix_init(4, 2, NULL);
+  ambix_matrix_fill(result, resultdata_4_2);
+
+  /* do some data multiplication */
+  printf("------------\n");
+  matrix_print(left);
+  printf("rightdata\n");  data_print(rightdata_3_2, 3*2);
+  printf("resltdata\n");  data_print(resultdata, 4*2);
+
+
+  fail_if(AMBIX_ERR_SUCCESS!=ambix_matrix_multiply_float32(resultdata, left, rightdata_3_2, 2), __LINE__,
+          "data multilplication failed");
+
+  matrix_print(left);
+  printf("rightdata\n");  data_print(rightdata_3_2, 3*2);
+  printf("resltdata\n");  data_print(resultdata, 4*2);
+  matrix_print(result);
+
+  /*
+  errf=matrix_diff(__LINE__, &matrix, result, eps);
+  fail_if(!(errf<eps), __LINE__, "diffing matrix multiplication with data multiplication returned %f (>%f)", errf, eps);
+  */
 
   free(resultdata);
+
+}
+
+void create_tests(void) {
+  int rows=4;
+  int cols=3;
+  int cols2=2;
+  ambixmatrix_t matrix, *left, *right;
+  float32_t eps=1e-10;
+  float32_t errf;
+
+  memset(&matrix, 0, sizeof(matrix));
+  
+  left=ambix_matrix_create();
+  fail_if((left==NULL), __LINE__, "failed to create left matrix");
+  fail_if((left->rows || left->cols), __LINE__, "created empty matrix has non-zero size");
+  fail_if((left!=ambix_matrix_init(rows, cols, left)), __LINE__, "initializing existing matrix* returned new matrix");
+  fail_if((left->rows!=rows || left->cols!=cols), __LINE__, "created matrix [%dx%d] does not match [%dx%d]", left->rows, left->cols, cols, cols2);
+
+  right=ambix_matrix_init(cols, cols2, NULL);
+  fail_if((right==NULL), __LINE__, "failed to create right matrix");
+  fail_if((right->rows!=cols || right->cols!=cols2), __LINE__, "created matrix [%dx%d] does not match [%dx%d]", right->rows, right->cols, cols, cols2);
+
+  fail_if((&matrix!=ambix_matrix_init(rows, cols2, &matrix)), __LINE__, "initializing existing matrix returned new matrix");
+  fail_if((matrix.rows!=rows || matrix.cols!=cols2), __LINE__, "initialized matrix [%dx%d] does not match [%dx%d]", matrix.rows, matrix.cols, rows, cols2);
+
+
+  ambix_matrix_deinit(&matrix);
+  fail_if((matrix.rows || matrix.cols), __LINE__, "deinitialized matrix is non-zero");
+
+  ambix_matrix_deinit(left);
+  fail_if((left->rows || left->cols), __LINE__, "deinitialized matrix is non-zero");
+
+  ambix_matrix_destroy(left);
+  ambix_matrix_destroy(right);
 }
 
 
