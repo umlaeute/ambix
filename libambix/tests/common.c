@@ -22,6 +22,7 @@
 */
 
 #include "common.h"
+#include <math.h>
 
 void matrix_print(const ambixmatrix_t*mtx) {
   printf("matrix [%dx%d]\n", mtx->rows, mtx->cols);
@@ -70,13 +71,14 @@ float32_t matrix_diff(uint32_t line, const ambixmatrix_t*A, const ambixmatrix_t*
     for(c=0; c<B->cols; c++) {
       float32_t v=a[r][c]-b[r][c];
       float32_t vabs=(v<0)?-v:v;
+      fail_if(isnan(v), line, "[%d|%d] is NaN: %f <-> %f", r, c, a[r][c], b[r][c]);
       if(vabs>maxdiff)
         maxdiff=vabs;
       sum+=vabs;
       if(vabs>eps)
         printf("%f - %f=%f @ [%02d|%02d]\n", a[r][c], b[r][c], v, r, c);
     }
-  printf("accumulated error %f\n", sum);
+  //printf("accumulated error %f\n", sum);
   return maxdiff;
 }
 
@@ -92,6 +94,7 @@ float32_t data_diff(uint32_t line, const float32_t*A, const float32_t*B, uint64_
   for(i=0; i<frames; i++) {
     float32_t v=A[i]-B[i];
     float32_t vabs=(v<0)?-v:v;
+    fail_if(isnan(v), line, "[%d] is NaN: %f <-> %f", i, A[i], B[i]);
     if(vabs>maxdiff)
       maxdiff=vabs;
     sum+=vabs;
@@ -99,7 +102,7 @@ float32_t data_diff(uint32_t line, const float32_t*A, const float32_t*B, uint64_
       printf("%f - %f=%f @ %d\n", A[i], B[i], v, i);
 
   }
-  printf("accumulated error %f\n", sum);
+  //printf("accumulated error %f\n", sum);
 
   return maxdiff;
 }
