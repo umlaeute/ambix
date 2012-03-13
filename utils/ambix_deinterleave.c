@@ -81,6 +81,16 @@ static char*ai_prefix(const char*filename) {
   strcat(result, filename);
   strcat(result, "-");
 #else
+  char*last=rindex(filename, '.');
+  if(last) {
+    int length=last-filename;
+    char*result=calloc(1, strlen(filename));
+    strncpy(result, filename, length);
+    result[length]='-';
+    result[length+1]='\0';
+    return result;
+  }
+
   char*result=strdup("outfile-");
 #endif
   return result;
@@ -188,7 +198,7 @@ static ai_t*ai_close(ai_t*ai) {
 static ai_t*ai_open_input(ai_t*ai) {
   uint32_t i;
   uint32_t channels=0;
-  ambixmatrix_t*matrix=NULL;
+  const ambixmatrix_t*matrix=NULL;
   if(!ai)return ai;
   if(!ai->inhandle) {
     ai->info.ambixfileformat=AMBIX_EXTENDED;
