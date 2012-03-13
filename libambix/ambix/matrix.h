@@ -128,7 +128,7 @@ int ambix_matrix_fill_swapped(ambixmatrix_t*mtx, number32_t*data);
  */
 AMBIX_API
 ambixmatrix_t*ambix_matrix_copy(const ambixmatrix_t*src, ambixmatrix_t*dest);
-/** @brief Multiplay two matrices
+/** @brief Multiply two matrices
  *
  * Multiply matrices dest=A*B, possibly resizing or creating the destination matrix
  *
@@ -140,6 +140,33 @@ ambixmatrix_t*ambix_matrix_copy(const ambixmatrix_t*src, ambixmatrix_t*dest);
  */
 AMBIX_API
 ambixmatrix_t*ambix_matrix_multiply(const ambixmatrix_t*A, const ambixmatrix_t*B, ambixmatrix_t*result);
+
+
+/** @brief Multiply a matrix with (32bit floating point) data 
+ *
+ * Multiply a [rows*cols] matrix with an array of [cols*frames] data to get [rows*frames] data
+ *
+ * @param dest a pointer to hold the output data; it must be large enough to hold at least rows*frames samples (allocated by the user)
+ * @param mtx the matrix to multiply source with
+ * @param source a pointer to an array that holds cols*frames samples (allocated by the user)
+ * @param frames number of frames in source
+ * @return an error code indicating success
+ */
+AMBIX_API
+ambix_err_t ambix_matrix_multiply_float32(float32_t*dest, const ambixmatrix_t*mtx, const float32_t*source, int64_t frames);
+/** @brief Multiply a matrix with (32bit signed integer) data 
+ *
+ * @see ambix_matrix_multiply_float32
+ */
+AMBIX_API
+ambix_err_t ambix_matrix_multiply_int32(int32_t*dest, const ambixmatrix_t*mtx, const int32_t*source, int64_t frames);
+ambix_err_t ambix_matrix_multiply_float32(float32_t*dest, const ambixmatrix_t*mtx, const float32_t*source, int64_t frames);
+/** @brief Multiply a matrix with (16 bit signed integer) data 
+ *
+ * @see ambix_matrix_multiply_float32
+ */
+AMBIX_API
+ambix_err_t ambix_matrix_multiply_int16(int16_t*dest, const ambixmatrix_t*mtx, const int16_t*source, int64_t frames);
 
 #ifdef __cplusplus
 }		/* extern "C" */

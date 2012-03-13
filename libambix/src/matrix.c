@@ -183,3 +183,52 @@ ambix_matrix_eye(ambixmatrix_t*matrix) {
 
   return matrix;
 }
+
+
+ambix_err_t ambix_matrix_multiply_float32(float32_t*dest, const ambixmatrix_t*matrix, const float32_t*source, int64_t frames) {
+  float32_t**mtx=matrix->data;
+  const uint32_t rows=matrix->rows;
+  const uint32_t cols=matrix->cols;
+  int64_t f;
+  for(f=0; f<frames; f++) {
+    uint32_t chan;
+    for(chan=0; chan<rows; chan++) {
+      const float32_t*src=source;
+      float32_t sum=0.;
+      uint32_t c;
+      for(c=0; c<cols; c++) {
+        sum+=mtx[chan][c] * src[c];
+      }
+      *dest++=sum;
+      source+=cols;
+    }
+  }
+  return AMBIX_ERR_SUCCESS;
+}
+
+
+#define MTXMULTIPLY_DATA_INT(typ)                                       \
+  ambix_err_t ambix_matrix_multiply_##typ(typ##_t*dest, const ambixmatrix_t*matrix, const typ##_t*source, int64_t frames) { \
+    float32_t**mtx=matrix->data;                                        \
+    const uint32_t rows=matrix->rows;                                   \
+    const uint32_t cols=matrix->cols;                                   \
+    int64_t f;                                                          \
+    for(f=0; f<frames; f++) {                                           \
+      uint32_t chan;                                                    \
+      for(chan=0; chan<rows; chan++) {                                  \
+        const typ##_t*src=source;                                       \
+        float32_t sum=0.;                                               \
+        uint32_t c;                                                     \
+        for(c=0; c<cols; c++) {                                         \
+          sum+=mtx[chan][c] * src[c];                                   \
+        }                                                               \
+        *dest++=sum;                                                    \
+        source+=cols;                                                   \
+      }                                                                 \
+    }                                                                   \
+    return AMBIX_ERR_SUCCESS;                                           \
+  }
+
+
+MTXMULTIPLY_DATA_INT(int16);
+MTXMULTIPLY_DATA_INT(int32);
