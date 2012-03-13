@@ -44,31 +44,6 @@ static float32_t resultdata_4_2[]= {
   0.81267,   0.87390,
 };
 
-
-static float32_t matrix_diff(ambixmatrix_t*A, ambixmatrix_t*B) {
-  uint32_t r, c;
-  float32_t sum=0.;
-
-  float32_t**a=NULL;
-  float32_t**b=NULL;
-
-  fail_if((NULL==A), __LINE__, "left-hand matrix of matrixdiff is NULL");
-  fail_if((NULL==B), __LINE__, "right-hand matrix of matrixdiff is NULL");
-  fail_if(((A->rows!=B->rows) || (A->cols!=B->cols)), __LINE__, "matrixdiff matrices do not match [%dx%d]!=[%dx%d]", A->rows, A->cols, B->rows, B->cols);
-  
-  a=A->data;
-  b=B->data;
-  for(r=0; r<A->rows; r++)
-    for(c=0; c<B->cols; c++) {
-      float32_t v=a[r][c]-b[r][c];
-      if(v<0)
-        sum-=v;
-      else
-        sum+=v;
-    }
-  return sum;
-}
-
 void create_tests(void) {
   int rows=4;
   int cols=3;
@@ -108,15 +83,15 @@ void create_tests(void) {
 
   fail_if((&matrix!=ambix_matrix_multiply(left, right, &matrix)), __LINE__, "multiply into existing matrix returned new matrix");
 
-  errf=matrix_diff(left, left);
+  errf=matrix_diff(__LINE__, left, left);
   fail_if((errf>eps), __LINE__, "diffing matrix with itself returned %f (>%f)", errf, eps);
 
-  errf=matrix_diff(&matrix, result);
+  errf=matrix_diff(__LINE__, &matrix, result);
   fail_if((errf>eps), __LINE__, "diffing two results of same multiplication returned %f (>%f)", errf, eps);
 
 
   fail_if((left!=ambix_matrix_multiply(eye, result, left)), __LINE__, "multiplication into matrix did not return original matrix");
-  errf=matrix_diff(left, result);
+  errf=matrix_diff(__LINE__, left, result);
   fail_if((errf>eps), __LINE__, "diffing matrix M with E*M returned %f (>%f)", errf, eps);
 
 
@@ -126,7 +101,7 @@ void create_tests(void) {
   fail_if(AMBIX_ERR_SUCCESS!=ambix_matrix_fill(result, resultdata), __LINE__,
           "filling result data failed");
 
-   errf=matrix_diff(&matrix, result);
+   errf=matrix_diff(__LINE__, &matrix, result);
   fail_if((errf>eps), __LINE__, "diffing matrix multiplication with data multiplication returned %f (>%f)", errf, eps);
 
   ambix_matrix_deinit(&matrix);

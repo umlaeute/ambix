@@ -22,7 +22,7 @@ fail_SOURCES=fail.c
 
 TESTS += matrix
 check_PROGRAMS += matrix
-matrix_SOURCES=matrix.c
+matrix_SOURCES=matrix.c common.c
 
 
 TESTS += 

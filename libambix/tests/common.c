@@ -25,7 +25,7 @@
 
 void matrix_print(const ambixmatrix_t*mtx) {
   printf("matrix [%dx%d]\n", mtx->rows, mtx->cols);
-  if(matrix->data) {
+  if(mtx->data) {
     uint32_t c, r;
     for(r=0; r<mtx->rows; r++) {
       for(c=0; c<mtx->cols; c++)
@@ -37,10 +37,36 @@ void matrix_print(const ambixmatrix_t*mtx) {
 
 float32_t*data_sine(uint32_t frames, float32_t periods) {
   float32_t*data=calloc(frames, sizeof(float32_t));
-  int32_t f;
+  int32_t frame;
   for(frame=0; frame<frames; frame++) {
     data[frame]=sinf((float32_t)frame*(float32_t)frames/periods);
   }
 
   return data;
+}
+
+
+
+float32_t matrix_diff(uint32_t line, const ambixmatrix_t*A, const ambixmatrix_t*B) {
+  uint32_t r, c;
+  float32_t sum=0.;
+
+  float32_t**a=NULL;
+  float32_t**b=NULL;
+
+  fail_if((NULL==A), line, "left-hand matrix of matrixdiff is NULL");
+  fail_if((NULL==B), line, "right-hand matrix of matrixdiff is NULL");
+  fail_if(((A->rows!=B->rows) || (A->cols!=B->cols)), line, "matrixdiff matrices do not match [%dx%d]!=[%dx%d]", A->rows, A->cols, B->rows, B->cols);
+  
+  a=A->data;
+  b=B->data;
+  for(r=0; r<A->rows; r++)
+    for(c=0; c<B->cols; c++) {
+      float32_t v=a[r][c]-b[r][c];
+      if(v<0)
+        sum-=v;
+      else
+        sum+=v;
+    }
+  return sum;
 }
