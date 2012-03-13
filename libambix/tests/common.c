@@ -36,23 +36,6 @@ void matrix_print(const ambixmatrix_t*mtx) {
   }
 }
 
-float32_t*data_sine(uint64_t frames, uint32_t channels, float32_t periods) {
-  float32_t*data=calloc(frames*channels, sizeof(float32_t));
-  float32_t*datap=data;
-  int64_t frame;
-  for(frame=0; frame<frames; frame++) {
-    float f=(float32_t)frame*periods/(float32_t)frames;
-    float32_t value=0.5*sinf(f);
-    int32_t chan;
-    for(chan=0; chan<channels; chan++)
-      *datap++=value;
-  }
-
-  return data;
-}
-
-
-
 float32_t matrix_diff(uint32_t line, const ambixmatrix_t*A, const ambixmatrix_t*B, float32_t eps) {
   uint32_t r, c;
   float32_t sum=0.;
@@ -116,3 +99,38 @@ void data_print(const float32_t*data, uint64_t frames) {
     printf("%05d: %f\n", (int)i, f);
   }
 }
+
+
+
+
+float32_t*data_sine(uint64_t frames, uint32_t channels, float32_t periods) {
+  float32_t*data=calloc(frames*channels, sizeof(float32_t));
+  float32_t*datap=data;
+  int64_t frame;
+  for(frame=0; frame<frames; frame++) {
+    float f=(float32_t)frame*periods/(float32_t)frames;
+    float32_t value=0.5*sinf(f);
+    int32_t chan;
+    for(chan=0; chan<channels; chan++)
+      *datap++=value;
+  }
+  return data;
+}
+
+float32_t*data_ramp(uint64_t frames, uint32_t channels) {
+  float32_t*data=calloc(frames*channels, sizeof(float32_t));
+  float32_t*datap=data;
+  double increment=1./(double)frames;
+  double value=0.;
+  int64_t frame;
+  for(frame=0; frame<frames; frame++) {
+    value+=increment;
+    int32_t chan;
+    for(chan=0; chan<channels; chan++)
+      *datap++=(value-0.5);
+  }
+  return data;
+}
+
+
+
