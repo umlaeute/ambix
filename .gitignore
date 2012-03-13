@@ -1,3 +1,8 @@
 *.o
 *~
 *.pd_*
+Makefile.in
+*.lo
+.deps/
+.libs/
+autom4te.cache/
