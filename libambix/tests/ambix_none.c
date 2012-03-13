@@ -32,7 +32,7 @@ void check_create_none(const char*path, ambix_sampleformat_t format) {
   float32_t*orgdata,*data,*resultdata;
   uint32_t frames=44100;
   uint32_t channels=6;
-  float32_t periods=100;
+  float32_t periods=10;
   uint32_t err32;
   float32_t diff=0., eps=1e-30;
 
@@ -54,6 +54,8 @@ void check_create_none(const char*path, ambix_sampleformat_t format) {
   fail_if((NULL==ambix), __LINE__, "couldn't create ambix file '%s' for writing", path);
 
   orgdata=data_sine(frames, channels, periods);
+  //data_print(orgdata, 100);
+
   memcpy(data, orgdata, frames*channels*sizeof(float32_t));
 
   fail_if((NULL==data), __LINE__, "couldn't create data %dx%d sine @ %f", frames, channels, periods);
