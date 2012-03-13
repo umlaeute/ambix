@@ -231,11 +231,10 @@ ambix_err_t _ambix_write_uuidchunk(ambix_t*ax, const void*data, int64_t datasize
   if(chunk->data)
     free(chunk->data);
 
-	chunk->data = calloc(4, datasize4);
+	chunk->data = calloc(datasize4, 4);
 
   memcpy(chunk->data, data, datasize);
 	chunk->datalen = datasize ;
-
 	err = sf_set_chunk (PRIVATE(ax)->sf_file, chunk) ;
 
   if(SF_ERR_NO_ERROR != err)
