@@ -139,6 +139,7 @@ ambixmatrix_t*
 ambix_matrix_multiply(const ambixmatrix_t*left, const ambixmatrix_t*right, ambixmatrix_t*dest) {
   uint32_t r, c, rows, cols, common;
   float32_t**ldat,**rdat,**ddat;
+  float32_t lv, rv;
   if(!left || !right)
     return NULL;
 
@@ -161,10 +162,13 @@ ambix_matrix_multiply(const ambixmatrix_t*left, const ambixmatrix_t*right, ambix
 
   for(r=0; r<rows; r++)
     for(c=0; c<cols; c++) {
-      float32_t sum=0.;
+      double sum=0.;
       uint32_t i;
-      for(i=0; i<common; i++)
-        sum+=ldat[r][i]*rdat[i][c];
+      for(i=0; i<common; i++) {
+        lv=ldat[r][i];
+        rv=rdat[i][c];
+        sum+=lv*rv;
+      }
       ddat[r][c]=sum;
     }
 
@@ -186,51 +190,51 @@ ambix_matrix_eye(ambixmatrix_t*matrix) {
   return matrix;
 }
 
-
 ambix_err_t ambix_matrix_multiply_float32(float32_t*dest, const ambixmatrix_t*matrix, const float32_t*source, int64_t frames) {
   float32_t**mtx=matrix->data;
-  const uint32_t rows=matrix->rows;
-  const uint32_t cols=matrix->cols;
-  int64_t f;
-  for(f=0; f<frames; f++) {
-    uint32_t chan;
-    for(chan=0; chan<rows; chan++) {
-      const float32_t*src=source;
-      float32_t sum=0.;
-      uint32_t c;
-      for(c=0; c<cols; c++) {
-        sum+=mtx[chan][c] * src[c];
+  const uint32_t outchannels=matrix->rows;
+  const uint32_t inchannels=matrix->cols;
+  int64_t frame;
+  for(frame=0; frame<frames; frame++) {
+    uint32_t outchan;
+    float32_t*dst=dest+frame;
+    const float32_t*src=source+frame;
+    for(outchan=0; outchan<outchannels; outchan++) {
+      double sum=0.;
+      uint32_t inchan;
+      for(inchan=0; inchan<inchannels; inchan++) {
+        double scale=mtx[outchan][inchan];
+        double in=src[inchan*frames];
+        sum+=scale * in;
       }
-      *dest++=sum;
-      source+=cols;
+      dst[frames*outchan]=sum;
     }
   }
   return AMBIX_ERR_SUCCESS;
 }
-
-
 #define MTXMULTIPLY_DATA_INT(typ)                                       \
   ambix_err_t ambix_matrix_multiply_##typ(typ##_t*dest, const ambixmatrix_t*matrix, const typ##_t*source, int64_t frames) { \
     float32_t**mtx=matrix->data;                                        \
-    const uint32_t rows=matrix->rows;                                   \
-    const uint32_t cols=matrix->cols;                                   \
-    int64_t f;                                                          \
-    for(f=0; f<frames; f++) {                                           \
-      uint32_t chan;                                                    \
-      for(chan=0; chan<rows; chan++) {                                  \
-        const typ##_t*src=source;                                       \
-        float32_t sum=0.;                                               \
-        uint32_t c;                                                     \
-        for(c=0; c<cols; c++) {                                         \
-          sum+=mtx[chan][c] * src[c];                                   \
+    const uint32_t outchannels=matrix->rows;                            \
+    const uint32_t inchannels=matrix->cols;                             \
+    int64_t frame;                                                      \
+    for(frame=0; frame<frames; frame++) {                               \
+      uint32_t outchan;                                                 \
+      typ##_t*dst=dest+frame;                                           \
+      const typ##_t*src=source+frame;                                   \
+      for(outchan=0; outchan<outchannels; outchan++) {                  \
+        double sum=0.;                                                  \
+        uint32_t inchan;                                                \
+        for(inchan=0; inchan<inchannels; inchan++) {                    \
+          double scale=mtx[outchan][inchan];                            \
+          double in=src[inchan*frames];                                 \
+          sum+=scale * in;                                              \
         }                                                               \
-        *dest++=sum;                                                    \
-        source+=cols;                                                   \
+        dst[frames*outchan]=sum;                                        \
       }                                                                 \
     }                                                                   \
     return AMBIX_ERR_SUCCESS;                                           \
   }
-
 
 MTXMULTIPLY_DATA_INT(int16);
 MTXMULTIPLY_DATA_INT(int32);
