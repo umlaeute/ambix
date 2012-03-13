@@ -28,5 +28,6 @@ TESTS += ambix_none
 check_PROGRAMS += ambix_none
 ambix_none_SOURCES = ambix_none.c common.c
 
-
-
+TESTS += ambix_simple
+check_PROGRAMS += ambix_simple
+ambix_simple_SOURCES = ambix_simple.c common.c
