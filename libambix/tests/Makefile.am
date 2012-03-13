@@ -6,12 +6,12 @@ TESTS_ENVIRONMENT = TESTDIR=$(srcdir)
 INCLUDES = -I$(top_srcdir)/libambix
 LDADD = $(top_builddir)/libambix/src/libambix.la
 
-TESTS=success skip fail 
+TESTS=pass skip fail 
 
 XFAIL_TESTS = fail
 
-check_PROGRAMS=success skip fail
+check_PROGRAMS=pass skip fail
 
-success_SOURCES=success.c
+pass_SOURCES=pass.c
 skip_SOURCES=skip.c
 fail_SOURCES=fail.c

@@ -1,4 +1,4 @@
-/* success - simple test that always succeeds
+/* pass - simple test that always passes
 
    Copyright © 2012 IOhannes m zmölnig <zmoelnig@iem.at>.
          Institute of Electronic Music and Acoustics (IEM),
@@ -25,6 +25,6 @@
 
 int main(int argc, char**argv) {
 
-  success();
+  pass();
   return 0;
 }

@@ -4,7 +4,7 @@
 #include <ambix/ambix.h>
 
 #include <stdlib.h>
-static void success(void) {exit(0); }
+static void pass(void) {exit(0); }
 static void fail(void) {exit(1); }
 static void skip(void) {exit(77); }
 
