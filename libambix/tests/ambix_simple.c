@@ -18,7 +18,6 @@
 
    You should have received a copy of the GNU Lesser General Public
    License along with this program; if not, see <http://www.gnu.org/licenses/>.
-
 */
 
 #include "common.h"
@@ -26,15 +25,17 @@
 #include <string.h>
 
 
-void check_create_simple(const char*path, ambix_sampleformat_t format) {
+void check_create_simple(const char*path, ambix_sampleformat_t format, float32_t eps) {
   ambixinfo_t info, rinfo, winfo;
   ambix_t*ambix=NULL;
   float32_t*orgdata,*data,*resultdata;
-  uint32_t frames=44100;
+  uint32_t frames=441000;
   uint32_t channels=4;
-  float32_t periods=10;
+  float32_t periods=20000;
   uint32_t err32;
-  float32_t diff=0., eps=1e-30;
+  float32_t diff=0.;
+
+  printf("test using '%s' [%d]\n", path, (int)format);
 
   resultdata=calloc(channels*frames, sizeof(float32_t));
   data=calloc(channels*frames, sizeof(float32_t));
@@ -63,7 +64,7 @@ void check_create_simple(const char*path, ambix_sampleformat_t format) {
   err32=ambix_writef_float32(ambix, data, NULL, frames);
   fail_if((err32!=frames), __LINE__, "wrote only %d frames of %d", err32, frames);
 
-  diff=data_diff(__LINE__, orgdata, data, frames*channels);
+  diff=data_diff(__LINE__, orgdata, data, frames*channels, eps);
   fail_if((diff>eps), __LINE__, "data diff %f > %f", diff, eps);
          
   fail_if((AMBIX_ERR_SUCCESS!=ambix_close(ambix)), __LINE__, "closing ambix file %p", ambix);
@@ -81,19 +82,22 @@ void check_create_simple(const char*path, ambix_sampleformat_t format) {
   err32=ambix_readf_float32(ambix, resultdata, NULL, frames);
   fail_if((err32!=frames), __LINE__, "wrote only %d frames of %d", err32, frames);
 
-  diff=data_diff(__LINE__, orgdata, resultdata, frames*channels);
+  diff=data_diff(__LINE__, orgdata, resultdata, frames*channels, eps);
   fail_if((diff>eps), __LINE__, "data diff %f > %f", diff, eps);
 
   fail_if((AMBIX_ERR_SUCCESS!=ambix_close(ambix)), __LINE__, "closing ambix file %p", ambix);
   ambix=NULL;
 
-  unlink(path);
+  //  unlink(path);
 }
 
 
 
 int main(int argc, char**argv) {
-  check_create_simple("test-simple.caf",  AMBIX_SAMPLEFORMAT_FLOAT32);
+  check_create_simple("test-float32.caf",  AMBIX_SAMPLEFORMAT_FLOAT32, 1e-7);
+  check_create_simple("test-pcm32.caf",  AMBIX_SAMPLEFORMAT_PCM32, 1e-5);
+  check_create_simple("test-pcm16.caf",  AMBIX_SAMPLEFORMAT_PCM16, 1./20000.);
+
 
   pass();
   return 0;

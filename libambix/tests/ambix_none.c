@@ -63,7 +63,7 @@ void check_create_none(const char*path, ambix_sampleformat_t format) {
   err32=ambix_writef_float32(ambix, NULL, data, frames);
   fail_if((err32!=frames), __LINE__, "wrote only %d frames of %d", err32, frames);
 
-  diff=data_diff(__LINE__, orgdata, data, frames*channels);
+  diff=data_diff(__LINE__, orgdata, data, frames*channels, eps);
   fail_if((diff>eps), __LINE__, "data diff %f > %f", diff, eps);
          
   fail_if((AMBIX_ERR_SUCCESS!=ambix_close(ambix)), __LINE__, "closing ambix file %p", ambix);
@@ -81,7 +81,7 @@ void check_create_none(const char*path, ambix_sampleformat_t format) {
   err32=ambix_readf_float32(ambix, NULL, resultdata, frames);
   fail_if((err32!=frames), __LINE__, "wrote only %d frames of %d", err32, frames);
 
-  diff=data_diff(__LINE__, orgdata, resultdata, frames*channels);
+  diff=data_diff(__LINE__, orgdata, resultdata, frames*channels, eps);
   fail_if((diff>eps), __LINE__, "data diff %f > %f", diff, eps);
 
   fail_if((AMBIX_ERR_SUCCESS!=ambix_close(ambix)), __LINE__, "closing ambix file %p", ambix);
