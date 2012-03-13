@@ -41,7 +41,7 @@ float32_t*data_sine(uint64_t frames, uint32_t channels, float32_t periods) {
   int64_t frame;
   for(frame=0; frame<frames; frame++) {
     float f=(float32_t)frame*periods/(float32_t)frames;
-    float32_t value=sinf(f);
+    float32_t value=0.5*sinf(f);
     int32_t chan;
     for(chan=0; chan<channels; chan++)
       *datap++=value;
@@ -52,9 +52,10 @@ float32_t*data_sine(uint64_t frames, uint32_t channels, float32_t periods) {
 
 
 
-float32_t matrix_diff(uint32_t line, const ambixmatrix_t*A, const ambixmatrix_t*B) {
+float32_t matrix_diff(uint32_t line, const ambixmatrix_t*A, const ambixmatrix_t*B, float32_t eps) {
   uint32_t r, c;
   float32_t sum=0.;
+  float32_t maxdiff=-1.f;
 
   float32_t**a=NULL;
   float32_t**b=NULL;
@@ -68,30 +69,39 @@ float32_t matrix_diff(uint32_t line, const ambixmatrix_t*A, const ambixmatrix_t*
   for(r=0; r<A->rows; r++)
     for(c=0; c<B->cols; c++) {
       float32_t v=a[r][c]-b[r][c];
-      if(v<0)
-        sum-=v;
-      else
-        sum+=v;
+      float32_t vabs=(v<0)?-v:v;
+      if(vabs>maxdiff)
+        maxdiff=vabs;
+      sum+=vabs;
+      if(vabs>eps)
+        printf("%f - %f=%f @ [%02d|%02d]\n", a[r][c], b[r][c], v, r, c);
     }
-  return sum;
+  printf("accumulated error %f\n", sum);
+  return maxdiff;
 }
 
 
-float32_t data_diff(uint32_t line, const float32_t*A, const float32_t*B, uint64_t frames) {
+float32_t data_diff(uint32_t line, const float32_t*A, const float32_t*B, uint64_t frames, float32_t eps) {
   uint64_t i;
   float32_t sum=0.;
+  float32_t maxdiff=-1.f;
 
   fail_if((NULL==A), line, "left-hand data of datadiff is NULL");
   fail_if((NULL==B), line, "right-hand data of datadiff is NULL");
   
   for(i=0; i<frames; i++) {
-    float32_t v=(*A++)-(*B++);
-    if(v<0)
-      sum-=v;
-    else
-      sum+=v;
+    float32_t v=A[i]-B[i];
+    float32_t vabs=(v<0)?-v:v;
+    if(vabs>maxdiff)
+      maxdiff=vabs;
+    sum+=vabs;
+    if(vabs>eps)
+      printf("%f - %f=%f @ %d\n", A[i], B[i], v, i);
+
   }
-  return sum;
+  printf("accumulated error %f\n", sum);
+
+  return maxdiff;
 }
 
 
