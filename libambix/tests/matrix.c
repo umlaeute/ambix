@@ -25,30 +25,30 @@
 #include <string.h>
 
 static float32_t leftdata_4_3[]= {
-0.983520, 0.034607, 0.648430,
-0.394529, 0.630990, 0.092989,
-0.059999, 0.319706, 0.121544,
-0.733692, 0.901404, 0.161981,
+   0.19, 0.06, 0.14,
+   0.05, 0.08, 0.44,
+   0.25, 0.9, 0.77,
+   0.83, 0.51, 0.58,
 };
 
 
 static float32_t rightdata_3_2[]= {
-  0.33431,   0.11569,
-  0.54961,   0.84047,
-  0.44430,   0.19395,
+   0.22, 0.46,
+   0.36, 0.53,
+   0.77, 0.85,
 };
 
 static float32_t resultdata_4_2[]= {
-  0.63592,   0.26863,
-  0.52001,   0.59400,
-  0.24978,   0.29922,
-  0.81267,   0.87390,
+   0.1712, 0.2382,
+   0.3786, 0.4394,
+   0.9719, 1.2465,
+   0.8128, 1.1451,
 };
 
-void mtxmul_tests(void) {
+void mtxmul_tests(float32_t eps) {
   float32_t errf;
-  float32_t eps=1e-7;
   ambixmatrix_t *left, *right, *result, *testresult;
+  STARTTEST();
 
  /* fill in some test data */
   left=ambix_matrix_init(4, 3, NULL);
@@ -67,11 +67,12 @@ void mtxmul_tests(void) {
 
   fail_if((result!=ambix_matrix_multiply(left, right, result)), __LINE__, "multiply into existing matrix returned new matrix");
 
+#if 0
   matrix_print(left);
   matrix_print(right);
   matrix_print(result);
   printf("------------\n");
-
+#endif
   errf=matrix_diff(__LINE__, testresult, result, eps);
   fail_if((errf>eps), __LINE__, "diffing two results of same multiplication returned %f (>%f)", errf, eps);
 
@@ -80,11 +81,10 @@ void mtxmul_tests(void) {
   ambix_matrix_destroy(result);
   ambix_matrix_destroy(testresult);
 }
-void mtxmul_eye_tests(void) {
+void mtxmul_eye_tests(float32_t eps) {
   float32_t errf;
-  float32_t eps=1e-7;
   ambixmatrix_t *left, *result, *eye;
-
+  STARTTEST();
   eye=ambix_matrix_init(4, 4, NULL);
   fail_if((eye!=ambix_matrix_eye(eye)), __LINE__, "filling unity matrix %p did not return original matrix %p", eye);
 
@@ -97,9 +97,11 @@ void mtxmul_eye_tests(void) {
           "filling result data failed");
 
   fail_if((result!=ambix_matrix_multiply(eye, left, result)), __LINE__, "multiplication into matrix did not return original matrix");
+#if 0
   matrix_print(eye);
   matrix_print(result);
   matrix_print(left);
+#endif
   errf=matrix_diff(__LINE__, left, result, eps);
   fail_if((errf>eps), __LINE__, "diffing matrix M with E*M returned %f (>%f)", errf, eps);
 
@@ -107,50 +109,42 @@ void mtxmul_eye_tests(void) {
   ambix_matrix_destroy(result);
   ambix_matrix_destroy(eye);
 }
-void datamul_tests(void) {
+void datamul_tests(float32_t eps) {
   float32_t errf;
-  float32_t eps=1e-7;
   float32_t*resultdata = calloc(4*2, sizeof(float32_t));
 
-  ambixmatrix_t*left, *result;
+  ambixmatrix_t*mtx=NULL;
+  STARTTEST();
 
-  left=ambix_matrix_init(4, 3, NULL);
-  ambix_matrix_fill(left, leftdata_4_3);
+  mtx=ambix_matrix_init(4, 3, NULL);
+  ambix_matrix_fill(mtx, leftdata_4_3);
 
-  result=ambix_matrix_init(4, 2, NULL);
-  ambix_matrix_fill(result, resultdata_4_2);
-
-  /* do some data multiplication */
-  printf("------------\n");
-  matrix_print(left);
-  printf("rightdata\n");  data_print(rightdata_3_2, 3*2);
-  printf("resltdata\n");  data_print(resultdata, 4*2);
-
-
-  fail_if(AMBIX_ERR_SUCCESS!=ambix_matrix_multiply_float32(resultdata, left, rightdata_3_2, 2), __LINE__,
+  fail_if(AMBIX_ERR_SUCCESS!=ambix_matrix_multiply_float32(resultdata, mtx, rightdata_3_2, 2), __LINE__,
           "data multilplication failed");
 
-  matrix_print(left);
-  printf("rightdata\n");  data_print(rightdata_3_2, 3*2);
-  printf("resltdata\n");  data_print(resultdata, 4*2);
-  matrix_print(result);
+  errf=data_diff(__LINE__, resultdata, resultdata_4_2, 4*2, eps);
+  fail_if(!(errf<eps), __LINE__, "diffing data multiplication returned %f (>%f)", errf, eps);
 
-  /*
-  errf=matrix_diff(__LINE__, &matrix, result, eps);
-  fail_if(!(errf<eps), __LINE__, "diffing matrix multiplication with data multiplication returned %f (>%f)", errf, eps);
-  */
+#if 0
+  printf("matrix:\n");matrix_print(mtx);
+  printf("input :\n");  data_print(rightdata_3_2, 3*2);
+  printf("output:\n");  data_print(resultdata, 4*2);
 
+  printf("target:\n");  data_print(resultdata_4_2, 4*2);
+#endif
+
+
+  if(mtx)ambix_matrix_destroy(mtx);
   free(resultdata);
-
 }
 
-void create_tests(void) {
+void create_tests(float32_t eps) {
   int rows=4;
   int cols=3;
   int cols2=2;
   ambixmatrix_t matrix, *left, *right;
-  float32_t eps=1e-10;
   float32_t errf;
+  STARTTEST();
 
   memset(&matrix, 0, sizeof(matrix));
   
@@ -181,7 +175,10 @@ void create_tests(void) {
 
 
 int main(int argc, char**argv) {
-  create_tests();
+  create_tests(1e-7);
+  mtxmul_tests(1e-7);
+  mtxmul_eye_tests(1e-7);
+  datamul_tests(1e-7);
 
   pass();
   return 0;
