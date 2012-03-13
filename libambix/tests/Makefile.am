@@ -22,8 +22,11 @@ fail_SOURCES=fail.c
 
 TESTS += matrix
 check_PROGRAMS += matrix
-matrix_SOURCES=matrix.c common.c
+matrix_SOURCES = matrix.c common.c
+
+TESTS += ambix_none
+check_PROGRAMS += ambix_none
+ambix_none_SOURCES = ambix_none.c common.c
 
 
-TESTS += 
 
