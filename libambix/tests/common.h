@@ -50,7 +50,10 @@ static inline void fail_if (int test, int line, const char *format, ...)
 void matrix_print(const ambixmatrix_t*mtx);
 float32_t matrix_diff(uint32_t line, const ambixmatrix_t*A, const ambixmatrix_t*B);
 
-float32_t*data_sine(uint32_t frames, float32_t periods);
+
+float32_t data_diff(uint32_t line, const float32_t*A, const float32_t*B, uint64_t frames);
+
+float32_t*data_sine(uint64_t frames, uint32_t channels, float32_t periods);
 
 #endif /* TESTS_COMMON_H */
 

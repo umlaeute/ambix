@@ -35,11 +35,15 @@ void matrix_print(const ambixmatrix_t*mtx) {
   }
 }
 
-float32_t*data_sine(uint32_t frames, float32_t periods) {
-  float32_t*data=calloc(frames, sizeof(float32_t));
-  int32_t frame;
+float32_t*data_sine(uint64_t frames, uint32_t channels, float32_t periods) {
+  float32_t*data=calloc(frames*channels, sizeof(float32_t));
+  float32_t*datap;
+  int64_t frame;
   for(frame=0; frame<frames; frame++) {
-    data[frame]=sinf((float32_t)frame*(float32_t)frames/periods);
+    float32_t value=sinf((float32_t)frame*(float32_t)frames/periods);
+    int32_t chan;
+    for(chan=0; chan<channels; chan++)
+      *datap++=value;
   }
 
   return data;
@@ -68,5 +72,23 @@ float32_t matrix_diff(uint32_t line, const ambixmatrix_t*A, const ambixmatrix_t*
       else
         sum+=v;
     }
+  return sum;
+}
+
+
+float32_t data_diff(uint32_t line, const float32_t*A, const float32_t*B, uint64_t frames) {
+  uint64_t i;
+  float32_t sum=0.;
+
+  fail_if((NULL==A), line, "left-hand data of datadiff is NULL");
+  fail_if((NULL==B), line, "right-hand data of datadiff is NULL");
+  
+  for(i=0; i<frames; i++) {
+    float32_t v=(*A++)-(*B++);
+    if(v<0)
+      sum-=v;
+    else
+      sum+=v;
+  }
   return sum;
 }
