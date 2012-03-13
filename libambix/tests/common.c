@@ -37,10 +37,11 @@ void matrix_print(const ambixmatrix_t*mtx) {
 
 float32_t*data_sine(uint64_t frames, uint32_t channels, float32_t periods) {
   float32_t*data=calloc(frames*channels, sizeof(float32_t));
-  float32_t*datap;
+  float32_t*datap=data;
   int64_t frame;
   for(frame=0; frame<frames; frame++) {
-    float32_t value=sinf((float32_t)frame*(float32_t)frames/periods);
+    float f=(float32_t)frame/(periods*(float32_t)frames);
+    float32_t value=sinf(f);
     int32_t chan;
     for(chan=0; chan<channels; chan++)
       *datap++=value;
@@ -91,4 +92,12 @@ float32_t data_diff(uint32_t line, const float32_t*A, const float32_t*B, uint64_
       sum+=v;
   }
   return sum;
+}
+
+
+void data_print(const float32_t*data, uint64_t frames) {
+  uint64_t i;
+  for(i=0; i<frames; i++) {
+    printf("%05d: %f\n", i, *data++);
+  }
 }
