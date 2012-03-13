@@ -72,8 +72,37 @@ static void print_usage(const char*path);
 static void print_version(const char*path);
 
 static ai_t*ai_matrix(ai_t*ai, const char*path) {
-  fprintf(stderr, "ambix_interleave: matrices not yet supported\n");
-  return NULL;
+  SF_INFO info;
+  uint32_t rows, cols;
+  float*data=NULL;
+  ai_t*result=NULL;
+  int byteswap=0;
+
+  SNDFILE*file=sf_open(path, SFM_READ, &info);
+
+  if(!file) {
+    fprintf(stderr, "ambix_interleave: matrix open failed\n");
+    return NULL;
+  }
+  rows=info.channels;
+  cols=info.frames;
+  data=malloc(rows*cols*sizeof(float));
+  byteswap=(sf_command(file, SFC_RAW_DATA_NEEDS_ENDSWAP, NULL, 0) == SF_TRUE);
+  if(cols!=sf_readf_float(file, data, cols)) {
+    fprintf(stderr, "ambix_interleave: matrix open failed\n");
+    goto cleanup;
+  }
+
+  ai->matrix=ambix_matrix_init(rows, cols, NULL);
+  ambix_matrix_fill_transposed(ai->matrix, (number32_t*)data, byteswap);
+
+  result=ai;
+
+  //  fprintf(stderr, "ambix_interleave: matrices not yet supported\n");
+  cleanup:
+  sf_close(file);
+  free(data);
+  return result;
 }
 
 static ai_t*ai_cmdline(const char*name, int argc, char**argv) {
@@ -198,7 +227,6 @@ static ai_t*ai_open_input(ai_t*ai) {
     ai->ininfo   =calloc(ai->numIns, sizeof(SF_INFO));
   }
 
-
   for(i=0; i<ai->numIns; i++) {
     SNDFILE*inhandle=ai->inhandles[i];
     SF_INFO*info=&ai->ininfo[i];
@@ -297,11 +325,30 @@ static ai_t*ai_open_output(ai_t*ai) {
   return ai;
 }
 
+
+static interleaver(float*dest, const float*source, uint64_t frames, uint32_t channels) {
+  uint64_t frame;
+
+
+  for(frame=0; frame<frames; frame++) {
+    uint64_t channel;
+    for(channel=0; channel<channels; channel++) {
+      //      dest[channel*frames+frame] = *source++;
+      *dest++ = source[channel*frames+frame];
+    }
+  }
+}
+
 static ai_t*ai_copy_block(ai_t*ai, 
                           float*tempdata,
+                          float*interleavebuffer,
                           uint64_t frames) {
   uint32_t i;
   uint64_t channels=0;
+
+  float*ambidata;
+  float*otherdata;
+
   if(!ai)return ai;
   for(i=0; i<ai->numIns; i++) {
     SNDFILE*in=ai->inhandles[i];
@@ -312,7 +359,9 @@ static ai_t*ai_copy_block(ai_t*ai,
       channels+=ai->ininfo[i].channels;
     }
   }
-  if(frames!=ambix_writef_float32(ai->outhandle, tempdata, tempdata+frames*ai->info.ambichannels, frames)) {
+  ambidata=(ai->info.ambichannels>0)?tempdata:NULL;
+  otherdata=(ai->info.otherchannels>0)?(tempdata+frames*ai->info.ambichannels):NULL;
+  if(frames!=ambix_writef_float32(ai->outhandle, ambidata, otherdata, frames)) {
     return ai_close(ai);
   }
 
@@ -322,7 +371,7 @@ static ai_t*ai_copy_block(ai_t*ai,
 static ai_t*ai_copy(ai_t*ai) {
   uint64_t blocksize=0, blocks=0;
   uint64_t f, frames=0, channels=0;
-  float32_t*tmpdata=NULL;
+  float32_t*tmpdata=NULL,*interleavebuffer=NULL;
   if(!ai)return ai;
   blocksize=ai->blocksize;
   if(blocksize<1)
@@ -330,15 +379,20 @@ static ai_t*ai_copy(ai_t*ai) {
   frames=ai->info.frames;
   channels=(ai->info.ambichannels+ai->info.otherchannels);
   tmpdata=malloc(sizeof(float32_t)*channels*blocksize);
+  interleavebuffer=malloc(sizeof(float32_t)*channels*blocksize);
   while(frames>blocksize) {
     blocks++;
-    if(!ai_copy_block(ai, tmpdata, blocksize)) {
+    if(!ai_copy_block(ai, tmpdata, interleavebuffer, blocksize)) {
       return ai_close(ai);
     }
     frames-=blocksize;
   }
-  if(!ai_copy_block(ai, tmpdata, frames))
+  if(!ai_copy_block(ai, tmpdata, interleavebuffer, frames))
     return ai_close(ai);
+
+
+  free(tmpdata);
+  free(interleavebuffer);
   return ai;
 }
 
