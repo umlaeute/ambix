@@ -96,7 +96,7 @@ ambix_err_t _ambix_splitAdaptormatrix_float32(float32_t*source, uint32_t sourcec
     for(chan=cols; chan<sourcechannels; chan++)
       *dest_other++=*source++;
   }
-  return AMBIX_ERR_UNKNOWN;
+  return AMBIX_ERR_SUCCESS;
 }
 /* both _int16 and _int32 are highly unoptimized! */
 /* LATER: add some fixed point magic to speed things up */
@@ -120,7 +120,7 @@ ambix_err_t _ambix_splitAdaptormatrix_int16(int16_t*source, uint32_t sourcechann
     for(chan=cols; chan<sourcechannels; chan++)
       *dest_other++=*source++;
   }
-  return AMBIX_ERR_UNKNOWN;
+  return AMBIX_ERR_SUCCESS;
 }
 ambix_err_t _ambix_splitAdaptormatrix_int32(int32_t*source, uint32_t sourcechannels, ambixmatrix_t*matrix, int32_t*dest_ambi, int32_t*dest_other, int64_t frames) {
   float32_t**mtx=matrix->data;
@@ -142,7 +142,7 @@ ambix_err_t _ambix_splitAdaptormatrix_int32(int32_t*source, uint32_t sourcechann
     for(chan=cols; chan<sourcechannels; chan++)
       *dest_other++=*source++;
   }
-  return AMBIX_ERR_UNKNOWN;
+  return AMBIX_ERR_SUCCESS;
 }
 
 
