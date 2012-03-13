@@ -76,29 +76,25 @@ static void print_version(const char*path);
 #define DEFAULT_SUFFIX ".wav"
 
 static char*ai_prefix(const char*filename) {
-#if 0
-  char*result=calloc(1, strlen(filename)+1);
-  strcat(result, filename);
-  strcat(result, "-");
-#else
+  char*result=NULL;
   char*last=rindex(filename, '.');
   if(last) {
     int length=last-filename;
-    char*result=calloc(1, strlen(filename));
+    result=calloc(1, strlen(filename));
     strncpy(result, filename, length);
     result[length]='-';
     result[length+1]='\0';
     return result;
   }
 
-  char*result=strdup("outfile-");
-#endif
+  result=strdup("outfile-");
   return result;
 }
 
 static ai_t*ai_cmdline(const char*name, int argc, char**argv) {
   ai_t*ai=calloc(1, sizeof(ai_t));
   uint32_t blocksize=0;
+
   while(argc) {
     if(!strcmp(argv[0], "-h") || !strcmp(argv[0], "--help")) {
       print_usage(name);
@@ -110,6 +106,7 @@ static ai_t*ai_cmdline(const char*name, int argc, char**argv) {
     }
     if(!strcmp(argv[0], "-p") || !strcmp(argv[0], "--prefix")) {
       if(argc>1) {
+        printf("prefix: '%s'\n", argv[1]);
         ai->prefix=strdup(argv[1]);
         argv+=2;
         argc-=2;
@@ -162,13 +159,13 @@ static ai_t*ai_close(ai_t*ai) {
   uint32_t i;
   if(!ai)return NULL;
 
-  printf("closing %d outhandles %p\n", ai->numOuts, ai->outhandles);
+  //  printf("closing %d outhandles %p\n", ai->numOuts, ai->outhandles);
   if(ai->outhandles) {
     for(i=0; i<ai->numOuts; i++) {
       SNDFILE*outhandle=ai->outhandles[i];
       if(outhandle) {
         int err=sf_close(outhandle);
-        printf("closing outhandle[%d] returned %d\n", i, err);
+        //    printf("closing outhandle[%d] returned %d\n", i, err);
       }
       ai->outhandles[i]=NULL;
     }
@@ -258,17 +255,17 @@ static ai_t*ai_open_output(ai_t*ai) {
   }
 
   channel=0;
-  printf("creating outfiles for %d/%d\n", ambichannels, otherchannels);
+  //  printf("creating outfiles for %d/%d\n", ambichannels, otherchannels);
   for(chan=0; chan<ambichannels; chan++) {
     char filename[MAX_FILENAMESIZE];
     snprintf(filename, MAX_FILENAMESIZE, "%sambi%03d%s", ai->prefix, chan, ai->suffix);
     filename[MAX_FILENAMESIZE-1]=0;
-    printf("ambifile%d=%s\n", chan, filename);
+    //    printf("ambifile%d=%s\n", chan, filename);
 
     memcpy(&ai->outinfo[channel], &info, sizeof(info));
 
     ai->outhandles[channel]=sf_open(filename, SFM_WRITE, &ai->outinfo[channel]);
-    printf("created outhandle[%d] %p\n", channel, ai->outhandles[channel]);
+    //    printf("created outhandle[%d] %p\n", channel, ai->outhandles[channel]);
     if(!ai->outhandles[channel]) {
       return ai_close(ai);
     }
@@ -296,10 +293,23 @@ static ai_t*ai_open_output(ai_t*ai) {
   return ai;
 }
 
+
+static void
+deinterleaver(float*dest, const float*source, uint64_t frames, uint32_t channels) {
+  uint64_t frame;
+  for(frame=0; frame<frames; frame++) {
+    uint64_t channel;
+    for(channel=0; channel<channels; channel++) {
+      dest[channel*frames+frame] = *source++;
+    }
+  }
+}
+
 static ai_t*ai_copy_block(ai_t*ai, 
                           float*rawdata,
                           float*cookeddata,
                           float*extradata,
+                          float*deinterleavebuffer,
                           uint64_t frames) {
   uint32_t i;
   uint32_t ambichannels, fullambichannels, otherchannels;
@@ -334,46 +344,36 @@ static ai_t*ai_copy_block(ai_t*ai,
   }
 
   /* decode the ambisonics data */
+  //  printf("reading ambidata %p & %p\n", rawdata, cookeddata);
   if(rawdata && cookeddata) {
     source=rawdata;
     dest  =cookeddata;
-    //printf("rawdata=%p\tcookeddata=%p\n", source, dest);
-    //printf("reading %d frames with [%dx%d]\n", (int)frames, (int)rows, (int)cols);
-    for(f=0; f<frames; f++) {
-      uint32_t chan;
-      source=rawdata;
-      for(chan=0; chan<rows; chan++) {
-        float32_t*src=source;
-        float32_t sum=0.;
-        uint32_t c;
-        for(c=0; c<cols; c++) {
-          float32_t s;
-          //printf("accessing matrix at [%dx%d] for frame %d\n", chan, c, f);
-          s=mtx[chan][c];
-          //MARK();
-          // printf("accessing source %p (%p/%p) at %d\n", src, source, rawdata, c);
-          sum+=s * src[c];
-        }
-        *dest++=sum;
-        source+=cols;
-      }
+
+    if(AMBIX_ERR_SUCCESS!=ambix_matrix_multiply_float32(cookeddata, matrix, rawdata, frames)) {
+      printf("failed decoding\n");
+      return ai_close(ai);
     }
+
+    /* deinterleave the buffer */
+    deinterleaver(deinterleavebuffer, cookeddata, frames, fullambichannels);
+
     /* store the ambisonics data */
     channel=0;
     for(c=0; c<fullambichannels; c++) {
-      if(frames!=sf_writef_float(ai->outhandles[channel], cookeddata+c*frames, frames)) {
+      if(frames!=sf_writef_float(ai->outhandles[channel], deinterleavebuffer+c*frames, frames)) {
         printf("failed writing %d ambiframes to %d:\n", frames, channel);
-        printf("  handle=%p, data=%p, frames=%d\n", ai->outhandles[channel], cookeddata+c*frames, frames);
+        printf("  handle=%p, data=%p, frames=%d\n", ai->outhandles[channel], deinterleavebuffer+c*frames, frames);
         return ai_close(ai);
       }
       channel++;
     }
   }
   /* store the extra data */
-  //printf("reading extradata %p\n", extradata);
+  //  printf("reading extradata %p\n", extradata);
   if(extradata) {
+    deinterleaver(deinterleavebuffer, extradata, frames, otherchannels);
     for(c=0; c<otherchannels; c++) {
-      if(frames!=sf_writef_float(ai->outhandles[channel], extradata+c*frames, frames)) {
+      if(frames!=sf_writef_float(ai->outhandles[channel], deinterleavebuffer+c*frames, frames)) {
         printf("failed writing %d extraframes to %d", frames, channel);
         return ai_close(ai);
       }
@@ -387,7 +387,8 @@ static ai_t*ai_copy_block(ai_t*ai,
 static ai_t*ai_copy(ai_t*ai) {
   uint64_t blocksize=0, blocks=0;
   uint64_t f, frames=0, channels=0;
-  float32_t*rawdata=NULL, *cookeddata=NULL, *extradata=NULL;
+  float32_t*rawdata=NULL, *cookeddata=NULL, *extradata=NULL,*deinterleavebuf=NULL;
+  uint64_t size=0;
   if(!ai)return ai;
   blocksize=ai->blocksize;
   if(blocksize<1)
@@ -401,26 +402,37 @@ static ai_t*ai_copy(ai_t*ai) {
       printf("no adaptor matrix founde...\n");
       return ai_close(ai);
     }
-    rawdata=malloc(sizeof(float32_t)*(ai->info.ambichannels)*blocksize);
-    printf("allocating rawdata for %dx%d samples -> %p\n", (int)(ai->info.ambichannels), (int)blocksize, rawdata);
+    size=(ai->info.ambichannels)*blocksize;
+    rawdata=malloc(sizeof(float32_t)*size);
     cookeddata=malloc(sizeof(float32_t)*(matrix->rows)*blocksize);
-    printf("allocating cokdata for %dx%d samples -> %p\n", (int)(matrix->rows), (int)blocksize, cookeddata);
+    if((matrix->rows)*blocksize > size)
+      size=(matrix->rows)*blocksize;
+
   }
   if(ai->info.otherchannels) {
     extradata=malloc(sizeof(float32_t)*(ai->info.otherchannels)*blocksize);
+    if((ai->info.otherchannels)*blocksize > size)
+      size=(ai->info.otherchannels)*blocksize;
   }
+  deinterleavebuf=malloc(sizeof(float32_t)*size);
 
   while(frames>blocksize) {
     blocks++;
-    if(!ai_copy_block(ai, rawdata, cookeddata, extradata, blocksize)) {
+    if(!ai_copy_block(ai, rawdata, cookeddata, extradata, deinterleavebuf, blocksize)) {
       return ai_close(ai);
     }
     frames-=blocksize;
   }
-  if(!ai_copy_block(ai, rawdata, cookeddata, extradata, frames)) {
+  if(!ai_copy_block(ai, rawdata, cookeddata, extradata, deinterleavebuf, frames)) {
     return ai_close(ai);
   }
-  printf("reading really done %p\n", ai);
+
+  free(rawdata);
+  free(cookeddata);
+  free(extradata);
+  free(deinterleavebuf);
+
+  //  printf("reading really done %p\n", ai);
   return ai;
 }
 
@@ -433,9 +445,14 @@ static int ambix_deinterleave(ai_t*ai) {
   //if(result)printf("success @ %d!\n", __LINE__);
   result=ai_copy(result);
   //if(result)printf("success @ %d!\n", __LINE__);
+
+  if(result) {
+    printf("Successfully deinterleaved '%s' to %d files (%s*%s)\n", ai->infilename, ai->numOuts, ai->prefix, ai->suffix);
+  }
+
   ai_close(ai);
   //if(result)printf("success @ %d!\n", __LINE__);
-  printf("deinterleave done %p\n", result);
+  //  printf("deinterleave done %p\n", result);
   return (result!=NULL);
 }
 
