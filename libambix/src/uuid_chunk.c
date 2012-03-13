@@ -104,13 +104,9 @@ _ambix_uuid1_to_matrix(const void*data, uint64_t datasize, ambixmatrix_t*orgmtx,
   if(!ambix_matrix_init(rows, cols, mtx))
       goto cleanup;
 
-  if(swap) {
-    if(ambix_matrix_fill_swapped(mtx, (number32_t*)(data+index)) != AMBIX_ERR_SUCCESS)
-      goto cleanup;
-  } else {
-    if(ambix_matrix_fill(mtx, (float32_t*)(data+index)) != AMBIX_ERR_SUCCESS)
-      goto cleanup;
-  }
+  if(ambix_matrix_fill(mtx, (float32_t*)(data+index), swap) != AMBIX_ERR_SUCCESS)
+    goto cleanup;
+
   return mtx;
 
  cleanup:
@@ -131,16 +127,13 @@ _ambix_matrix_to_uuid1(const ambixmatrix_t*matrix, void*data, int swap) {
   uint32_t rows=matrix->rows;
   uint32_t cols=matrix->cols;
   float32_t**mtx=matrix->data;
-
   if(!uuid)
     return 0;
-
   datasize+=16; /* reserved for the UUID */
 
   datasize+=sizeof(uint32_t); /* rows */
   datasize+=sizeof(uint32_t); /* cols */
   datasize+=(uint64_t)rows*(uint64_t)cols*sizeof(float32_t); /* data */
-
 
   if(data) {
     uint64_t i, r, c;

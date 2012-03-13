@@ -75,12 +75,34 @@ ambix_matrix_init(uint32_t rows, uint32_t cols, ambixmatrix_t*orgmtx) {
   
   return mtx;
 }
-int
-ambix_matrix_fill(ambixmatrix_t*mtx, float32_t*data) {
+
+ambixmatrix_t*
+ambix_matrix_transpose(const ambixmatrix_t*matrix, ambixmatrix_t*xirtam) {
+  uint32_t rows, cols, r, c;
+  float32_t**mtx, **xtm;
+  if(!xirtam)
+    xirtam=ambix_matrix_init(matrix->cols, matrix->rows, NULL);
+
+  rows=matrix->rows;
+  cols=matrix->cols;
+  
+  mtx=matrix->data;  
+  xtm=xirtam->data;
+
+  for(r=0; r<rows; r++)
+    for(c=0; c<cols; c++)
+      xtm[c][r]=mtx[r][c];
+  
+  return xirtam;
+}
+
+ambix_err_t
+_ambix_matrix_fill(ambixmatrix_t*mtx, const number32_t*ndata) {
   float32_t**matrix=mtx->data;
   uint32_t rows=mtx->rows;
   uint32_t cols=mtx->cols;
   uint32_t r;
+  const float*data=(const float*)ndata;
   for(r=0; r<rows; r++) {
     uint32_t c;
     for(c=0; c<cols; c++) {
@@ -89,9 +111,8 @@ ambix_matrix_fill(ambixmatrix_t*mtx, float32_t*data) {
   }
   return AMBIX_ERR_SUCCESS;
 }
-
-int
-ambix_matrix_fill_swapped(ambixmatrix_t*mtx, number32_t*data) {
+ambix_err_t
+_ambix_matrix_fill_byteswapped(ambixmatrix_t*mtx, const number32_t*data) {
   float32_t**matrix=mtx->data;
   uint32_t rows=mtx->rows;
   uint32_t cols=mtx->cols;
@@ -106,6 +127,37 @@ ambix_matrix_fill_swapped(ambixmatrix_t*mtx, number32_t*data) {
     }
   }
   return AMBIX_ERR_SUCCESS;
+}
+
+ambix_err_t
+ambix_matrix_fill(ambixmatrix_t*mtx, const number32_t*data, int byteswap) {
+  if(byteswap)
+    return _ambix_matrix_fill_byteswapped(mtx, data);
+  return _ambix_matrix_fill(mtx, data);
+}
+
+
+ambix_err_t
+ambix_matrix_fill_transposed(ambixmatrix_t*mtx, const number32_t*data, int byteswap) {
+  ambix_err_t err=0;
+  ambixmatrix_t*xtm=ambix_matrix_init(mtx->cols, mtx->rows, NULL);
+
+  if(!xtm)
+    return AMBIX_ERR_UNKNOWN;
+
+  if(byteswap)
+    err=_ambix_matrix_fill_byteswapped(xtm, data);
+  else
+    err=_ambix_matrix_fill(xtm, data);
+
+  if(AMBIX_ERR_SUCCESS==err) {
+    ambixmatrix_t*resu=ambix_matrix_transpose(mtx, xtm);
+    if(!resu)
+      err=AMBIX_ERR_UNKNOWN;
+  }
+
+  ambix_matrix_destroy(xtm);
+  return err;
 }
 
 
