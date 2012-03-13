@@ -32,9 +32,10 @@ void check_create_extended(const char*path, ambix_sampleformat_t format, float32
   float32_t*orgotherdata,*otherdata,*resultotherdata;
   uint32_t frames=441000;
   uint32_t ambichannels=4;
-  uint32_t otherchannels=4;
+  uint32_t otherchannels=2;
   float32_t periods=20000;
-  ambixmatrix_t eye={0,0,NULL},*eye2=NULL;
+  ambixmatrix_t eye={0,0,NULL};
+  const ambixmatrix_t*eye2=NULL;
   uint32_t err32;
   float32_t diff=0.;
 
@@ -45,6 +46,9 @@ void check_create_extended(const char*path, ambix_sampleformat_t format, float32
 
   resultotherdata=calloc(otherchannels*frames, sizeof(float32_t));
   otherdata=calloc(otherchannels*frames, sizeof(float32_t));
+
+  ambix_matrix_init(ambichannels, ambichannels, &eye);
+  ambix_matrix_eye(&eye);
 
   memset(&winfo, 0, sizeof(winfo));
   memset(&info, 0, sizeof(info));
@@ -91,14 +95,14 @@ void check_create_extended(const char*path, ambix_sampleformat_t format, float32
   ambix=ambix_open(path, AMBIX_READ, &rinfo);
   fail_if((NULL==ambix), __LINE__, "couldn't create ambix file '%s' for reading", path);
 
-  eye2=ambix_getAdaptorMatrix(ambix);
-  fail_if((NULL==eye2), __LINE__, "failed reading adaptor matrix");
-
   fail_if((info.ambixfileformat!=rinfo.ambixfileformat), __LINE__, "ambixfileformat mismatch %d!=%d", info.ambixfileformat, rinfo.ambixfileformat);
   fail_if((info.samplerate!=rinfo.samplerate), __LINE__, "samplerate mismatch %g!=%g", info.samplerate, rinfo.samplerate);
   fail_if((info.sampleformat!=rinfo.sampleformat), __LINE__, "sampleformat mismatch %d!=%d", info.sampleformat, rinfo.sampleformat);
   fail_if((info.ambichannels!=rinfo.ambichannels), __LINE__, "ambichannels mismatch %d!=%d", info.ambichannels, rinfo.ambichannels);
   fail_if((info.otherchannels!=rinfo.otherchannels), __LINE__, "otherchannels mismatch %d!=%d", info.otherchannels, rinfo.otherchannels);
+
+  eye2=ambix_getAdaptorMatrix(ambix);
+  fail_if((NULL==eye2), __LINE__, "failed reading adaptor matrix");
 
   diff=matrix_diff(__LINE__, &eye, eye2, eps);
   fail_if((diff>eps), __LINE__, "adaptormatrix diff %f > %f", diff, eps);
