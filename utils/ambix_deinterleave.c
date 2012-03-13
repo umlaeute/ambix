@@ -275,7 +275,7 @@ static ai_t*ai_open_output(ai_t*ai) {
 
   for(chan=0; chan<otherchannels; chan++) {
     char filename[MAX_FILENAMESIZE];
-    snprintf(filename, MAX_FILENAMESIZE, "%extra%03d%s", ai->prefix, chan, ai->suffix);
+    snprintf(filename, MAX_FILENAMESIZE, "%sextra%03d%s", ai->prefix, chan, ai->suffix);
     filename[MAX_FILENAMESIZE-1]=0;
     printf("extrafile%d=%s\n", chan, filename);
     memcpy(&ai->outinfo[channel], &info, sizeof(info));
