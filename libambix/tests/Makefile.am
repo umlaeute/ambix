@@ -14,6 +14,7 @@ XFAIL_TESTS = fail
 check_PROGRAMS= \
 	pass skip fail
 
+SOURCES=common.c common.h
 
 pass_SOURCES=pass.c
 skip_SOURCES=skip.c
@@ -24,5 +25,5 @@ check_PROGRAMS += matrix
 matrix_SOURCES=matrix.c
 
 
-
+TESTS += 
 

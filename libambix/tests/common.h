@@ -47,7 +47,8 @@ static inline void fail_if (int test, int line, const char *format, ...)
   } ;
 } /* fail_if */
 
-
+void matrix_print(const ambixmatrix_t*mtx);
+float32_t*data_sine(uint32_t frames, float32_t periods);
 
 #endif /* TESTS_COMMON_H */
 
