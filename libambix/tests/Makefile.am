@@ -31,3 +31,7 @@ ambix_none_SOURCES = ambix_none.c common.c
 TESTS += ambix_simple
 check_PROGRAMS += ambix_simple
 ambix_simple_SOURCES = ambix_simple.c common.c
+
+TESTS += ambix_extended
+check_PROGRAMS += ambix_extended
+ambix_extended_SOURCES = ambix_extended.c common.c
