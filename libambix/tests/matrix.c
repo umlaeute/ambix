@@ -52,11 +52,11 @@ void mtxmul_tests(float32_t eps) {
 
  /* fill in some test data */
   left=ambix_matrix_init(4, 3, NULL);
-  ambix_matrix_fill(left, leftdata_4_3);
+  ambix_matrix_fill(left, leftdata_4_3, 0);
   right=ambix_matrix_init(3, 2, NULL);
-  ambix_matrix_fill(right, rightdata_3_2);
+  ambix_matrix_fill(right, rightdata_3_2, 0);
   testresult=ambix_matrix_init(4, 2, NULL);
-  ambix_matrix_fill(testresult, resultdata_4_2);
+  ambix_matrix_fill(testresult, resultdata_4_2, 0);
 
   errf=matrix_diff(__LINE__, left, left, eps);
   fail_if(!(errf<eps), __LINE__, "diffing matrix with itself returned %f (>%f)", errf, eps);
@@ -89,11 +89,11 @@ void mtxmul_eye_tests(float32_t eps) {
   fail_if((eye!=ambix_matrix_eye(eye)), __LINE__, "filling unity matrix %p did not return original matrix %p", eye);
 
   left=ambix_matrix_init(4, 2, NULL);
-  fail_if(AMBIX_ERR_SUCCESS!=ambix_matrix_fill(left, resultdata_4_2), __LINE__,
+  fail_if(AMBIX_ERR_SUCCESS!=ambix_matrix_fill(left, resultdata_4_2, 0), __LINE__,
           "filling left data failed");
 
   result=ambix_matrix_init(4, 2, NULL);
-  fail_if(AMBIX_ERR_SUCCESS!=ambix_matrix_fill(result, resultdata_4_2), __LINE__,
+  fail_if(AMBIX_ERR_SUCCESS!=ambix_matrix_fill(result, resultdata_4_2, 0), __LINE__,
           "filling result data failed");
 
   fail_if((result!=ambix_matrix_multiply(eye, left, result)), __LINE__, "multiplication into matrix did not return original matrix");
@@ -117,7 +117,7 @@ void datamul_tests(float32_t eps) {
   STARTTEST();
 
   mtx=ambix_matrix_init(4, 3, NULL);
-  ambix_matrix_fill(mtx, leftdata_4_3);
+  ambix_matrix_fill(mtx, leftdata_4_3, 0);
 
   fail_if(AMBIX_ERR_SUCCESS!=ambix_matrix_multiply_float32(resultdata, mtx, rightdata_3_2, 2), __LINE__,
           "data multilplication failed");
