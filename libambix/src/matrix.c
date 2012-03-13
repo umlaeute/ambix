@@ -40,10 +40,12 @@ ambix_matrix_destroy(ambixmatrix_t*mtx) {
 void
 ambix_matrix_deinit(ambixmatrix_t*mtx) {
   uint32_t r;
-  for(r=0; r<mtx->rows; r++) {
-    if(mtx->data[r])
-      free(mtx->data[r]);
-    mtx->data[r]=NULL;
+  if(mtx->data) {
+    for(r=0; r<mtx->rows; r++) {
+      if(mtx->data[r])
+        free(mtx->data[r]);
+      mtx->data[r]=NULL;
+    }
   }
   free(mtx->data);
   mtx->data=NULL;
@@ -54,9 +56,6 @@ ambixmatrix_t*
 ambix_matrix_init(uint32_t rows, uint32_t cols, ambixmatrix_t*orgmtx) {
   ambixmatrix_t*mtx=orgmtx;
   uint32_t r;
-  if(rows<1 || cols<1)
-    return NULL;
-
   if(!mtx) {
     mtx=(ambixmatrix_t*)calloc(1, sizeof(ambixmatrix_t));
     if(!mtx)
@@ -67,10 +66,13 @@ ambix_matrix_init(uint32_t rows, uint32_t cols, ambixmatrix_t*orgmtx) {
 
   mtx->rows=rows;
   mtx->cols=cols;
-  mtx->data=(float32_t**)calloc(rows, sizeof(float32_t*));
-  for(r=0; r<rows; r++) {
-    mtx->data[r]=(float32_t*)calloc(cols, sizeof(float32_t));
+  if(rows>0 && cols > 0) {
+    mtx->data=(float32_t**)calloc(rows, sizeof(float32_t*));
+    for(r=0; r<rows; r++) {
+      mtx->data[r]=(float32_t*)calloc(cols, sizeof(float32_t));
+    }
   }
+  
   return mtx;
 }
 int
