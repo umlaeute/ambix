@@ -55,5 +55,7 @@ float32_t data_diff(uint32_t line, const float32_t*A, const float32_t*B, uint64_
 
 float32_t*data_sine(uint64_t frames, uint32_t channels, float32_t periods);
 
+#define STARTTEST()   printf("============ %s[%04d]:\t%s ==========\n", __FILE__, __LINE__, __FUNCTION__)
+
 #endif /* TESTS_COMMON_H */
 
