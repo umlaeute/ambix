@@ -40,7 +40,7 @@ float32_t*data_sine(uint64_t frames, uint32_t channels, float32_t periods) {
   float32_t*datap=data;
   int64_t frame;
   for(frame=0; frame<frames; frame++) {
-    float f=(float32_t)frame/(periods*(float32_t)frames);
+    float f=(float32_t)frame*periods/(float32_t)frames;
     float32_t value=sinf(f);
     int32_t chan;
     for(chan=0; chan<channels; chan++)
@@ -97,7 +97,9 @@ float32_t data_diff(uint32_t line, const float32_t*A, const float32_t*B, uint64_
 
 void data_print(const float32_t*data, uint64_t frames) {
   uint64_t i;
+  float f100=data[100];
   for(i=0; i<frames; i++) {
-    printf("%05d: %f\n", i, *data++);
+    float f=*data++;
+    printf("%05d: %f\n", (int)i, f);
   }
 }
