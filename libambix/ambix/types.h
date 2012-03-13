@@ -44,7 +44,7 @@ extern "C" {
 /** 32bit floating point number */
 typedef float float32_t;
 
-#ifdef HAVE_STDINT_H
+#if defined (__linux__) || defined(__apple__)
 # include <stdint.h>
 #else
 /** 16bit signed integer  */
