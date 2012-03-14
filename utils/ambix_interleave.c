@@ -27,7 +27,7 @@
  * ambix_interleave -o <outfile> [-O <order>] [-X <matrixfile>] <infile1> [<infile2> ...]
  * merge several (multi-channel) audio files into a single ambix file;
  * infile1 becomes W-channel, infile2 becomes X-channel,...
- * by default this will write an 'ambix simple' file (only full sets are accepted) 
+ * by default this will write an 'ambix simple' file (only full sets are accepted)
  * eventually files are written as 'ambix extended' file with adaptor matrix set to unity
  * if 'order' is specified, all inchannels not needed for the full set are written as 'extrachannels'
  * 'matrixfile' is a soundfile/octavefile that is interpreted as matrix: each channel is a row, sampleframes are columns
@@ -316,7 +316,7 @@ static ai_t*ai_open_input(ai_t*ai) {
   printf("got %d input channels each %d frames\n", channels, ai->info.frames);
   printf("ambichannels: %d\n", ai->info.ambichannels);
   printf("extrachannels: %d\n", ai->info.extrachannels);
-  if(ai->matrix) 
+  if(ai->matrix)
     printf("matrix: [%dx%d]\n", ai->matrix->rows, ai->matrix->cols);
   else
     printf("matrix: NONE\n");
@@ -336,13 +336,13 @@ static ai_t*ai_open_output(ai_t*ai) {
   memcpy(&info, &ai->info, sizeof(info));
   ai->outhandle=ambix_open(ai->outfilename, AMBIX_WRITE, &info);
 
-  if(!ai) return ai_close(ai);  
+  if(!ai) return ai_close(ai);
   if(AMBIX_EXTENDED==ai->info.fileformat) {
     ambix_err_t err=ambix_setAdaptorMatrix(ai->outhandle, ai->matrix);
     if(err==AMBIX_ERR_SUCCESS) {
       ambix_write_header(ai->outhandle);
     } else {
-      printf("setting adapator matrix [%dx%d]=%d returned %d\n", ai->matrix->rows, ai->matrix->cols, ambix_isFullSet(ai->matrix->rows), err);
+      fprintf(stderr, "setting adapator matrix [%dx%d]=%d returned %d\n", ai->matrix->rows, ai->matrix->cols, ambix_isFullSet(ai->matrix->rows), err);
       return ai_close(ai);
     }
   }
@@ -363,7 +363,7 @@ static interleaver(float*dest, const float*source, uint64_t frames, uint32_t cha
   }
 }
 
-static ai_t*ai_copy_block(ai_t*ai, 
+static ai_t*ai_copy_block(ai_t*ai,
                           float*ambidata,
                           float*extradata,
                           float*interleavedata,
@@ -383,7 +383,7 @@ static ai_t*ai_copy_block(ai_t*ai,
       channels+=ai->ininfo[i].channels;
     }
   }
-  
+
   if(ambidata)
     interleaver(ambidata, interleavedata, frames, ai->info.ambichannels);
 
@@ -447,9 +447,6 @@ static int ambix_interleave(ai_t*ai) {
   //if(result)printf("success @ %d!\n", __LINE__);
   return (result!=NULL);
 }
-
-
-
 
 int main(int argc, char**argv) {
   ai_t*ai=ai_cmdline(argv[0], argc-1, argv+1);

@@ -45,9 +45,9 @@ void printinfo(const char*path) {
   } else
     printf("OK\n");
 
-  printf("Frames\t: %d\n", info.frames); 
+  printf("Frames\t: %d\n", info.frames);
 
-  printf("Samplerate\t: %f\n", info.samplerate); 
+  printf("Samplerate\t: %f\n", info.samplerate);
 
   printf("Sampleformat\t: %d (", info.sampleformat);
   switch(info.sampleformat) {
@@ -69,7 +69,7 @@ void printinfo(const char*path) {
   }
   printf(")\n");
 
-  printf("Ambisonics channels\t: %d\n", info.ambichannels); 
+  printf("Ambisonics channels\t: %d\n", info.ambichannels);
   printf("Non-Ambisonics channels\t: %d\n", info.extrachannels);
 
 
@@ -94,7 +94,7 @@ void printinfo(const char*path) {
   printf("Close file '%s': ", path);
   if(AMBIX_ERR_SUCCESS!=ambix_close(ambix))
     printf("failed\n");
-  else 
+  else
     printf("OK\n");
 }
 

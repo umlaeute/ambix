@@ -27,7 +27,7 @@
  * ambix_deinterleave -o <outfile> [-O <order>] [-X <matrixfile>] <infile1> [<infile2> ...]
  * merge several (multi-channel) audio files into a single ambix file;
  * infile1 becomes W-channel, infile2 becomes X-channel,...
- * by default this will write an 'ambix simple' file (only full sets are accepted) 
+ * by default this will write an 'ambix simple' file (only full sets are accepted)
  * eventually files are written as 'ambix extended' file with adaptor matrix set to unity
  * if 'order' is specified, all inchannels not needed for the full set are written as 'extrachannels'
  * 'matrixfile' is a soundfile/octavefile that is interpreted as matrix: each channel is a row, sampleframes are columns
@@ -305,7 +305,7 @@ deinterleaver(float*dest, const float*source, uint64_t frames, uint32_t channels
   }
 }
 
-static ai_t*ai_copy_block(ai_t*ai, 
+static ai_t*ai_copy_block(ai_t*ai,
                           float*rawdata,
                           float*cookeddata,
                           float*extradata,
@@ -336,7 +336,7 @@ static ai_t*ai_copy_block(ai_t*ai,
   }
 
   /* read the raw data */
-  if(frames!=ambix_readf_float32(ai->inhandle, 
+  if(frames!=ambix_readf_float32(ai->inhandle,
                                  rawdata,
                                  extradata,
                                  frames)) {
@@ -349,9 +349,6 @@ static ai_t*ai_copy_block(ai_t*ai,
     source=rawdata;
     dest  =cookeddata;
 
-#if 1
-    //    printf("decoding %d frames: %d channels in to %p to %d channels in %p\n", (int) frames, (int)ambichannels, rawdata, (int)fullambichannels, cookeddata);
-    //    printf("matrix[%dx%d]\n", matrix->rows, matrix->cols);
     if(AMBIX_ERR_SUCCESS!=ambix_matrix_multiply_float32(cookeddata, matrix, rawdata, frames)) {
       printf("failed decoding\n");
       return ai_close(ai);
@@ -359,11 +356,6 @@ static ai_t*ai_copy_block(ai_t*ai,
 
     /* deinterleave the buffer */
     deinterleaver(deinterleavebuffer, cookeddata, frames, fullambichannels);
-#else
-    /* deinterleave the buffer */
-    fullambichannels=ambichannels;
-    deinterleaver(deinterleavebuffer, rawdata, frames, ambichannels);
-#endif
 
     /* store the ambisonics data */
     channel=0;
