@@ -105,18 +105,6 @@ ambixmatrix_t*ambix_matrix_eye(ambixmatrix_t*matrix);
  */
 AMBIX_API
 ambix_err_t ambix_matrix_fill(ambixmatrix_t*mtx, const float32_t*data);
-/** @brief Fill a transposed matrix
- *
- * Fill transposed data into a properly initialized matrix
- *
- * @param mtx initialized matrix object to copy data into
- * @param data pointer to at least (mtx->rows*mtx->cols) values; data is ordered column-by-column with no padding (A[0,0], A[1,0], .., A[rows-1,0],  A[0, 1], .. A[rows-1, cols-1])
- * @param byteswap whether the data needs to be byteswapped
- * @return an error code indicating success
- */
-AMBIX_API
-ambix_err_t ambix_matrix_fill_transposed(ambixmatrix_t*mtx, const number32_t*data, int byteswap);
-
 
 /** @brief Copy a matrix to another matrix
  *
