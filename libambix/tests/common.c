@@ -35,11 +35,12 @@ void matrix_print(const ambixmatrix_t*mtx) {
     }
   }
 }
-
+#define MAX_OVER 10
 float32_t matrix_diff(uint32_t line, const ambixmatrix_t*A, const ambixmatrix_t*B, float32_t eps) {
   uint32_t r, c;
   float32_t sum=0.;
   float32_t maxdiff=-1.f;
+  uint64_t overcount=0;
 
   float32_t**a=NULL;
   float32_t**b=NULL;
@@ -58,10 +59,15 @@ float32_t matrix_diff(uint32_t line, const ambixmatrix_t*A, const ambixmatrix_t*
       if(vabs>maxdiff)
         maxdiff=vabs;
       sum+=vabs;
-      if(vabs>eps)
-        printf("%f - %f=%f @ [%02d|%02d]\n", a[r][c], b[r][c], v, r, c);
+      if(vabs>eps) {
+        overcount++;
+        if(overcount<MAX_OVER)
+          printf("%f - %f=%f @ [%02d|%02d]\n", a[r][c], b[r][c], v, r, c);
+      }
     }
-  //printf("accumulated error %f\n", sum);
+
+  if(overcount>MAX_OVER)
+    printf("accumulated error %f over %d/%d frames\n", sum, overcount, (int)(A->cols*B->rows));
   return maxdiff;
 }
 
@@ -70,6 +76,7 @@ float32_t data_diff(uint32_t line, const float32_t*A, const float32_t*B, uint64_
   uint64_t i;
   float32_t sum=0.;
   float32_t maxdiff=-1.f;
+  uint64_t overcount=0;
 
   fail_if((NULL==A), line, "left-hand data of datadiff is NULL");
   fail_if((NULL==B), line, "right-hand data of datadiff is NULL");
@@ -81,11 +88,16 @@ float32_t data_diff(uint32_t line, const float32_t*A, const float32_t*B, uint64_
     if(vabs>maxdiff)
       maxdiff=vabs;
     sum+=vabs;
-    if(vabs>eps)
-      printf("%f - %f=%f @ %d\n", A[i], B[i], v, i);
+    if(vabs>eps) {
+      overcount++;
+      if(overcount<MAX_OVER)
+        printf("%f - %f=%f @ %d\n", A[i], B[i], v, i);
+    }
 
   }
-  //printf("accumulated error %f\n", sum);
+
+  if(overcount>MAX_OVER)
+    printf("accumulated error %f over %d/%d frames\n", sum, (int)overcount, (int)frames);
 
   return maxdiff;
 }
