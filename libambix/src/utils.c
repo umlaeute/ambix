@@ -45,7 +45,7 @@ int ambix_isFullSet(uint32_t channels) {
 }
 
 
-void _ambix_print_info(const ambixinfo_t*info) {
+void _ambix_print_info(const ambix_info_t*info) {
   printf("AMBIX_INFO 0x%X\n", info);
   if(!info)return;
   printf("  frames\t: %d\n", info->frames);
@@ -56,7 +56,7 @@ void _ambix_print_info(const ambixinfo_t*info) {
   printf("  otherchannels\t: %d\n", info->extrachannels);
 }
 
-void _ambix_print_matrix(const ambixmatrix_t*mtx) {
+void _ambix_print_matrix(const ambix_matrix_t*mtx) {
   printf("matrix 0x%X", mtx);
   if(mtx) {
     float32_t**data=mtx->data;

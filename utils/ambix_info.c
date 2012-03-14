@@ -31,9 +31,9 @@
 
 
 void printinfo(const char*path) {
-  ambixinfo_t info;
+  ambix_info_t info;
   ambix_t*ambix;
-  const ambixmatrix_t*matrix;
+  const ambix_matrix_t*matrix;
   memset(&info, 0, sizeof(info));
 
   printf("Open file '%s': ", path);

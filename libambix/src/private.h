@@ -63,14 +63,14 @@ typedef struct ambix_t {
   int32_t channels;
 
   /** ambisonics info chunk as presented to the outside world */
-  ambixinfo_t info;
+  ambix_info_t info;
   /** ambisonics info chunk as read from disk */
-  ambixinfo_t realinfo;
+  ambix_info_t realinfo;
 
   /** reconstruction matrix */
-  ambixmatrix_t matrix;
+  ambix_matrix_t matrix;
   /** final reconstruction matrix (potentially includes another adaptor matrix) */
-  ambixmatrix_t matrix2;
+  ambix_matrix_t matrix2;
   /** whether to use the matrix(1), the finalmatrix(2), or no matrix when decoding */
   int use_matrix;
 
@@ -101,7 +101,7 @@ typedef struct ambix_t {
  * @param ambixinfo struct to a valid ambixinfo structure
  * @return errorcode indicating success
  */
-ambix_err_t	_ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t mode, const ambixinfo_t*ambixinfo);
+ambix_err_t	_ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t mode, const ambix_info_t*ambixinfo);
 /** @brief Do close an ambix file
  *
  * this is implemented by the various backends (currently only libsndfile)
@@ -178,7 +178,7 @@ uint32_t _ambix_checkUUID(const char UUID[16]);
  * @return a pointer to the filled matrix or NULL on failure
  * @remark only use data from a uuid-chunk for which _ambix_parseuuid() that returned '1'
  */
-ambixmatrix_t*_ambix_uuid1_to_matrix(const void*data, uint64_t datasize, ambixmatrix_t*mtx, int byteswap);
+ambix_matrix_t*_ambix_uuid1_to_matrix(const void*data, uint64_t datasize, ambix_matrix_t*mtx, int byteswap);
 
 /** @brief generate UUID-chunk (v1) from matrix
  * @param matrix data to store in chunk
@@ -188,7 +188,7 @@ ambixmatrix_t*_ambix_uuid1_to_matrix(const void*data, uint64_t datasize, ambixma
  * @remark you should call this two times: first with data=NULL, which will return the datasize you need to allocate;
  *         then you allocate enough data (datasize bytes) and call the function again
  */
-uint64_t _ambix_matrix_to_uuid1(const ambixmatrix_t*matrix, void*data, int byteswap);
+uint64_t _ambix_matrix_to_uuid1(const ambix_matrix_t*matrix, void*data, int byteswap);
 
 
 /** @brief write UUID chunk to file
@@ -210,7 +210,7 @@ ambix_err_t _ambix_write_uuidchunk(ambix_t*ax, const void*data, int64_t datasize
  * @return an error code indicating success
  */
 ambix_err_t
-_ambix_matrix_fill_byteswapped(ambixmatrix_t*mtx, const number32_t*data);
+_ambix_matrix_fill_byteswapped(ambix_matrix_t*mtx, const number32_t*data);
 
 
 /** @brief byte-swap 32bit data
@@ -282,11 +282,11 @@ ambix_err_t _ambix_splitAdaptor_int16(int16_t*source, uint32_t sourcechannels, u
  * @param frames number of frames to extract
  * @return error code indicating success
  */
-ambix_err_t _ambix_splitAdaptormatrix_float32(float32_t*source, uint32_t sourcechannels, ambixmatrix_t*matrix, float32_t*dest_ambi, float32_t*dest_other, int64_t frames);
+ambix_err_t _ambix_splitAdaptormatrix_float32(float32_t*source, uint32_t sourcechannels, ambix_matrix_t*matrix, float32_t*dest_ambi, float32_t*dest_other, int64_t frames);
 /* @see _ambix_splitAdaptormatrix_float32 */
-ambix_err_t _ambix_splitAdaptormatrix_int32(int32_t*source, uint32_t sourcechannels, ambixmatrix_t*matrix, int32_t*dest_ambi, int32_t*dest_other, int64_t frames);
+ambix_err_t _ambix_splitAdaptormatrix_int32(int32_t*source, uint32_t sourcechannels, ambix_matrix_t*matrix, int32_t*dest_ambi, int32_t*dest_other, int64_t frames);
 /* @see _ambix_splitAdaptormatrix_float32 */
-ambix_err_t _ambix_splitAdaptormatrix_int16(int16_t*source, uint32_t sourcechannels, ambixmatrix_t*matrix, int16_t*dest_ambi, int16_t*dest_other, int64_t frames);
+ambix_err_t _ambix_splitAdaptormatrix_int16(int16_t*source, uint32_t sourcechannels, ambix_matrix_t*matrix, int16_t*dest_ambi, int16_t*dest_other, int64_t frames);
 
 
 /** @brief merge two separate interleaved (32bit floating point) audio data blocks into one
@@ -312,10 +312,10 @@ ambix_err_t _ambix_mergeAdaptor_int32(int32_t*source1, uint32_t source1channels,
 ambix_err_t _ambix_mergeAdaptor_int16(int16_t*source1, uint32_t source1channels, int16_t*source2, uint32_t source2channels, int16_t*destination, int64_t frames);
 
 
-/** @brief debugging printout for ambixinfo_t
+/** @brief debugging printout for ambix_info_t
  * @param info an ambixinfo struct
  */
-void _ambix_print_info(const ambixinfo_t*info);
+void _ambix_print_info(const ambix_info_t*info);
 
 #define MARK() printf("%s:%d[%s]\n", __FILE__, __LINE__, __FUNCTION__)
 

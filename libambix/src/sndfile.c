@@ -76,7 +76,7 @@ static void print_sfinfo(SF_INFO*info) {
 }
 
 static void
-ambix2sndfile_info(const ambixinfo_t*axinfo, SF_INFO *sfinfo) {
+ambix2sndfile_info(const ambix_info_t*axinfo, SF_INFO *sfinfo) {
   sfinfo->frames=axinfo->frames;
   sfinfo->samplerate=axinfo->samplerate;
   sfinfo->channels=axinfo->ambichannels+axinfo->extrachannels;
@@ -85,7 +85,7 @@ ambix2sndfile_info(const ambixinfo_t*axinfo, SF_INFO *sfinfo) {
   sfinfo->seekable=0;
 }
 static void
-sndfile2ambix_info(const SF_INFO*sfinfo, ambixinfo_t*axinfo) {
+sndfile2ambix_info(const SF_INFO*sfinfo, ambix_info_t*axinfo) {
   axinfo->frames=sfinfo->frames;
   axinfo->samplerate=(double)(sfinfo->samplerate);
   axinfo->extrachannels=sfinfo->channels;
@@ -147,7 +147,7 @@ ambix_read_uuidchunk(ambix_t*ax) {
 
 
 
-ambix_err_t _ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t mode, const ambixinfo_t*ambixinfo) {
+ambix_err_t _ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t mode, const ambix_info_t*ambixinfo) {
   int sfmode=0;
 
   ambix->private=calloc(1, sizeof(ambixsndfile_private_t));

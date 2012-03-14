@@ -50,7 +50,7 @@ extern "C" {
  * @return a new matrix object or NULL
  */
 AMBIX_API
-ambixmatrix_t*ambix_matrix_create(void);
+ambix_matrix_t*ambix_matrix_create(void);
 
 /** @brief Destroy a matrix
  *
@@ -60,7 +60,7 @@ ambixmatrix_t*ambix_matrix_create(void);
  * @param mtx matrix object to destroy
  */
 AMBIX_API
-void ambix_matrix_destroy(ambixmatrix_t*mtx);
+void ambix_matrix_destroy(ambix_matrix_t*mtx);
 
 /** @brief Initialize a matrix
  *
@@ -72,7 +72,7 @@ void ambix_matrix_destroy(ambixmatrix_t*mtx);
  * @return pointer to a newly initialized (and/or allocated) matrix, or NULL on error
  */
 AMBIX_API
-ambixmatrix_t*ambix_matrix_init(uint32_t rows, uint32_t cols, ambixmatrix_t*mtx);
+ambix_matrix_t*ambix_matrix_init(uint32_t rows, uint32_t cols, ambix_matrix_t*mtx);
 
 
 /** @brief De-initialize a matrix
@@ -82,7 +82,7 @@ ambixmatrix_t*ambix_matrix_init(uint32_t rows, uint32_t cols, ambixmatrix_t*mtx)
  * @param mtx matrix object to deinitialize
  */
 AMBIX_API
-void ambix_matrix_deinit(ambixmatrix_t*mtx);
+void ambix_matrix_deinit(ambix_matrix_t*mtx);
 
 
 /** @brief Fill matrix with identity matrix
@@ -93,7 +93,7 @@ void ambix_matrix_deinit(ambixmatrix_t*mtx);
  * @return pointer to the matrix object
  */
 AMBIX_API
-ambixmatrix_t*ambix_matrix_eye(ambixmatrix_t*matrix);
+ambix_matrix_t*ambix_matrix_eye(ambix_matrix_t*matrix);
 
 /** @brief Fill a matrix with values
  *
@@ -104,7 +104,7 @@ ambixmatrix_t*ambix_matrix_eye(ambixmatrix_t*matrix);
  * @return an error code indicating success
  */
 AMBIX_API
-ambix_err_t ambix_matrix_fill(ambixmatrix_t*mtx, const float32_t*data);
+ambix_err_t ambix_matrix_fill(ambix_matrix_t*mtx, const float32_t*data);
 
 /** @brief Copy a matrix to another matrix
  *
@@ -115,7 +115,7 @@ ambix_err_t ambix_matrix_fill(ambixmatrix_t*mtx, const float32_t*data);
  * @return pointer to the destination matrix
  */
 AMBIX_API
-ambixmatrix_t*ambix_matrix_copy(const ambixmatrix_t*src, ambixmatrix_t*dest);
+ambix_matrix_t*ambix_matrix_copy(const ambix_matrix_t*src, ambix_matrix_t*dest);
 /** @brief Multiply two matrices
  *
  * Multiply matrices dest=A*B, possibly resizing or creating the destination matrix
@@ -127,7 +127,7 @@ ambixmatrix_t*ambix_matrix_copy(const ambixmatrix_t*src, ambixmatrix_t*dest);
  * @remark if this returns a newly allocated matrix object (result!=return value), the host has to take care of calling ambix_matrix_destroy()
  */
 AMBIX_API
-ambixmatrix_t*ambix_matrix_multiply(const ambixmatrix_t*A, const ambixmatrix_t*B, ambixmatrix_t*result);
+ambix_matrix_t*ambix_matrix_multiply(const ambix_matrix_t*A, const ambix_matrix_t*B, ambix_matrix_t*result);
 
 
 /** @brief Multiply a matrix with (32bit floating point) data
@@ -141,20 +141,20 @@ ambixmatrix_t*ambix_matrix_multiply(const ambixmatrix_t*A, const ambixmatrix_t*B
  * @return an error code indicating success
  */
 AMBIX_API
-ambix_err_t ambix_matrix_multiply_float32(float32_t*dest, const ambixmatrix_t*mtx, const float32_t*source, int64_t frames);
+ambix_err_t ambix_matrix_multiply_float32(float32_t*dest, const ambix_matrix_t*mtx, const float32_t*source, int64_t frames);
 /** @brief Multiply a matrix with (32bit signed integer) data
  *
  * @see ambix_matrix_multiply_float32
  */
 AMBIX_API
-ambix_err_t ambix_matrix_multiply_int32(int32_t*dest, const ambixmatrix_t*mtx, const int32_t*source, int64_t frames);
-ambix_err_t ambix_matrix_multiply_float32(float32_t*dest, const ambixmatrix_t*mtx, const float32_t*source, int64_t frames);
+ambix_err_t ambix_matrix_multiply_int32(int32_t*dest, const ambix_matrix_t*mtx, const int32_t*source, int64_t frames);
+ambix_err_t ambix_matrix_multiply_float32(float32_t*dest, const ambix_matrix_t*mtx, const float32_t*source, int64_t frames);
 /** @brief Multiply a matrix with (16 bit signed integer) data
  *
  * @see ambix_matrix_multiply_float32
  */
 AMBIX_API
-ambix_err_t ambix_matrix_multiply_int16(int16_t*dest, const ambixmatrix_t*mtx, const int16_t*source, int64_t frames);
+ambix_err_t ambix_matrix_multiply_int16(int16_t*dest, const ambix_matrix_t*mtx, const int16_t*source, int64_t frames);
 
 #ifdef __cplusplus
 }		/* extern "C" */

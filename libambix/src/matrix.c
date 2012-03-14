@@ -27,18 +27,18 @@
 # include <stdlib.h>
 #endif /* HAVE_STDLIB_H */
 
-ambixmatrix_t*
+ambix_matrix_t*
 ambix_matrix_create(void) {
   return ambix_matrix_init(0, 0, NULL);
 }
 void
-ambix_matrix_destroy(ambixmatrix_t*mtx) {
+ambix_matrix_destroy(ambix_matrix_t*mtx) {
   ambix_matrix_deinit(mtx);
   free(mtx);
   mtx=NULL;
 }
 void
-ambix_matrix_deinit(ambixmatrix_t*mtx) {
+ambix_matrix_deinit(ambix_matrix_t*mtx) {
   uint32_t r;
   if(mtx->data) {
     for(r=0; r<mtx->rows; r++) {
@@ -52,12 +52,12 @@ ambix_matrix_deinit(ambixmatrix_t*mtx) {
   mtx->rows=0;
   mtx->cols=0;
 }
-ambixmatrix_t*
-ambix_matrix_init(uint32_t rows, uint32_t cols, ambixmatrix_t*orgmtx) {
-  ambixmatrix_t*mtx=orgmtx;
+ambix_matrix_t*
+ambix_matrix_init(uint32_t rows, uint32_t cols, ambix_matrix_t*orgmtx) {
+  ambix_matrix_t*mtx=orgmtx;
   uint32_t r;
   if(!mtx) {
-    mtx=(ambixmatrix_t*)calloc(1, sizeof(ambixmatrix_t));
+    mtx=(ambix_matrix_t*)calloc(1, sizeof(ambix_matrix_t));
     if(!mtx)
       return NULL;
     mtx->data=NULL;
@@ -76,8 +76,8 @@ ambix_matrix_init(uint32_t rows, uint32_t cols, ambixmatrix_t*orgmtx) {
   return mtx;
 }
 
-ambixmatrix_t*
-ambix_matrix_transpose(const ambixmatrix_t*matrix, ambixmatrix_t*xirtam) {
+ambix_matrix_t*
+ambix_matrix_transpose(const ambix_matrix_t*matrix, ambix_matrix_t*xirtam) {
   uint32_t rows, cols, r, c;
   float32_t**mtx, **xtm;
   if(!xirtam)
@@ -97,7 +97,7 @@ ambix_matrix_transpose(const ambixmatrix_t*matrix, ambixmatrix_t*xirtam) {
 }
 
 ambix_err_t
-ambix_matrix_fill(ambixmatrix_t*mtx, const float32_t*ndata) {
+ambix_matrix_fill(ambix_matrix_t*mtx, const float32_t*ndata) {
   float32_t**matrix=mtx->data;
   uint32_t rows=mtx->rows;
   uint32_t cols=mtx->cols;
@@ -112,7 +112,7 @@ ambix_matrix_fill(ambixmatrix_t*mtx, const float32_t*ndata) {
   return AMBIX_ERR_SUCCESS;
 }
 ambix_err_t
-_ambix_matrix_fill_byteswapped(ambixmatrix_t*mtx, const number32_t*data) {
+_ambix_matrix_fill_byteswapped(ambix_matrix_t*mtx, const number32_t*data) {
   float32_t**matrix=mtx->data;
   uint32_t rows=mtx->rows;
   uint32_t cols=mtx->cols;
@@ -130,9 +130,9 @@ _ambix_matrix_fill_byteswapped(ambixmatrix_t*mtx, const number32_t*data) {
 }
 
 ambix_err_t
-ambix_matrix_fill_transposed(ambixmatrix_t*mtx, const float32_t*data, int byteswap) {
+ambix_matrix_fill_transposed(ambix_matrix_t*mtx, const float32_t*data, int byteswap) {
   ambix_err_t err=0;
-  ambixmatrix_t*xtm=ambix_matrix_init(mtx->cols, mtx->rows, NULL);
+  ambix_matrix_t*xtm=ambix_matrix_init(mtx->cols, mtx->rows, NULL);
 
   if(!xtm)
     return AMBIX_ERR_UNKNOWN;
@@ -143,7 +143,7 @@ ambix_matrix_fill_transposed(ambixmatrix_t*mtx, const float32_t*data, int bytesw
     err=ambix_matrix_fill(xtm, data);
 
   if(AMBIX_ERR_SUCCESS==err) {
-    ambixmatrix_t*resu=ambix_matrix_transpose(mtx, xtm);
+    ambix_matrix_t*resu=ambix_matrix_transpose(mtx, xtm);
     if(!resu)
       err=AMBIX_ERR_UNKNOWN;
   }
@@ -154,12 +154,12 @@ ambix_matrix_fill_transposed(ambixmatrix_t*mtx, const float32_t*data, int bytesw
 
 
 
-ambixmatrix_t*
-ambix_matrix_copy(const ambixmatrix_t*src, ambixmatrix_t*dest) {
+ambix_matrix_t*
+ambix_matrix_copy(const ambix_matrix_t*src, ambix_matrix_t*dest) {
   if(!src)
     return NULL;
   if(!dest)
-    dest=(ambixmatrix_t*)calloc(1, sizeof(ambixmatrix_t));
+    dest=(ambix_matrix_t*)calloc(1, sizeof(ambix_matrix_t));
 
   if((dest->rows != src->rows) || (dest->cols != src->cols))
     ambix_matrix_init(src->rows, src->cols, dest);
@@ -179,8 +179,8 @@ ambix_matrix_copy(const ambixmatrix_t*src, ambixmatrix_t*dest) {
 }
 
 
-ambixmatrix_t*
-ambix_matrix_multiply(const ambixmatrix_t*left, const ambixmatrix_t*right, ambixmatrix_t*dest) {
+ambix_matrix_t*
+ambix_matrix_multiply(const ambix_matrix_t*left, const ambix_matrix_t*right, ambix_matrix_t*dest) {
   uint32_t r, c, rows, cols, common;
   float32_t**ldat,**rdat,**ddat;
   float32_t lv, rv;
@@ -191,7 +191,7 @@ ambix_matrix_multiply(const ambixmatrix_t*left, const ambixmatrix_t*right, ambix
     return NULL;
 
   if(!dest)
-    dest=(ambixmatrix_t*)calloc(1, sizeof(ambixmatrix_t));
+    dest=(ambix_matrix_t*)calloc(1, sizeof(ambix_matrix_t));
 
   if((dest->rows != left->rows) || (dest->cols != right->cols))
     ambix_matrix_init(left->rows, right->cols, dest);
@@ -220,8 +220,8 @@ ambix_matrix_multiply(const ambixmatrix_t*left, const ambixmatrix_t*right, ambix
 }
 
 
-ambixmatrix_t*
-ambix_matrix_eye(ambixmatrix_t*matrix) {
+ambix_matrix_t*
+ambix_matrix_eye(ambix_matrix_t*matrix) {
   int32_t rows=matrix->rows;
   int32_t cols=matrix->cols;
   float32_t**mtx=matrix->data;
@@ -234,7 +234,7 @@ ambix_matrix_eye(ambixmatrix_t*matrix) {
   return matrix;
 }
 
-ambix_err_t ambix_matrix_multiply_float32(float32_t*dest, const ambixmatrix_t*matrix, const float32_t*source, int64_t frames) {
+ambix_err_t ambix_matrix_multiply_float32(float32_t*dest, const ambix_matrix_t*matrix, const float32_t*source, int64_t frames) {
   float32_t**mtx=matrix->data;
   const uint32_t outchannels=matrix->rows;
   const uint32_t inchannels=matrix->cols;
@@ -259,7 +259,7 @@ ambix_err_t ambix_matrix_multiply_float32(float32_t*dest, const ambixmatrix_t*ma
   return AMBIX_ERR_SUCCESS;
 }
 #define MTXMULTIPLY_DATA_INT(typ)                                       \
-  ambix_err_t ambix_matrix_multiply_##typ(typ##_t*dest, const ambixmatrix_t*matrix, const typ##_t*source, int64_t frames) { \
+  ambix_err_t ambix_matrix_multiply_##typ(typ##_t*dest, const ambix_matrix_t*matrix, const typ##_t*source, int64_t frames) { \
     float32_t**mtx=matrix->data;                                        \
     const uint32_t outchannels=matrix->rows;                            \
     const uint32_t inchannels=matrix->cols;                             \

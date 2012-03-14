@@ -133,17 +133,17 @@ typedef enum {
 
 
 /** a 2-dimensional floating point matrix */
-typedef struct ambixmatrix_t {
+typedef struct ambix_matrix_t {
   /** number of rows */
   uint32_t rows;
   /** number of columns */
   uint32_t cols;
   /** matrix data (as vector (length: rows) of row-vectors (length: cols)) */
   float32_t**data;
-} ambixmatrix_t;
+} ambix_matrix_t;
 
 /** this is for passing data about the opened ambix file between the host application and the library */
-typedef struct ambixinfo_t {
+typedef struct ambix_info_t {
   /** number of frames in the file */
   uint64_t  frames;
   /** samplerate in Hz */
@@ -164,7 +164,7 @@ typedef struct ambixinfo_t {
    * if the file contains a reduced set (ambichannels<(ambiorder+1)^2) you can reconstruct the full set by
    * multiplying the reduced set with the reconstruction matrix */
 	uint32_t			ambichannels;
-} ambixinfo_t;
+} ambix_info_t;
 
 /**
  * typedef from libsndfile

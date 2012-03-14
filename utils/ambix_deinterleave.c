@@ -52,7 +52,7 @@
 #define MARK() printf("%s:%d[%s]\n", __FILE__, __LINE__, __FUNCTION__)
 
 typedef struct ai_t {
-  ambixinfo_t info;
+  ambix_info_t info;
 
   char*infilename;
   ambix_t*inhandle;
@@ -63,7 +63,7 @@ typedef struct ai_t {
   SF_INFO *outinfo;
   uint32_t numOuts;
 
-  ambixmatrix_t matrix;
+  ambix_matrix_t matrix;
 
   uint32_t blocksize;
 #define DEFAULT_BLOCKSIZE 1024
@@ -195,7 +195,7 @@ static ai_t*ai_close(ai_t*ai) {
 static ai_t*ai_open_input(ai_t*ai) {
   uint32_t i;
   uint32_t channels=0;
-  const ambixmatrix_t*matrix=NULL;
+  const ambix_matrix_t*matrix=NULL;
   if(!ai)return ai;
   if(!ai->inhandle) {
     ai->info.fileformat=AMBIX_EXTENDED;
@@ -315,7 +315,7 @@ static ai_t*ai_copy_block(ai_t*ai,
   uint32_t ambichannels, fullambichannels, extrachannels;
   uint64_t channel, f, c, channels=0;
 
-  const ambixmatrix_t*matrix;
+  const ambix_matrix_t*matrix;
   uint32_t rows, cols;
   float32_t**mtx;
   float*source, *dest;
@@ -397,7 +397,7 @@ static ai_t*ai_copy(ai_t*ai) {
   channels=(ai->info.ambichannels+ai->info.extrachannels);
 
   if(ai->info.ambichannels) {
-    const ambixmatrix_t*matrix=&ai->matrix;
+    const ambix_matrix_t*matrix=&ai->matrix;
     if(!matrix) {
       printf("no adaptor matrix founde...\n");
       return ai_close(ai);

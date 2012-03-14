@@ -31,7 +31,7 @@
 #endif /* HAVE_STRING_H */
 
 
-static ambix_err_t _check_write_ambixinfo(ambixinfo_t*info) {
+static ambix_err_t _check_write_ambixinfo(ambix_info_t*info) {
   /* FIXXME: rather than failing, we could force the values to be correct */
   switch(info->fileformat) {
   case AMBIX_NONE:
@@ -71,7 +71,7 @@ static _ambix_info_set(ambix_t*ambix
   ambix->ambisonics_order==fullambichannels>0?ambix_channels2order(fullambichannels):0;
 }
 
-ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambixinfo_t*ambixinfo) {
+ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambix_info_t*ambixinfo) {
   ambix_t*ambix=NULL;
   ambix_err_t err;
   int32_t ambichannels, otherchannels;
@@ -190,23 +190,23 @@ SNDFILE*ambix_getSndfile	(ambix_t*ambix) {
 }
 
 
-const ambixmatrix_t*ambix_getAdaptorMatrix	(ambix_t*ambix) {
+const ambix_matrix_t*ambix_getAdaptorMatrix	(ambix_t*ambix) {
   if(AMBIX_EXTENDED==ambix->info.fileformat)
     return &(ambix->matrix);
   return NULL;
 }
-ambix_err_t ambix_setAdaptorMatrix	(ambix_t*ambix, const ambixmatrix_t*matrix) {
+ambix_err_t ambix_setAdaptorMatrix	(ambix_t*ambix, const ambix_matrix_t*matrix) {
   if(0) {
   } else if((ambix->filemode & AMBIX_READ ) && (AMBIX_SIMPLE   == ambix->info.fileformat)) {
     /* multiply the matrix with the previous adaptor matrix */
     if(AMBIX_EXTENDED == ambix->realinfo.fileformat) {
-      ambixmatrix_t*mtx=ambix_matrix_multiply(matrix, &ambix->matrix, &ambix->matrix2);
+      ambix_matrix_t*mtx=ambix_matrix_multiply(matrix, &ambix->matrix, &ambix->matrix2);
       if(mtx != &ambix->matrix2)
         return AMBIX_ERR_UNKNOWN;
       ambix->use_matrix=2;
       return AMBIX_ERR_SUCCESS;
     } else {
-      ambixmatrix_t*mtx=NULL;
+      ambix_matrix_t*mtx=NULL;
       if(matrix->cols != ambix->realinfo.ambichannels) {
         return AMBIX_ERR_INVALID_DIMENSION;
       }

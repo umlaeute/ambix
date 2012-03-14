@@ -24,7 +24,7 @@
 #include "common.h"
 #include <math.h>
 
-void matrix_print(const ambixmatrix_t*mtx) {
+void matrix_print(const ambix_matrix_t*mtx) {
   printf("matrix [%dx%d]\n", mtx->rows, mtx->cols);
   if(mtx->data) {
     uint32_t c, r;
@@ -36,7 +36,7 @@ void matrix_print(const ambixmatrix_t*mtx) {
   }
 }
 #define MAX_OVER 10
-float32_t matrix_diff(uint32_t line, const ambixmatrix_t*A, const ambixmatrix_t*B, float32_t eps) {
+float32_t matrix_diff(uint32_t line, const ambix_matrix_t*A, const ambix_matrix_t*B, float32_t eps) {
   uint32_t r, c;
   float32_t sum=0.;
   float32_t maxdiff=-1.f;

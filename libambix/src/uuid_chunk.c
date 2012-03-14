@@ -62,9 +62,9 @@ _ambix_checkUUID(const char data[16]) {
   return 0;
 }
 
-ambixmatrix_t*
-_ambix_uuid1_to_matrix(const void*data, uint64_t datasize, ambixmatrix_t*orgmtx, int swap) {
-  ambixmatrix_t*mtx=orgmtx;
+ambix_matrix_t*
+_ambix_uuid1_to_matrix(const void*data, uint64_t datasize, ambix_matrix_t*orgmtx, int swap) {
+  ambix_matrix_t*mtx=orgmtx;
   uint32_t rows;
   uint32_t cols;
   uint64_t size;
@@ -96,7 +96,7 @@ _ambix_uuid1_to_matrix(const void*data, uint64_t datasize, ambixmatrix_t*orgmtx,
   }
 
   if(!mtx) {
-    mtx=(ambixmatrix_t*)calloc(1, sizeof(ambixmatrix_t));
+    mtx=(ambix_matrix_t*)calloc(1, sizeof(ambix_matrix_t));
     if(!mtx)
       goto cleanup;
   }
@@ -125,7 +125,7 @@ _ambix_uuid1_to_matrix(const void*data, uint64_t datasize, ambixmatrix_t*orgmtx,
 
 
 uint64_t
-_ambix_matrix_to_uuid1(const ambixmatrix_t*matrix, void*data, int swap) {
+_ambix_matrix_to_uuid1(const ambix_matrix_t*matrix, void*data, int swap) {
   const char*uuid=_ambix_getUUID(1);
   uint64_t index=0;
   uint64_t datasize=0;

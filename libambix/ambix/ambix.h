@@ -77,20 +77,20 @@ int ambix_isFullSet(uint32_t channels);
  *
  * @param path filename of the file to open
  * @param mode whether to open the file for reading and/or writing (AMBIX_READ, AMBIX_WRITE, AMBIX_READ | AMBIX_WRITE)
- * @param ambixinfo pointer to a valid ambixinfo_t structure
+ * @param ambixinfo pointer to a valid ambix_info_t structure
  * @remark
  *    when opening a file for reading, the structure should be initialized to zero before calling ambix_open():
- *    the fields will be set by the library; if you set the ambixinfo_t.ambixformat field to something else than AMBIX_NONE,
- *    the library will present the data as if the was written in this format (e.g. if you set ambixinfo_t.ambixformat:=AMBIX_SIMPLE
+ *    the fields will be set by the library; if you set the ambix_info_t.ambixformat field to something else than AMBIX_NONE,
+ *    the library will present the data as if the was written in this format (e.g. if you set ambix_info_t.ambixformat:=AMBIX_SIMPLE
  *    but the file really is AMBIX_EXTENDED, the library will automatically pre-multiply the reconstruction matrix to
  *    give you the full ambisonics set.
  * @remark
- *   when opening a file for writing, the caller must set the fields; if ambixinfo_t.ambixformat is AMBIX_NONE, than ambixinfo_t.ambixchannels must be 0,
- *   else ambixinfo_t.ambichannels must be >0; if ambixinfo_t.ambixformat is AMBIX_SIMPLE, then ambixinfo_t.ambichannels must be (ambiorder+1)^2
+ *   when opening a file for writing, the caller must set the fields; if ambix_info_t.ambixformat is AMBIX_NONE, than ambix_info_t.ambixchannels must be 0,
+ *   else ambix_info_t.ambichannels must be >0; if ambix_info_t.ambixformat is AMBIX_SIMPLE, then ambix_info_t.ambichannels must be (ambiorder+1)^2
  * @return A handle to the opened file (or NULL on failure)
  */
 AMBIX_API
-ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambixinfo_t*ambixinfo) ;
+ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambix_info_t*ambixinfo) ;
 
 /** @brief Close an ambix handle
  *
@@ -201,7 +201,7 @@ SNDFILE*ambix_getSndfile	(ambix_t*ambix);
  *          nor used after calling ambix_close()
  */
 AMBIX_API
-const ambixmatrix_t*ambix_getAdaptorMatrix	(ambix_t*ambix);
+const ambix_matrix_t*ambix_getAdaptorMatrix	(ambix_t*ambix);
 
 /** @brief set a matrix to be pre-multiplied
  *
@@ -220,7 +220,7 @@ const ambixmatrix_t*ambix_getAdaptorMatrix	(ambix_t*ambix);
  * @remark using this on ambix handles other than READ/SIMPLE or WRITE/EXTENDED is an error
  */
 AMBIX_API
-ambix_err_t ambix_setAdaptorMatrix	(ambix_t*ambix, const ambixmatrix_t*matrix);
+ambix_err_t ambix_setAdaptorMatrix	(ambix_t*ambix, const ambix_matrix_t*matrix);
 
 
 #ifdef __cplusplus

@@ -26,7 +26,7 @@
 
 
 void check_create_extended(const char*path, ambix_sampleformat_t format, uint32_t chunksize, float32_t eps) {
-  ambixinfo_t info, rinfo, winfo;
+  ambix_info_t info, rinfo, winfo;
   ambix_t*ambix=NULL;
   float32_t*orgambidata,*ambidata,*resultambidata;
   float32_t*orgotherdata,*otherdata,*resultotherdata;
@@ -34,8 +34,8 @@ void check_create_extended(const char*path, ambix_sampleformat_t format, uint32_
   uint32_t ambichannels=4;
   uint32_t extrachannels=2;
   float32_t periods=20000;
-  ambixmatrix_t eye={0,0,NULL};
-  const ambixmatrix_t*eye2=NULL;
+  ambix_matrix_t eye={0,0,NULL};
+  const ambix_matrix_t*eye2=NULL;
   uint32_t err32;
   float32_t diff=0.;
   STARTTEST();

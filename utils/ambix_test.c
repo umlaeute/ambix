@@ -27,9 +27,9 @@
 #include <string.h>
 
 void createfile_simple(const char*path, uint32_t ambichannels, uint32_t extrachannels, uint64_t frames) {
-  ambixinfo_t info;
+  ambix_info_t info;
   ambix_t*ambix;
-  const ambixmatrix_t*matrix;
+  const ambix_matrix_t*matrix;
 
   extrachannels=0;
 
@@ -103,10 +103,10 @@ void createfile_simple(const char*path, uint32_t ambichannels, uint32_t extracha
 }
 
 void createfile_extended(const char*path, uint32_t ambichannels, uint32_t extrachannels, uint64_t frames) {
-  ambixinfo_t info;
+  ambix_info_t info;
   ambix_t*ambix;
-  const ambixmatrix_t*matrix;
-  ambixmatrix_t adaptmatrix;
+  const ambix_matrix_t*matrix;
+  ambix_matrix_t adaptmatrix;
   ambix_err_t err;
 
   memset(&info, 0, sizeof(info));

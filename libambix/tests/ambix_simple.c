@@ -26,7 +26,7 @@
 
 
 void check_create_simple(const char*path, ambix_sampleformat_t format, float32_t eps) {
-  ambixinfo_t info, rinfo, winfo;
+  ambix_info_t info, rinfo, winfo;
   ambix_t*ambix=NULL;
   float32_t*orgdata,*data,*resultdata;
   uint32_t frames=441000;

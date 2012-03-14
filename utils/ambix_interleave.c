@@ -53,7 +53,7 @@
 
 
 typedef struct ai_t {
-  ambixinfo_t info;
+  ambix_info_t info;
 
   char**infilenames;
   SNDFILE**inhandles;
@@ -63,7 +63,7 @@ typedef struct ai_t {
   char*outfilename;
   ambix_t*outhandle;
 
-  ambixmatrix_t*matrix;
+  ambix_matrix_t*matrix;
   uint32_t channels;
 
   uint32_t blocksize;
@@ -77,7 +77,7 @@ static ai_t*ai_matrix(ai_t*ai, const char*path) {
   uint32_t rows, cols;
   float*data=NULL;
   ai_t*result=NULL;
-  ambixmatrix_t*mtx=NULL;
+  ambix_matrix_t*mtx=NULL;
   uint32_t frames;
 
   memset(&info, 0, sizeof(info));
@@ -331,7 +331,7 @@ static ai_t*ai_open_input(ai_t*ai) {
 }
 
 static ai_t*ai_open_output(ai_t*ai) {
-  ambixinfo_t info;
+  ambix_info_t info;
   if(!ai)return ai;
   memcpy(&info, &ai->info, sizeof(info));
   ai->outhandle=ambix_open(ai->outfilename, AMBIX_WRITE, &info);
