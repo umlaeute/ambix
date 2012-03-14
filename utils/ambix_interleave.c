@@ -76,7 +76,7 @@ static ai_t*ai_matrix(ai_t*ai, const char*path) {
   uint32_t rows, cols;
   float*data=NULL;
   ai_t*result=NULL;
-  int byteswap=0;
+  ambixmatrix_t*mtx=NULL;
 
   SNDFILE*file=sf_open(path, SFM_READ, &info);
 
@@ -87,19 +87,27 @@ static ai_t*ai_matrix(ai_t*ai, const char*path) {
   rows=info.channels;
   cols=info.frames;
   data=malloc(rows*cols*sizeof(float));
-  byteswap=(sf_command(file, SFC_RAW_DATA_NEEDS_ENDSWAP, NULL, 0) == SF_TRUE);
   if(cols!=sf_readf_float(file, data, cols)) {
     fprintf(stderr, "ambix_interleave: matrix open failed\n");
     goto cleanup;
   }
 
-  ai->matrix=ambix_matrix_init(rows, cols, NULL);
-  ambix_matrix_fill_transposed(ai->matrix, (number32_t*)data, byteswap);
+  mtx=ambix_matrix_init(cols, rows, NULL);
+  if(mtx && (AMBIX_ERR_SUCCESS==ambix_matrix_fill(mtx, data))) {
+    uint32_t r, c;
+    ai->matrix=ambix_matrix_init(rows, cols, NULL);
+
+    for(r=0; r<rows; r++)
+      for(c=0; c<cols; c++)
+        ai->matrix->data[r][c]=mtx->data[c][r];
+  }
 
   result=ai;
 
   //  fprintf(stderr, "ambix_interleave: matrices not yet supported\n");
   cleanup:
+  if(mtx)
+    ambix_matrix_destroy(mtx);
   sf_close(file);
   free(data);
   return result;
