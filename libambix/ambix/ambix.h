@@ -42,35 +42,6 @@
 extern "C" {
 #endif	/* __cplusplus */
 
-/** @brief Calculate the number of channels for a full 3d ambisonics set of a given order
- *
- * @param order the order of the full set
- * @return the number of channels of the full set
- */
-AMBIX_API
-uint32_t ambix_order2channels(uint32_t order);
-
-
-/** @brief Calculate the order of a full 3d ambisonics set fora gien number of channels
- *
- * @param channels the number of channels of the full set
- * @return the order of the full set, or -1 if the channels don't form a full set
- */
-AMBIX_API
-
-
-int32_t ambix_channels2order(uint32_t channels);
-/** @brief Checks whether the channel can form a full 3 ambisonics set
- *
- * @param channels the number of channels supposed to form a full set
- * @return TRUE if the channels can form full set, FALSE otherwise
- */
-AMBIX_API
-int ambix_isFullSet(uint32_t channels);
-
-
-
-
 /** @brief Open an ambix file
  *
  * Opens a soundfile for reading/writing
