@@ -349,6 +349,9 @@ static ai_t*ai_copy_block(ai_t*ai,
     source=rawdata;
     dest  =cookeddata;
 
+#if 1
+    //    printf("decoding %d frames: %d channels in to %p to %d channels in %p\n", (int) frames, (int)ambichannels, rawdata, (int)fullambichannels, cookeddata);
+    //    printf("matrix[%dx%d]\n", matrix->rows, matrix->cols);
     if(AMBIX_ERR_SUCCESS!=ambix_matrix_multiply_float32(cookeddata, matrix, rawdata, frames)) {
       printf("failed decoding\n");
       return ai_close(ai);
@@ -356,6 +359,11 @@ static ai_t*ai_copy_block(ai_t*ai,
 
     /* deinterleave the buffer */
     deinterleaver(deinterleavebuffer, cookeddata, frames, fullambichannels);
+#else
+    /* deinterleave the buffer */
+    fullambichannels=ambichannels;
+    deinterleaver(deinterleavebuffer, rawdata, frames, ambichannels);
+#endif
 
     /* store the ambisonics data */
     channel=0;
@@ -447,7 +455,7 @@ static int ambix_deinterleave(ai_t*ai) {
   //if(result)printf("success @ %d!\n", __LINE__);
 
   if(result) {
-    printf("Successfully deinterleaved '%s' to %d files (%s*%s)\n", ai->infilename, ai->numOuts, ai->prefix, ai->suffix);
+    printf("Deinterleaving '%s' to %d files (%s*%s)\n", ai->infilename, ai->numOuts, ai->prefix, ai->suffix);
   }
 
   ai_close(ai);
