@@ -65,7 +65,7 @@ int32_t ambix_channels2order(uint32_t channels);
  * @return TRUE if the channels can form full set, FALSE otherwise
  */
 AMBIX_API
-int ambix_isFullSet(uint32_t channels);
+int ambix_is_fullset(uint32_t channels);
 
 #ifdef __cplusplus
 }		/* extern "C" */

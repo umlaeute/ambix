@@ -41,7 +41,7 @@ static ambix_err_t _check_write_ambixinfo(ambix_info_t*info) {
   case AMBIX_SIMPLE:
     if(info->extrachannels>0)
       return AMBIX_ERR_INVALID_FORMAT;
-    if(!ambix_isFullSet(info->ambichannels))
+    if(!ambix_is_fullset(info->ambichannels))
       return AMBIX_ERR_INVALID_FORMAT;
     break;
   }
@@ -116,7 +116,7 @@ ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambix_info_
            * if so, we have a simple-ambix file, else it is just an ordinary caf
            */
           if(ambix->matrix.cols <= channels &&  /* reduced set must be fully present */
-             ambix_isFullSet(ambix->matrix.rows)) { /* expanded set must be a full set */
+             ambix_is_fullset(ambix->matrix.rows)) { /* expanded set must be a full set */
             /* it's a simple AMBIX! */
             _ambix_info_set(ambix, AMBIX_EXTENDED, channels-ambix->matrix.cols, ambix->matrix.cols, ambix->matrix.rows);
           } else {
@@ -129,7 +129,7 @@ ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambix_info_
           /* check whether channels are (N+1)^2
            * if so, we have a simple-ambix file, else it is just an ordinary caf
            */
-          if(ambix_isFullSet(channels)) { /* expanded set must be a full set */
+          if(ambix_is_fullset(channels)) { /* expanded set must be a full set */
             /* it's a simple AMBIX! */
             _ambix_info_set(ambix, AMBIX_SIMPLE, 0, channels, channels);
           } else {
@@ -219,7 +219,7 @@ ambix_err_t ambix_set_adaptormatrix	(ambix_t*ambix, const ambix_matrix_t*matrix)
       return AMBIX_ERR_UNKNOWN;
 
     /* check whether the matrix will expand to a full set */
-    if(!ambix_isFullSet(matrix->rows))
+    if(!ambix_is_fullset(matrix->rows))
       return AMBIX_ERR_INVALID_DIMENSION;
 
     if(!ambix_matrix_copy(matrix, &ambix->matrix))
@@ -266,7 +266,7 @@ ambix_err_t	ambix_write_header	(ambix_t*ambix) {
 static ambix_err_t _ambix_check_write(ambix_t*ambix, const void*ambidata, const void*otherdata, int64_t frames) {
   /* TODO: add some checks whether writing is feasible
    * e.g. format=extended but no (or wrong) matrix present */
-  if((ambix->realinfo.fileformat==AMBIX_EXTENDED) && !ambix_isFullSet(ambix->matrix.rows))
+  if((ambix->realinfo.fileformat==AMBIX_EXTENDED) && !ambix_is_fullset(ambix->matrix.rows))
     return AMBIX_ERR_INVALID_DIMENSION;
 
   ambix->startedWriting=1;

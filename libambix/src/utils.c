@@ -40,7 +40,7 @@ int32_t ambix_channels2order(uint32_t channels) {
   return -1;
 }
 
-int ambix_isFullSet(uint32_t channels) {
+int ambix_is_fullset(uint32_t channels) {
   return (ambix_order2channels(ambix_channels2order(channels))==channels);
 }
 

@@ -303,7 +303,7 @@ static ai_t*ai_open_input(ai_t*ai) {
       return ai_close(ai);
     }
   } else {
-    if(!ambix_isFullSet(channels)) {
+    if(!ambix_is_fullset(channels)) {
       return ai_close(ai);
     }
     /* simple format */
@@ -342,7 +342,7 @@ static ai_t*ai_open_output(ai_t*ai) {
     if(err==AMBIX_ERR_SUCCESS) {
       ambix_write_header(ai->outhandle);
     } else {
-      fprintf(stderr, "setting adapator matrix [%dx%d]=%d returned %d\n", ai->matrix->rows, ai->matrix->cols, ambix_isFullSet(ai->matrix->rows), err);
+      fprintf(stderr, "setting adapator matrix [%dx%d]=%d returned %d\n", ai->matrix->rows, ai->matrix->cols, ambix_is_fullset(ai->matrix->rows), err);
       return ai_close(ai);
     }
   }
