@@ -32,7 +32,7 @@ uint32_t ambix_order2channels(uint32_t order) {
 int32_t ambix_channels2order(uint32_t channels) {
   /* L=(N+1)^2 */
   int32_t order1=(int32_t)sqrt((double)channels);
-  
+
   if(order1*order1==channels) { /* expanded set must be a full set */
     return order1-1;
   }

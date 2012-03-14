@@ -21,7 +21,7 @@
 
 */
 
-/** 
+/**
  * @file	ambix/types.h
  * @brief	Ambisonics Xchange Type Definitions
  * @details This file is part of libambix
@@ -110,7 +110,7 @@ typedef enum {
 /** ambix file types */
 typedef enum {
   /** file is not an ambix file (or unknown) */
-  AMBIX_NONE     = 0, 
+  AMBIX_NONE     = 0,
   /** simple ambix file   (w/ pre-multiplication matrix) */
   AMBIX_SIMPLE   = 1,
   /** extended ambix file (w pre-multiplication matrix ) */

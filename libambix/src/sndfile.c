@@ -118,7 +118,7 @@ ambix_read_uuidchunk(ambix_t*ax) {
     /* FIXXME: no data chunk, can only be AMBIX_SIMPLE */
     result=__LINE__;goto simple;
   }
-  
+
   chunkver=_ambix_checkUUID(chunk_info.data);
   if(1==chunkver) {
     if(!_ambix_uuid1_to_matrix(chunk_info.data+16, chunk_info.datalen-16, &ax->matrix, ax->byteswap)) {

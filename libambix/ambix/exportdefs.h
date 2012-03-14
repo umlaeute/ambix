@@ -22,7 +22,7 @@
 */
 
 
-/** 
+/**
  * @file	ambix/exportdefs.h
  * @brief	export definitions for various compilers
  * @details This file is part of libambix

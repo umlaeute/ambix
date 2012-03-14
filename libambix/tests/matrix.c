@@ -271,7 +271,7 @@ void create_tests(float32_t eps) {
   STARTTEST();
 
   memset(&matrix, 0, sizeof(matrix));
-  
+
   left=ambix_matrix_create();
   fail_if((left==NULL), __LINE__, "failed to create left matrix");
   fail_if((left->rows || left->cols), __LINE__, "created empty matrix has non-zero size");

@@ -72,7 +72,7 @@ ambix_matrix_init(uint32_t rows, uint32_t cols, ambixmatrix_t*orgmtx) {
       mtx->data[r]=(float32_t*)calloc(cols, sizeof(float32_t));
     }
   }
-  
+
   return mtx;
 }
 
@@ -85,14 +85,14 @@ ambix_matrix_transpose(const ambixmatrix_t*matrix, ambixmatrix_t*xirtam) {
 
   rows=matrix->rows;
   cols=matrix->cols;
-  
-  mtx=matrix->data;  
+
+  mtx=matrix->data;
   xtm=xirtam->data;
 
   for(r=0; r<rows; r++)
     for(c=0; c<cols; c++)
       xtm[c][r]=mtx[r][c];
-  
+
   return xirtam;
 }
 

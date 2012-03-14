@@ -1,4 +1,4 @@
-/* common test functionality 
+/* common test functionality
 
    Copyright © 2012 IOhannes m zmölnig <zmoelnig@iem.at>.
          Institute of Electronic Music and Acoustics (IEM),
@@ -48,7 +48,7 @@ float32_t matrix_diff(uint32_t line, const ambixmatrix_t*A, const ambixmatrix_t*
   fail_if((NULL==A), line, "left-hand matrix of matrixdiff is NULL");
   fail_if((NULL==B), line, "right-hand matrix of matrixdiff is NULL");
   fail_if(((A->rows!=B->rows) || (A->cols!=B->cols)), line, "matrixdiff matrices do not match [%dx%d]!=[%dx%d]", A->rows, A->cols, B->rows, B->cols);
-  
+
   a=A->data;
   b=B->data;
   for(r=0; r<A->rows; r++)
@@ -80,7 +80,7 @@ float32_t data_diff(uint32_t line, const float32_t*A, const float32_t*B, uint64_
 
   fail_if((NULL==A), line, "left-hand data of datadiff is NULL");
   fail_if((NULL==B), line, "right-hand data of datadiff is NULL");
-  
+
   for(i=0; i<frames; i++) {
     float32_t v=A[i]-B[i];
     float32_t vabs=(v<0)?-v:v;
