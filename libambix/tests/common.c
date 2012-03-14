@@ -112,15 +112,27 @@ void data_print(const float32_t*data, uint64_t frames) {
   }
 }
 
+void data_transpose(float32_t*outdata, const float32_t*indata, uint32_t inrows, uint32_t incols) {
+  uint32_t r, c;
+  for(r=0; r<inrows; r++) {
+    for(c=0; c<incols; c++) {
+      uint32_t outoffset=inrows*c+r;
+      uint32_t inoffset=incols*r+c;
+      //      printf("writing %d [%f] to %d\n", inoffset, indata[inoffset], outoffset);
+      outdata[outoffset]=indata[inoffset];
+    }
+  }
+}
 
 
-
-float32_t*data_sine(uint64_t frames, uint32_t channels, float32_t periods) {
+float32_t*data_sine(uint64_t frames, uint32_t channels, float32_t freq) {
+  float32_t periods=44100./freq;
   float32_t*data=calloc(frames*channels, sizeof(float32_t));
   float32_t*datap=data;
   int64_t frame;
   for(frame=0; frame<frames; frame++) {
-    float f=(float32_t)frame*periods/(float32_t)frames;
+    //    float f=(float32_t)frame*periods/(float32_t)frames;
+    float f=(float32_t)frame*periods;
     float32_t value=0.5*sinf(f);
     int32_t chan;
     for(chan=0; chan<channels; chan++)
