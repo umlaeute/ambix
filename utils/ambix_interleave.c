@@ -51,6 +51,7 @@
 
 #define MARK() printf("%s:%d[%s]\n", __FILE__, __LINE__, __FUNCTION__)
 
+
 typedef struct ai_t {
   ambixinfo_t info;
 
@@ -77,18 +78,21 @@ static ai_t*ai_matrix(ai_t*ai, const char*path) {
   float*data=NULL;
   ai_t*result=NULL;
   ambixmatrix_t*mtx=NULL;
+  uint32_t frames;
 
+  memset(&info, 0, sizeof(info));
   SNDFILE*file=sf_open(path, SFM_READ, &info);
 
   if(!file) {
-    fprintf(stderr, "ambix_interleave: matrix open failed\n");
+    fprintf(stderr, "ambix_interleave: matrix open failed '%s'\n", path);
     return NULL;
   }
   rows=info.channels;
   cols=info.frames;
   data=malloc(rows*cols*sizeof(float));
-  if(cols!=sf_readf_float(file, data, cols)) {
-    fprintf(stderr, "ambix_interleave: matrix open failed\n");
+  frames=sf_readf_float(file, data, cols);
+  if(cols!=frames) {
+    fprintf(stderr, "ambix_interleave: matrix reading %d frames returned %d\n", frames, cols);
     goto cleanup;
   }
 
@@ -123,7 +127,7 @@ static ai_t*ai_cmdline(const char*name, int argc, char**argv) {
       print_usage(name);
       exit(0);
     }
-    if(!strcmp(argv[0], "-v") || !strcmp(argv[0], "--version")) {
+    if(!strcmp(argv[0], "-V") || !strcmp(argv[0], "--version")) {
       print_version(name);
       exit(0);
     }
@@ -134,6 +138,7 @@ static ai_t*ai_cmdline(const char*name, int argc, char**argv) {
         argc-=2;
         continue;
       }
+      fprintf(stderr, "no output file specified\n");
       return NULL;
     }
     if(!strcmp(argv[0], "-O") || !strcmp(argv[0], "--order")) {
@@ -144,6 +149,7 @@ static ai_t*ai_cmdline(const char*name, int argc, char**argv) {
         argc-=2;
         continue;
       }
+      fprintf(stderr, "no ambisonics order specified\n");
       return NULL;
     }
     if(!strcmp(argv[0], "-b") || !strcmp(argv[0], "--blocksize")) {
@@ -153,15 +159,20 @@ static ai_t*ai_cmdline(const char*name, int argc, char**argv) {
         argc-=2;
         continue;
       }
+      fprintf(stderr, "no blocksize specified\n");
       return NULL;
     }
     if(!strcmp(argv[0], "-X") || !strcmp(argv[0], "--matrix")) {
       if(argc>1) {
-        if(!ai_matrix(ai, argv[1]))
+        if(!ai_matrix(ai, argv[1])) {
+          fprintf(stderr, "Couldn't read matrix '%s'\n", argv[1]);
           return NULL;
+        }
         argv+=2;
         argc-=2;
+        continue;
       }
+      fprintf(stderr, "no matrix file specified\n");
       return NULL;
     }
     ai->infilenames=argv;
@@ -169,11 +180,15 @@ static ai_t*ai_cmdline(const char*name, int argc, char**argv) {
     break;
   }
 
-  if(!ai->infilenames)
+  if(!ai->infilenames) {
+    fprintf(stderr, "no input files specified\n");
     return NULL;
+  }
 
-  if(!ai->outfilename)
+  if(!ai->outfilename) {
+    fprintf(stderr, "no output filename specified\n");
     return NULL;
+  }
 
   if(channels>0) {
     ai->channels = channels;
@@ -307,6 +322,7 @@ static ai_t*ai_open_input(ai_t*ai) {
     printf("matrix: NONE\n");
 
   if((ai->info.ambichannels < 1) && (ai->info.extrachannels < 1)) {
+    fprintf(stderr, "no output channels defined\n");
     return ai_close(ai);
   }
 
