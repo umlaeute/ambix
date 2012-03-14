@@ -148,19 +148,22 @@ typedef struct ambixinfo_t {
   uint64_t  frames;
   /** samplerate in Hz */
   double			samplerate;
-  /** type of the ambix file */
+  /** sample type of the ambix file */
   ambix_sampleformat_t sampleformat;
-
-  /** type of the ambix file */
+  /** layout type of the ambix file */
   ambix_fileformat_t fileformat;
+
+  /** number of non-ambisonics channels in the file
+   * @remark think of a better name, like 'uncodedchannels'
+   */
+	uint32_t			extrachannels;
+
   /** number of (raw) ambisonics channels present in the file
    * if the file contains a full set of ambisonics channels (always true if ambixformat==AMBIX_SIMPLE),
    * then ambichannels=(ambiorder+1)^2;
    * if the file contains a reduced set (ambichannels<(ambiorder+1)^2) you can reconstruct the full set by
    * multiplying the reduced set with the reconstruction matrix */
 	uint32_t			ambichannels;
-  /** number of non-ambisonics channels in the file */
-	uint32_t			otherchannels;
 } ambixinfo_t;
 
 /**

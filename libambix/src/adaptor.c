@@ -28,7 +28,7 @@
 #endif /* HAVE_STDLIB_H */
 
 ambix_err_t _ambix_adaptorbuffer_resize(ambix_t*ambix, uint64_t frames, uint16_t itemsize) {
-  uint32_t channels=ambix->info.ambichannels + ambix->info.otherchannels;
+  uint32_t channels=ambix->info.ambichannels + ambix->info.extrachannels;
 
   uint64_t size=channels*frames*itemsize;
 

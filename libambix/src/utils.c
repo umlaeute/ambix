@@ -53,7 +53,7 @@ void _ambix_print_info(const ambixinfo_t*info) {
   printf("  sampleformat\t: %d\n", info->sampleformat);
   printf("  fileformat\t: %d\n", info->fileformat);
   printf("  ambichannels\t: %d\n", info->ambichannels);
-  printf("  otherchannels\t: %d\n", info->otherchannels);
+  printf("  otherchannels\t: %d\n", info->extrachannels);
 }
 
 void _ambix_print_matrix(const ambixmatrix_t*mtx) {

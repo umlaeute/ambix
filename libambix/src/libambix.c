@@ -39,7 +39,7 @@ static ambix_err_t _check_write_ambixinfo(ambixinfo_t*info) {
       return AMBIX_ERR_INVALID_FORMAT;
     break;
   case AMBIX_SIMPLE:
-    if(info->otherchannels>0)
+    if(info->extrachannels>0)
       return AMBIX_ERR_INVALID_FORMAT;
     if(!ambix_isFullSet(info->ambichannels))
       return AMBIX_ERR_INVALID_FORMAT;
@@ -67,7 +67,7 @@ static _ambix_info_set(ambix_t*ambix
   }
   ambix->realinfo.fileformat=format;
   ambix->realinfo.ambichannels=ambichannels;
-  ambix->realinfo.otherchannels=otherchannels;
+  ambix->realinfo.extrachannels=otherchannels;
   ambix->ambisonics_order==fullambichannels>0?ambix_channels2order(fullambichannels):0;
 }
 
@@ -86,7 +86,7 @@ ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambixinfo_t
     if(err!=AMBIX_ERR_SUCCESS)
       return NULL;
     ambichannels=ambixinfo->ambichannels;
-    otherchannels=ambixinfo->otherchannels;
+    otherchannels=ambixinfo->extrachannels;
   }
 
   ambix=calloc(1, sizeof(ambix_t));
@@ -292,13 +292,13 @@ static ambix_err_t _ambix_check_read(ambix_t*ambix, const void*ambidata, const v
     realframes=_ambix_readf_##type(ambix, adaptorbuffer, frames);       \
     switch(ambix->use_matrix) {                                         \
     case 1:                                                             \
-      _ambix_splitAdaptormatrix_##type(adaptorbuffer, ambix->info.ambichannels+ambix->info.otherchannels, &ambix->matrix          , ambidata, otherdata, realframes); \
+      _ambix_splitAdaptormatrix_##type(adaptorbuffer, ambix->info.ambichannels+ambix->info.extrachannels, &ambix->matrix          , ambidata, otherdata, realframes); \
       break;                                                            \
     case 2:                                                             \
-      _ambix_splitAdaptormatrix_##type(adaptorbuffer, ambix->info.ambichannels+ambix->info.otherchannels, &ambix->matrix2         , ambidata, otherdata, realframes); \
+      _ambix_splitAdaptormatrix_##type(adaptorbuffer, ambix->info.ambichannels+ambix->info.extrachannels, &ambix->matrix2         , ambidata, otherdata, realframes); \
       break;                                                            \
     default:                                                            \
-      _ambix_splitAdaptor_##type      (adaptorbuffer, ambix->info.ambichannels+ambix->info.otherchannels, ambix->info.ambichannels, ambidata, otherdata, realframes); \
+      _ambix_splitAdaptor_##type      (adaptorbuffer, ambix->info.ambichannels+ambix->info.extrachannels, ambix->info.ambichannels, ambidata, otherdata, realframes); \
     };                                                                  \
     return realframes;                                                  \
   }
@@ -310,7 +310,7 @@ static ambix_err_t _ambix_check_read(ambix_t*ambix, const void*ambidata, const v
     if(AMBIX_ERR_SUCCESS != err) return -err;                           \
     _ambix_adaptorbuffer_resize(ambix, frames, sizeof(type##_t));       \
     adaptorbuffer=(type##_t*)ambix->adaptorbuffer;                      \
-    _ambix_mergeAdaptor_##type(ambidata, ambix->info.ambichannels, otherdata, ambix->info.otherchannels, adaptorbuffer, frames); \
+    _ambix_mergeAdaptor_##type(ambidata, ambix->info.ambichannels, otherdata, ambix->info.extrachannels, adaptorbuffer, frames); \
     return _ambix_writef_##type(ambix, adaptorbuffer, frames);          \
   }
 
