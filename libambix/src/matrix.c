@@ -140,7 +140,7 @@ ambix_matrix_fill_transposed(ambixmatrix_t*mtx, const number32_t*data, int bytes
   if(byteswap)
     err=_ambix_matrix_fill_byteswapped(xtm, data);
   else
-    err=_ambix_matrix_fill(xtm, data);
+    err=ambix_matrix_fill(xtm, data);
 
   if(AMBIX_ERR_SUCCESS==err) {
     ambixmatrix_t*resu=ambix_matrix_transpose(mtx, xtm);
