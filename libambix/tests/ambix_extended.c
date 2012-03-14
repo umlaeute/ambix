@@ -74,7 +74,7 @@ void check_create_extended(const char*path, ambix_sampleformat_t format, uint32_
   memcpy(ambidata, orgambidata, framesize*ambichannels*sizeof(float32_t));
   memcpy(otherdata, orgotherdata, framesize*extrachannels*sizeof(float32_t));
 
-  fail_if((AMBIX_ERR_SUCCESS!=ambix_setAdaptorMatrix(ambix, &eye)),
+  fail_if((AMBIX_ERR_SUCCESS!=ambix_set_adaptormatrix(ambix, &eye)),
           __LINE__, "failed setting adaptor matrix");
   fail_if((AMBIX_ERR_SUCCESS!=ambix_write_header(ambix)),
           __LINE__, "failed writing headers");
@@ -120,7 +120,7 @@ void check_create_extended(const char*path, ambix_sampleformat_t format, uint32_
   fail_if((info.ambichannels!=rinfo.ambichannels), __LINE__, "ambichannels mismatch %d!=%d", info.ambichannels, rinfo.ambichannels);
   fail_if((info.extrachannels!=rinfo.extrachannels), __LINE__, "extrachannels mismatch %d!=%d", info.extrachannels, rinfo.extrachannels);
 
-  eye2=ambix_getAdaptorMatrix(ambix);
+  eye2=ambix_get_adaptormatrix(ambix);
   fail_if((NULL==eye2), __LINE__, "failed reading adaptor matrix");
 
   diff=matrix_diff(__LINE__, &eye, eye2, eps);

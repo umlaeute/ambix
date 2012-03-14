@@ -132,7 +132,7 @@ int64_t ambix_readf_int32   (ambix_t*ambix, int32_t *ambidata, int32_t*otherdata
  * @param ambix The handle to an ambix file
  * @param ambidata pointer to user allocated array to retrieve ambisonics channels into;
  *        must be large enough to hold at least (frames*ambix->info.ambichannels) samples, OR
- *        if you are reading the file as 'ambix simple' and you successfully added an adaptor matrix using ambix_setAdaptorMatrix()
+ *        if you are reading the file as 'ambix simple' and you successfully added an adaptor matrix using ambix_set_adaptormatrix()
  *        the array must be large enough to hold at least (frames * adaptormatrix.rows) samples
  * @param otherdata pointer to user allocated array to retrieve non-ambisonics channels into
  *        must be large enough to hold at least (frames*ambix->info.otherchannels) samples
@@ -183,7 +183,7 @@ int64_t ambix_writef_float32   (ambix_t*ambix, float32_t *ambidata, float32_t*ot
  * @return A libsndfile handle or NULL
  */
 AMBIX_API
-SNDFILE*ambix_getSndfile	(ambix_t*ambix);
+SNDFILE*ambix_get_sndfile	(ambix_t*ambix);
 
 /** @brief get the adaptor matrix
  *
@@ -201,7 +201,7 @@ SNDFILE*ambix_getSndfile	(ambix_t*ambix);
  *          nor used after calling ambix_close()
  */
 AMBIX_API
-const ambix_matrix_t*ambix_getAdaptorMatrix	(ambix_t*ambix);
+const ambix_matrix_t*ambix_get_adaptormatrix	(ambix_t*ambix);
 
 /** @brief set a matrix to be pre-multiplied
  *
@@ -220,7 +220,7 @@ const ambix_matrix_t*ambix_getAdaptorMatrix	(ambix_t*ambix);
  * @remark using this on ambix handles other than READ/SIMPLE or WRITE/EXTENDED is an error
  */
 AMBIX_API
-ambix_err_t ambix_setAdaptorMatrix	(ambix_t*ambix, const ambix_matrix_t*matrix);
+ambix_err_t ambix_set_adaptormatrix	(ambix_t*ambix, const ambix_matrix_t*matrix);
 
 
 #ifdef __cplusplus

@@ -166,7 +166,7 @@ void createfile_extended(const char*path, uint32_t ambichannels, uint32_t extrac
     }
   } while(0);
 
-  err=ambix_setAdaptorMatrix(ambix, &adaptmatrix);
+  err=ambix_set_adaptormatrix(ambix, &adaptmatrix);
   if(err!=AMBIX_ERR_SUCCESS) {
     printf("failed setting adaptor matrix\n");
   }

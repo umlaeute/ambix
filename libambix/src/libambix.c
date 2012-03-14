@@ -185,17 +185,17 @@ ambix_err_t	ambix_close	(ambix_t*ambix) {
   return res;
 }
 
-SNDFILE*ambix_getSndfile	(ambix_t*ambix) {
+SNDFILE*ambix_get_sndfile	(ambix_t*ambix) {
   return _ambix_get_sndfile(ambix);
 }
 
 
-const ambix_matrix_t*ambix_getAdaptorMatrix	(ambix_t*ambix) {
+const ambix_matrix_t*ambix_get_adaptormatrix	(ambix_t*ambix) {
   if(AMBIX_EXTENDED==ambix->info.fileformat)
     return &(ambix->matrix);
   return NULL;
 }
-ambix_err_t ambix_setAdaptorMatrix	(ambix_t*ambix, const ambix_matrix_t*matrix) {
+ambix_err_t ambix_set_adaptormatrix	(ambix_t*ambix, const ambix_matrix_t*matrix) {
   if(0) {
   } else if((ambix->filemode & AMBIX_READ ) && (AMBIX_SIMPLE   == ambix->info.fileformat)) {
     /* multiply the matrix with the previous adaptor matrix */

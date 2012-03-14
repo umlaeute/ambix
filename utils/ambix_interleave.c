@@ -338,7 +338,7 @@ static ai_t*ai_open_output(ai_t*ai) {
 
   if(!ai) return ai_close(ai);
   if(AMBIX_EXTENDED==ai->info.fileformat) {
-    ambix_err_t err=ambix_setAdaptorMatrix(ai->outhandle, ai->matrix);
+    ambix_err_t err=ambix_set_adaptormatrix(ai->outhandle, ai->matrix);
     if(err==AMBIX_ERR_SUCCESS) {
       ambix_write_header(ai->outhandle);
     } else {

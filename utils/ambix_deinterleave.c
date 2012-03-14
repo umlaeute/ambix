@@ -210,7 +210,7 @@ static ai_t*ai_open_input(ai_t*ai) {
     return ai_close(ai);
   }
 
-  matrix=ambix_getAdaptorMatrix(ai->inhandle);
+  matrix=ambix_get_adaptormatrix(ai->inhandle);
   if(!matrix) {
     return ai_close(ai);
   }
