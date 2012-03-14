@@ -130,7 +130,7 @@ _ambix_matrix_fill_byteswapped(ambixmatrix_t*mtx, const number32_t*data) {
 }
 
 ambix_err_t
-ambix_matrix_fill_transposed(ambixmatrix_t*mtx, const number32_t*data, int byteswap) {
+ambix_matrix_fill_transposed(ambixmatrix_t*mtx, const float32_t*data, int byteswap) {
   ambix_err_t err=0;
   ambixmatrix_t*xtm=ambix_matrix_init(mtx->cols, mtx->rows, NULL);
 
@@ -138,7 +138,7 @@ ambix_matrix_fill_transposed(ambixmatrix_t*mtx, const number32_t*data, int bytes
     return AMBIX_ERR_UNKNOWN;
 
   if(byteswap)
-    err=_ambix_matrix_fill_byteswapped(xtm, data);
+    err=_ambix_matrix_fill_byteswapped(xtm, (const number32_t*)data);
   else
     err=ambix_matrix_fill(xtm, data);
 
@@ -239,19 +239,21 @@ ambix_err_t ambix_matrix_multiply_float32(float32_t*dest, const ambixmatrix_t*ma
   const uint32_t outchannels=matrix->rows;
   const uint32_t inchannels=matrix->cols;
   int64_t frame;
+  float32_t*dst=dest;
+  const float32_t*src=source;
   for(frame=0; frame<frames; frame++) {
     uint32_t outchan;
-    float32_t*dst=dest+frame;
-    const float32_t*src=source+frame;
     for(outchan=0; outchan<outchannels; outchan++) {
       double sum=0.;
       uint32_t inchan;
+      //      printf("..output:%d @ %d\n", (int)outchan, (int)frame);
       for(inchan=0; inchan<inchannels; inchan++) {
         double scale=mtx[outchan][inchan];
-        double in=src[inchan*frames];
-        sum+=scale * in;
+        double in=src[frame*inchannels+inchan];
+        //        printf("....%f[%d|%d]*%f\n", (float)scale, (int)outchan, (int)inchan, (float)in);
+        sum+=scale*in;
       }
-      dst[frames*outchan]=sum;
+      dst[frame*outchannels+outchan]=sum;
     }
   }
   return AMBIX_ERR_SUCCESS;
