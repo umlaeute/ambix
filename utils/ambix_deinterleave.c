@@ -106,7 +106,7 @@ static ai_t*ai_cmdline(const char*name, int argc, char**argv) {
     }
     if(!strcmp(argv[0], "-p") || !strcmp(argv[0], "--prefix")) {
       if(argc>1) {
-        printf("prefix: '%s'\n", argv[1]);
+        //printf("prefix: '%s'\n", argv[1]);
         ai->prefix=strdup(argv[1]);
         argv+=2;
         argc-=2;
@@ -277,7 +277,7 @@ static ai_t*ai_open_output(ai_t*ai) {
     char filename[MAX_FILENAMESIZE];
     snprintf(filename, MAX_FILENAMESIZE, "%sextra%03d%s", ai->prefix, chan, ai->suffix);
     filename[MAX_FILENAMESIZE-1]=0;
-    printf("extrafile%d=%s\n", chan, filename);
+    //printf("extrafile%d=%s\n", chan, filename);
     memcpy(&ai->outinfo[channel], &info, sizeof(info));
 
     ai->outhandles[channel]=sf_open(filename, SFM_WRITE, &ai->outinfo[channel]);
