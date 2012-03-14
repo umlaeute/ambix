@@ -33,7 +33,7 @@
 
 static ambix_err_t _check_write_ambixinfo(ambixinfo_t*info) {
   /* FIXXME: rather than failing, we could force the values to be correct */
-  switch(info->ambixfileformat) {
+  switch(info->fileformat) {
   case AMBIX_NONE:
     if(info->ambichannels>0)
       return AMBIX_ERR_INVALID_FORMAT;
@@ -65,7 +65,7 @@ static _ambix_info_set(ambix_t*ambix
   default:
     break;
   }
-  ambix->realinfo.ambixfileformat=format;
+  ambix->realinfo.fileformat=format;
   ambix->realinfo.ambichannels=ambichannels;
   ambix->realinfo.otherchannels=otherchannels;
   ambix->ambisonics_order==fullambichannels>0?ambix_channels2order(fullambichannels):0;
@@ -91,7 +91,7 @@ ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambixinfo_t
 
   ambix=calloc(1, sizeof(ambix_t));
   if(AMBIX_ERR_SUCCESS == _ambix_open(ambix, path, mode, ambixinfo)) {
-    const ambix_fileformat_t wantformat=ambixinfo->ambixfileformat;
+    const ambix_fileformat_t wantformat=ambixinfo->fileformat;
     ambix_fileformat_t haveformat;
     uint32_t channels = ambix->channels;
     /* successfully opened, initialize common stuff... */
@@ -143,19 +143,19 @@ ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambixinfo_t
       _ambix_info_set(ambix, AMBIX_NONE, channels, 0, 0);
     }
 
-    haveformat=ambix->realinfo.ambixfileformat;
+    haveformat=ambix->realinfo.fileformat;
 
     ambix->filemode=mode;
     memcpy(&ambix->info, &ambix->realinfo, sizeof(ambix->info));
 
     if(0) {
     } else if(AMBIX_SIMPLE==wantformat && AMBIX_EXTENDED==haveformat) {
-      ambix->info.ambixfileformat=AMBIX_SIMPLE;
+      ambix->info.fileformat=AMBIX_SIMPLE;
       ambix->use_matrix=1;
     } else if(AMBIX_EXTENDED==wantformat && AMBIX_SIMPLE==haveformat) {
       ambix_matrix_init(ambix->realinfo.ambichannels, ambix->realinfo.ambichannels, &ambix->matrix);
       ambix_matrix_eye(&ambix->matrix);
-      ambix->info.ambixfileformat=AMBIX_EXTENDED;
+      ambix->info.fileformat=AMBIX_EXTENDED;
       ambix->use_matrix=0;
     }
 
@@ -191,15 +191,15 @@ SNDFILE*ambix_getSndfile	(ambix_t*ambix) {
 
 
 const ambixmatrix_t*ambix_getAdaptorMatrix	(ambix_t*ambix) {
-  if(AMBIX_EXTENDED==ambix->info.ambixfileformat)
+  if(AMBIX_EXTENDED==ambix->info.fileformat)
     return &(ambix->matrix);
   return NULL;
 }
 ambix_err_t ambix_setAdaptorMatrix	(ambix_t*ambix, const ambixmatrix_t*matrix) {
   if(0) {
-  } else if((ambix->filemode & AMBIX_READ ) && (AMBIX_SIMPLE   == ambix->info.ambixfileformat)) {
+  } else if((ambix->filemode & AMBIX_READ ) && (AMBIX_SIMPLE   == ambix->info.fileformat)) {
     /* multiply the matrix with the previous adaptor matrix */
-    if(AMBIX_EXTENDED == ambix->realinfo.ambixfileformat) {
+    if(AMBIX_EXTENDED == ambix->realinfo.fileformat) {
       ambixmatrix_t*mtx=ambix_matrix_multiply(matrix, &ambix->matrix, &ambix->matrix2);
       if(mtx != &ambix->matrix2)
         return AMBIX_ERR_UNKNOWN;
@@ -213,7 +213,7 @@ ambix_err_t ambix_setAdaptorMatrix	(ambix_t*ambix, const ambixmatrix_t*matrix) {
       mtx=ambix_matrix_copy(matrix, &ambix->matrix2);
       ambix->use_matrix=2;
     }
-  } else if((ambix->filemode & AMBIX_WRITE) && (AMBIX_EXTENDED == ambix->info.ambixfileformat)) {
+  } else if((ambix->filemode & AMBIX_WRITE) && (AMBIX_EXTENDED == ambix->info.fileformat)) {
     /* too late, writing started already */
     if(ambix->startedWriting)
       return AMBIX_ERR_UNKNOWN;
@@ -234,7 +234,7 @@ ambix_err_t ambix_setAdaptorMatrix	(ambix_t*ambix, const ambixmatrix_t*matrix) {
 ambix_err_t	ambix_write_header	(ambix_t*ambix) {
   void*data=NULL;
   if(ambix->filemode & AMBIX_WRITE) {
-    if((AMBIX_EXTENDED == ambix->info.ambixfileformat)) {
+    if((AMBIX_EXTENDED == ambix->info.fileformat)) {
       ambix_err_t res;
       /* generate UUID-chunk */
       uint64_t datalen=_ambix_matrix_to_uuid1(&ambix->matrix, NULL, ambix->byteswap);
@@ -266,7 +266,7 @@ ambix_err_t	ambix_write_header	(ambix_t*ambix) {
 static ambix_err_t _ambix_check_write(ambix_t*ambix, const void*ambidata, const void*otherdata, int64_t frames) {
   /* TODO: add some checks whether writing is feasible
    * e.g. format=extended but no (or wrong) matrix present */
-  if((ambix->realinfo.ambixfileformat==AMBIX_EXTENDED) && !ambix_isFullSet(ambix->matrix.rows))
+  if((ambix->realinfo.fileformat==AMBIX_EXTENDED) && !ambix_isFullSet(ambix->matrix.rows))
     return AMBIX_ERR_INVALID_DIMENSION;
 
   ambix->startedWriting=1;

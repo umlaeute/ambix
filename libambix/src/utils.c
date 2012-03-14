@@ -51,7 +51,7 @@ void _ambix_print_info(const ambixinfo_t*info) {
   printf("  frames\t: %d\n", info->frames);
   printf("  samplerate\t: %f\n", info->samplerate);
   printf("  sampleformat\t: %d\n", info->sampleformat);
-  printf("  ambixfileformat\t: %d\n", info->ambixfileformat);
+  printf("  fileformat\t: %d\n", info->fileformat);
   printf("  ambichannels\t: %d\n", info->ambichannels);
   printf("  otherchannels\t: %d\n", info->otherchannels);
 }

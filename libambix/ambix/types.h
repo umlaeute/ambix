@@ -152,7 +152,7 @@ typedef struct ambixinfo_t {
   ambix_sampleformat_t sampleformat;
 
   /** type of the ambix file */
-  ambix_fileformat_t ambixfileformat;
+  ambix_fileformat_t fileformat;
   /** number of (raw) ambisonics channels present in the file
    * if the file contains a full set of ambisonics channels (always true if ambixformat==AMBIX_SIMPLE),
    * then ambichannels=(ambiorder+1)^2;
