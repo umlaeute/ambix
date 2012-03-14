@@ -260,22 +260,22 @@ static ai_t*ai_open_input(ai_t*ai) {
       return ai_close(ai);
     }
     /* extended format */
-    ai->info.ambixfileformat=AMBIX_EXTENDED;
+    ai->info.fileformat=AMBIX_EXTENDED;
     ai->info.ambichannels=ai->matrix->cols;
-    ai->info.otherchannels=channels-ai->matrix->cols;
+    ai->info.extrachannels=channels-ai->matrix->cols;
   } else if (ai->channels > 0) {
     if(ai->channels < channels) {
-      ai->info.ambixfileformat=AMBIX_EXTENDED;
+      ai->info.fileformat=AMBIX_EXTENDED;
       ai->info.ambichannels=(ai->channels);
-      ai->info.otherchannels=channels-(ai->channels);
+      ai->info.extrachannels=channels-(ai->channels);
 
       ai->matrix=ambix_matrix_init(ai->channels, ai->channels, NULL);
       ai->matrix=ambix_matrix_eye (ai->matrix);
     } else if (ai->channels == channels) {
       /* simple format */
-      ai->info.ambixfileformat=AMBIX_SIMPLE;
+      ai->info.fileformat=AMBIX_SIMPLE;
       ai->info.ambichannels=channels;
-      ai->info.otherchannels=0;
+      ai->info.extrachannels=0;
     } else {
       return ai_close(ai);
     }
@@ -284,21 +284,21 @@ static ai_t*ai_open_input(ai_t*ai) {
       return ai_close(ai);
     }
     /* simple format */
-    ai->info.ambixfileformat=AMBIX_SIMPLE;
+    ai->info.fileformat=AMBIX_SIMPLE;
     ai->info.ambichannels=channels;
-    ai->info.otherchannels=0;
+    ai->info.extrachannels=0;
   }
 
-  printf("format: %s\n", (ai->info.ambixfileformat==AMBIX_SIMPLE)?"simple":"extended");
+  printf("format: %s\n", (ai->info.fileformat==AMBIX_SIMPLE)?"simple":"extended");
   printf("got %d input channels each %d frames\n", channels, ai->info.frames);
   printf("ambichannels: %d\n", ai->info.ambichannels);
-  printf("otherchannels: %d\n", ai->info.otherchannels);
+  printf("extrachannels: %d\n", ai->info.extrachannels);
   if(ai->matrix) 
     printf("matrix: [%dx%d]\n", ai->matrix->rows, ai->matrix->cols);
   else
     printf("matrix: NONE\n");
 
-  if((ai->info.ambichannels < 1) && (ai->info.otherchannels < 1)) {
+  if((ai->info.ambichannels < 1) && (ai->info.extrachannels < 1)) {
     return ai_close(ai);
   }
 
@@ -313,7 +313,7 @@ static ai_t*ai_open_output(ai_t*ai) {
   ai->outhandle=ambix_open(ai->outfilename, AMBIX_WRITE, &info);
 
   if(!ai) return ai_close(ai);  
-  if(AMBIX_EXTENDED==ai->info.ambixfileformat) {
+  if(AMBIX_EXTENDED==ai->info.fileformat) {
     ambix_err_t err=ambix_setAdaptorMatrix(ai->outhandle, ai->matrix);
     if(err==AMBIX_ERR_SUCCESS) {
       ambix_write_header(ai->outhandle);
@@ -360,7 +360,7 @@ static ai_t*ai_copy_block(ai_t*ai,
     }
   }
   ambidata=(ai->info.ambichannels>0)?tempdata:NULL;
-  otherdata=(ai->info.otherchannels>0)?(tempdata+frames*ai->info.ambichannels):NULL;
+  otherdata=(ai->info.extrachannels>0)?(tempdata+frames*ai->info.ambichannels):NULL;
   if(frames!=ambix_writef_float32(ai->outhandle, ambidata, otherdata, frames)) {
     return ai_close(ai);
   }
@@ -377,7 +377,7 @@ static ai_t*ai_copy(ai_t*ai) {
   if(blocksize<1)
     blocksize=DEFAULT_BLOCKSIZE;
   frames=ai->info.frames;
-  channels=(ai->info.ambichannels+ai->info.otherchannels);
+  channels=(ai->info.ambichannels+ai->info.extrachannels);
   tmpdata=malloc(sizeof(float32_t)*channels*blocksize);
   interleavebuffer=malloc(sizeof(float32_t)*channels*blocksize);
   while(frames>blocksize) {

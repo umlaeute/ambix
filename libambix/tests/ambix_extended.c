@@ -32,7 +32,7 @@ void check_create_extended(const char*path, ambix_sampleformat_t format, float32
   float32_t*orgotherdata,*otherdata,*resultotherdata;
   uint32_t frames=441000;
   uint32_t ambichannels=4;
-  uint32_t otherchannels=2;
+  uint32_t extrachannels=2;
   float32_t periods=20000;
   ambixmatrix_t eye={0,0,NULL};
   const ambixmatrix_t*eye2=NULL;
@@ -44,8 +44,8 @@ void check_create_extended(const char*path, ambix_sampleformat_t format, float32
   resultambidata=calloc(ambichannels*frames, sizeof(float32_t));
   ambidata=calloc(ambichannels*frames, sizeof(float32_t));
 
-  resultotherdata=calloc(otherchannels*frames, sizeof(float32_t));
-  otherdata=calloc(otherchannels*frames, sizeof(float32_t));
+  resultotherdata=calloc(extrachannels*frames, sizeof(float32_t));
+  otherdata=calloc(extrachannels*frames, sizeof(float32_t));
 
   ambix_matrix_init(ambichannels, ambichannels, &eye);
   ambix_matrix_eye(&eye);
@@ -53,9 +53,9 @@ void check_create_extended(const char*path, ambix_sampleformat_t format, float32
   memset(&winfo, 0, sizeof(winfo));
   memset(&info, 0, sizeof(info));
 
-  info.ambixfileformat=AMBIX_EXTENDED;
+  info.fileformat=AMBIX_EXTENDED;
   info.ambichannels=ambichannels;
-  info.otherchannels=otherchannels;
+  info.extrachannels=extrachannels;
   info.samplerate=44100;
   info.sampleformat=format;
 
@@ -65,13 +65,13 @@ void check_create_extended(const char*path, ambix_sampleformat_t format, float32
   fail_if((NULL==ambix), __LINE__, "couldn't create ambix file '%s' for writing", path);
 
   orgambidata=data_sine(frames, ambichannels, periods);
-  orgotherdata=data_ramp(frames, otherchannels);
+  orgotherdata=data_ramp(frames, extrachannels);
   //data_print(orgdata, 100);
   fail_if((NULL==orgambidata), __LINE__, "couldn't create ambidata %dx%d sine @ %f", frames, ambichannels, periods);
-  fail_if((NULL==orgotherdata), __LINE__, "couldn't create otherdata %dx%d sine @ %f", frames, otherchannels, periods);
+  fail_if((NULL==orgotherdata), __LINE__, "couldn't create otherdata %dx%d sine @ %f", frames, extrachannels, periods);
 
   memcpy(ambidata, orgambidata, frames*ambichannels*sizeof(float32_t));
-  memcpy(otherdata, orgotherdata, frames*otherchannels*sizeof(float32_t));
+  memcpy(otherdata, orgotherdata, frames*extrachannels*sizeof(float32_t));
 
   fail_if((AMBIX_ERR_SUCCESS!=ambix_setAdaptorMatrix(ambix, &eye)),
           __LINE__, "failed setting adaptor matrix");
@@ -83,7 +83,7 @@ void check_create_extended(const char*path, ambix_sampleformat_t format, float32
 
   diff=data_diff(__LINE__, orgambidata, ambidata, frames*ambichannels, eps);
   fail_if((diff>eps), __LINE__, "ambidata diff %f > %f", diff, eps);
-  diff=data_diff(__LINE__, orgotherdata, otherdata, frames*otherchannels, eps);
+  diff=data_diff(__LINE__, orgotherdata, otherdata, frames*extrachannels, eps);
   fail_if((diff>eps), __LINE__, "otherdata diff %f > %f", diff, eps);
 
   fail_if((AMBIX_ERR_SUCCESS!=ambix_close(ambix)), __LINE__, "closing ambix file %p", ambix);
@@ -95,11 +95,11 @@ void check_create_extended(const char*path, ambix_sampleformat_t format, float32
   ambix=ambix_open(path, AMBIX_READ, &rinfo);
   fail_if((NULL==ambix), __LINE__, "couldn't create ambix file '%s' for reading", path);
 
-  fail_if((info.ambixfileformat!=rinfo.ambixfileformat), __LINE__, "ambixfileformat mismatch %d!=%d", info.ambixfileformat, rinfo.ambixfileformat);
+  fail_if((info.fileformat!=rinfo.fileformat), __LINE__, "fileformat mismatch %d!=%d", info.fileformat, rinfo.fileformat);
   fail_if((info.samplerate!=rinfo.samplerate), __LINE__, "samplerate mismatch %g!=%g", info.samplerate, rinfo.samplerate);
   fail_if((info.sampleformat!=rinfo.sampleformat), __LINE__, "sampleformat mismatch %d!=%d", info.sampleformat, rinfo.sampleformat);
   fail_if((info.ambichannels!=rinfo.ambichannels), __LINE__, "ambichannels mismatch %d!=%d", info.ambichannels, rinfo.ambichannels);
-  fail_if((info.otherchannels!=rinfo.otherchannels), __LINE__, "otherchannels mismatch %d!=%d", info.otherchannels, rinfo.otherchannels);
+  fail_if((info.extrachannels!=rinfo.extrachannels), __LINE__, "extrachannels mismatch %d!=%d", info.extrachannels, rinfo.extrachannels);
 
   eye2=ambix_getAdaptorMatrix(ambix);
   fail_if((NULL==eye2), __LINE__, "failed reading adaptor matrix");
@@ -113,7 +113,7 @@ void check_create_extended(const char*path, ambix_sampleformat_t format, float32
   diff=data_diff(__LINE__, orgambidata, resultambidata, frames*ambichannels, eps);
   fail_if((diff>eps), __LINE__, "ambidata diff %f > %f", diff, eps);
 
-  diff=data_diff(__LINE__, orgotherdata, resultotherdata, frames*otherchannels, eps);
+  diff=data_diff(__LINE__, orgotherdata, resultotherdata, frames*extrachannels, eps);
   fail_if((diff>eps), __LINE__, "otherdata diff %f > %f", diff, eps);
 
   fail_if((AMBIX_ERR_SUCCESS!=ambix_close(ambix)), __LINE__, "closing ambix file %p", ambix);

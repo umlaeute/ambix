@@ -26,20 +26,20 @@
 #include <stdio.h>
 #include <string.h>
 
-void createfile_simple(const char*path, uint32_t ambichannels, uint32_t otherchannels, uint64_t frames) {
+void createfile_simple(const char*path, uint32_t ambichannels, uint32_t extrachannels, uint64_t frames) {
   ambixinfo_t info;
   ambix_t*ambix;
   const ambixmatrix_t*matrix;
 
-  otherchannels=0;
+  extrachannels=0;
 
   memset(&info, 0, sizeof(info));
   info.frames=frames;
   info.samplerate=44100;
   info.sampleformat=AMBIX_SAMPLEFORMAT_FLOAT32;
-  info.ambixfileformat=AMBIX_SIMPLE;
+  info.fileformat=AMBIX_SIMPLE;
   info.ambichannels=ambichannels;
-  info.otherchannels=otherchannels;
+  info.extrachannels=extrachannels;
 
 
   printf("Open file '%s': ", path);
@@ -65,17 +65,17 @@ void createfile_simple(const char*path, uint32_t ambichannels, uint32_t othercha
   }
   printf(")\n");
 
-  printf("ambiXformat\t: %d (", info.ambixfileformat);
-  switch(info.ambixfileformat) {
+  printf("ambiXformat\t: %d (", info.fileformat);
+  switch(info.fileformat) {
   case(AMBIX_NONE): printf("NONE"); break;
   case(AMBIX_SIMPLE): printf("SIMPLE"); break;
   case(AMBIX_EXTENDED): printf("EXTENDED"); break;
-  default: printf("**unknown** 0x%04X", info.ambixfileformat);
+  default: printf("**unknown** 0x%04X", info.fileformat);
   }
   printf(")\n");
 
   printf("Ambisonics channels\t: %d\n", info.ambichannels);
-  printf("Non-Ambisonics channels\t: %d\n", info.otherchannels);
+  printf("Non-Ambisonics channels\t: %d\n", info.extrachannels);
 
 
 
@@ -83,7 +83,7 @@ void createfile_simple(const char*path, uint32_t ambichannels, uint32_t othercha
   do {
     uint64_t res;
     float32_t ambidata[64*ambichannels];
-    float32_t otherdata[64*otherchannels];
+    float32_t otherdata[64*extrachannels];
     while(frames>64) {
       res=ambix_writef_float32(ambix, ambidata, otherdata, 64);
       frames-=64;
@@ -102,7 +102,7 @@ void createfile_simple(const char*path, uint32_t ambichannels, uint32_t othercha
     printf("OK\n");
 }
 
-void createfile_extended(const char*path, uint32_t ambichannels, uint32_t otherchannels, uint64_t frames) {
+void createfile_extended(const char*path, uint32_t ambichannels, uint32_t extrachannels, uint64_t frames) {
   ambixinfo_t info;
   ambix_t*ambix;
   const ambixmatrix_t*matrix;
@@ -113,9 +113,9 @@ void createfile_extended(const char*path, uint32_t ambichannels, uint32_t otherc
   info.frames=frames;
   info.samplerate=44100;
   info.sampleformat=AMBIX_SAMPLEFORMAT_FLOAT32;
-  info.ambixfileformat=AMBIX_EXTENDED;
+  info.fileformat=AMBIX_EXTENDED;
   info.ambichannels=ambichannels;
-  info.otherchannels=otherchannels;
+  info.extrachannels=extrachannels;
 
 
   printf("Open file '%s': ", path);
@@ -141,17 +141,17 @@ void createfile_extended(const char*path, uint32_t ambichannels, uint32_t otherc
   }
   printf(")\n");
 
-  printf("ambiXformat\t: %d (", info.ambixfileformat);
-  switch(info.ambixfileformat) {
+  printf("ambiXformat\t: %d (", info.fileformat);
+  switch(info.fileformat) {
   case(AMBIX_NONE): printf("NONE"); break;
   case(AMBIX_SIMPLE): printf("SIMPLE"); break;
   case(AMBIX_EXTENDED): printf("EXTENDED"); break;
-  default: printf("**unknown** 0x%04X", info.ambixfileformat);
+  default: printf("**unknown** 0x%04X", info.fileformat);
   }
   printf(")\n");
 
   printf("Ambisonics channels\t: %d\n", info.ambichannels);
-  printf("Non-Ambisonics channels\t: %d\n", info.otherchannels);
+  printf("Non-Ambisonics channels\t: %d\n", info.extrachannels);
 
   memset(&adaptmatrix, 0, sizeof(adaptmatrix));
   ambix_matrix_init(25, ambichannels,&adaptmatrix);
@@ -182,7 +182,7 @@ void createfile_extended(const char*path, uint32_t ambichannels, uint32_t otherc
     const int blocksize=64;
     uint64_t res;
     float32_t ambidata[blocksize*ambichannels];
-    float32_t otherdata[blocksize*otherchannels];
+    float32_t otherdata[blocksize*extrachannels];
     while(frames>blocksize) {
       res=ambix_writef_float32(ambix, ambidata, otherdata, blocksize);
       if(res!=blocksize)

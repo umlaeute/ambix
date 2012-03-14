@@ -198,7 +198,7 @@ static ai_t*ai_open_input(ai_t*ai) {
   const ambixmatrix_t*matrix=NULL;
   if(!ai)return ai;
   if(!ai->inhandle) {
-    ai->info.ambixfileformat=AMBIX_EXTENDED;
+    ai->info.fileformat=AMBIX_EXTENDED;
 
     ai->inhandle=ambix_open(ai->infilename, AMBIX_READ, &ai->info);
   }
@@ -206,7 +206,7 @@ static ai_t*ai_open_input(ai_t*ai) {
     return ai_close(ai);
   }
 
-  if((ai->info.ambichannels < 1) && (ai->info.otherchannels < 1)) {
+  if((ai->info.ambichannels < 1) && (ai->info.extrachannels < 1)) {
     return ai_close(ai);
   }
 
@@ -222,14 +222,14 @@ static ai_t*ai_open_input(ai_t*ai) {
 static ai_t*ai_open_output(ai_t*ai) {
   SF_INFO info, tmpinfo;
   int format=0;
-  int32_t chan, channel, ambichannels, otherchannels;
+  int32_t chan, channel, ambichannels, extrachannels;
   if(!ai)return ai;
 
   ambichannels=ai->matrix.rows;
-  otherchannels=ai->info.otherchannels;
+  extrachannels=ai->info.extrachannels;
 
   if(!ai->outhandles) {
-    ai->numOuts=ambichannels+otherchannels;
+    ai->numOuts=ambichannels+extrachannels;
     ai->outhandles=calloc(ai->numOuts, sizeof(SNDFILE*));
     ai->outinfo   =calloc(ai->numOuts, sizeof(SF_INFO));
   }
@@ -255,7 +255,7 @@ static ai_t*ai_open_output(ai_t*ai) {
   }
 
   channel=0;
-  //  printf("creating outfiles for %d/%d\n", ambichannels, otherchannels);
+  //  printf("creating outfiles for %d/%d\n", ambichannels, extrachannels);
   for(chan=0; chan<ambichannels; chan++) {
     char filename[MAX_FILENAMESIZE];
     snprintf(filename, MAX_FILENAMESIZE, "%sambi%03d%s", ai->prefix, chan, ai->suffix);
@@ -273,7 +273,7 @@ static ai_t*ai_open_output(ai_t*ai) {
     channel++;
   }
 
-  for(chan=0; chan<otherchannels; chan++) {
+  for(chan=0; chan<extrachannels; chan++) {
     char filename[MAX_FILENAMESIZE];
     snprintf(filename, MAX_FILENAMESIZE, "%sextra%03d%s", ai->prefix, chan, ai->suffix);
     filename[MAX_FILENAMESIZE-1]=0;
@@ -312,7 +312,7 @@ static ai_t*ai_copy_block(ai_t*ai,
                           float*deinterleavebuffer,
                           uint64_t frames) {
   uint32_t i;
-  uint32_t ambichannels, fullambichannels, otherchannels;
+  uint32_t ambichannels, fullambichannels, extrachannels;
   uint64_t channel, f, c, channels=0;
 
   const ambixmatrix_t*matrix;
@@ -329,7 +329,7 @@ static ai_t*ai_copy_block(ai_t*ai,
   mtx =matrix->data;
 
   ambichannels=ai->info.ambichannels;
-  otherchannels=ai->info.otherchannels;
+  extrachannels=ai->info.extrachannels;
   fullambichannels=rows;
   if(cols!=ambichannels) {
     printf("columns do not match ambichannels %d!=%d\n", cols, ambichannels);
@@ -371,8 +371,8 @@ static ai_t*ai_copy_block(ai_t*ai,
   /* store the extra data */
   //  printf("reading extradata %p\n", extradata);
   if(extradata) {
-    deinterleaver(deinterleavebuffer, extradata, frames, otherchannels);
-    for(c=0; c<otherchannels; c++) {
+    deinterleaver(deinterleavebuffer, extradata, frames, extrachannels);
+    for(c=0; c<extrachannels; c++) {
       if(frames!=sf_writef_float(ai->outhandles[channel], deinterleavebuffer+c*frames, frames)) {
         printf("failed writing %d extraframes to %d", frames, channel);
         return ai_close(ai);
@@ -394,7 +394,7 @@ static ai_t*ai_copy(ai_t*ai) {
   if(blocksize<1)
     blocksize=DEFAULT_BLOCKSIZE;
   frames=ai->info.frames;
-  channels=(ai->info.ambichannels+ai->info.otherchannels);
+  channels=(ai->info.ambichannels+ai->info.extrachannels);
 
   if(ai->info.ambichannels) {
     const ambixmatrix_t*matrix=&ai->matrix;
@@ -409,10 +409,10 @@ static ai_t*ai_copy(ai_t*ai) {
       size=(matrix->rows)*blocksize;
 
   }
-  if(ai->info.otherchannels) {
-    extradata=malloc(sizeof(float32_t)*(ai->info.otherchannels)*blocksize);
-    if((ai->info.otherchannels)*blocksize > size)
-      size=(ai->info.otherchannels)*blocksize;
+  if(ai->info.extrachannels) {
+    extradata=malloc(sizeof(float32_t)*(ai->info.extrachannels)*blocksize);
+    if((ai->info.extrachannels)*blocksize > size)
+      size=(ai->info.extrachannels)*blocksize;
   }
   deinterleavebuf=malloc(sizeof(float32_t)*size);
 

@@ -60,17 +60,17 @@ void printinfo(const char*path) {
   }
   printf(")\n");
 
-  printf("ambiXformat\t: %d (", info.ambixfileformat);
-  switch(info.ambixfileformat) {
+  printf("ambiXformat\t: %d (", info.fileformat);
+  switch(info.fileformat) {
   case(AMBIX_NONE): printf("NONE"); break;
   case(AMBIX_SIMPLE): printf("SIMPLE"); break;
   case(AMBIX_EXTENDED): printf("EXTENDED"); break;
-  default: printf("**unknown** 0x%04X", info.ambixfileformat);
+  default: printf("**unknown** 0x%04X", info.fileformat);
   }
   printf(")\n");
 
   printf("Ambisonics channels\t: %d\n", info.ambichannels); 
-  printf("Non-Ambisonics channels\t: %d\n", info.otherchannels);
+  printf("Non-Ambisonics channels\t: %d\n", info.extrachannels);
 
 
 

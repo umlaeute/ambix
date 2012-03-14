@@ -42,9 +42,9 @@ void check_create_none(const char*path, ambix_sampleformat_t format) {
   memset(&winfo, 0, sizeof(winfo));
   memset(&info, 0, sizeof(info));
 
-  info.ambixfileformat=AMBIX_NONE;
+  info.fileformat=AMBIX_NONE;
   info.ambichannels=0;
-  info.otherchannels=channels;
+  info.extrachannels=channels;
   info.samplerate=44100;
   info.sampleformat=format;
 
@@ -72,11 +72,11 @@ void check_create_none(const char*path, ambix_sampleformat_t format) {
   ambix=ambix_open(path, AMBIX_READ, &rinfo);
   fail_if((NULL==ambix), __LINE__, "couldn't create ambix file '%s' for reading", path);
 
-  fail_if((info.ambixfileformat!=rinfo.ambixfileformat), __LINE__, "ambixfileformat mismatch %d!=%d", info.ambixfileformat, rinfo.ambixfileformat);
+  fail_if((info.fileformat!=rinfo.fileformat), __LINE__, "fileformat mismatch %d!=%d", info.fileformat, rinfo.fileformat);
   fail_if((info.samplerate!=rinfo.samplerate), __LINE__, "samplerate mismatch %g!=%g", info.samplerate, rinfo.samplerate);
   fail_if((info.sampleformat!=rinfo.sampleformat), __LINE__, "sampleformat mismatch %d!=%d", info.sampleformat, rinfo.sampleformat);
   fail_if((info.ambichannels!=rinfo.ambichannels), __LINE__, "ambichannels mismatch %d!=%d", info.ambichannels, rinfo.ambichannels);
-  fail_if((info.otherchannels!=rinfo.otherchannels), __LINE__, "otherchannels mismatch %d!=%d", info.otherchannels, rinfo.otherchannels);
+  fail_if((info.extrachannels!=rinfo.extrachannels), __LINE__, "extrachannels mismatch %d!=%d", info.extrachannels, rinfo.extrachannels);
 
   err32=ambix_readf_float32(ambix, NULL, resultdata, frames);
   fail_if((err32!=frames), __LINE__, "wrote only %d frames of %d", err32, frames);
