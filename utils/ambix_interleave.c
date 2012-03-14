@@ -364,28 +364,35 @@ static interleaver(float*dest, const float*source, uint64_t frames, uint32_t cha
 }
 
 static ai_t*ai_copy_block(ai_t*ai, 
-                          float*tempdata,
-                          float*interleavebuffer,
+                          float*ambidata,
+                          float*extradata,
+                          float*interleavedata,
                           uint64_t frames) {
   uint32_t i;
   uint64_t channels=0;
 
-  float*ambidata;
-  float*otherdata;
-
   if(!ai)return ai;
   for(i=0; i<ai->numIns; i++) {
+    uint64_t offset=channels*frames;
     SNDFILE*in=ai->inhandles[i];
     if(in) {
-      if(frames!=sf_readf_float(in, tempdata+channels*frames, frames)) {
+      //printf("reading %d frames from[%d] at %p+%d\n", (int)frames, (int)i, interleavedata, (int)offset);
+      if(frames!=sf_readf_float(in, interleavedata+offset, frames)) {
         return ai_close(ai);
       }
       channels+=ai->ininfo[i].channels;
     }
   }
-  ambidata=(ai->info.ambichannels>0)?tempdata:NULL;
-  otherdata=(ai->info.extrachannels>0)?(tempdata+frames*ai->info.ambichannels):NULL;
-  if(frames!=ambix_writef_float32(ai->outhandle, ambidata, otherdata, frames)) {
+  
+  if(ambidata)
+    interleaver(ambidata, interleavedata, frames, ai->info.ambichannels);
+
+  if(extradata)
+    interleaver(extradata, interleavedata+frames*ai->info.ambichannels, frames, ai->info.extrachannels);
+
+  //printf("writing %d frames to  %p & %p\n", (int)frames,  ambidata, extradata);
+
+  if(frames!=ambix_writef_float32(ai->outhandle, ambidata, extradata, frames)) {
     return ai_close(ai);
   }
 
@@ -395,27 +402,34 @@ static ai_t*ai_copy_block(ai_t*ai,
 static ai_t*ai_copy(ai_t*ai) {
   uint64_t blocksize=0, blocks=0;
   uint64_t f, frames=0, channels=0;
-  float32_t*tmpdata=NULL,*interleavebuffer=NULL;
+  float32_t*ambidata=NULL,*extradata=NULL,*interleavebuffer=NULL;
   if(!ai)return ai;
   blocksize=ai->blocksize;
   if(blocksize<1)
     blocksize=DEFAULT_BLOCKSIZE;
   frames=ai->info.frames;
   channels=(ai->info.ambichannels+ai->info.extrachannels);
-  tmpdata=malloc(sizeof(float32_t)*channels*blocksize);
+
+  if(ai->info.ambichannels>0)
+    ambidata =malloc(sizeof(float32_t)*ai->info.ambichannels *blocksize);
+  if(ai->info.extrachannels>0)
+  extradata=malloc(sizeof(float32_t)*ai->info.extrachannels*blocksize);
+
   interleavebuffer=malloc(sizeof(float32_t)*channels*blocksize);
+
   while(frames>blocksize) {
     blocks++;
-    if(!ai_copy_block(ai, tmpdata, interleavebuffer, blocksize)) {
+    if(!ai_copy_block(ai, ambidata, extradata, interleavebuffer, blocksize)) {
       return ai_close(ai);
     }
     frames-=blocksize;
   }
-  if(!ai_copy_block(ai, tmpdata, interleavebuffer, frames))
+  if(!ai_copy_block(ai, ambidata, extradata, interleavebuffer, frames))
     return ai_close(ai);
 
 
-  free(tmpdata);
+  free(ambidata);
+  free(extradata);
   free(interleavebuffer);
   return ai;
 }
