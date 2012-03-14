@@ -97,7 +97,7 @@ ambix_matrix_transpose(const ambixmatrix_t*matrix, ambixmatrix_t*xirtam) {
 }
 
 ambix_err_t
-_ambix_matrix_fill(ambixmatrix_t*mtx, const number32_t*ndata) {
+ambix_matrix_fill(ambixmatrix_t*mtx, const float32_t*ndata) {
   float32_t**matrix=mtx->data;
   uint32_t rows=mtx->rows;
   uint32_t cols=mtx->cols;
@@ -128,14 +128,6 @@ _ambix_matrix_fill_byteswapped(ambixmatrix_t*mtx, const number32_t*data) {
   }
   return AMBIX_ERR_SUCCESS;
 }
-
-ambix_err_t
-ambix_matrix_fill(ambixmatrix_t*mtx, const number32_t*data, int byteswap) {
-  if(byteswap)
-    return _ambix_matrix_fill_byteswapped(mtx, data);
-  return _ambix_matrix_fill(mtx, data);
-}
-
 
 ambix_err_t
 ambix_matrix_fill_transposed(ambixmatrix_t*mtx, const number32_t*data, int byteswap) {

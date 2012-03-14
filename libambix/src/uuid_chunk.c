@@ -104,8 +104,13 @@ _ambix_uuid1_to_matrix(const void*data, uint64_t datasize, ambixmatrix_t*orgmtx,
   if(!ambix_matrix_init(rows, cols, mtx))
       goto cleanup;
 
-  if(ambix_matrix_fill(mtx, (float32_t*)(data+index), swap) != AMBIX_ERR_SUCCESS)
-    goto cleanup;
+  if(swap) {
+    if(_ambix_matrix_fill_byteswapped(mtx, (number32_t*)(data+index)) != AMBIX_ERR_SUCCESS)
+      goto cleanup;
+  } else {
+    if(ambix_matrix_fill(mtx, (float32_t*)(data+index)) != AMBIX_ERR_SUCCESS)
+      goto cleanup;
+  }
 
   return mtx;
 

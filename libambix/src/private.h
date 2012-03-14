@@ -200,6 +200,19 @@ uint64_t _ambix_matrix_to_uuid1(const ambixmatrix_t*matrix, void*data, int bytes
  */
 ambix_err_t _ambix_write_uuidchunk(ambix_t*ax, const void*data, int64_t datasize);
 
+
+/** @brief Fill a matrix with byteswapped values
+ *
+ * Fill data into a properly initialized matrix
+ *
+ * @param mtx initialized matrix object to copy data into
+ * @param data pointer to at least (mtx->rows*mtx->cols) values; data is ordered row-by-row with no padding (A[0,0], A[0,1], .., A[0,cols-1],  A[1, 0], .. A[rows-1, cols-1])
+ * @return an error code indicating success
+ */
+ambix_err_t
+_ambix_matrix_fill_byteswapped(ambixmatrix_t*mtx, const number32_t*data);
+
+
 /** @brief byte-swap 32bit data
  * @param n a 32bit chunk in the wrong byte order
  * @return byte-swapped data
