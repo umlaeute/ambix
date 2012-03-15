@@ -160,15 +160,13 @@ read_uuidchunk(ambix_t*ax) {
 
 		memset(&uuid, 0, sizeof(uuid));
 		strncpy(uuid.id, _ambix_getUUID(1), 16);
-
 		if ( !sf_command(file, SFC_GET_UUID, &uuid, sizeof(uuid)) )	{
 			// extended
-      if(!_ambix_uuid1_to_matrix(uuid.data, uuid.data_size, &ax->matrix, ax->byteswap)) {
-        return AMBIX_ERR_UNKNOWN;
+      if(_ambix_uuid1_to_matrix(uuid.data, uuid.data_size, &ax->matrix, ax->byteswap)) {
+        return AMBIX_ERR_SUCCESS;
       }
 		}
 #endif
-
   return AMBIX_ERR_UNKNOWN;
 }
 
@@ -276,7 +274,6 @@ ambix_err_t _ambix_write_uuidchunk(ambix_t*ax, const void*data, int64_t datasize
     memcpy(uuid.id, data, 16);
 		uuid.data=(void*)(data+16);
 		uuid.data_size=datasize-16;
-
 		if(!sf_command(PRIVATE(ax)->sf_file, SFC_SET_UUID, &uuid, sizeof(uuid))) {
       return  AMBIX_ERR_SUCCESS;
     }
