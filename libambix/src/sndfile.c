@@ -19,6 +19,12 @@
    You should have received a copy of the GNU Lesser General Public
    License along with this program; if not, see <http://www.gnu.org/licenses/>.
 
+
+   SF_UUID_ code is:
+   Copyright © 2012 Christian Nachbar,
+         Institute of Electronic Music and Acoustics (IEM),
+         University of Music and Dramatic Arts, Graz
+
 */
 
 #include "private.h"
@@ -38,8 +44,11 @@ typedef struct ambixsndfile_private_t {
   SNDFILE*sf_file;
   /** libsndfile info as returned by sf_open() */
   SF_INFO sf_info;
+#if defined HAVE_SF_CHUNK_INFO
   /** for writing uuid chunks */
   SF_CHUNK_INFO sf_chunk;
+#elif defined HAVE_SF_UUID_INFO
+#endif
 }ambixsndfile_private_t;
 static inline ambixsndfile_private_t*PRIVATE(ambix_t*ax) { return ((ambixsndfile_private_t*)(ax->private)); }
 
@@ -94,7 +103,7 @@ sndfile2ambix_info(const SF_INFO*sfinfo, ambix_info_t*axinfo) {
 
 static int
 read_uuidchunk(ambix_t*ax) {
-#ifdef HAVE_SF_GET_CHUNK_SIZE
+#if defined HAVE_SF_GET_CHUNK_SIZE && defined (HAVE_SF_CHUNK_INFO)
 	int				err ;
   int result=0;
 	SF_CHUNK_INFO	chunk_info ;
@@ -145,9 +154,22 @@ read_uuidchunk(ambix_t*ax) {
   if(chunk_info.data)
     free(chunk_info.data) ;
   return result;
-#else
-  return AMBIX_ERR_UNKNOWN;
+#elif defined HAVE_SF_UUID_INFO
+		SF_UUID_INFO uuid;
+    SNDFILE*file=PRIVATE(ax)->sf_file;
+
+		memset(&uuid, 0, sizeof(uuid));
+		strncpy(uuid.id, _ambix_getUUID(1), 16);
+
+		if ( !sf_command(file, SFC_GET_UUID, &uuid, sizeof(uuid)) )	{
+			// extended
+      if(!_ambix_uuid1_to_matrix(uuid.data, uuid.data_size, &ax->matrix, ax->byteswap)) {
+        return AMBIX_ERR_UNKNOWN;
+      }
+		}
 #endif
+
+  return AMBIX_ERR_UNKNOWN;
 }
 
 
@@ -192,9 +214,10 @@ ambix_err_t	_ambix_close	(ambix_t*ambix) {
     sf_close(PRIVATE(ambix)->sf_file);
   PRIVATE(ambix)->sf_file=NULL;
 
+#if defined HAVE_SF_SET_CHUNK && defined (HAVE_SF_CHUNK_INFO)
   if((PRIVATE(ambix)->sf_chunk).data)
     free((PRIVATE(ambix)->sf_chunk).data);
-
+#endif
 
   free(PRIVATE(ambix));
   return AMBIX_ERR_SUCCESS;
@@ -224,6 +247,7 @@ int64_t _ambix_writef_float32   (ambix_t*ambix, float32_t*data, int64_t frames) 
   return sf_writef_float(PRIVATE(ambix)->sf_file, (float*)data, frames) ;
 }
 ambix_err_t _ambix_write_uuidchunk(ambix_t*ax, const void*data, int64_t datasize) {
+#if defined HAVE_SF_SET_CHUNK && defined (HAVE_SF_CHUNK_INFO)
 	int				err ;
   SF_CHUNK_INFO*chunk=&PRIVATE(ax)->sf_chunk;
   int64_t datasize4 = datasize>>2;
@@ -241,14 +265,21 @@ ambix_err_t _ambix_write_uuidchunk(ambix_t*ax, const void*data, int64_t datasize
 
   memcpy(chunk->data, data, datasize);
 	chunk->datalen = datasize ;
-#ifdef HAVE_SF_GET_CHUNK_SIZE
 	err = sf_set_chunk (PRIVATE(ax)->sf_file, chunk) ;
-#else
-  return  AMBIX_ERR_UNKONWN
-#endif
 
   if(SF_ERR_NO_ERROR != err)
     return AMBIX_ERR_UNKNOWN;
 
   return AMBIX_ERR_SUCCESS;
+#elif defined HAVE_SF_UUID_INFO
+		SF_UUID_INFO uuid;
+    memcpy(uuid.id, data, 16);
+		uuid.data=(void*)(data+16);
+		uuid.data_size=datasize-16;
+
+		if(!sf_command(PRIVATE(ax)->sf_file, SFC_SET_UUID, &uuid, sizeof(uuid))) {
+      return  AMBIX_ERR_SUCCESS;
+    }
+#endif
+  return  AMBIX_ERR_UNKNOWN;
 }
