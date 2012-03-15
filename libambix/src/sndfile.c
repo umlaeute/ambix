@@ -93,16 +93,19 @@ sndfile2ambix_info(const SF_INFO*sfinfo, ambix_info_t*axinfo) {
 }
 
 static int
-ambix_read_uuidchunk(ambix_t*ax) {
+read_uuidchunk(ambix_t*ax) {
+#ifdef HAVE_SF_GET_CHUNK_SIZE
 	int				err ;
   int result=0;
 	SF_CHUNK_INFO	chunk_info ;
   SNDFILE*file=PRIVATE(ax)->sf_file;
   uint32_t chunkver=0;
+
   const char*id="uuid";
 	memset (&chunk_info, 0, sizeof (chunk_info)) ;
 	snprintf (chunk_info.id, sizeof (chunk_info.id), id) ;
 	chunk_info.id_size = 4 ;
+
 	err = sf_get_chunk_size (file, &chunk_info) ;
 
   if(err != SF_ERR_NO_ERROR) {
@@ -142,6 +145,9 @@ ambix_read_uuidchunk(ambix_t*ax) {
   if(chunk_info.data)
     free(chunk_info.data) ;
   return result;
+#else
+  return AMBIX_ERR_UNKNOWN;
+#endif
 }
 
 
@@ -172,7 +178,7 @@ ambix_err_t _ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t
 
   ambix->is_CAF=((SF_FORMAT_CAF & PRIVATE(ambix)->sf_info.format) != 0);
 
-  if((ambix->is_CAF) && (ambix_read_uuidchunk(ambix) == AMBIX_ERR_SUCCESS)) {
+  if((ambix->is_CAF) && (read_uuidchunk(ambix) == AMBIX_ERR_SUCCESS)) {
     ambix->has_UUID=1;
   } else {
     ambix->has_UUID=0;
@@ -235,7 +241,11 @@ ambix_err_t _ambix_write_uuidchunk(ambix_t*ax, const void*data, int64_t datasize
 
   memcpy(chunk->data, data, datasize);
 	chunk->datalen = datasize ;
+#ifdef HAVE_SF_GET_CHUNK_SIZE
 	err = sf_set_chunk (PRIVATE(ax)->sf_file, chunk) ;
+#else
+  return  AMBIX_ERR_UNKONWN
+#endif
 
   if(SF_ERR_NO_ERROR != err)
     return AMBIX_ERR_UNKNOWN;
