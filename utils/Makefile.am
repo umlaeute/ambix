@@ -8,15 +8,15 @@ bin_PROGRAMS = \
 INCLUDES = -I$(top_srcdir)/libambix
 LDADD = $(top_builddir)/libambix/src/libambix.la
 
-ambix-info_SOURCES = ambix-info.c
+ambix_info_SOURCES = ambix-info.c
 
-ambix-interleave_SOURCES = ambix-interleave.c
-ambix-interleave_CFLAGS = @SNDFILE_CFLAGS@
-ambix-interleave_LDADD = $(top_builddir)/libambix/src/libambix.la @SNDFILE_LIBS@
+ambix_interleave_SOURCES = ambix-interleave.c
+ambix_interleave_CFLAGS = @SNDFILE_CFLAGS@
+ambix_interleave_LDADD = $(top_builddir)/libambix/src/libambix.la @SNDFILE_LIBS@
 
-ambix-deinterleave_SOURCES = ambix-deinterleave.c
-ambix-deinterleave_CFLAGS = @SNDFILE_CFLAGS@
-ambix-deinterleave_LDADD = $(top_builddir)/libambix/src/libambix.la @SNDFILE_LIBS@
+ambix_deinterleave_SOURCES = ambix-deinterleave.c
+ambix_deinterleave_CFLAGS = @SNDFILE_CFLAGS@
+ambix_deinterleave_LDADD = $(top_builddir)/libambix/src/libambix.la @SNDFILE_LIBS@
 
-ambix-test_SOURCES = ambix-test.c
+ambix_test_SOURCES = ambix-test.c
 
