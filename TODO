@@ -1,0 +1,25 @@
+FILE-FORMAT
+===========
+read old-school "amb"-files
+  as "ambix extended" files with a conversion-matrix
+
+helper-library
+==============
+library for matrix operations related to libambix
+- find a good name for it
+- generate standard conversion matrices, namely for 
+-- common channel orderings
+-- common normalization schemes (semi-normalized and normalized)
+-- Furse-Malham
+- analysis of existing matrices
+
+UTILITIES
+=========
+ambix-jrec
+  utility to record ambix files via jack
+
+ambix-jplay
+  utility to play back ambix files via jack
+
+
+
