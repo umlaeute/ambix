@@ -1,5 +1,9 @@
-AC_INIT(libambix/src/libambix.c)
-AM_INIT_AUTOMAKE(libambix,0.0.1)
+AC_INIT([ambix],[0.0.1],[zmoelnig@iem.at],
+                [libambix],[http://ambisonics.iem.at//])
+AM_INIT_AUTOMAKE($PACKAGE_NAME,$PACKAGE_VERSION)
+
+m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
+
 AM_PROG_LIBTOOL
 
 AC_CONFIG_MACRO_DIR([m4])
