@@ -103,11 +103,12 @@ sndfile2ambix_info(const SF_INFO*sfinfo, ambix_info_t*axinfo) {
 
 static int
 read_uuidchunk(ambix_t*ax) {
-#if defined HAVE_SF_GET_CHUNK_SIZE && defined (HAVE_SF_CHUNK_INFO)
+#if defined HAVE_SF_GET_CHUNK_ITERATOR && defined (HAVE_SF_CHUNK_INFO)
 	int				err ;
   int result=0;
 	SF_CHUNK_INFO	chunk_info ;
   SNDFILE*file=PRIVATE(ax)->sf_file;
+  SF_CHUNK_ITERATOR *iterator;
   uint32_t chunkver=0;
 
   const char*id="uuid";
@@ -115,45 +116,41 @@ read_uuidchunk(ambix_t*ax) {
 	snprintf (chunk_info.id, sizeof (chunk_info.id), id) ;
 	chunk_info.id_size = 4 ;
 
-	err = sf_get_chunk_size (file, &chunk_info) ;
+  for(iterator = sf_get_chunk_iterator (file, &chunk_info); NULL!=iterator; iterator=sf_next_chunk_iterator (iterator)) {
+    if(chunk_info.data)
+      free(chunk_info.data);
+    chunk_info.data=NULL;
 
-  if(err != SF_ERR_NO_ERROR) {
-    result=__LINE__;goto cleanup;
-  }
-  if(chunk_info.datalen<16) {
-    result=__LINE__;goto cleanup;
-  }
-
-	chunk_info.data = malloc (chunk_info.datalen) ;
-	err = sf_get_chunk_data (file, &chunk_info) ;
-  if(err != SF_ERR_NO_ERROR) {
-    /* FIXXME: no data chunk, can only be AMBIX_SIMPLE */
-    result=__LINE__;goto simple;
-  }
-
-  chunkver=_ambix_checkUUID(chunk_info.data);
-  if(1==chunkver) {
-    if(!_ambix_uuid1_to_matrix(chunk_info.data+16, chunk_info.datalen-16, &ax->matrix, ax->byteswap)) {
-      result=__LINE__;goto simple;
+    err = sf_get_chunk_size (iterator, &chunk_info) ;
+    if(err != SF_ERR_NO_ERROR) {
+      continue;
     }
-  } else {
-    result=__LINE__;goto simple;
+
+    if(chunk_info.datalen<16) {
+      continue;
+    }
+
+    chunk_info.data = malloc (chunk_info.datalen) ;
+    err = sf_get_chunk_data (iterator, &chunk_info) ;
+    if(err != SF_ERR_NO_ERROR) {
+      continue;
+    }
+
+    chunkver=_ambix_checkUUID(chunk_info.data);
+    if(1==chunkver) {
+      if(_ambix_uuid1_to_matrix(chunk_info.data+16, chunk_info.datalen-16, &ax->matrix, ax->byteswap)) {
+        if(chunk_info.data)
+          free(chunk_info.data) ;
+        return AMBIX_ERR_SUCCESS;
+      }
+    } else
+      continue;
   }
 
   if(chunk_info.data)
     free(chunk_info.data) ;
-  return AMBIX_ERR_SUCCESS;
+  return AMBIX_ERR_UNKNOWN;
 
- simple:
-
-  if(chunk_info.data)
-    free(chunk_info.data) ;
-  return result;
-
- cleanup:
-  if(chunk_info.data)
-    free(chunk_info.data) ;
-  return result;
 #elif defined HAVE_SF_UUID_INFO
 		SF_UUID_INFO uuid;
     SNDFILE*file=PRIVATE(ax)->sf_file;
@@ -252,7 +249,6 @@ ambix_err_t _ambix_write_uuidchunk(ambix_t*ax, const void*data, int64_t datasize
 
   if(datasize4*4 < datasize)
     datasize4++;
-
 	memset (chunk, 0, sizeof (chunk)) ;
 	snprintf (chunk->id, sizeof (chunk->id), "uuid") ;
 	chunk->id_size = 4 ;
@@ -264,10 +260,8 @@ ambix_err_t _ambix_write_uuidchunk(ambix_t*ax, const void*data, int64_t datasize
   memcpy(chunk->data, data, datasize);
 	chunk->datalen = datasize ;
 	err = sf_set_chunk (PRIVATE(ax)->sf_file, chunk) ;
-
   if(SF_ERR_NO_ERROR != err)
     return AMBIX_ERR_UNKNOWN;
-
   return AMBIX_ERR_SUCCESS;
 #elif defined HAVE_SF_UUID_INFO
 		SF_UUID_INFO uuid;
