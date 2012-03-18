@@ -32,9 +32,11 @@ if test "x$have_sndfile" = "xyes"; then
  LIBS="$LIBS $SNDFILE_LIBS"
  AC_CHECK_HEADERS(sndfile.h)
  AC_SEARCH_LIBS([sf_set_chunk], [sndfile], [AC_DEFINE([HAVE_SF_SET_CHUNK], [1], [Define to 1 if libsndfile can set custom chunks using sf_set_chunk()])])
- AC_SEARCH_LIBS([sf_get_chunk_size], [sndfile], [AC_DEFINE([HAVE_SF_GET_CHUNK_SIZE], [1], [Define to 1 if libsndfile can get custom chunks using sf_get_chunk_*()])])
- AC_CHECK_TYPES([SF_UUID_INFO], [], [], [[#include <sndfile.h>]])
+ AC_SEARCH_LIBS([sf_get_chunk_iterator], [sndfile], [AC_DEFINE([HAVE_SF_GET_CHUNK_ITERATOR], [1], [Define to 1 if libsndfile can get custom chunks via an iterator])])
  AC_CHECK_TYPES([SF_CHUNK_INFO], [], [], [[#include <sndfile.h>]])
+
+dnl a custom version of libsndfile used sf_command to write UUID-chunks
+ AC_CHECK_TYPES([SF_UUID_INFO], [], [], [[#include <sndfile.h>]])
 fi
 
 CFLAGS="$tmp_sndfile_CFLAGS"
