@@ -20,7 +20,7 @@ libambix_la_SOURCES += sndfile.c
 libambix_la_CFLAGS += @SNDFILE_CFLAGS@
 libambix_la_LIBADD += @SNDFILE_LIBS@
 else
-libambix_la_SOURCES += dummy.c
+libambix_la_SOURCES += null.c
 endif
 
 
