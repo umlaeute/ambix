@@ -8,4 +8,6 @@ EXTRA_DIST = libambix.doxy
 nobase_include_HEADERS = \
 	ambix/ambix.h \
 	ambix/exportdefs.h \
-	ambix/types.h
+	ambix/matrix.h \
+	ambix/types.h \
+	ambix/utils.h

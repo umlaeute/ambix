@@ -15,6 +15,7 @@ check_PROGRAMS= \
 	pass skip fail
 
 SOURCES=common.c common.h
+noinst_HEADERS = common.h 
 
 pass_SOURCES=pass.c
 skip_SOURCES=skip.c
