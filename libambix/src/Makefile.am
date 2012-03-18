@@ -3,7 +3,7 @@ INCLUDES = -I$(top_srcdir)/libambix
 
 lib_LTLIBRARIES = libambix.la
 
-libambix_la_LDFLAGS = -version-info 0:0:0 -no-undefined
+libambix_la_LDFLAGS = -version-info @SHARED_VERSION_INFO@ -no-undefined
 libambix_la_CFLAGS  = -DAMBIX_INTERNAL
 libambix_la_CFLAGS += -fvisibility=hidden
 libambix_la_LIBADD  = $(LIBM)
