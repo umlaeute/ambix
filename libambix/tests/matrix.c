@@ -154,6 +154,8 @@ void datamul_tests(float32_t eps) {
 
   if(mtx)ambix_matrix_destroy(mtx);
   free(resultdata);
+  free(resultdataT);
+  free(inputdata);
 }
 
 void datamul_eye_tests(float32_t eps) {
@@ -186,6 +188,7 @@ void datamul_eye_tests(float32_t eps) {
 
   free(inputdata);
   free(outputdata);
+  ambix_matrix_deinit(&eye);
 }
 
 void datamul_4_2_tests(uint32_t chunksize, float32_t eps) {

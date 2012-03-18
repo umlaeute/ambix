@@ -87,6 +87,11 @@ void check_create_none(const char*path, ambix_sampleformat_t format) {
   fail_if((AMBIX_ERR_SUCCESS!=ambix_close(ambix)), __LINE__, "closing ambix file %p", ambix);
   ambix=NULL;
 
+
+  free(resultdata);
+  free(data);
+  free(orgdata);
+
   unlink(path);
 }
 

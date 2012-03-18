@@ -142,6 +142,12 @@ void check_create_extended(const char*path, ambix_sampleformat_t format, uint32_
   free(ambidata);
   free(resultotherdata);
   free(otherdata);
+
+  free(orgambidata);
+  free(orgotherdata);
+
+  ambix_matrix_deinit(&eye);
+
   unlink(path);
 }
 
