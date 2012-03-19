@@ -210,7 +210,7 @@ ambix_err_t _ambix_write_uuidchunk(ambix_t*ax, const void*data, int64_t datasize
  * @return an error code indicating success
  */
 ambix_err_t
-_ambix_matrix_fill_byteswapped(ambix_matrix_t*mtx, const number32_t*data);
+_ambix_matrix_fill_data_byteswapped(ambix_matrix_t*mtx, const number32_t*data);
 
 
 /** @brief byte-swap 32bit data

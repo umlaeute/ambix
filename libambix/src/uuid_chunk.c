@@ -105,10 +105,10 @@ _ambix_uuid1_to_matrix(const void*data, uint64_t datasize, ambix_matrix_t*orgmtx
       goto cleanup;
 
   if(swap) {
-    if(_ambix_matrix_fill_byteswapped(mtx, (number32_t*)(data+index)) != AMBIX_ERR_SUCCESS)
+    if(_ambix_matrix_fill_data_byteswapped(mtx, (number32_t*)(data+index)) != AMBIX_ERR_SUCCESS)
       goto cleanup;
   } else {
-    if(ambix_matrix_fill(mtx, (float32_t*)(data+index)) != AMBIX_ERR_SUCCESS)
+    if(ambix_matrix_fill_data(mtx, (float32_t*)(data+index)) != AMBIX_ERR_SUCCESS)
       goto cleanup;
   }
 

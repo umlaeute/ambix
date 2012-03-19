@@ -85,15 +85,23 @@ AMBIX_API
 void ambix_matrix_deinit(ambix_matrix_t*mtx);
 
 
-/** @brief Fill matrix with identity matrix
+/** @brief Fill a matrix according to specs
  *
- * Zero out the matrix and fill the diagonally with ones
+ * Fill a properly initialized matrix according to type.
+ * you can use this to generate standard matrices
+ * (e.g. using AMBIX_MATRIX_ONE will set all elements of the matrix to 1)
+ * since this call will not change the matrix layout (e.g. the dimension)
+ * it is the responsibility of the caller to ensure that the matrix has a proper 
+ * layout for the requested type (e.g. it is an error to fill a Furse-Malham matrix into
+ * a matrix that holds more than 3rd order ambisonics)
  *
- * @param matrix initialized matrix object to initialize
- * @return pointer to the matrix object
+ * @param matrix initialized matrix object to fill
+ * @param type data specification
+
+ * @return pointer to the matrix object, if the type was not valid (for the input matrix)
  */
 AMBIX_API
-ambix_matrix_t*ambix_matrix_eye(ambix_matrix_t*matrix);
+ambix_matrix_t*ambix_matrix_fill(ambix_matrix_t*matrix, ambix_matrixtype_t type);
 
 /** @brief Fill a matrix with values
  *
@@ -104,7 +112,7 @@ ambix_matrix_t*ambix_matrix_eye(ambix_matrix_t*matrix);
  * @return an error code indicating success
  */
 AMBIX_API
-ambix_err_t ambix_matrix_fill(ambix_matrix_t*mtx, const float32_t*data);
+ambix_err_t ambix_matrix_fill_data(ambix_matrix_t*mtx, const float32_t*data);
 
 /** @brief Copy a matrix to another matrix
  *

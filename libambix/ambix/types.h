@@ -79,8 +79,12 @@ typedef struct ambix_t ambix_t;
 /** error codes returned by functions */
 typedef enum
 {	
+  /** an unknown error */
+  AMBIX_ERR_UNKNOWN=-1,
+
   /** no error encountered */
   AMBIX_ERR_SUCCESS			= 0,
+
   /** an invalid ambix handle was passed to the function */
   AMBIX_ERR_INVALID_HANDLE,
   /** the file in question is invalid (e.g. doesn't contain audio) */
@@ -89,8 +93,9 @@ typedef enum
   AMBIX_ERR_INVALID_DIMENSION,
   /** the ambix handle is in a format that does not allow the function (e.g. setting a premultiply matrix for a format other than AMBIX_SIMPLE) */
   AMBIX_ERR_INVALID_FORMAT,
-  /** an unknown error */
-  AMBIX_ERR_UNKNOWN=-1
+
+  /** you specified an invalid matrix */
+  AMBIX_ERR_INVALID_MATRIX,
 
 } ambix_err_t;
 
@@ -102,7 +107,7 @@ typedef enum {
   /** open file for writing  */
   AMBIX_WRITE = (1<<1),
   /** open file for reading&writing  */
-  AMBIX_RRW = (AMBIX_READ|AMBIX_WRITE)
+  AMBIX_RDRW = (AMBIX_READ|AMBIX_WRITE)
 
 } ambix_filemode_t;
 
@@ -130,6 +135,20 @@ typedef enum {
   /** 32 bit floating point */
   AMBIX_SAMPLEFORMAT_FLOAT32,
 } ambix_sampleformat_t;
+
+
+/** ambix matrix types */
+typedef enum {
+  /** invalid matrix  format */
+  AMBIX_MATRIX_INVALID = -1,
+  /** a matrix filled with zeros */
+  AMBIX_MATRIX_ZERO = 0,
+  /** a matrix filled with ones */
+  AMBIX_MATRIX_ONE = 1,
+  /** an identity matrix (diagonal is 1, rest is 0) */
+  AMBIX_MATRIX_IDENTITY,
+} ambix_matrixtype_t;
+
 
 
 /** a 2-dimensional floating point matrix */

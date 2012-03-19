@@ -97,7 +97,7 @@ ambix_matrix_transpose(const ambix_matrix_t*matrix, ambix_matrix_t*xirtam) {
 }
 
 ambix_err_t
-ambix_matrix_fill(ambix_matrix_t*mtx, const float32_t*ndata) {
+ambix_matrix_fill_data(ambix_matrix_t*mtx, const float32_t*ndata) {
   float32_t**matrix=mtx->data;
   uint32_t rows=mtx->rows;
   uint32_t cols=mtx->cols;
@@ -112,7 +112,7 @@ ambix_matrix_fill(ambix_matrix_t*mtx, const float32_t*ndata) {
   return AMBIX_ERR_SUCCESS;
 }
 ambix_err_t
-_ambix_matrix_fill_byteswapped(ambix_matrix_t*mtx, const number32_t*data) {
+_ambix_matrix_fill_data_byteswapped(ambix_matrix_t*mtx, const number32_t*data) {
   float32_t**matrix=mtx->data;
   uint32_t rows=mtx->rows;
   uint32_t cols=mtx->cols;
@@ -130,7 +130,7 @@ _ambix_matrix_fill_byteswapped(ambix_matrix_t*mtx, const number32_t*data) {
 }
 
 ambix_err_t
-ambix_matrix_fill_transposed(ambix_matrix_t*mtx, const float32_t*data, int byteswap) {
+ambix_matrix_fill_data_transposed(ambix_matrix_t*mtx, const float32_t*data, int byteswap) {
   ambix_err_t err=0;
   ambix_matrix_t*xtm=ambix_matrix_init(mtx->cols, mtx->rows, NULL);
 
@@ -138,9 +138,9 @@ ambix_matrix_fill_transposed(ambix_matrix_t*mtx, const float32_t*data, int bytes
     return AMBIX_ERR_UNKNOWN;
 
   if(byteswap)
-    err=_ambix_matrix_fill_byteswapped(xtm, (const number32_t*)data);
+    err=_ambix_matrix_fill_data_byteswapped(xtm, (const number32_t*)data);
   else
-    err=ambix_matrix_fill(xtm, data);
+    err=ambix_matrix_fill_data(xtm, data);
 
   if(AMBIX_ERR_SUCCESS==err) {
     ambix_matrix_t*resu=ambix_matrix_transpose(mtx, xtm);
@@ -221,16 +221,35 @@ ambix_matrix_multiply(const ambix_matrix_t*left, const ambix_matrix_t*right, amb
 
 
 ambix_matrix_t*
-ambix_matrix_eye(ambix_matrix_t*matrix) {
+ambix_matrix_fill(ambix_matrix_t*matrix, ambix_matrixtype_t typ) {
   int32_t rows=matrix->rows;
   int32_t cols=matrix->cols;
+  int32_t r, c;
   float32_t**mtx=matrix->data;
 
-  int32_t r, c;
-  for(r=0; r<rows; r++)
-    for(c=0; c<cols; c++)
-      mtx[r][c]=(r==c)?1.:0.;
-
+  switch(typ) {
+  default:
+    return NULL;
+  case (AMBIX_MATRIX_ZERO):
+    for(r=0; r<rows; r++) {
+      for(c=0; c<cols; c++)
+        mtx[r][c]=0.;
+    }
+    break;
+  case (AMBIX_MATRIX_ONE):
+    for(r=0; r<rows; r++) {
+      for(c=0; c<cols; c++)
+        mtx[r][c]=1.;
+    }
+    break;
+  case (AMBIX_MATRIX_IDENTITY):
+    for(r=0; r<rows; r++) {
+      for(c=0; c<cols; c++)
+        mtx[r][c]=(r==c)?1.:0.;
+    }
+    break;
+          
+  }
   return matrix;
 }
 

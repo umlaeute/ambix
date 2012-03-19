@@ -154,7 +154,7 @@ ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambix_info_
       ambix->use_matrix=1;
     } else if(AMBIX_EXTENDED==wantformat && AMBIX_SIMPLE==haveformat) {
       ambix_matrix_init(ambix->realinfo.ambichannels, ambix->realinfo.ambichannels, &ambix->matrix);
-      ambix_matrix_eye(&ambix->matrix);
+      ambix_matrix_fill(&ambix->matrix, AMBIX_MATRIX_IDENTITY);
       ambix->info.fileformat=AMBIX_EXTENDED;
       ambix->use_matrix=0;
     }
