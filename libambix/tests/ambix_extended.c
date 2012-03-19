@@ -49,7 +49,7 @@ void check_create_extended(const char*path, ambix_sampleformat_t format, uint32_
   otherdata=calloc(extrachannels*framesize, sizeof(float32_t));
 
   ambix_matrix_init(ambichannels, ambichannels, &eye);
-  ambix_matrix_eye(&eye);
+  ambix_matrix_fill(&eye, AMBIX_MATRIX_IDENTITY);
 
   memset(&winfo, 0, sizeof(winfo));
   memset(&info, 0, sizeof(info));

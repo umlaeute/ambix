@@ -52,11 +52,11 @@ void mtxmul_tests(float32_t eps) {
 
  /* fill in some test data */
   left=ambix_matrix_init(4, 3, NULL);
-  ambix_matrix_fill(left, leftdata_4_3);
+  ambix_matrix_fill_data(left, leftdata_4_3);
   right=ambix_matrix_init(3, 2, NULL);
-  ambix_matrix_fill(right, rightdata_3_2);
+  ambix_matrix_fill_data(right, rightdata_3_2);
   testresult=ambix_matrix_init(4, 2, NULL);
-  ambix_matrix_fill(testresult, resultdata_4_2);
+  ambix_matrix_fill_data(testresult, resultdata_4_2);
 
   errf=matrix_diff(__LINE__, left, left, eps);
   fail_if(!(errf<eps), __LINE__, "diffing matrix with itself returned %f (>%f)", errf, eps);
@@ -86,14 +86,14 @@ void mtxmul_eye_tests(float32_t eps) {
   ambix_matrix_t *left, *result, *eye;
   STARTTEST();
   eye=ambix_matrix_init(4, 4, NULL);
-  fail_if((eye!=ambix_matrix_eye(eye)), __LINE__, "filling unity matrix %p did not return original matrix %p", eye);
+  fail_if((eye!=ambix_matrix_fill(eye, AMBIX_MATRIX_IDENTITY)), __LINE__, "filling unity matrix %p did not return original matrix %p", eye);
 
   left=ambix_matrix_init(4, 2, NULL);
-  fail_if(AMBIX_ERR_SUCCESS!=ambix_matrix_fill(left, resultdata_4_2), __LINE__,
+  fail_if(AMBIX_ERR_SUCCESS!=ambix_matrix_fill_data(left, resultdata_4_2), __LINE__,
           "filling left data failed");
 
   result=ambix_matrix_init(4, 2, NULL);
-  fail_if(AMBIX_ERR_SUCCESS!=ambix_matrix_fill(result, resultdata_4_2), __LINE__,
+  fail_if(AMBIX_ERR_SUCCESS!=ambix_matrix_fill_data(result, resultdata_4_2), __LINE__,
           "filling result data failed");
 
   fail_if((result!=ambix_matrix_multiply(eye, left, result)), __LINE__, "multiplication into matrix did not return original matrix");
@@ -119,7 +119,7 @@ void datamul_tests(float32_t eps) {
   STARTTEST();
 
   mtx=ambix_matrix_init(4, 3, NULL);
-  ambix_matrix_fill(mtx, leftdata_4_3);
+  ambix_matrix_fill_data(mtx, leftdata_4_3);
 
   data_transpose(inputdata, rightdata_3_2, 3, 2);
 
@@ -172,7 +172,7 @@ void datamul_eye_tests(float32_t eps) {
   inputdata =data_sine(frames, channels, freq);
   outputdata=malloc(sizeof(float32_t)*frames*channels);
   ambix_matrix_init(channels, channels, &eye);
-  ambix_matrix_eye(&eye);
+  ambix_matrix_fill(&eye, AMBIX_MATRIX_IDENTITY);
 
   fail_if(AMBIX_ERR_SUCCESS!=ambix_matrix_multiply_float32(outputdata, &eye, inputdata, frames),
           __LINE__, "data multilplication failed");
