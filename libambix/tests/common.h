@@ -57,7 +57,7 @@ void data_transpose(float32_t*outdata, const float32_t*indata, uint32_t inrows, 
 float32_t*data_sine(uint64_t frames, uint32_t channels, float32_t periods);
 float32_t*data_ramp(uint64_t frames, uint32_t channels);
 
-#define STARTTEST()   printf("============ %s[%04d]:\t%s ==========\n", __FILE__, __LINE__, __FUNCTION__)
+#define STARTTEST()   printf("============ %s[%04d]:\t%s\n", __FILE__, __LINE__, __FUNCTION__)
 
 #endif /* TESTS_COMMON_H */
 
