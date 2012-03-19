@@ -147,6 +147,9 @@ typedef enum {
   AMBIX_MATRIX_ONE = 1,
   /** an identity matrix (diagonal is 1, rest is 0) */
   AMBIX_MATRIX_IDENTITY,
+
+  /** conversion matrix Furse-Malham -> ambix */
+  AMBIX_MATRIX_FUMA,
 } ambix_matrixtype_t;
 
 

@@ -27,6 +27,13 @@
 # include <stdlib.h>
 #endif /* HAVE_STDLIB_H */
 
+#include <math.h>
+
+static ambix_matrix_t*_matrix_diag(ambix_matrix_t*orgmatrix, const float32_t*diag, uint32_t count);
+static ambix_matrix_t*_matrix_router(ambix_matrix_t*orgmatrix, const float32_t*route, uint32_t count, int swap);
+
+static void _matrix_sid2acn(float32_t*data, uint32_t count);
+
 ambix_matrix_t*
 ambix_matrix_create(void) {
   return ambix_matrix_init(0, 0, NULL);
@@ -219,13 +226,13 @@ ambix_matrix_multiply(const ambix_matrix_t*left, const ambix_matrix_t*right, amb
   return dest;
 }
 
-
 ambix_matrix_t*
 ambix_matrix_fill(ambix_matrix_t*matrix, ambix_matrixtype_t typ) {
   int32_t rows=matrix->rows;
   int32_t cols=matrix->cols;
   int32_t r, c;
   float32_t**mtx=matrix->data;
+  const float32_t sqrt2=sqrt(2);
 
   switch(typ) {
   default:
@@ -248,7 +255,89 @@ ambix_matrix_fill(ambix_matrix_t*matrix, ambix_matrixtype_t typ) {
         mtx[r][c]=(r==c)?1.:0.;
     }
     break;
-          
+
+  case (AMBIX_MATRIX_FUMA): do { /* Furse Malham -> ACN/SN3D */
+#warning fix matrix_type for FuMa2ambix
+    ambix_matrix_t*result=NULL, *weightm=NULL, *routem=NULL, *reducem=NULL;
+
+    switch(cols) {
+    case  3: /* h   = 1st order 2-D */
+      if(4==rows) {
+        float32_t weights[]={1.4142f, 1.f, 1.f, 1.f};
+        float32_t ordering[4];
+        weights[0]=sqrt2;
+        _matrix_sid2acn(ordering, sizeof(ordering)/sizeof(*ordering));
+
+        weightm=_matrix_diag(NULL, weights, sizeof(weights)/sizeof(*weights));
+        routem =_matrix_router(NULL, ordering, sizeof(ordering)/sizeof(*ordering), 0);
+        reducem=ambix_matrix_init(rows, cols, NULL);
+        reducem=ambix_matrix_fill(reducem, AMBIX_MATRIX_IDENTITY);
+      }
+      break;
+    case  4: /* f   = 1st order 3-D */
+      if(4==rows) {
+        float32_t weights[]={1.4142f, 1.f, 1.f, 1.f};
+        float32_t ordering[4];
+        weights[0]=sqrt2;
+        _matrix_sid2acn(ordering, sizeof(ordering)/sizeof(*ordering));
+
+        weightm=_matrix_diag(NULL, weights, sizeof(weights)/sizeof(*weights));
+        routem =_matrix_router(NULL, ordering, sizeof(ordering)/sizeof(*ordering), 0);
+        reducem=ambix_matrix_init(rows, cols, NULL);
+        reducem=ambix_matrix_fill(reducem, AMBIX_MATRIX_IDENTITY);
+      }
+      break;
+    case  5: /* hh  = 2nd order 2-D */
+      if(9==rows) {
+      }
+      break;
+    case  6: /* fh  = 2nd order 2-D + 1st order 3-D (formerly called 2.5 order) */
+      if(9==rows) {
+      }
+      break;
+    case  7: /* hhh = 3rd order 2-D */
+      if(16==rows) {
+      }
+      break;
+    case  8: /* fhh = 3rd order 2-D + 1st order 3-D */
+      if(16==rows) {
+      }
+      break;
+    case  9: /* ff  = 2nd order 3-D */
+      if(9==rows) {
+        float32_t ordering[9];
+        _matrix_sid2acn(ordering, sizeof(ordering)/sizeof(*ordering));
+        routem =_matrix_router(NULL, ordering, sizeof(ordering)/sizeof(*ordering), 0);
+
+      }
+      break;
+    case 11: /* ffh = 3rd order 2-D + 2nd order 3-D */
+      if(16==rows) {
+      }
+      break;
+    case 16: /* fff = 3rd order 3-D */
+      if(16==rows) {
+        float32_t ordering[16];
+        _matrix_sid2acn(ordering, sizeof(ordering)/sizeof(*ordering));
+        routem =_matrix_router(NULL, ordering, sizeof(ordering)/sizeof(*ordering), 0);
+      }
+      break;
+    default:break;
+    }
+    if(weightm&&routem&&reducem) {
+      ambix_matrix_t*m0=ambix_matrix_multiply(weightm, routem, NULL);
+      if(m0) {
+        result=ambix_matrix_multiply(m0, reducem, matrix);
+        ambix_matrix_destroy(m0);
+      }
+    }
+    if(weightm) ambix_matrix_destroy(weightm);
+    if(routem) ambix_matrix_destroy(routem);
+    if(reducem) ambix_matrix_destroy(reducem);
+
+    return(result);
+  } while(0);
+
   }
   return matrix;
 }
@@ -303,3 +392,69 @@ ambix_err_t ambix_matrix_multiply_float32(float32_t*dest, const ambix_matrix_t*m
 
 MTXMULTIPLY_DATA_INT(int16);
 MTXMULTIPLY_DATA_INT(int32);
+
+
+
+/* conversion matrices
+ * conversion=(weights*ordering)
+ */
+
+/* weights
+ *  N3D = SN3D * sqrt(2n+1)
+ * SN3D =  N3D / sqrt(2n+1)
+ */
+
+/* ordering
+ */
+
+
+static ambix_matrix_t*_matrix_diag(ambix_matrix_t*orgmatrix, const float32_t*diag, uint32_t count) {
+  uint32_t i;
+  ambix_matrix_t*matrix=ambix_matrix_init(count, count, orgmatrix);
+  for(i=0; i<count; i++)
+    matrix->data[i][i]=diag[i];
+
+  return matrix;
+}
+static ambix_matrix_t*_matrix_router(ambix_matrix_t*orgmatrix, const float32_t*route, uint32_t count, int swap) {
+  uint32_t i;
+  ambix_matrix_t*matrix=NULL;
+  for(i=0; i<count; i++) {
+    uint32_t o=route[i];
+    if(i<0 || i>count)
+      return NULL;
+  }
+  matrix=ambix_matrix_init(count, count, orgmatrix);
+  for(i=0; i<count; i++) {
+    uint32_t o=route[i];
+    if(swap)
+      matrix->data[o][i]=1.;
+    else
+      matrix->data[i][o]=1.;
+  }
+  return matrix;
+}
+
+
+
+static void _matrix_sid2acn(float32_t*data, uint32_t count) {
+  float32_t*datap=data;
+  int32_t order=ambix_channels2order(count);
+  int32_t o;
+  if(order<0)return;
+
+  for(o=0; o<=order; o++) {
+    uint32_t offset=o>0?ambix_order2channels(o-1):0;
+    uint32_t maxindex=ambix_order2channels(o)-offset;
+
+    int32_t incr=2;
+    int32_t index;
+
+    for(index=1; index<maxindex; index+=2) {
+      *datap++=index+offset;
+    }
+    for(index=maxindex-1; index>=0; index-=2) {
+      *datap++=index+offset;
+    }
+  }
+}
