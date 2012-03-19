@@ -97,7 +97,7 @@ static ai_t*ai_matrix(ai_t*ai, const char*path) {
   }
 
   mtx=ambix_matrix_init(cols, rows, NULL);
-  if(mtx && (AMBIX_ERR_SUCCESS==ambix_matrix_fill(mtx, data))) {
+  if(mtx && (AMBIX_ERR_SUCCESS==ambix_matrix_fill_data(mtx, data))) {
     uint32_t r, c;
     ai->matrix=ambix_matrix_init(rows, cols, NULL);
 
@@ -293,7 +293,7 @@ static ai_t*ai_open_input(ai_t*ai) {
       ai->info.extrachannels=channels-(ai->channels);
 
       ai->matrix=ambix_matrix_init(ai->channels, ai->channels, NULL);
-      ai->matrix=ambix_matrix_eye (ai->matrix);
+      ai->matrix=ambix_matrix_fill (ai->matrix, AMBIX_MATRIX_IDENTITY);
     } else if (ai->channels == channels) {
       /* simple format */
       ai->info.fileformat=AMBIX_SIMPLE;
