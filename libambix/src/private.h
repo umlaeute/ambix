@@ -48,10 +48,11 @@ typedef struct ambix_t {
   /** private data by the actual backend */
   void*private;
 
-  /** whether the file has an UUID-chunk */
-  int has_UUID;
-  /** whether the file is a CAF file */
-  int is_CAF;
+  /** whether the file is a valid AMBIX file (CAF) */
+  int is_AMBIX;
+
+  /** whether the file has an UUID-chunk, and which AMBIX version it describs */
+  ambix_fileformat_t format;
 
   /** read/write mode */
   ambix_filemode_t filemode;

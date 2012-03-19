@@ -95,7 +95,7 @@ ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambix_info_
     ambix_fileformat_t haveformat;
     uint32_t channels = ambix->channels;
     /* successfully opened, initialize common stuff... */
-    if(ambix->is_CAF) {
+    if(ambix->is_AMBIX) {
       if(AMBIX_WRITE & mode) {
         switch(wantformat) {
         case(AMBIX_NONE):
@@ -111,7 +111,7 @@ ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambix_info_
           break;
         }
       } else {
-        if(ambix->has_UUID) {
+        if(ambix->format>AMBIX_SIMPLE) {
           /* check whether channels are (N+1)^2
            * if so, we have a simple-ambix file, else it is just an ordinary caf
            */

@@ -78,8 +78,8 @@ void _ambix_print_ambix(const ambix_t*ambix) {
   if(!ambix)return;
 
   printf("  private\t: %p\n", ambix->private);
-  printf("  has_UUID\t: %d\n", ambix->has_UUID);
-  printf("  is_CAF\t: %d\n", ambix->is_CAF);
+  printf("  is_AMBIX\t: %d\n", ambix->is_AMBIX);
+  printf("  format\t: %d\n", ambix->format);
   printf("  filemode\t: %d\n", ambix->filemode);
   printf("  byteswap\t: %d\n", ambix->byteswap);
   printf("  channels\t: %d\n", ambix->channels);

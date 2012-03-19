@@ -193,12 +193,12 @@ ambix_err_t _ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t
   ambix->byteswap=(sf_command(PRIVATE(ambix)->sf_file, SFC_RAW_DATA_NEEDS_ENDSWAP, NULL, 0) == SF_TRUE);
   ambix->channels = PRIVATE(ambix)->sf_info.channels;
 
-  ambix->is_CAF=((SF_FORMAT_CAF & PRIVATE(ambix)->sf_info.format) != 0);
+  ambix->is_AMBIX=((SF_FORMAT_CAF & PRIVATE(ambix)->sf_info.format) != 0);
 
-  if((ambix->is_CAF) && (read_uuidchunk(ambix) == AMBIX_ERR_SUCCESS)) {
-    ambix->has_UUID=1;
+  if((ambix->is_AMBIX) && (read_uuidchunk(ambix) == AMBIX_ERR_SUCCESS)) {
+    ambix->format=AMBIX_EXTENDED;
   } else {
-    ambix->has_UUID=0;
+    ambix->format=AMBIX_SIMPLE;
   }
 
   return AMBIX_ERR_SUCCESS;
