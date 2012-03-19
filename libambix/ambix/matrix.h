@@ -140,13 +140,14 @@ ambix_matrix_t*ambix_matrix_multiply(const ambix_matrix_t*A, const ambix_matrix_
 
 /** @brief Multiply a matrix with (32bit floating point) data
  *
- * Multiply a [rows*cols] matrix with an array of [cols*frames] data to get [rows*frames] data
+ * Multiply a [rows*cols] matrix with an array of [cols*frames] source data to get [rows*frames] dest data.
  *
  * @param dest a pointer to hold the output data; it must be large enough to hold at least rows*frames samples (allocated by the user)
  * @param mtx the matrix to multiply source with
  * @param source a pointer to an array that holds cols*frames samples (allocated by the user)
  * @param frames number of frames in source
  * @return an error code indicating success
+ * @remark both source and dest data are arranged column-wise (as is the default for interleaved audio-data)
  */
 AMBIX_API
 ambix_err_t ambix_matrix_multiply_float32(float32_t*dest, const ambix_matrix_t*mtx, const float32_t*source, int64_t frames);
