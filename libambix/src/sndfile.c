@@ -172,6 +172,7 @@ read_uuidchunk(ambix_t*ax) {
 
 ambix_err_t _ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t mode, const ambix_info_t*ambixinfo) {
   int sfmode=0;
+  int caf=0;
 
   ambix->private=calloc(1, sizeof(ambixsndfile_private_t));
   ambix2sndfile_info(ambixinfo, &PRIVATE(ambix)->sf_info);
@@ -193,12 +194,79 @@ ambix_err_t _ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t
   ambix->byteswap=(sf_command(PRIVATE(ambix)->sf_file, SFC_RAW_DATA_NEEDS_ENDSWAP, NULL, 0) == SF_TRUE);
   ambix->channels = PRIVATE(ambix)->sf_info.channels;
 
-  ambix->is_AMBIX=((SF_FORMAT_CAF & PRIVATE(ambix)->sf_info.format) != 0);
-
-  if((ambix->is_AMBIX) && (read_uuidchunk(ambix) == AMBIX_ERR_SUCCESS)) {
-    ambix->format=AMBIX_EXTENDED;
+  caf=((SF_FORMAT_CAF == (SF_FORMAT_TYPEMASK & PRIVATE(ambix)->sf_info.format) != 0));
+  if(caf) {
+    ambix->is_AMBIX=1;
+    
+    if(read_uuidchunk(ambix) == AMBIX_ERR_SUCCESS) {
+      ambix->format=AMBIX_EXTENDED;
+    } else {
+      ambix->format=AMBIX_SIMPLE;
+    }
   } else {
-    ambix->format=AMBIX_SIMPLE;
+    // check whether this is an .amb file or the like...
+    if(0) {
+    } else if(sf_command(PRIVATE(ambix)->sf_file, SFC_WAVEX_GET_AMBISONIC, NULL, 0) == SF_AMBISONIC_B_FORMAT) {
+      /*
+        The four B-format signals are interleaved for each sample frame in the order W,X,Y,Z.
+
+        If the extended six-channel B-Format is used, the U and V signals will occupy the
+        fifth and sixth slots: W,X,Y,Z,U,V.
+
+        If horizontal-only B-format  is to be represented, a three or five-channel file
+        will suffice, with signals interleaved as W,X,Y (First Order), or W,X,Y,U,V (Second-order). 
+        However, four and -six-channel files are also acceptable, with the Z channel empty. 
+        Higher-order configurations are possible in theory, but are not addressed here. 
+        A decoder program should either 'degrade gracefully', or reject formats it cannot handle.
+        
+        For all B-format configurations, the dwChannelMask field should be set to zero.
+
+        Though strictly speaking an optional chunk, it is recommended that the PEAK chunk be
+        used for all B-Format files. Apart from its general utility, it has the special virtue
+        for B-format in that applications can determine from the peak value for the Z channel
+        whether the file is indeed full periphonic B-format (with height information), or
+        'Horizontal-only' (Z channel present but empty). 
+      */
+      switch(ambix->channels) {
+      case  3: /* h   = 1st order 2-D */
+        ambix_matrix_init(ambix_order2channels(1), ambix->channels, &ambix->matrix);
+        break;
+      case  4: /* f   = 1st order 3-D */
+        ambix_matrix_init(ambix_order2channels(1), ambix->channels, &ambix->matrix);
+        break;
+      case  5: /* hh  = 2nd order 2-D */
+        ambix_matrix_init(ambix_order2channels(2), ambix->channels, &ambix->matrix);
+        break;
+      case  6: /* fh  = 2nd order 2-D + 1st order 3-D (formerly called 2.5 order) */
+        ambix_matrix_init(ambix_order2channels(2), ambix->channels, &ambix->matrix);
+        break;
+      case  7: /* hhh = 3rd order 2-D */
+        ambix_matrix_init(ambix_order2channels(3), ambix->channels, &ambix->matrix);
+        break;
+      case  8: /* fhh = 3rd order 2-D + 1st order 3-D */
+        ambix_matrix_init(ambix_order2channels(3), ambix->channels, &ambix->matrix);
+        break;
+      case  9: /* ff  = 2nd order 3-D */
+        ambix_matrix_init(ambix_order2channels(2), ambix->channels, &ambix->matrix);
+        break;
+      case 11: /* ffh = 3rd order 2-D + 2nd order 3-D */
+        ambix_matrix_init(ambix_order2channels(3), ambix->channels, &ambix->matrix);
+        break;
+      case 16: /* fff = 3rd order 3-D */
+        ambix_matrix_init(ambix_order2channels(3), ambix->channels, &ambix->matrix);
+        break;
+      }
+      if(NULL != ambix_matrix_fill(&ambix->matrix, AMBIX_MATRIX_FUMA)) {
+        ambix->is_AMBIX=1;
+        ambix->format=AMBIX_EXTENDED;
+      } else {
+        ambix->is_AMBIX=0;
+        ambix->format=AMBIX_NONE;
+      }
+    } else {
+      ambix->is_AMBIX=0;
+      ambix->format=AMBIX_NONE;
+    }
   }
 
   return AMBIX_ERR_SUCCESS;
