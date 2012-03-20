@@ -87,8 +87,11 @@ typedef struct ambix_t {
 
   /** whether we already started reading samples */
   int startedReading;
-  /** whether we alwrity started writing samples */
+  /** whether we already started writing samples */
   int startedWriting;
+
+  /** whether we have pending headers to write */
+  int pendingHeaders;
 } ambix_t;
 
 

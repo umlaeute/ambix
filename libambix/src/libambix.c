@@ -174,6 +174,11 @@ ambix_err_t	ambix_close	(ambix_t*ambix) {
   if(NULL==ambix) {
     return AMBIX_ERR_INVALID_HANDLE;
   }
+
+  if((ambix->filemode & AMBIX_WRITE) && ambix->pendingHeaders) {
+    _ambix_write_header(ambix);
+  }
+
   res=_ambix_close(ambix);
 
   _ambix_adaptorbuffer_destroy(ambix);
@@ -225,13 +230,14 @@ ambix_err_t ambix_set_adaptormatrix	(ambix_t*ambix, const ambix_matrix_t*matrix)
     if(!ambix_matrix_copy(matrix, &ambix->matrix))
       return AMBIX_ERR_UNKNOWN;
     /* ready to write it to file */
+    ambix->pendingHeaders=1;
     return AMBIX_ERR_SUCCESS;
   }
 
   return AMBIX_ERR_UNKNOWN;
 }
 
-ambix_err_t	ambix_write_header	(ambix_t*ambix) {
+ambix_err_t	_ambix_write_header	(ambix_t*ambix) {
   void*data=NULL;
   if(ambix->filemode & AMBIX_WRITE) {
     if((AMBIX_EXTENDED == ambix->info.fileformat)) {
@@ -251,6 +257,10 @@ ambix_err_t	ambix_write_header	(ambix_t*ambix) {
       res=_ambix_write_uuidchunk(ambix, data, datalen);
       if(data)
         free(data);
+
+      if(AMBIX_ERR_SUCCESS==res)
+        ambix->pendingHeaders=0;
+
       return res;
     }
     return AMBIX_ERR_INVALID_FORMAT;
@@ -268,6 +278,12 @@ static ambix_err_t _ambix_check_write(ambix_t*ambix, const void*ambidata, const 
    * e.g. format=extended but no (or wrong) matrix present */
   if((ambix->realinfo.fileformat==AMBIX_EXTENDED) && !ambix_is_fullset(ambix->matrix.rows))
     return AMBIX_ERR_INVALID_DIMENSION;
+
+  if(ambix->pendingHeaders) {
+    ambix_err_t res=_ambix_write_header(ambix);
+    if(AMBIX_ERR_SUCCESS!=res)
+      return res;
+  }
 
   ambix->startedWriting=1;
   return AMBIX_ERR_SUCCESS;
