@@ -182,9 +182,10 @@ typedef struct ambix_info_t {
 
   /** number of (raw) ambisonics channels present in the file
    * if the file contains a full set of ambisonics channels (always true if ambixformat==AMBIX_SIMPLE),
-   * then ambichannels=(ambiorder+1)^2;
-   * if the file contains a reduced set (ambichannels<(ambiorder+1)^2) you can reconstruct the full set by
-   * multiplying the reduced set with the reconstruction matrix */
+   * then \f$ambichannel=(order_{ambi}+1)^2\f$;
+   * if the file contains an adaptor matrix, it has to be used to reconstruct the full set by
+   * multiplying the adaptor matrix with the channels present
+   */
 	uint32_t			ambichannels;
 } ambix_info_t;
 

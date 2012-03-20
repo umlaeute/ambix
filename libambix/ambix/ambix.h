@@ -57,7 +57,7 @@ extern "C" {
  *    give you the full ambisonics set.
  * @remark
  *   when opening a file for writing, the caller must set the fields; if ambixinfo.ambixformat is AMBIX_NONE, than ambixinfo.ambichannels must be 0,
- *   else ambixinfo.ambichannels must be >0; if ambixinfo.ambixformat is AMBIX_SIMPLE, then ambixinfo.ambichannels must be (ambiorder+1)^2
+ *   else ambixinfo.ambichannels must be >0; if ambixinfo.ambixformat is AMBIX_SIMPLE, then ambixinfo.ambichannels must be \f$(order_{ambi}+1)^2\f$
  * @return A handle to the opened file (or NULL on failure)
  */
 AMBIX_API
