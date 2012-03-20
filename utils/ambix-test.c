@@ -170,11 +170,6 @@ void createfile_extended(const char*path, uint32_t ambichannels, uint32_t extrac
   if(err!=AMBIX_ERR_SUCCESS) {
     printf("failed setting adaptor matrix\n");
   }
-  err=ambix_write_header(ambix);
-  if(err!=AMBIX_ERR_SUCCESS) {
-    printf("failed writing header\n");
-  }
-
 
   /* no write some data... */
   printf("Writing %d frames\n", frames);

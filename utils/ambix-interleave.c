@@ -339,9 +339,7 @@ static ai_t*ai_open_output(ai_t*ai) {
   if(!ai) return ai_close(ai);
   if(AMBIX_EXTENDED==ai->info.fileformat) {
     ambix_err_t err=ambix_set_adaptormatrix(ai->outhandle, ai->matrix);
-    if(err==AMBIX_ERR_SUCCESS) {
-      ambix_write_header(ai->outhandle);
-    } else {
+    if(err!=AMBIX_ERR_SUCCESS) {
       fprintf(stderr, "setting adapator matrix [%dx%d]=%d returned %d\n", ai->matrix->rows, ai->matrix->cols, ambix_is_fullset(ai->matrix->rows), err);
       return ai_close(ai);
     }
