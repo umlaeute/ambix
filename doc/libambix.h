@@ -50,18 +50,34 @@
 /**
  * @page usage Usage
  *
- * @section readsimple_usage Reading SIMPLE ambix files
+ * @section read_usage Reading ambix files
+ *
+ * When opening a file for read, the ambix_info_t struct should be set to 0.
+ * On successfull open, all fields are filled by the library.
+ * If the open fails, the state of the ambix_info_t fields is undefined.
+ *
+ * The only exception to this is, if you want to force the ambix file to be read as either
+ * "SIMPLE" or "EXTENDED", e.g. because you don't want to care about adaptor matrices or
+ * because you do. In this case you must set the fileformat field the requested format.
+ *
+ *
+ *
+ * @subsection readsimple_usage Reading SIMPLE ambix files
  *
  * You can read any ambix file as "SIMPLE" by setting the 'fileformat' member of the ambix_info_t struct
  * to AMBIX_SIMPLE prior to opening the file.
  * This will automatically do any conversion needed, by pre-multiplying the raw ambisonics data with an embedded
  * adaptor matrix.
  *
+ * real "SIMPLE" files lack extra audio channels.
+ * However, when opening a file that is not a "SIMPLE" ambix file (e.g. an "EXTENDED" ambix file) as a "SIMPLE" one,
+ * extra channels might be readable.
+ *
  * @code
    ambix_t*ambix = NULL;
    ambix_info_t*info  = calloc(1, sizeof(ambix_info_t));
 
-   ambix->fileformat = AMBIX_SIMPLE; 
+   ambix->fileformat = AMBIX_SIMPLE;
 
    ambix = ambix_open("ambixfile.caf", AMBIX_READ, info);
    if(ambix) {
@@ -93,11 +109,11 @@
  *
  *
  *
- * @section readextended_usage Reading EXTENDED ambix files
+ * @subsection readextended_usage Reading EXTENDED ambix files
  *
  * You can read an ambix file as "EXTENDED" by setting the 'fileformat' member of the ambix_info_t struct
  * to AMBIX_EXTENDED prior to opening the file.
- * You will then have to retrieve the adaptor matrix from the file, in order to be able to reconstruct the 
+ * You will then have to retrieve the adaptor matrix from the file, in order to be able to reconstruct the
  * full ambisonics set.
  * You can also analyse the matrix to make educated guesses about the original channel layout.
  *
@@ -106,7 +122,7 @@
    ambix_info_t*info  = calloc(1, sizeof(ambix_info_t));
 
    // setting the fileformat to AMBIX_EXTENDED forces the ambi data to be delivered as stored in the file
-   ambix->fileformat = AMBIX_EXTENDED; 
+   ambix->fileformat = AMBIX_EXTENDED;
 
    ambix = ambix_open("ambixfile.caf", AMBIX_READ, info);
    if(ambix) {
@@ -141,7 +157,7 @@
  * @endcode
  *
  *
- * @section readunknown_usage Reading any ambix files
+ * @subsection readunknown_usage Reading any ambix files
  *
  * If you don't specify the format prior to opening, you can query the format of the file
  * from the ambix_info_t struct.
@@ -171,6 +187,107 @@
      // ...
 
      ambix_close(ambix);
+   }
+ * @endcode
+ *
+ *
+ * @section write_usage Writing ambix files
+ *
+ * To write data to an ambix file, you have to open it with the AMBIX_WRITE flag.
+ * You also need to specify some global properties of the output data, namely the samplerate and the sampleformat,
+ * as well as the number of ambisonics channels and the number of extra channels that are phyiscally stored on the disk.
+ *
+ * @subsection writesimple_usage Writing SIMPLE ambix files
+ *
+ * You can write "SIMPLE" ambix files by setting the 'fileformat' member of the ambix_info_t struct
+ * to AMBIX_SIMPLE prior to opening the file.
+ *
+ * You will need to provide a full set of ambisonics channels when writing data to the file,
+ * and must not set an adaptor matrix.
+ * A full set of ambisonics must always satisfy the formula @f$channels=(order_{ambi}+1)^2@f$.
+ *
+ * You cannot write extra audio channels into a "SIMPLE" ambix file.
+ *
+ * @code
+   ambix_t*ambix = NULL;
+   ambix_info_t*info  = calloc(1, sizeof(ambix_info_t));
+
+   // need to specify samplerate and sampleformat
+   ambix->samplerate = 44100;
+   ambix->sampleformat = AMBIX_SAMPLEFORMAT_PCM16;
+   ambix->fileformat = AMBIX_SIMPLE;
+   ambix->ambichannels = 16; // 16 channels means 3rd order ambisonics, according to L=(2N+1)^2
+
+   ambix = ambix_open("ambixfile.caf", AMBIX_WRITE, info);
+   if(ambix) {
+     uint64_t frames = info->frames;
+     uint64_t blocksize = 1024;
+     uint64_t block;
+
+     float32_t*ambidata  = calloc(info->ambichannels  * blocksize, sizeof(float32_t));
+
+     while(haveData) {
+       // acquire blocksize samples of a full set of 3rd order ambisonics data (16 channels)
+       // into ambidata (interleaved)
+       // ...
+
+       block = ambix_writef_float32(ambix, ambidata, NULL, blocksize);
+     }
+
+     ambix_close(ambix);
+     free(ambidata);
+   }
+ * @endcode
+ *
+ * @subsection writeextended_usage Writing EXTENDED ambix files
+ *
+ * You can write "EXTENDED" ambix files by setting the 'fileformat' member of the ambix_info_t struct
+ * to AMBIX_EXTENDED prior to opening the file.
+ *
+ * You MUST set an adaptormatrix (to convert the reduced set to a full ambisonics set) using ambix_set_adaptormatrix() and
+ * ensure that it gets written to disk by calling ambix_write_header() prior to writing any samples to the file.
+ *
+ * @code
+   ambix_t*ambix = NULL;
+   ambix_info_t*info  = calloc(1, sizeof(ambix_info_t));
+
+   // need to specify samplerate and sampleformat
+   ambix->samplerate = 44100;
+   ambix->sampleformat = AMBIX_SAMPLEFORMAT_PCM16;
+   ambix->fileformat = AMBIX_EXTENDED;
+   ambix->ambichannels = 8;  // a reduced ambisonics set
+   ambix->extrachannels = 1; // an extrachannel, e.g. click-track
+
+   ambix = ambix_open("ambixfile.caf", AMBIX_WRITE, info);
+   if(ambix) {
+     uint64_t frames = info->frames;
+     uint64_t blocksize = 1024;
+     uint64_t block;
+
+     float32_t*ambidata  = calloc(info->ambichannels  * blocksize, sizeof(float32_t));
+     float32_t*extradata  = calloc(info->extrachannels  * blocksize, sizeof(float32_t));
+
+     // create an adaptormatrix:
+     ambix_matrix_t adaptormatrix = {0, 0, NULL};
+     ambix_matrix_init(16, 8, &adaptormatrix);
+     // fill the adaptormatrix, that expands our 8 channels to a full 3D 3rd-order set (16 channels)
+     // ...
+
+     ambix_set_adapatormatrix(ambix, &adaptormatrix);
+     ambix_write_header(ambix);
+
+     while(haveData) {
+       // acquire blocksize samples of a full set of reduced ambisonics data (8 channels)
+       // into ambidata (interleaved), and a some (1) extra channels
+       // ...
+
+       block = ambix_writef_float32(ambix, ambidata, extradata, blocksize);
+     }
+
+     ambix_close(ambix);
+     ambix_matrix_deinit(&adaptormatrix);
+     free(ambidata);
+     free(extradata);
    }
  * @endcode
  *
