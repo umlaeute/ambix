@@ -23,9 +23,10 @@
 
 #include "m_pd.h"
 #include <ambix/ambix.h>
+#include <pthread.h>
 
 /* ------------------------ ambixread ----------------------------- */
-
+#define MAXCHANS 64
 static t_class *ambixread_class;
 
 typedef struct _ambixread
@@ -40,7 +41,7 @@ typedef struct _ambixread
   t_outlet *x_mtxout ;                    /* matrix outlet (in ambix-extended mode) */
   t_outlet *x_infoout;                    /* bang-on-done and other-info outlet */
 
-  t_sample *(x_outvec[MAXSFCHANS]);       /* audio vectors */
+  t_sample *(x_outvec[MAXCHANS]);       /* audio vectors */
   int x_vecsize;                          /* vector size for transfers */
   int x_state;                            /* opened, running, or idle */
   t_float x_insamplerate;   /* sample rate of input signal if known */
@@ -111,7 +112,7 @@ void ambix_read_tilde_setup(void) {
     class_addmethod(ambixread_class, (t_method)ambixread_dsp, gensym("dsp"), 0);
     class_addmethod(ambixread_class, (t_method)ambixread_open, gensym("open"), 
         A_GIMME, 0);
-    class_addmethod(ambixread_class, (t_method)ambixread_print, gensym("print"), 0);
+    //    class_addmethod(ambixread_class, (t_method)ambixread_print, gensym("print"), 0);
 }
 void ambix_readX_tilde_setup(void) {
   ambix_read_tilde_setup();
