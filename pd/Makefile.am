@@ -9,11 +9,10 @@ if WINDOWS
 AM_LDFLAGS+= -no-undefined
 endif
 
-AM_LDFLAGS+= @EXTRA_LTFLAGS@
 
 # RTE
-AM_CFLAGS += 
-AM_LDFLAGS+= 
+AM_CFLAGS += @RTE_CFLAGS@
+AM_LDFLAGS+= @RTE_LIBS@
 
 pkglib_LTLIBRARIES+= \
         ambix_read~.la \
@@ -25,3 +24,32 @@ INCLUDES = -I$(top_srcdir)/libambix
 ambix_read__la_SOURCES		= ambix_read~.c
 ambix_readX__la_SOURCES		= ambix_read~.c
 
+
+
+
+# convenience symlinks
+.PHONY: convenience-link clean-convenience-link
+
+convenience-link: $(pkglib_LTLIBRARIES)
+	  @for lib in $^; do \
+	   for soname in `echo | $(EGREP) "^dlname=" $$lib | $(SED) -e "s|^dlname='\(.*\)'|\1|"`; do  \
+	    echo "$$soname: creating convenience link from $(abs_builddir)/.libs to $(builddir)"; \
+	    rm -f $$soname ; \
+	    test -e $(abs_builddir)/.libs/$$soname && \
+	    $(LN_S) $(abs_builddir)/.libs/$$soname $$soname || true; \
+	   done; \
+	  done
+
+clean-convenience-link:
+	  @for lib in $(pkglib_LTLIBRARIES); do \
+	   for soname in `echo | $(EGREP) "^dlname=" $$lib | $(SED) -e "s|^dlname='\(.*\)'|\1|"`; do  \
+	    echo "$$soname: cleaning convenience links"; \
+	    test -L $$soname && rm -f $$soname || true; \
+	  done; done
+
+all-local:: convenience-link
+
+clean-local:: clean-convenience-link
+
+
+foo:: $(pkglib_LTLIBRARIES)
