@@ -138,7 +138,8 @@ AMBIX_API
 ambix_matrix_t*ambix_matrix_multiply(const ambix_matrix_t*A, const ambix_matrix_t*B, ambix_matrix_t*result);
 
 
-/** @brief Multiply a matrix with (32bit floating point) data
+/** @brief Multiply a matrix with data
+ * @defgroup ambix_matrix_multiply_data
  *
  * Multiply a [rows*cols] matrix with an array of [cols*frames] source data to get [rows*frames] dest data.
  *
@@ -149,18 +150,21 @@ ambix_matrix_t*ambix_matrix_multiply(const ambix_matrix_t*A, const ambix_matrix_
  * @return an error code indicating success
  * @remark both source and dest data are arranged column-wise (as is the default for interleaved audio-data)
  */
+/** @brief Multiply a matrix with (32bit floating point) data
+ *
+ * @ingroup ambix_matrix_multiply_data
+ */
 AMBIX_API
 ambix_err_t ambix_matrix_multiply_float32(float32_t*dest, const ambix_matrix_t*mtx, const float32_t*source, int64_t frames);
 /** @brief Multiply a matrix with (32bit signed integer) data
  *
- * @see ambix_matrix_multiply_float32
+ * @ingroup ambix_matrix_multiply_data
  */
 AMBIX_API
 ambix_err_t ambix_matrix_multiply_int32(int32_t*dest, const ambix_matrix_t*mtx, const int32_t*source, int64_t frames);
-ambix_err_t ambix_matrix_multiply_float32(float32_t*dest, const ambix_matrix_t*mtx, const float32_t*source, int64_t frames);
 /** @brief Multiply a matrix with (16 bit signed integer) data
  *
- * @see ambix_matrix_multiply_float32
+ * @ingroup ambix_matrix_multiply_data
  */
 AMBIX_API
 ambix_err_t ambix_matrix_multiply_int16(int16_t*dest, const ambix_matrix_t*mtx, const int16_t*source, int64_t frames);

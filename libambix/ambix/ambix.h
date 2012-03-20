@@ -19,7 +19,6 @@
 
    You should have received a copy of the GNU Lesser General Public
    License along with this program; if not, see <http://www.gnu.org/licenses/>.
-
 */
 
 /**
@@ -73,7 +72,7 @@ ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambix_info_
 AMBIX_API
 ambix_err_t	ambix_close	(ambix_t*ambix);
 
-/** @brief write the ambix header
+/** @brief Write the ambix header
  *
  * Writes the ambix specific header to the soundfile (e.g adaptor matrix,...)
  *
@@ -86,18 +85,19 @@ AMBIX_API
 ambix_err_t	ambix_write_header	(ambix_t*ambix);
 
 /** @brief Read samples (as 16bit signed integer values) from the ambix file
- * @see ambix_readf_float32
+ * @ingroup ambix_readf
  */
 AMBIX_API
 int64_t ambix_readf_int16   (ambix_t*ambix, int16_t*ambidata, int16_t*otherdata, int64_t frames) ;
 /** @brief Read samples (as 32bit signed integer values) from the ambix file
- * @see ambix_readf_float32
+ * @ingroup ambix_readf
  */
 AMBIX_API
 int64_t ambix_readf_int32   (ambix_t*ambix, int32_t *ambidata, int32_t*otherdata, int64_t frames) ;
-/** @brief Read samples (as 32bit floating point values) from the ambix file
+/** @brief Read samples from the ambix file
+ * @defgroup ambix_readf
  *
- * reads samples (as single precision floating point values) from an ambix file,
+ * Reads samples from an ambix file,
  * possibly expanding a reduced channel set to a full ambisonics set (when reading an 'ambix extended' file as 'ambix simple')
  *
  * @param ambix The handle to an ambix file
@@ -110,25 +110,29 @@ int64_t ambix_readf_int32   (ambix_t*ambix, int32_t *ambidata, int32_t*otherdata
  * @param frames number of sample frames you want to read
  * @return the number of sample frames sucessfully read
  */
+/** @brief Read samples (as single prevision floating point values) from the ambix file
+ * @ingroup ambix_readf
+ */
 AMBIX_API
 int64_t ambix_readf_float32   (ambix_t*ambix, float32_t *ambidata, float32_t*otherdata, int64_t frames) ;
 
 /** @brief Write (16bit signed integer) samples to the ambix file
- * @see ambix_writef_float32
+ * @ingroup ambix_writef
  */
 AMBIX_API
 int64_t ambix_writef_int16   (ambix_t*ambix, int16_t*ambidata, int16_t*otherdata, int64_t frames) ;
 /** @brief Write (32bit signed integer) samples to the ambix file
- * @see ambix_writef_float32
+ * @ingroup ambix_writef
  */
 AMBIX_API
 int64_t ambix_writef_int32   (ambix_t*ambix, int32_t *ambidata, int32_t*otherdata, int64_t frames) ;
-/** @brief Write (32bit floating point) samples to the ambix file
+/** @brief Write samples to the ambix file
+ * @defgroup ambix_writef
  *
- * writes samples (as single precision floating point values) to an ambix file,
+ * Writes samples (as single precision floating point values) to an ambix file,
  * possibly expanding a reduced channel set to a full ambisonics set (when writeing an 'ambix extended' file as 'ambix simple').
  *
- * data will be stored on harddisk in the format specified when opening the file for writing which need not be float32,
+ * Data will be stored on harddisk in the format specified when opening the file for writing which need not be float32,
  * in which case the data is automatically converted by the library to the appropriate format.
  *
  * @param ambix The handle to an ambix file
@@ -139,12 +143,15 @@ int64_t ambix_writef_int32   (ambix_t*ambix, int32_t *ambidata, int32_t*otherdat
  * @param frames number of sample frames you want to write
  * @return the number of sample frames sucessfully written
  */
+/** @brief Write (32bit floating point) samples to the ambix file
+ * @ingroup ambix_writef
+ */
 AMBIX_API
 int64_t ambix_writef_float32   (ambix_t*ambix, float32_t *ambidata, float32_t*otherdata, int64_t frames) ;
 
 
 
-/** @brief get the libsndfile handle associated with the ambix handle
+/** @brief Get the libsndfile handle associated with the ambix handle
  *
  * If possible, require an SNDFILE handle if possible;
  * if the ambix handle is not asociated with SNDFILE (e.g. because libambix is compiled without libsndfile support),
@@ -156,9 +163,9 @@ int64_t ambix_writef_float32   (ambix_t*ambix, float32_t *ambidata, float32_t*ot
 AMBIX_API
 SNDFILE*ambix_get_sndfile	(ambix_t*ambix);
 
-/** @brief get the adaptor matrix
+/** @brief Get the adaptor matrix
  *
- * the ambix extended fileformat comes with a adaptor matrix, that can be used
+ * The ambix extended fileformat comes with a adaptor matrix, that can be used
  * to reconstruct a full 3d ambisonics set from the channels stored in ambix file.
  * in the ambix simple format no adaptor matrix is present, the file contains the full set.
  * @remark the adaptor matrix can only be obtained for a ambix extended file; if you have opened
@@ -174,15 +181,15 @@ SNDFILE*ambix_get_sndfile	(ambix_t*ambix);
 AMBIX_API
 const ambix_matrix_t*ambix_get_adaptormatrix	(ambix_t*ambix);
 
-/** @brief set a matrix to be pre-multiplied
+/** @brief Set a matrix to be pre-multiplied
  *
- * adds an (additional) adaptor matrix to the processing.
- * depending on the mode of operation this canhave different meanings!
- * when READing an ambix 'SIMPLE' file, this tells the library to do an (additional) matrix-multiplication
- * when reconstructing the full ambisonics set; you can use use this to get the ambisonics channels in a format
+ * Adds an (additional) adaptor matrix to the processing.
+ * Depending on the mode of operation this canhave different meanings!
+ * When READing an ambix 'SIMPLE' file, this tells the library to do an (additional) matrix-multiplication
+ * When reconstructing the full ambisonics set; you can use use this to get the ambisonics channels in a format
  * other than SN3D/ACN (e.g. using an ambix to Furse-Malham adaptor matrix) or getting the loudspeaker feeds
  * directly (by supplying a decoder matrix); in this case, the matrix MUST have ambix->ambichannels columns.
- * when WRITEing an ambix 'EXTENDED' file, this tells the library to store the matrix as the adaptor matrix within the file;
+ * When WRITEing an ambix 'EXTENDED' file, this tells the library to store the matrix as the adaptor matrix within the file;
  *
  * @param ambix The handle to an ambix file
  * @param matrix a matrix that will be pre-multiplied to the reconstruction-matrix;
