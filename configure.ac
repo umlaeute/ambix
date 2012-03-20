@@ -14,6 +14,8 @@ AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([libambix/Makefile libambix/src/Makefile libambix/tests/Makefile])
 AC_CONFIG_FILES([utils/Makefile])
 
+AC_CONFIG_FILES([pd/Makefile])
+
 IEM_OPERATING_SYSTEM
 
 
