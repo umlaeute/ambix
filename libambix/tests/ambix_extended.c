@@ -76,8 +76,6 @@ void check_create_extended(const char*path, ambix_sampleformat_t format, uint32_
 
   fail_if((AMBIX_ERR_SUCCESS!=ambix_set_adaptormatrix(ambix, &eye)),
           __LINE__, "failed setting adaptor matrix");
-  fail_if((AMBIX_ERR_SUCCESS!=ambix_write_header(ambix)),
-          __LINE__, "failed writing headers");
 
   if(chunksize>0) {
     uint32_t subframe=chunksize;
