@@ -7,7 +7,7 @@ dnl with or without modifications, as long as this notice is preserved.
 #
 # checks for RTE (currently: Pd)
 # if so, they are added to the LDFLAGS, CFLAGS and whatelse
-AC_DEFUN([CHECK_RTE],
+AC_DEFUN([IEM_CHECK_RTE],
 [
 IEM_OPERATING_SYSTEM
 
