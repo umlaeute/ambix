@@ -25,11 +25,23 @@ License along with this program; if not, see <http://www.gnu.org/licenses/>.
 #include <ambix/ambix.h>
 #include <pthread.h>
 #include <string.h>
+#include <stdlib.h>
 
 /* ------------------------ ambixread ----------------------------- */
 #define MAXCHANS 64
 #define MAXVECSIZE 128
+/* READSIZE was 65538, but we are using frames, not bytes */
 
+#if 0
+#define READSIZE 65536
+#define DEFBUFPERCHAN 262144
+#define MINBUFSIZE (4 * READSIZE)
+#define MAXBUFSIZE 16777216     /* arbitrary; just don't want to hang malloc */
+#endif
+#define READSIZE 128
+#define DEFBUFPERCHAN (4 * READSIZE)
+#define MINBUFSIZE (4 * READSIZE)
+#define MAXBUFSIZE (256 * READSIZE)     /* arbitrary; just don't want to hang malloc */
 
 static t_class *ambixread_class;
 
@@ -52,6 +64,7 @@ typedef struct _ambixthreaddata {
   t_ambixrequest requestcode;      /* pending request from parent to I/O thread */
 
   int vecsize;                          /* vector size for transfers */
+  int bufsize;                          /* buffer size in bytes */
 
   ambix_t  *ambix;    /* handler for ambix */
   char *filename;       /* file to open (string is permanently allocated) */
@@ -90,10 +103,6 @@ typedef struct _ambixread
   int x_ambioutlets;                      /* number of ambi audio outlets */
   int x_xtraoutlets;                      /* number of extra audio outlets */
 
-#if 0
-  char *x_buf;                            /* soundfile buffer */
-  int x_bufsize;                          /* buffer size in bytes */
-#endif
   t_outlet *x_mtxout ;                    /* matrix outlet (in ambix-extended mode) */
   t_outlet *x_infout;                    /* bang-on-done and other-info outlet */
 
@@ -121,6 +130,7 @@ static void *ambixread_thread(void *zz) {
          relinquish the mutex while we're in open_soundfile(). */
       uint64_t onsetframes = x->onsetframes;
       char *filename = x->filename;
+      uint64_t fifosize = x->fifosize;
 
       float32_t*ambififo,*xtrafifo;
 
@@ -155,7 +165,7 @@ static void *ambixread_thread(void *zz) {
       /* copy back into the instance structure. */
       x->ambix = ambix;
       if (ambix == NULL) {
-        x->fileerror = errno;
+        x->fileerror = 10;
         x->eof = 1;
         goto lost;
       }
@@ -224,7 +234,6 @@ static void *ambixread_thread(void *zz) {
           else wantframes = READSIZE;
         }
         ambix = x->ambix;
-        buf = x->buf;
         fifohead = x->fifohead;
         ambififo = x->ambififo;
         ambichannels = x->ambichannels;
@@ -240,7 +249,7 @@ static void *ambixread_thread(void *zz) {
         if (x->requestcode != BUSY)
           break;
         if (gotframes < 0) {
-          x->fileerror = errno;
+          x->fileerror = 11;
           break;
         } else if (gotframes == 0) {
           x->eof = 1;
@@ -451,6 +460,7 @@ static void ambixread_free(t_ambixread *x) {
 static void *ambixread_new(t_symbol*s, int argc, t_atom*argv) {
   uint32_t ambichannels = 4;
   uint32_t extrachannels = 2;
+  uint64_t bufsize = 0;
   uint32_t i;
   t_ambixread*x=(t_ambixread*)pd_new(ambixread_class);
   x->x_objname=s;
@@ -468,6 +478,13 @@ static void *ambixread_new(t_symbol*s, int argc, t_atom*argv) {
     pd_error(x, "limiting to %d ambisonics channels and %d extrachannels", ambichannels, extrachannels);
   }
 
+  if (bufsize <= 0) bufsize = DEFBUFPERCHAN;
+  else if (bufsize < MINBUFSIZE)
+    bufsize = MINBUFSIZE;
+  else if (bufsize > MAXBUFSIZE)
+    bufsize = MAXBUFSIZE;
+
+
   x->x_ambioutlets=ambichannels;
   for (i = 0; i < ambichannels; i++)
     outlet_new(&x->x_obj, gensym("signal"));
@@ -478,19 +495,21 @@ static void *ambixread_new(t_symbol*s, int argc, t_atom*argv) {
 
   x->x_infout = outlet_new(&x->x_obj, NULL);
 
+  x->x_clock = clock_new(x, (t_method)ambixread_tick);
+  x->x_canvas = canvas_getcurrent();
+
   memset(&x->x_threaddata, 0, sizeof(x->x_threaddata));
 
   pthread_mutex_init(&x->x_threaddata.mutex, 0);
   pthread_cond_init(&x->x_threaddata.requestcondition, 0);
   pthread_cond_init(&x->x_threaddata.answercondition, 0);
 
-  x->x_clock = clock_new(x, (t_method)ambixread_tick);
-  x->x_canvas = canvas_getcurrent();
-
   x->x_threaddata.vecsize = MAXVECSIZE;
   x->x_threaddata.state = IDLE;
   x->x_threaddata.fifosize = x->x_threaddata.fifohead = x->x_threaddata.fifotail = x->x_threaddata.requestcode = 0;
   pthread_create(&x->x_childthread, 0, ambixread_thread, &x->x_threaddata);
+
+  x->x_threaddata.bufsize = bufsize;
 
   return x;
 }
