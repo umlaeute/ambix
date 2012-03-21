@@ -76,75 +76,40 @@ _AMBIX_SPLITADAPTOR(float32);
 _AMBIX_SPLITADAPTOR(int32);
 _AMBIX_SPLITADAPTOR(int16);
 
-ambix_err_t _ambix_splitAdaptormatrix_float32(float32_t*source, uint32_t sourcechannels, ambix_matrix_t*matrix, float32_t*dest_ambi, float32_t*dest_other, int64_t frames) {
-  float32_t**mtx=matrix->data;
-  const uint32_t rows=matrix->rows;
-  const uint32_t cols=matrix->cols;
-  int64_t f;
-  for(f=0; f<frames; f++) {
-    uint32_t chan;
-    for(chan=0; chan<rows; chan++) {
-      float32_t*src=source;
-      float32_t sum=0.;
-      uint32_t c;
-      for(c=0; c<cols; c++) {
-        sum+=mtx[chan][c] * src[c];
-      }
-      *dest_ambi++=sum;
-      source+=cols;
-    }
-    for(chan=cols; chan<sourcechannels; chan++)
-      *dest_other++=*source++;
-  }
-  return AMBIX_ERR_SUCCESS;
-}
-/* both _int16 and _int32 are highly unoptimized! */
-/* LATER: add some fixed point magic to speed things up */
-ambix_err_t _ambix_splitAdaptormatrix_int16(int16_t*source, uint32_t sourcechannels, ambix_matrix_t*matrix, int16_t*dest_ambi, int16_t*dest_other, int64_t frames) {
-  float32_t**mtx=matrix->data;
-  const uint32_t rows=matrix->rows;
-  const uint32_t cols=matrix->cols;
-  int64_t f;
-  for(f=0; f<frames; f++) {
-    uint32_t chan;
-    for(chan=0; chan<rows; chan++) {
-      int16_t*src=source;
-      float32_t sum=0.;
-      uint32_t c;
-      for(c=0; c<cols; c++) {
-        sum+=mtx[chan][c] * src[c];
-      }
-      *dest_ambi++=sum;
-      source+=cols;
-    }
-    for(chan=cols; chan<sourcechannels; chan++)
-      *dest_other++=*source++;
-  }
-  return AMBIX_ERR_SUCCESS;
-}
-ambix_err_t _ambix_splitAdaptormatrix_int32(int32_t*source, uint32_t sourcechannels, ambix_matrix_t*matrix, int32_t*dest_ambi, int32_t*dest_other, int64_t frames) {
-  float32_t**mtx=matrix->data;
-  const uint32_t rows=matrix->rows;
-  const uint32_t cols=matrix->cols;
-  int64_t f;
-  for(f=0; f<frames; f++) {
-    uint32_t chan;
-    for(chan=0; chan<rows; chan++) {
-      int32_t*src=source;
-      float32_t sum=0.;
-      uint32_t c;
-      for(c=0; c<cols; c++) {
-        sum+=mtx[chan][c] * src[c];
-      }
-      *dest_ambi++=sum;
-      source+=cols;
-    }
-    for(chan=cols; chan<sourcechannels; chan++)
-      *dest_other++=*source++;
-  }
-  return AMBIX_ERR_SUCCESS;
-}
 
+
+#define _AMBIX_SPLITADAPTOR_MATRIX(type)                                \
+  ambix_err_t _ambix_splitAdaptormatrix_##type(type##_t*source_, uint32_t sourcechannels, \
+                                               ambix_matrix_t*matrix,   \
+                                               type##_t*dest_ambi, type##_t*dest_other, \
+                                               int64_t frames) {        \
+    float32_t**mtx=matrix->data;                                        \
+    const uint32_t fullambichannels=matrix->rows;                       \
+    const uint32_t rawambichannels=matrix->cols;                        \
+    int64_t f;                                                          \
+    for(f=0; f<frames; f++) {                                           \
+      uint32_t outchan, inchan;                                         \
+      type##_t*source = source_+sourcechannels*f;                       \
+      for(outchan=0; outchan<fullambichannels; outchan++) {             \
+        type##_t*src=source;                                            \
+        float32_t sum=0.;                                               \
+        for(inchan=0; inchan<rawambichannels; inchan++) {               \
+          sum+=mtx[outchan][inchan] * src[inchan];                      \
+        }                                                               \
+        *dest_ambi++=sum;                                               \
+      }                                                                 \
+      for(inchan=rawambichannels; inchan<sourcechannels; inchan++)      \
+        *dest_other++=*source++;                                        \
+    }                                                                   \
+    return AMBIX_ERR_SUCCESS;                                           \
+  }
+
+_AMBIX_SPLITADAPTOR_MATRIX(float32);
+/* both _int16 and _int32 are highly unoptimized!
+ * LATER: add some fixed point magic to speed things up
+ */
+_AMBIX_SPLITADAPTOR_MATRIX(int32);
+_AMBIX_SPLITADAPTOR_MATRIX(int16);
 
 #define _AMBIX_MERGEADAPTOR(type)                                       \
   ambix_err_t _ambix_mergeAdaptor_##type(type##_t*source1, uint32_t source1channels, type##_t*source2, uint32_t source2channels, type##_t*destination, int64_t frames) { \
