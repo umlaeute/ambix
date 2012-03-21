@@ -14,11 +14,12 @@ endif
 AM_CFLAGS += @RTE_CFLAGS@
 AM_LDFLAGS+= @RTE_LIBS@
 
+AM_LDFLAGS+=$(top_builddir)/libambix/src/libambix.la
+
 pkglib_LTLIBRARIES+= \
         ambix_read~.la \
         ambix_readX~.la
 
-LDADD = $(top_builddir)/libambix/src/libambix.la
 INCLUDES = -I$(top_srcdir)/libambix
 
 ambix_read__la_SOURCES		= ambix_read~.c
