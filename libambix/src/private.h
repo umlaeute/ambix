@@ -263,15 +263,15 @@ ambix_err_t _ambix_adaptorbuffer_destroy(ambix_t*ambix);
  * @param frames number of frames to extract
  * @return error code indicating success
  */
-ambix_err_t _ambix_splitAdaptor_float32(float32_t*source, uint32_t sourcechannels, uint32_t ambichannels, float32_t*dest_ambi, float32_t*dest_other, int64_t frames);
+ambix_err_t _ambix_splitAdaptor_float32(const float32_t*source, uint32_t sourcechannels, uint32_t ambichannels, float32_t*dest_ambi, float32_t*dest_other, int64_t frames);
 /** @brief extract ambisonics and non-ambisonics channels from interleaved (32bit signed integer) data
  * @see _ambix_splitAdapator_float32
  */
-ambix_err_t _ambix_splitAdaptor_int32(int32_t*source, uint32_t sourcechannels, uint32_t ambichannels, int32_t*dest_ambi, int32_t*dest_other, int64_t frames);
+ambix_err_t _ambix_splitAdaptor_int32(const int32_t*source, uint32_t sourcechannels, uint32_t ambichannels, int32_t*dest_ambi, int32_t*dest_other, int64_t frames);
 /** @brief extract ambisonics and non-ambisonics channels from interleaved (16bit signed integer) data
  * @see _ambix_splitAdapator_float32
  */
-ambix_err_t _ambix_splitAdaptor_int16(int16_t*source, uint32_t sourcechannels, uint32_t ambichannels, int16_t*dest_ambi, int16_t*dest_other, int64_t frames);
+ambix_err_t _ambix_splitAdaptor_int16(const int16_t*source, uint32_t sourcechannels, uint32_t ambichannels, int16_t*dest_ambi, int16_t*dest_other, int64_t frames);
 
 /** @brief extract ambisonics and non-ambisonics channels from interleaved data using matrix operations
  *
@@ -286,11 +286,11 @@ ambix_err_t _ambix_splitAdaptor_int16(int16_t*source, uint32_t sourcechannels, u
  * @param frames number of frames to extract
  * @return error code indicating success
  */
-ambix_err_t _ambix_splitAdaptormatrix_float32(float32_t*source, uint32_t sourcechannels, ambix_matrix_t*matrix, float32_t*dest_ambi, float32_t*dest_other, int64_t frames);
+ambix_err_t _ambix_splitAdaptormatrix_float32(const float32_t*source, uint32_t sourcechannels, const ambix_matrix_t*matrix, float32_t*dest_ambi, float32_t*dest_other, int64_t frames);
 /* @see _ambix_splitAdaptormatrix_float32 */
-ambix_err_t _ambix_splitAdaptormatrix_int32(int32_t*source, uint32_t sourcechannels, ambix_matrix_t*matrix, int32_t*dest_ambi, int32_t*dest_other, int64_t frames);
+ambix_err_t _ambix_splitAdaptormatrix_int32(const int32_t*source, uint32_t sourcechannels, const ambix_matrix_t*matrix, int32_t*dest_ambi, int32_t*dest_other, int64_t frames);
 /* @see _ambix_splitAdaptormatrix_float32 */
-ambix_err_t _ambix_splitAdaptormatrix_int16(int16_t*source, uint32_t sourcechannels, ambix_matrix_t*matrix, int16_t*dest_ambi, int16_t*dest_other, int64_t frames);
+ambix_err_t _ambix_splitAdaptormatrix_int16(const int16_t*source, uint32_t sourcechannels, const ambix_matrix_t*matrix, int16_t*dest_ambi, int16_t*dest_other, int64_t frames);
 
 
 /** @brief merge two separate interleaved (32bit floating point) audio data blocks into one
@@ -305,15 +305,15 @@ ambix_err_t _ambix_splitAdaptormatrix_int16(int16_t*source, uint32_t sourcechann
  * @param frames number of frames to extract
  * @return error code indicating success
  */
-ambix_err_t _ambix_mergeAdaptor_float32(float32_t*source1, uint32_t source1channels, float32_t*source2, uint32_t source2channels, float32_t*destination, int64_t frames);
+ambix_err_t _ambix_mergeAdaptor_float32(const float32_t*source1, uint32_t source1channels, const float32_t*source2, uint32_t source2channels, float32_t*destination, int64_t frames);
 /** @brief merge two separate interleaved (32bit signed integer) audio data blocks into one
  * @see _ambix_mergeAdapator_float32
  */
-ambix_err_t _ambix_mergeAdaptor_int32(int32_t*source1, uint32_t source1channels, int32_t*source2, uint32_t source2channels, int32_t*destination, int64_t frames);
+ambix_err_t _ambix_mergeAdaptor_int32(const int32_t*source1, uint32_t source1channels, const int32_t*source2, uint32_t source2channels, int32_t*destination, int64_t frames);
 /** @brief merge two separate interleaved (16bit signed integer) audio data blocks into one
  * @see _ambix_mergeAdapator_float32
  */
-ambix_err_t _ambix_mergeAdaptor_int16(int16_t*source1, uint32_t source1channels, int16_t*source2, uint32_t source2channels, int16_t*destination, int64_t frames);
+ambix_err_t _ambix_mergeAdaptor_int16(const int16_t*source1, uint32_t source1channels, const int16_t*source2, uint32_t source2channels, int16_t*destination, int64_t frames);
 
 
 /** @brief debugging printout for ambix_info_t

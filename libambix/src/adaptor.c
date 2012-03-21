@@ -60,7 +60,9 @@ ambix_err_t _ambix_adaptorbuffer_destroy(ambix_t*ambix) {
 
 
 #define _AMBIX_SPLITADAPTOR(type) \
-  ambix_err_t _ambix_splitAdaptor_##type(type##_t*source, uint32_t sourcechannels, uint32_t ambichannels, type##_t*dest_ambi, type##_t*dest_other, int64_t frames) { \
+  ambix_err_t _ambix_splitAdaptor_##type(const type##_t*source, uint32_t sourcechannels, \
+                                         uint32_t ambichannels, type##_t*dest_ambi, type##_t*dest_other, \
+                                         int64_t frames) {              \
     int64_t frame;                                                      \
     for(frame=0; frame<frames; frame++) {                               \
       uint32_t chan;                                                    \
@@ -79,8 +81,8 @@ _AMBIX_SPLITADAPTOR(int16);
 
 
 #define _AMBIX_SPLITADAPTOR_MATRIX(type)                                \
-  ambix_err_t _ambix_splitAdaptormatrix_##type(type##_t*source_, uint32_t sourcechannels, \
-                                               ambix_matrix_t*matrix,   \
+  ambix_err_t _ambix_splitAdaptormatrix_##type(const type##_t*source, uint32_t sourcechannels, \
+                                               const ambix_matrix_t*matrix, \
                                                type##_t*dest_ambi, type##_t*dest_other, \
                                                int64_t frames) {        \
     float32_t**mtx=matrix->data;                                        \
@@ -89,9 +91,8 @@ _AMBIX_SPLITADAPTOR(int16);
     int64_t f;                                                          \
     for(f=0; f<frames; f++) {                                           \
       uint32_t outchan, inchan;                                         \
-      type##_t*source = source_+sourcechannels*f;                       \
+      const type##_t*src = source+sourcechannels*f;                     \
       for(outchan=0; outchan<fullambichannels; outchan++) {             \
-        type##_t*src=source;                                            \
         float32_t sum=0.;                                               \
         for(inchan=0; inchan<rawambichannels; inchan++) {               \
           sum+=mtx[outchan][inchan] * src[inchan];                      \
@@ -99,7 +100,7 @@ _AMBIX_SPLITADAPTOR(int16);
         *dest_ambi++=sum;                                               \
       }                                                                 \
       for(inchan=rawambichannels; inchan<sourcechannels; inchan++)      \
-        *dest_other++=*source++;                                        \
+        *dest_other++=*src++;                                           \
     }                                                                   \
     return AMBIX_ERR_SUCCESS;                                           \
   }
@@ -112,7 +113,9 @@ _AMBIX_SPLITADAPTOR_MATRIX(int32);
 _AMBIX_SPLITADAPTOR_MATRIX(int16);
 
 #define _AMBIX_MERGEADAPTOR(type)                                       \
-  ambix_err_t _ambix_mergeAdaptor_##type(type##_t*source1, uint32_t source1channels, type##_t*source2, uint32_t source2channels, type##_t*destination, int64_t frames) { \
+  ambix_err_t _ambix_mergeAdaptor_##type(const type##_t*source1, uint32_t source1channels, \
+                                         const type##_t*source2, uint32_t source2channels, \
+                                         type##_t*destination, int64_t frames) { \
     int64_t frame;                                                      \
     for(frame=0; frame<frames; frame++) {                               \
       uint32_t chan;                                                    \
