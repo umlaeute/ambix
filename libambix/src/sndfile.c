@@ -300,13 +300,13 @@ int64_t _ambix_readf_float32   (ambix_t*ambix, float32_t*data, int64_t frames) {
   return sf_readf_float(PRIVATE(ambix)->sf_file, (float*)data, frames) ;
 }
 
-int64_t _ambix_writef_int16   (ambix_t*ambix, int16_t*data, int64_t frames) {
+int64_t _ambix_writef_int16   (ambix_t*ambix, const int16_t*data, int64_t frames) {
   return sf_writef_short(PRIVATE(ambix)->sf_file, (short*)data, frames) ;
 }
-int64_t _ambix_writef_int32   (ambix_t*ambix, int32_t*data, int64_t frames) {
+int64_t _ambix_writef_int32   (ambix_t*ambix, const int32_t*data, int64_t frames) {
   return sf_writef_int(PRIVATE(ambix)->sf_file, (int*)data, frames) ;
 }
-int64_t _ambix_writef_float32   (ambix_t*ambix, float32_t*data, int64_t frames) {
+int64_t _ambix_writef_float32   (ambix_t*ambix, const float32_t*data, int64_t frames) {
   return sf_writef_float(PRIVATE(ambix)->sf_file, (float*)data, frames) ;
 }
 ambix_err_t _ambix_write_uuidchunk(ambix_t*ax, const void*data, int64_t datasize) {

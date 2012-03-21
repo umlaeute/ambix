@@ -148,15 +148,15 @@ int64_t _ambix_readf_int16   (ambix_t*ambix, int16_t*data, int64_t frames);
  * @param frames number of sample frames to write
  * @return number of sample frames successfully written
  */
-int64_t _ambix_writef_float32   (ambix_t*ambix, float32_t*data, int64_t frames);
+int64_t _ambix_writef_float32   (ambix_t*ambix, const float32_t*data, int64_t frames);
 /** @see _ambix_writef_float32
  * @remark this operates on 32bit integer data
  */
-int64_t _ambix_writef_int32   (ambix_t*ambix, int32_t*data, int64_t frames);
+int64_t _ambix_writef_int32   (ambix_t*ambix, const int32_t*data, int64_t frames);
 /** @see _ambix_writef_float32
  * @remark this operates on 16bit integer data
  */
-int64_t _ambix_writef_int16   (ambix_t*ambix, int16_t*data, int64_t frames);
+int64_t _ambix_writef_int16   (ambix_t*ambix, const int16_t*data, int64_t frames);
 
 /** @brief Get UUID for ambix
  * @param ambix version
