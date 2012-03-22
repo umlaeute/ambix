@@ -3,7 +3,7 @@
  *  @private
  */
 
-/* libambix.h -  Documentation for Ambisonics Xchange Library              -*- c -*-
+/* libambix.h -  Documentation for Ambisonics Xchange Library         -*- c -*-
 
    Copyright © 2012 IOhannes m zmölnig <zmoelnig@iem.at>.
          Institute of Electronic Music and Acoustics (IEM),
@@ -36,15 +36,16 @@
  *
  * @section usage_sec Usage
  *
- * libambix provides a (hopefully easy to use) C-interface.
- * Basically you open a file using ambix_open(), read audio data using @ref ambix_readf
- * or write audio data using @ref ambix_writef and call ambix_close() once you are done.
+ * libambix provides a (hopefully easy to use) C-interface. Basically you open a
+ * file using ambix_open(), read audio data using @ref ambix_readf or write
+ * audio data using @ref ambix_writef and call ambix_close() once you are done.
  *
  * For a more detailed documentation, see the @link usage Usage page @endlink.
  *
  * @section format_sec Format
  *
- * For a shortish specification of the ambix format see the @link format Format page @endlink.
+ * For a shortish specification of the ambix format see the @link format Format
+ * page @endlink-
  */
 
 /**
@@ -52,26 +53,28 @@
  *
  * @section read_usage Reading ambix files
  *
- * When opening a file for read, the ambix_info_t struct should be set to 0.
- * On successfull open, all fields are filled by the library.
- * If the open fails, the state of the ambix_info_t fields is undefined.
+ * When opening a file for read, the ambix_info_t struct should be set to 0. On
+ * successfull open, all fields are filled by the library. If the open fails,
+ * the state of the ambix_info_t fields is undefined.
  *
- * The only exception to this is, if you want to force the ambix file to be read as either
- * "SIMPLE" or "EXTENDED", e.g. because you don't want to care about adaptor matrices or
- * because you do. In this case you must set the fileformat field the requested format.
+ * The only exception to this is, if you want to force the ambix file to be read
+ * as either "SIMPLE" or "EXTENDED", e.g. because you don't want to care about
+ * adaptor matrices or because you do. In this case you must set the fileformat
+ * field the requested format.
  *
  *
  *
  * @subsection readsimple_usage Reading SIMPLE ambix files
  *
- * You can read any ambix file as "SIMPLE" by setting the 'fileformat' member of the ambix_info_t struct
- * to AMBIX_SIMPLE prior to opening the file.
- * This will automatically do any conversion needed, by pre-multiplying the raw ambisonics data with an embedded
- * adaptor matrix.
+ * You can read any ambix file as "SIMPLE" by setting the 'fileformat' member of
+ * the ambix_info_t struct * to AMBIX_SIMPLE prior to opening the file.
+ * This will automatically do any conversion needed, by pre-multiplying the raw
+ * ambisonics data with an embedded adaptor matrix.
  *
- * real "SIMPLE" files lack extra audio channels.
- * However, when opening a file that is not a "SIMPLE" ambix file (e.g. an "EXTENDED" ambix file) as a "SIMPLE" one,
- * extra channels might be readable.
+ * Real "SIMPLE" files lack extra audio channels.
+ * However, when opening a file that is not a "SIMPLE" ambix file (e.g. an
+ * "EXTENDED" ambix file) as a "SIMPLE" one, by forcing the 'fileformat' member
+ * to 'AMBIX_SIMPLE', extra channels might be readable.
  *
  * @code
    ambix_t*ambix = NULL;
@@ -111,11 +114,11 @@
  *
  * @subsection readextended_usage Reading EXTENDED ambix files
  *
- * You can read an ambix file as "EXTENDED" by setting the 'fileformat' member of the ambix_info_t struct
- * to AMBIX_EXTENDED prior to opening the file.
- * You will then have to retrieve the adaptor matrix from the file, in order to be able to reconstruct the
- * full ambisonics set.
- * You can also analyse the matrix to make educated guesses about the original channel layout.
+ * You can read an ambix file as "EXTENDED" by setting the 'fileformat' member
+ * of the ambix_info_t struct to AMBIX_EXTENDED prior to opening the file. You
+ * will then have to retrieve the adaptor matrix from the file, in order to be
+ * able to reconstruct the full ambisonics set. You can also analyse the matrix
+ * to make educated guesses about the original channel layout.
  *
  * @code
    ambix_t*ambix = NULL;
@@ -193,18 +196,20 @@
  *
  * @section write_usage Writing ambix files
  *
- * To write data to an ambix file, you have to open it with the AMBIX_WRITE flag.
- * You also need to specify some global properties of the output data, namely the samplerate and the sampleformat,
- * as well as the number of ambisonics channels and the number of extra channels that are phyiscally stored on the disk.
+ * To write data to an ambix file, you have to open it with the AMBIX_WRITE
+ * flag. You also need to specify some global properties of the output data,
+ * namely the samplerate and the sampleformat, as well as the number of
+ * ambisonics channels and the number of extra channels that are phyiscally
+ * stored on the disk.
  *
  * @subsection writesimple_usage Writing SIMPLE ambix files
  *
- * You can write "SIMPLE" ambix files by setting the 'fileformat' member of the ambix_info_t struct
- * to AMBIX_SIMPLE prior to opening the file.
+ * You can write "SIMPLE" ambix files by setting the 'fileformat' member of the
+ * ambix_info_t struct to AMBIX_SIMPLE prior to opening the file.
  *
- * You will need to provide a full set of ambisonics channels when writing data to the file,
- * and must not set an adaptor matrix.
- * A full set of ambisonics must always satisfy the formula @f$channels=(order_{ambi}+1)^2@f$.
+ * You will need to provide a full set of ambisonics channels when writing data
+ * to the file, and must not set an adaptor matrix. A full set of ambisonics
+ * must always satisfy the formula @f$channels=(order_{ambi}+1)^2@f$.
  *
  * You cannot write extra audio channels into a "SIMPLE" ambix file.
  *
@@ -241,11 +246,13 @@
  *
  * @subsection writeextended_usage Writing EXTENDED ambix files
  *
- * You can write "EXTENDED" ambix files by setting the 'fileformat' member of the ambix_info_t struct
- * to AMBIX_EXTENDED prior to opening the file.
+ * You can write "EXTENDED" ambix files by setting the 'fileformat' member of
+ * the ambix_info_t struct to AMBIX_EXTENDED prior to opening the file.
  *
- * You MUST set an adaptormatrix (to convert the reduced set to a full ambisonics set) using ambix_set_adaptormatrix() and
- * ensure that it gets written to disk by calling ambix_write_header() prior to writing any samples to the file.
+ * You MUST set an adaptormatrix (to convert the reduced set to a full
+ * ambisonics set) using ambix_set_adaptormatrix(). It gets written to disk
+ * prior to writing any samples to the file (or closing the ambix file). It is
+ * an error to call ambix_set_adaptormatrix() after starting to write samples.
  *
  * @code
    ambix_t*ambix = NULL;
