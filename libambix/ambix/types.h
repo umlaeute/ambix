@@ -1,4 +1,4 @@
-/* ambix/types.h -  Ambisonics Xchange - Type Definitions              -*- c -*-
+/* ambix/types.h - Ambisonics Xchange - Type Definitions	-*- c -*-
 
    Copyright © 2012 IOhannes m zmölnig <zmoelnig@iem.at>.
          Institute of Electronic Music and Acoustics (IEM),
@@ -39,7 +39,7 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif	/* __cplusplus */
+#endif /* __cplusplus */
 
 /** 32bit floating point number */
 typedef float float32_t;
@@ -47,17 +47,17 @@ typedef float float32_t;
 #if defined (__linux__) || defined(__apple__)
 # include <stdint.h>
 #else
-/** 16bit signed integer  */
+/** 16bit signed integer */
 typedef signed short int16_t;
-/** 16bit unsigned integer  */
+/** 16bit unsigned integer */
 typedef unsigned short uint16_t;
-/** 32bit signed integer  */
+/** 32bit signed integer */
 typedef signed int int32_t;
-/** 32bit unsigned integer  */
+/** 32bit unsigned integer */
 typedef unsigned int uint32_t;
-/** 64bit signed integer  */
+/** 64bit signed integer */
 typedef signed long int64_t;
-/** 64bit unsigned integer  */
+/** 64bit unsigned integer */
 typedef unsigned long uint64_t;
 #endif
 
@@ -78,12 +78,12 @@ typedef struct ambix_t ambix_t;
 
 /** error codes returned by functions */
 typedef enum
-{	
+{
   /** an unknown error */
   AMBIX_ERR_UNKNOWN=-1,
 
   /** no error encountered */
-  AMBIX_ERR_SUCCESS			= 0,
+  AMBIX_ERR_SUCCESS= 0,
 
   /** an invalid ambix handle was passed to the function */
   AMBIX_ERR_INVALID_HANDLE,
@@ -103,10 +103,10 @@ typedef enum
 /** error codes returned by functions */
 typedef enum {
   /** open file for reading */
-  AMBIX_READ  = (1<<0),
-  /** open file for writing  */
+  AMBIX_READ = (1<<0),
+  /** open file for writing */
   AMBIX_WRITE = (1<<1),
-  /** open file for reading&writing  */
+  /** open file for reading&writing */
   AMBIX_RDRW = (AMBIX_READ|AMBIX_WRITE)
 
 } ambix_filemode_t;
@@ -116,7 +116,7 @@ typedef enum {
 typedef enum {
   /** file is not an ambix file (or unknown) */
   AMBIX_NONE     = 0,
-  /** simple ambix file   (w/ pre-multiplication matrix) */
+  /** simple ambix file (w/ pre-multiplication matrix) */
   AMBIX_SIMPLE   = 1,
   /** extended ambix file (w pre-multiplication matrix ) */
   AMBIX_EXTENDED = 2
@@ -139,7 +139,7 @@ typedef enum {
 
 /** ambix matrix types */
 typedef enum {
-  /** invalid matrix  format */
+  /** invalid matrix format */
   AMBIX_MATRIX_INVALID = -1,
   /** a matrix filled with zeros */
   AMBIX_MATRIX_ZERO = 0,
@@ -164,12 +164,14 @@ typedef struct ambix_matrix_t {
   float32_t**data;
 } ambix_matrix_t;
 
-/** this is for passing data about the opened ambix file between the host application and the library */
+/** this is for passing data about the opened ambix file between the host
+ * application and the library
+*/
 typedef struct ambix_info_t {
   /** number of frames in the file */
-  uint64_t  frames;
+  uint64_t frames;
   /** samplerate in Hz */
-  double			samplerate;
+  double samplerate;
   /** sample type of the ambix file */
   ambix_sampleformat_t sampleformat;
   /** layout type of the ambix file */
@@ -178,15 +180,16 @@ typedef struct ambix_info_t {
   /** number of non-ambisonics channels in the file
    * @remark think of a better name, like 'uncodedchannels'
    */
-	uint32_t			extrachannels;
+  uint32_t extrachannels;
 
-  /** number of (raw) ambisonics channels present in the file
-   * if the file contains a full set of ambisonics channels (always true if ambixformat==AMBIX_SIMPLE),
-   * then \f$ambichannel=(order_{ambi}+1)^2\f$;
-   * if the file contains an adaptor matrix, it has to be used to reconstruct the full set by
-   * multiplying the adaptor matrix with the channels present
+  /** number of (raw) ambisonics channels present in the file.
+   *
+   * If the file contains a full set of ambisonics channels (always true if
+   * ambixformat==AMBIX_SIMPLE), then \f$ambichannel=(order_{ambi}+1)^2\f$; if
+   * the file contains an adaptor matrix, it has to be used to reconstruct the
+   * full set by multiplying the adaptor matrix with the channels present.
    */
-	uint32_t			ambichannels;
+  uint32_t ambichannels;
 } ambix_info_t;
 
 /**
@@ -196,6 +199,6 @@ typedef struct ambix_info_t {
 typedef struct SNDFILE_tag SNDFILE;
 
 #ifdef __cplusplus
-}		/* extern "C" */
-#endif	/* __cplusplus */
+} /* extern "C" */
+#endif /* __cplusplus */
 #endif /* AMBIX_TYPES_H */
