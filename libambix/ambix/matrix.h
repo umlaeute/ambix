@@ -1,4 +1,4 @@
-/* ambix/matrix.h -  Matrix utilities              -*- c -*-
+/* ambix/matrix.h - Matrix utilities	-*- c -*-
 
    Copyright © 2012 IOhannes m zmölnig <zmoelnig@iem.at>.
          Institute of Electronic Music and Acoustics (IEM),
@@ -60,7 +60,7 @@ ambix_matrix_t* ambix_matrix_create (void);
  * @param mtx matrix object to destroy
  */
 AMBIX_API
-void ambix_matrix_destroy (ambix_matrix_t*mtx);
+void ambix_matrix_destroy (ambix_matrix_t* mtx);
 
 /** @brief Initialize a matrix
  *
@@ -77,7 +77,7 @@ void ambix_matrix_destroy (ambix_matrix_t*mtx);
  * error.
  */
 AMBIX_API
-ambix_matrix_t* ambix_matrix_init (uint32_t rows, uint32_t cols, ambix_matrix_t*mtx);
+ambix_matrix_t* ambix_matrix_init (uint32_t rows, uint32_t cols, ambix_matrix_t* mtx);
 
 
 /** @brief De-initialize a matrix
@@ -87,7 +87,7 @@ ambix_matrix_t* ambix_matrix_init (uint32_t rows, uint32_t cols, ambix_matrix_t*
  * @param mtx matrix object to deinitialize
  */
 AMBIX_API
-void ambix_matrix_deinit (ambix_matrix_t*mtx);
+void ambix_matrix_deinit (ambix_matrix_t* mtx);
 
 
 /** @brief Fill a matrix according to specs
@@ -108,7 +108,7 @@ void ambix_matrix_deinit (ambix_matrix_t*mtx);
  * input matrix)
  */
 AMBIX_API
-ambix_matrix_t* ambix_matrix_fill (ambix_matrix_t*matrix, ambix_matrixtype_t type);
+ambix_matrix_t* ambix_matrix_fill (ambix_matrix_t* matrix, ambix_matrixtype_t type);
 
 /** @brief Fill a matrix with values
  *
@@ -123,7 +123,7 @@ ambix_matrix_t* ambix_matrix_fill (ambix_matrix_t*matrix, ambix_matrixtype_t typ
  * @return an error code indicating success
  */
 AMBIX_API
-ambix_err_t ambix_matrix_fill_data (ambix_matrix_t*mtx, const float32_t*data);
+ambix_err_t ambix_matrix_fill_data (ambix_matrix_t* mtx, const float32_t* data);
 
 /** @brief Copy a matrix to another matrix
  *
@@ -136,7 +136,7 @@ ambix_err_t ambix_matrix_fill_data (ambix_matrix_t*mtx, const float32_t*data);
  * @return pointer to the destination matrix
  */
 AMBIX_API
-ambix_matrix_t* ambix_matrix_copy (const ambix_matrix_t*src, ambix_matrix_t*dest);
+ambix_matrix_t* ambix_matrix_copy (const ambix_matrix_t* src, ambix_matrix_t* dest);
 /** @brief Multiply two matrices
  *
  * Multiply matrices dest=A*B, possibly resizing or creating the destination
@@ -155,7 +155,7 @@ ambix_matrix_t* ambix_matrix_copy (const ambix_matrix_t*src, ambix_matrix_t*dest
  * value), the host has to take care of calling ambix_matrix_destroy().
  */
 AMBIX_API
-ambix_matrix_t* ambix_matrix_multiply (const ambix_matrix_t*A, const ambix_matrix_t*B, ambix_matrix_t*result);
+ambix_matrix_t* ambix_matrix_multiply (const ambix_matrix_t* A, const ambix_matrix_t* B, ambix_matrix_t* result);
 
 
 /** @brief Multiply a matrix with data
@@ -184,19 +184,19 @@ ambix_matrix_t* ambix_matrix_multiply (const ambix_matrix_t*A, const ambix_matri
  * @ingroup ambix_matrix_multiply_data
  */
 AMBIX_API
-ambix_err_t ambix_matrix_multiply_float32(float32_t*dest, const ambix_matrix_t*mtx, const float32_t*source, int64_t frames);
+ambix_err_t ambix_matrix_multiply_float32(float32_t* dest, const ambix_matrix_t* mtx, const float32_t* source, int64_t frames);
 /** @brief Multiply a matrix with (32bit signed integer) data
  *
  * @ingroup ambix_matrix_multiply_data
  */
 AMBIX_API
-ambix_err_t ambix_matrix_multiply_int32(int32_t*dest, const ambix_matrix_t*mtx, const int32_t*source, int64_t frames);
+ambix_err_t ambix_matrix_multiply_int32(int32_t* dest, const ambix_matrix_t* mtx, const int32_t* source, int64_t frames);
 /** @brief Multiply a matrix with (16 bit signed integer) data
  *
  * @ingroup ambix_matrix_multiply_data
  */
 AMBIX_API
-ambix_err_t ambix_matrix_multiply_int16(int16_t*dest, const ambix_matrix_t*mtx, const int16_t*source, int64_t frames);
+ambix_err_t ambix_matrix_multiply_int16(int16_t* dest, const ambix_matrix_t* mtx, const int16_t* source, int64_t frames);
 
 #ifdef __cplusplus
 } /* extern "C" */

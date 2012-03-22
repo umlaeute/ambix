@@ -68,7 +68,7 @@ extern "C" {
  * @return A handle to the opened file (or NULL on failure)
  */
 AMBIX_API
-ambix_t* ambix_open (const char *path, const ambix_filemode_t mode, ambix_info_t*ambixinfo) ;
+ambix_t* ambix_open (const char* path, const ambix_filemode_t mode, ambix_info_t* ambixinfo) ;
 
 /** @brief Close an ambix handle
  *
@@ -80,18 +80,18 @@ ambix_t* ambix_open (const char *path, const ambix_filemode_t mode, ambix_info_t
  * @return an error code indicating success
  */
 AMBIX_API
-ambix_err_t ambix_close (ambix_t*ambix);
+ambix_err_t ambix_close (ambix_t* ambix);
 
 /** @brief Read samples (as 16bit signed integer values) from the ambix file
  * @ingroup ambix_readf
  */
 AMBIX_API
-int64_t ambix_readf_int16 (ambix_t*ambix, int16_t*ambidata, int16_t*otherdata, int64_t frames) ;
+int64_t ambix_readf_int16 (ambix_t* ambix, int16_t* ambidata, int16_t* otherdata, int64_t frames) ;
 /** @brief Read samples (as 32bit signed integer values) from the ambix file
  * @ingroup ambix_readf
  */
 AMBIX_API
-int64_t ambix_readf_int32 (ambix_t*ambix, int32_t *ambidata, int32_t*otherdata, int64_t frames) ;
+int64_t ambix_readf_int32 (ambix_t* ambix, int32_t* ambidata, int32_t* otherdata, int64_t frames) ;
 /** @brief Read samples from the ambix file
  * @defgroup ambix_readf ambix_readf()
  *
@@ -121,18 +121,18 @@ int64_t ambix_readf_int32 (ambix_t*ambix, int32_t *ambidata, int32_t*otherdata, 
  * @ingroup ambix_readf
  */
 AMBIX_API
-int64_t ambix_readf_float32 (ambix_t*ambix, float32_t *ambidata, float32_t*otherdata, int64_t frames) ;
+int64_t ambix_readf_float32 (ambix_t* ambix, float32_t* ambidata, float32_t* otherdata, int64_t frames) ;
 
 /** @brief Write (16bit signed integer) samples to the ambix file
  * @ingroup ambix_writef
  */
 AMBIX_API
-int64_t ambix_writef_int16 (ambix_t*ambix, int16_t*ambidata, int16_t*otherdata, int64_t frames) ;
+int64_t ambix_writef_int16 (ambix_t* ambix, const int16_t* ambidata, const int16_t* otherdata, int64_t frames) ;
 /** @brief Write (32bit signed integer) samples to the ambix file
  * @ingroup ambix_writef
  */
 AMBIX_API
-int64_t ambix_writef_int32 (ambix_t*ambix, int32_t *ambidata, int32_t*otherdata, int64_t frames) ;
+int64_t ambix_writef_int32 (ambix_t* ambix, const int32_t* ambidata, const int32_t* otherdata, int64_t frames) ;
 /** @brief Write samples to the ambix file
  * @defgroup ambix_writef ambix_writef()
  *
@@ -162,7 +162,7 @@ int64_t ambix_writef_int32 (ambix_t*ambix, int32_t *ambidata, int32_t*otherdata,
  * @ingroup ambix_writef
  */
 AMBIX_API
-int64_t ambix_writef_float32 (ambix_t*ambix, float32_t *ambidata, float32_t*otherdata, int64_t frames) ;
+int64_t ambix_writef_float32 (ambix_t* ambix, const float32_t* ambidata, const float32_t* otherdata, int64_t frames) ;
 
 
 /** @brief Get the libsndfile handle associated with the ambix handle
@@ -176,7 +176,7 @@ int64_t ambix_writef_float32 (ambix_t*ambix, float32_t *ambidata, float32_t*othe
  * @return A libsndfile handle or NULL
  */
 AMBIX_API
-SNDFILE* ambix_get_sndfile (ambix_t*ambix);
+SNDFILE* ambix_get_sndfile (ambix_t* ambix);
 
 /** @brief Get the adaptor matrix
  *
@@ -200,7 +200,7 @@ SNDFILE* ambix_get_sndfile (ambix_t*ambix);
  * library and must neither be freed nor used after calling ambix_close().
  */
 AMBIX_API
-const ambix_matrix_t* ambix_get_adaptormatrix (ambix_t*ambix);
+const ambix_matrix_t* ambix_get_adaptormatrix (ambix_t* ambix);
 
 /** @brief Set a matrix to be pre-multiplied
  *
@@ -225,7 +225,7 @@ const ambix_matrix_t* ambix_get_adaptormatrix (ambix_t*ambix);
  * is an error.
  */
 AMBIX_API
-ambix_err_t ambix_set_adaptormatrix (ambix_t*ambix, const ambix_matrix_t*matrix);
+ambix_err_t ambix_set_adaptormatrix (ambix_t* ambix, const ambix_matrix_t* matrix);
 
 
 #ifdef __cplusplus

@@ -320,7 +320,7 @@ static ambix_err_t _ambix_check_read(ambix_t*ambix, const void*ambidata, const v
   }
 
 #define AMBIX_WRITEF(type) \
-  int64_t ambix_writef_##type (ambix_t*ambix, type##_t *ambidata, type##_t*otherdata, int64_t frames) { \
+  int64_t ambix_writef_##type (ambix_t*ambix, const type##_t *ambidata, const type##_t*otherdata, int64_t frames) { \
     type##_t*adaptorbuffer;                                             \
     ambix_err_t err= _ambix_check_write(ambix, (const void*)ambidata, (const void*)otherdata, frames); \
     if(AMBIX_ERR_SUCCESS != err) return -err;                           \
