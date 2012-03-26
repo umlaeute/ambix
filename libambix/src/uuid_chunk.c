@@ -30,8 +30,32 @@
 # include <stdlib.h>
 #endif /* HAVE_STDLIB_H */
 
+/* on UUIDs:
+ * ideally, we would use UUIDs based on an URI that indicates the format-version
+ * e.g. URI="http://ambisonics.iem.at/xchange/format/1.0"
+ * this can be converted to an UUID(v5), using a small perl-script like
+ * @code
+ #!/usr/bin/perl
+ use UUID::Tiny; 
+ my $v5_url_UUIDs    = create_UUID_as_string(UUID_V5, UUID_NS_URL, $ARGV[0]);
+ print "$v5_url_UUIDs\n";
+ * @endcode
+ *
+ * this gives us:
+ *  http://ambisonics.iem.at/xchange/format/1.0 1ad318c3-00e5-5576-be2d-0dca2460bc89
+ *  http://ambisonics.iem.at/xchange/format/2.0 7c449194-05e1-58e4-9463-d0f8f2a1ed0f
+ *  http://ambisonics.iem.at/xchange/format/3.0 50c26359-d96d-5a67-bc19-db124f7606d0
+ */
 
-static const char _ambix_uuid_v1[]="IEM.AT/AMBIX/XML"; /* uarg, this is not a UUID! */
+ /*
+  * uarg, this is not a UUID! 
+  * (well it is...UUID::Tiny thinks it's a v2 (DCE security) UUID 
+  */
+static const char _ambix_uuid_v1_[]="IEM.AT/AMBIX/XML";
+/* 
+ * that's a better UUID, based on a SHA1-hash of "http://ambisonics.iem.at/xchange/format/1.0"
+ */
+static const char _ambix_uuid_v1[]={0x1a, 0xd3, 0x18, 0xc3, 0x00, 0xe5, 0x55, 0x76, 0xbe, 0x2d, 0x0d, 0xca, 0x24, 0x60, 0xbc, 0x89};
 const char* _ambix_getUUID(uint32_t version) {
   switch(version) {
   default:
@@ -42,21 +66,13 @@ const char* _ambix_getUUID(uint32_t version) {
   return NULL;
 }
 
-static int
-_ambix_checkUUID_1(const char*data) {
-  unsigned int i;
-  const char*uuid=_ambix_getUUID(1);
-  if(!uuid) return 0;
-  for(i=0; i<16; i++)
-    if(uuid[i]!=data[i])
-      return 0;
-
-  return 1;
-}
-
 uint32_t
 _ambix_checkUUID(const char data[16]) {
-  if(_ambix_checkUUID_1(data))
+  if(!memcmp(data, _ambix_uuid_v1, 16))
+    return 1;
+
+  /* compat mode: old AMBIXv1 UUID */
+  if(!memcmp(data, _ambix_uuid_v1_, 16))
     return 1;
 
   return 0;
