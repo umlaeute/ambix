@@ -40,12 +40,12 @@
  * file using ambix_open(), read audio data using @ref ambix_readf or write
  * audio data using @ref ambix_writef and call ambix_close() once you are done.
  *
- * For a more detailed documentation, see the @link usage Usage page @endlink.
+ * For a more detailed documentation, see the @link usage Usage page. @endlink
  *
  * @section format_sec Format
  *
  * For a shortish specification of the ambix format see the @link format Format
- * page @endlink-
+ * page. @endlink
  */
 
 /**
@@ -307,4 +307,50 @@
  * @section todo_format TODO
  *
  * document the ambix format
+ *
+ * @section format_bugfix Bug-fixes for the format-specification
+ *
+ * @subsection format_bugfix_UUID UUID-chunk
+ *
+ * The original format proposal defined a UUID @b 49454d2e-4154-2f41-4d42-49582f584d4c, 
+ * which is equivalent to the literal "IEM.AT/AMBIX/XML".
+ * Unfortunately this does not take into account, that while UUIDs can be @e random, 
+ * certain bits are reserved (e.g. indicating the UUID variant).
+ * The originally suggested UUID is - according to it's reserved bits - a v2 variant (DCE Security),
+ * though in reality it is not. This makes name clashes probable and counteracts the idea of using UUIDs.
+ * This UUID should therefore be deprecated.
+ *
+ * Therefore, it is suggested to use URL based UUID of the v5 variant (SHA-1 based), with the URLs following the scheme
+ *   http://ambisonics.iem.at/xchange/format/1.0 ,
+ * where the last element of the URL denotes the ambix specification version the given chunk adheres to.
+ * This allows for easy and consistent adding of new UUIDs, if the format ever needs to be extended.
+ *
+ * The URL http://ambisonics.iem.at/xchange/format/1.0 translates to the UUID @b 1ad318c3-00e5-5576-be2d-0dca2460bc89.
+ *
+ * For compatibility reasons, libambix will be able to read both the original (deprecated) and the new UUID.
+ * However, it will only write the new UUID to newly created ambix files.
+ *
+ * @subsection format_bugfix_sampletypes Valid sample types
+ *
+ * The original format proposal enumerates the valid sample (audio data) types, as int16, int24, int32 and float32.
+ * This seems to be an unnecessary restriction on the CAF-format.
+ * All sample types valid in CAF-files should be valid in ambix files as well.
+ *
+ * @subsection format_bugfix_rowcols Type of rows & columns in the adaptor matrix
+ *
+ * The original format proposal shows the adaptor matrix as a linear array of float32 values, with the first element
+ * being the number of rows in the matrix and the second element being the number of columns. The remaining values form the
+ * actual matrix data in the order a[0,0], a[0,1]...a[L,C].
+ * Since both rows and columns can only be positive integer values, this has been changed, so the first two values are of the type int32.
+ *
+ * @subsection format_bugfix_extrachannels Extra (non-ambisonics) channels
+ *
+ * The original format proposal speaks only of full ambisonics sets (in the case of the "BASIC" format, all audio channels 
+ * in the CAF-file must form exactly a full ambisonics set; in the case of the "EXTENDED" format, all audio channels in the
+ * CAF-file multiplied by the adaptor matrix must form a full ambisonics set).
+ * When implementing libambix, this was interpreted to allow room for "extra" (non-ambisonics) channels in the "EXTENDED" format:
+ * If a file holds (C+X) audio channels (with both C and X being positive integers),
+ * the first C channels are converted into a full ambisonics set by multiplying it with the [L*C] adaptor matrix. 
+ * The remaining X channels are provided "as-is", and can be used to store extra data (like click-tracks,...)
+ *
  */
