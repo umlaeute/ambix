@@ -90,7 +90,9 @@ typedef enum
   AMBIX_ERR_INVALID_FILE,
   /** matrix dimension mismatch */
   AMBIX_ERR_INVALID_DIMENSION,
-  /** the ambix handle is in a format that does not allow the function (e.g. setting a premultiply matrix for a format other than AMBIX_SIMPLE) */
+  /** the ambix handle is in a format that does not allow the function (e.g.
+   * setting a premultiply matrix for a format other than AMBIX_BASIC)
+   */
   AMBIX_ERR_INVALID_FORMAT,
 
   /** you specified an invalid matrix */
@@ -115,8 +117,8 @@ typedef enum {
 typedef enum {
   /** file is not an ambix file (or unknown) */
   AMBIX_NONE     = 0,
-  /** simple ambix file (w/ pre-multiplication matrix) */
-  AMBIX_SIMPLE   = 1,
+  /** basic ambix file (w/ pre-multiplication matrix) */
+  AMBIX_BASIC   = 1,
   /** extended ambix file (w pre-multiplication matrix ) */
   AMBIX_EXTENDED = 2
 } ambix_fileformat_t;
@@ -184,7 +186,7 @@ typedef struct ambix_info_t {
   /** number of (raw) ambisonics channels present in the file.
    *
    * If the file contains a full set of ambisonics channels (always true if
-   * ambixformat==AMBIX_SIMPLE), then \f$ambichannel=(order_{ambi}+1)^2\f$; if
+   * ambixformat==AMBIX_BASIC), then \f$ambichannel=(order_{ambi}+1)^2\f$; if
    * the file contains an adaptor matrix, it has to be used to reconstruct the
    * full set by multiplying the adaptor matrix with the channels present.
    */

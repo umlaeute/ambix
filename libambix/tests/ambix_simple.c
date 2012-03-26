@@ -43,7 +43,7 @@ void check_create_simple(const char*path, ambix_sampleformat_t format, float32_t
   memset(&winfo, 0, sizeof(winfo));
   memset(&info, 0, sizeof(info));
 
-  info.fileformat=AMBIX_SIMPLE;
+  info.fileformat=AMBIX_BASIC;
   info.ambichannels=channels;
   info.extrachannels=0;
   info.samplerate=44100;

@@ -56,14 +56,14 @@ extern "C" {
  * to zero before calling ambix_open(): the fields will be set by the library;
  * if you set the ambixinfo.ambixformat field to something else than AMBIX_NONE,
  * the library will present the data as if the was written in this format (e.g.
- * if you set ambixinfo.ambixformat to AMBIX_SIMPLE but the file really is
+ * if you set ambixinfo.ambixformat to AMBIX_BASIC but the file really is
  * AMBIX_EXTENDED, the library will automatically pre-multiply the
  * reconstruction matrix to give you the full ambisonics set.
  *
  * @remark when opening a file for writing, the caller must set the fields; if
  * ambixinfo.ambixformat is AMBIX_NONE, than ambixinfo.ambichannels must be 0,
  * else ambixinfo.ambichannels must be >0; if ambixinfo.ambixformat is
- * AMBIX_SIMPLE, then ambixinfo.ambichannels must be @f$(order_{ambi}+1)^2@f$
+ * AMBIX_BASIC, then ambixinfo.ambichannels must be @f$(order_{ambi}+1)^2@f$
  *
  * @return A handle to the opened file (or NULL on failure)
  */
@@ -97,14 +97,14 @@ int64_t ambix_readf_int32 (ambix_t* ambix, int32_t* ambidata, int32_t* otherdata
  *
  * Reads samples from an ambix file, possibly expanding a reduced channel set to
  * a full ambisonics set (when reading an 'ambix extended' file as 'ambix
- * simple')
+ * basic')
  *
  * @param ambix The handle to an ambix file
  *
  * @param ambidata pointer to user allocated array to retrieve ambisonics
  * channels into; must be large enough to hold at least
  * (frames*ambix->info.ambichannels) samples, OR if you are reading the file as
- * 'ambix simple' and you successfully added an adaptor matrix using
+ * 'ambix basic' and you successfully added an adaptor matrix using
  * ambix_set_adaptormatrix() the array must be large enough to hold at least
  * (frames * adaptormatrix.rows) samples.
  *
@@ -138,7 +138,7 @@ int64_t ambix_writef_int32 (ambix_t* ambix, const int32_t* ambidata, const int32
  *
  * Writes samples (as single precision floating point values) to an ambix file,
  * possibly expanding a reduced channel set to a full ambisonics set (when
- * writing an 'ambix extended' file as 'ambix simple').
+ * writing an 'ambix extended' file as 'ambix basic').
  *
  * Data will be stored on harddisk in the format specified when opening the file
  * for writing which need not be float32, in which case the data is
@@ -182,15 +182,15 @@ SNDFILE* ambix_get_sndfile (ambix_t* ambix);
  *
  * The ambix extended fileformat comes with a adaptor matrix, that can be used
  * to reconstruct a full 3d ambisonics set from the channels stored in ambix
- * file. In the ambix SIMPLE format no adaptor matrix is present, the file
+ * file. In the ambix BASIC format no adaptor matrix is present, the file
  * always contains the full set.
  *
  * @remark the adaptor matrix can only be obtained for a ambix extended file; if
- * you have opened an ambix extended file as "ambix simple", the adaptor will be
+ * you have opened an ambix extended file as "ambix basic", the adaptor will be
  * done by the library; in this case, you will not be able to fetch the adaptor
  * matrix.
  *
- * @remark if you have opened an ambix simple file as ambix extended, this will
+ * @remark if you have opened an ambix basic file as ambix extended, this will
  * return a unity matrix.
  *
  * @param ambix The handle to an ambix file
@@ -205,7 +205,7 @@ const ambix_matrix_t* ambix_get_adaptormatrix (ambix_t* ambix);
 /** @brief Set a matrix to be pre-multiplied
  *
  * Adds an (additional) adaptor matrix to the processing. Depending on the mode
- * of operation this canhave different meanings! When READing an ambix 'SIMPLE'
+ * of operation this canhave different meanings! When READing an ambix 'BASIC'
  * file, this tells the library to do an (additional) matrix-multiplication When
  * reconstructing the full ambisonics set; you can use use this to get the
  * ambisonics channels in a format other than SN3D/ACN (e.g. using an ambix to
@@ -221,7 +221,7 @@ const ambix_matrix_t* ambix_get_adaptormatrix (ambix_t* ambix);
  *
  * @return an errorcode indicating success
  *
- * @remark using this on ambix handles other than READ/SIMPLE or WRITE/EXTENDED
+ * @remark using this on ambix handles other than READ/BASIC or WRITE/EXTENDED
  * is an error.
  */
 AMBIX_API

@@ -27,7 +27,7 @@
  * ambix_interleave -o <outfile> [-O <order>] [-X <matrixfile>] <infile1> [<infile2> ...]
  * merge several (multi-channel) audio files into a single ambix file;
  * infile1 becomes W-channel, infile2 becomes X-channel,...
- * by default this will write an 'ambix simple' file (only full sets are accepted)
+ * by default this will write an 'ambix basic' file (only full sets are accepted)
  * eventually files are written as 'ambix extended' file with adaptor matrix set to unity
  * if 'order' is specified, all inchannels not needed for the full set are written as 'extrachannels'
  * 'matrixfile' is a soundfile/octavefile that is interpreted as matrix: each channel is a row, sampleframes are columns
@@ -295,8 +295,8 @@ static ai_t*ai_open_input(ai_t*ai) {
       ai->matrix=ambix_matrix_init(ai->channels, ai->channels, NULL);
       ai->matrix=ambix_matrix_fill (ai->matrix, AMBIX_MATRIX_IDENTITY);
     } else if (ai->channels == channels) {
-      /* simple format */
-      ai->info.fileformat=AMBIX_SIMPLE;
+      /* basic format */
+      ai->info.fileformat=AMBIX_BASIC;
       ai->info.ambichannels=channels;
       ai->info.extrachannels=0;
     } else {
@@ -306,13 +306,13 @@ static ai_t*ai_open_input(ai_t*ai) {
     if(!ambix_is_fullset(channels)) {
       return ai_close(ai);
     }
-    /* simple format */
-    ai->info.fileformat=AMBIX_SIMPLE;
+    /* basic format */
+    ai->info.fileformat=AMBIX_BASIC;
     ai->info.ambichannels=channels;
     ai->info.extrachannels=0;
   }
 
-  printf("format: %s\n", (ai->info.fileformat==AMBIX_SIMPLE)?"simple":"extended");
+  printf("format: %s\n", (ai->info.fileformat==AMBIX_BASIC)?"basic":"extended");
   printf("got %d input channels each %d frames\n", channels, ai->info.frames);
   printf("ambichannels: %d\n", ai->info.ambichannels);
   printf("extrachannels: %d\n", ai->info.extrachannels);

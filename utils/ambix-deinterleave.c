@@ -27,7 +27,7 @@
  * ambix_deinterleave -o <outfile> [-O <order>] [-X <matrixfile>] <infile1> [<infile2> ...]
  * merge several (multi-channel) audio files into a single ambix file;
  * infile1 becomes W-channel, infile2 becomes X-channel,...
- * by default this will write an 'ambix simple' file (only full sets are accepted)
+ * by default this will write an 'ambix basic' file (only full sets are accepted)
  * eventually files are written as 'ambix extended' file with adaptor matrix set to unity
  * if 'order' is specified, all inchannels not needed for the full set are written as 'extrachannels'
  * 'matrixfile' is a soundfile/octavefile that is interpreted as matrix: each channel is a row, sampleframes are columns

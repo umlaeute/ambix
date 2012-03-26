@@ -58,29 +58,29 @@
  * the state of the ambix_info_t fields is undefined.
  *
  * The only exception to this is, if you want to force the ambix file to be read
- * as either "SIMPLE" or "EXTENDED", e.g. because you don't want to care about
+ * as either "BASIC" or "EXTENDED", e.g. because you don't want to care about
  * adaptor matrices or because you do. In this case you must set the fileformat
  * field the requested format.
  *
  *
  *
- * @subsection readsimple_usage Reading SIMPLE ambix files
+ * @subsection readbasic_usage Reading BASIC ambix files
  *
- * You can read any ambix file as "SIMPLE" by setting the 'fileformat' member of
- * the ambix_info_t struct * to AMBIX_SIMPLE prior to opening the file.
+ * You can read any ambix file as "BASIC" by setting the 'fileformat' member of
+ * the ambix_info_t struct * to AMBIX_BASIC prior to opening the file.
  * This will automatically do any conversion needed, by pre-multiplying the raw
  * ambisonics data with an embedded adaptor matrix.
  *
- * Real "SIMPLE" files lack extra audio channels.
- * However, when opening a file that is not a "SIMPLE" ambix file (e.g. an
- * "EXTENDED" ambix file) as a "SIMPLE" one, by forcing the 'fileformat' member
- * to 'AMBIX_SIMPLE', extra channels might be readable.
+ * Real "BASIC" files lack extra audio channels.
+ * However, when opening a file that is not a "BASIC" ambix file (e.g. an
+ * "EXTENDED" ambix file) as a "BASIC" one, by forcing the 'fileformat' member
+ * to 'AMBIX_BASIC', extra channels might be readable.
  *
  * @code
    ambix_t*ambix = NULL;
    ambix_info_t*info  = calloc(1, sizeof(ambix_info_t));
 
-   ambix->fileformat = AMBIX_SIMPLE;
+   ambix->fileformat = AMBIX_BASIC;
 
    ambix = ambix_open("ambixfile.caf", AMBIX_READ, info);
    if(ambix) {
@@ -173,8 +173,8 @@
 
    if(ambix) {
      switch(ambix->fileformat) {
-     case(AMBIX_SIMPLE):
-       printf("this file is ambix simple\n");
+     case(AMBIX_BASIC):
+       printf("this file is ambix basic\n");
        break;
      case(AMBIX_EXTENDED):
        printf("this file is ambix extended\n");
@@ -202,16 +202,16 @@
  * ambisonics channels and the number of extra channels that are phyiscally
  * stored on the disk.
  *
- * @subsection writesimple_usage Writing SIMPLE ambix files
+ * @subsection writebasic_usage Writing BASIC ambix files
  *
- * You can write "SIMPLE" ambix files by setting the 'fileformat' member of the
- * ambix_info_t struct to AMBIX_SIMPLE prior to opening the file.
+ * You can write "BASIC" ambix files by setting the 'fileformat' member of the
+ * ambix_info_t struct to AMBIX_BASIC prior to opening the file.
  *
  * You will need to provide a full set of ambisonics channels when writing data
  * to the file, and must not set an adaptor matrix. A full set of ambisonics
  * must always satisfy the formula @f$channels=(order_{ambi}+1)^2@f$.
  *
- * You cannot write extra audio channels into a "SIMPLE" ambix file.
+ * You cannot write extra audio channels into a "BASIC" ambix file.
  *
  * @code
    ambix_t*ambix = NULL;
@@ -220,7 +220,7 @@
    // need to specify samplerate and sampleformat
    ambix->samplerate = 44100;
    ambix->sampleformat = AMBIX_SAMPLEFORMAT_PCM16;
-   ambix->fileformat = AMBIX_SIMPLE;
+   ambix->fileformat = AMBIX_BASIC;
    ambix->ambichannels = 16; // 16 channels means 3rd order ambisonics, according to L=(2N+1)^2
 
    ambix = ambix_open("ambixfile.caf", AMBIX_WRITE, info);
