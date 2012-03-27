@@ -38,7 +38,7 @@ static ambix_err_t _check_write_ambixinfo(ambix_info_t*info) {
     if(info->ambichannels>0)
       return AMBIX_ERR_INVALID_FORMAT;
     break;
-  case AMBIX_SIMPLE:
+  case AMBIX_BASIC:
     if(info->extrachannels>0)
       return AMBIX_ERR_INVALID_FORMAT;
     if(!ambix_is_fullset(info->ambichannels))
@@ -59,7 +59,7 @@ static _ambix_info_set(ambix_t*ambix
   case AMBIX_NONE:
     ambichannels=fullambichannels=0;
     break;
-  case AMBIX_SIMPLE:
+  case AMBIX_BASIC:
     otherchannels=0;
     break;
   default:
@@ -101,8 +101,8 @@ ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambix_info_
         case(AMBIX_NONE):
           _ambix_info_set(ambix, AMBIX_NONE, channels, 0, 0);
           break;
-        case(AMBIX_SIMPLE):
-          _ambix_info_set(ambix, AMBIX_SIMPLE, 0, channels, channels);
+        case(AMBIX_BASIC):
+          _ambix_info_set(ambix, AMBIX_BASIC, 0, channels, channels);
           break;
         case(AMBIX_EXTENDED):
           /* the number of full channels is not clear yet!
@@ -111,7 +111,7 @@ ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambix_info_
           break;
         }
       } else {
-        if(ambix->format>AMBIX_SIMPLE) {
+        if(ambix->format>AMBIX_BASIC) {
           /* check whether channels are (N+1)^2
            * if so, we have a simple-ambix file, else it is just an ordinary caf
            */
@@ -124,14 +124,14 @@ ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambix_info_
             _ambix_info_set(ambix, AMBIX_NONE, channels, 0, 0);
           }
         } else {
-          /* no uuid chunk found, it's probably a SIMPLE ambix file */
+          /* no uuid chunk found, it's probably a BASIC ambix file */
 
           /* check whether channels are (N+1)^2
            * if so, we have a simple-ambix file, else it is just an ordinary caf
            */
           if(ambix_is_fullset(channels)) { /* expanded set must be a full set */
             /* it's a simple AMBIX! */
-            _ambix_info_set(ambix, AMBIX_SIMPLE, 0, channels, channels);
+            _ambix_info_set(ambix, AMBIX_BASIC, 0, channels, channels);
           } else {
             /* it's an ordinary CAF file */
             _ambix_info_set(ambix, AMBIX_NONE, channels, 0, 0);
@@ -149,10 +149,10 @@ ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambix_info_
     memcpy(&ambix->info, &ambix->realinfo, sizeof(ambix->info));
 
     if(0) {
-    } else if(AMBIX_SIMPLE==wantformat && AMBIX_EXTENDED==haveformat) {
-      ambix->info.fileformat=AMBIX_SIMPLE;
+    } else if(AMBIX_BASIC==wantformat && AMBIX_EXTENDED==haveformat) {
+      ambix->info.fileformat=AMBIX_BASIC;
       ambix->use_matrix=1;
-    } else if(AMBIX_EXTENDED==wantformat && AMBIX_SIMPLE==haveformat) {
+    } else if(AMBIX_EXTENDED==wantformat && AMBIX_BASIC==haveformat) {
       ambix_matrix_init(ambix->realinfo.ambichannels, ambix->realinfo.ambichannels, &ambix->matrix);
       ambix_matrix_fill(&ambix->matrix, AMBIX_MATRIX_IDENTITY);
       ambix->info.fileformat=AMBIX_EXTENDED;
@@ -202,7 +202,7 @@ const ambix_matrix_t*ambix_get_adaptormatrix	(ambix_t*ambix) {
 }
 ambix_err_t ambix_set_adaptormatrix	(ambix_t*ambix, const ambix_matrix_t*matrix) {
   if(0) {
-  } else if((ambix->filemode & AMBIX_READ ) && (AMBIX_SIMPLE   == ambix->info.fileformat)) {
+  } else if((ambix->filemode & AMBIX_READ ) && (AMBIX_BASIC   == ambix->info.fileformat)) {
     /* multiply the matrix with the previous adaptor matrix */
     if(AMBIX_EXTENDED == ambix->realinfo.fileformat) {
       ambix_matrix_t*mtx=ambix_matrix_multiply(matrix, &ambix->matrix, &ambix->matrix2);
@@ -320,7 +320,7 @@ static ambix_err_t _ambix_check_read(ambix_t*ambix, const void*ambidata, const v
   }
 
 #define AMBIX_WRITEF(type) \
-  int64_t ambix_writef_##type (ambix_t*ambix, type##_t *ambidata, type##_t*otherdata, int64_t frames) { \
+  int64_t ambix_writef_##type (ambix_t*ambix, const type##_t *ambidata, const type##_t*otherdata, int64_t frames) { \
     type##_t*adaptorbuffer;                                             \
     ambix_err_t err= _ambix_check_write(ambix, (const void*)ambidata, (const void*)otherdata, frames); \
     if(AMBIX_ERR_SUCCESS != err) return -err;                           \

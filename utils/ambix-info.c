@@ -63,7 +63,7 @@ void printinfo(const char*path) {
   printf("ambiXformat\t: %d (", info.fileformat);
   switch(info.fileformat) {
   case(AMBIX_NONE): printf("NONE"); break;
-  case(AMBIX_SIMPLE): printf("SIMPLE"); break;
+  case(AMBIX_BASIC): printf("BASIC"); break;
   case(AMBIX_EXTENDED): printf("EXTENDED"); break;
   default: printf("**unknown** 0x%04X", info.fileformat);
   }

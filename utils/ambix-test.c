@@ -26,7 +26,7 @@
 #include <stdio.h>
 #include <string.h>
 
-void createfile_simple(const char*path, uint32_t ambichannels, uint32_t extrachannels, uint64_t frames) {
+void createfile_basic(const char*path, uint32_t ambichannels, uint32_t extrachannels, uint64_t frames) {
   ambix_info_t info;
   ambix_t*ambix;
   const ambix_matrix_t*matrix;
@@ -37,7 +37,7 @@ void createfile_simple(const char*path, uint32_t ambichannels, uint32_t extracha
   info.frames=frames;
   info.samplerate=44100;
   info.sampleformat=AMBIX_SAMPLEFORMAT_FLOAT32;
-  info.fileformat=AMBIX_SIMPLE;
+  info.fileformat=AMBIX_BASIC;
   info.ambichannels=ambichannels;
   info.extrachannels=extrachannels;
 
@@ -68,7 +68,7 @@ void createfile_simple(const char*path, uint32_t ambichannels, uint32_t extracha
   printf("ambiXformat\t: %d (", info.fileformat);
   switch(info.fileformat) {
   case(AMBIX_NONE): printf("NONE"); break;
-  case(AMBIX_SIMPLE): printf("SIMPLE"); break;
+  case(AMBIX_BASIC): printf("BASIC"); break;
   case(AMBIX_EXTENDED): printf("EXTENDED"); break;
   default: printf("**unknown** 0x%04X", info.fileformat);
   }
@@ -144,7 +144,7 @@ void createfile_extended(const char*path, uint32_t ambichannels, uint32_t extrac
   printf("ambiXformat\t: %d (", info.fileformat);
   switch(info.fileformat) {
   case(AMBIX_NONE): printf("NONE"); break;
-  case(AMBIX_SIMPLE): printf("SIMPLE"); break;
+  case(AMBIX_BASIC): printf("BASIC"); break;
   case(AMBIX_EXTENDED): printf("EXTENDED"); break;
   default: printf("**unknown** 0x%04X", info.fileformat);
   }
@@ -206,7 +206,7 @@ void createfile_extended(const char*path, uint32_t ambichannels, uint32_t extrac
 
 int main(int argc, char**argv) {
   if(argc>1) {
-    createfile_simple(argv[1], 9, 3, 44100);
+    createfile_basic(argv[1], 9, 3, 44100);
     if(argc>2)
       createfile_extended(argv[2], 9, 3, 44100);
   }

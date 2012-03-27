@@ -1,4 +1,4 @@
-/* ambix/ambix.h -  Ambisonics Xchange - utilities              -*- c -*-
+/* ambix/ambix.h - Ambisonics Xchange - utilities	-*- c -*-
 
    Copyright © 2012 IOhannes m zmölnig <zmoelnig@iem.at>.
          Institute of Electronic Music and Acoustics (IEM),
@@ -18,7 +18,6 @@
 
    You should have received a copy of the GNU Lesser General Public
    License along with this program; if not, see <http://www.gnu.org/licenses/>.
-
 */
 
 /**
@@ -38,10 +37,11 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif	/* __cplusplus */
+#endif /* __cplusplus */
 
 
-/** @brief Calculate the number of channels for a full 3d ambisonics set of a given order
+/** @brief Calculate the number of channels for a full 3d ambisonics set of a
+ * given order.
  *
  * @param order the order of the full set
  * @return the number of channels of the full set
@@ -49,25 +49,26 @@ extern "C" {
 AMBIX_API
 uint32_t ambix_order2channels(uint32_t order);
 
-
-/** @brief Calculate the order of a full 3d ambisonics set fora gien number of channels
+/** @brief Calculate the order of a full 3d ambisonics set for a given number of
+ * channels.
  *
  * @param channels the number of channels of the full set
- * @return the order of the full set, or -1 if the channels don't form a full set
+ * @return the order of the full set, or -1 if the channels don't form a full
+ * set.
  */
 AMBIX_API
-
-
 int32_t ambix_channels2order(uint32_t channels);
-/** @brief Checks whether the channel can form a full 3 ambisonics set
+
+/** @brief Checks whether the channel can form a full 3d ambisonics set.
  *
- * @param channels the number of channels supposed to form a full set
- * @return TRUE if the channels can form full set, FALSE otherwise
+ * @param channels the number of channels supposed to form a full set.
+ *
+ * @return TRUE if the channels can form full set, FALSE otherwise.
  */
 AMBIX_API
 int ambix_is_fullset(uint32_t channels);
 
 #ifdef __cplusplus
-}		/* extern "C" */
-#endif	/* __cplusplus */
+} /* extern "C" */
+#endif /* __cplusplus */
 #endif /* AMBIX_UTILS_H */

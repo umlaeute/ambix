@@ -27,7 +27,7 @@
  * ambix_dump -o <outfile> [-O <order>] [-X <matrixfile>] <infile1> [<infile2> ...]
  * merge several (multi-channel) audio files into a single ambix file;
  * infile1 becomes W-channel, infile2 becomes X-channel,...
- * by default this will write an 'ambix simple' file (only full sets are accepted)
+ * by default this will write an 'ambix basic' file (only full sets are accepted)
  * eventually files are written as 'ambix extended' file with adaptor matrix set to unity
  * if 'order' is specified, all inchannels not needed for the full set are written as 'extrachannels'
  * 'matrixfile' is a soundfile/octavefile that is interpreted as matrix: each channel is a row, sampleframes are columns
@@ -101,8 +101,8 @@ static ai_t*ai_cmdline(const char*name, int argc, char**argv) {
       argv++; argc--;
       continue;
     }
-    if(!strcmp(argv[0], "-S") || !strcmp(argv[0], "--simple")) {
-      format=AMBIX_SIMPLE;
+    if(!strcmp(argv[0], "-B") || !strcmp(argv[0], "--basic")) {
+      format=AMBIX_BASIC;
       argv++; argc--;
       continue;
     }
@@ -144,7 +144,7 @@ static ai_t*ai_cmdline(const char*name, int argc, char**argv) {
   else
     ai->format = AMBIX_EXTENDED;
 
-  if(format == AMBIX_SIMPLE)
+  if(format == AMBIX_BASIC)
     dumpRaw=dumpRaw || dumpCooked;
 
   ai->dumpRaw=dumpRaw;
@@ -372,7 +372,7 @@ void print_usage(const char*name) {
   printf("  -a, --ambisonics                 dump cooked ambisonics data\n");
   printf("  -x, --extra                      dump additional audio data\n");
 
-  printf("  -S, --simple                      open as AMBIX_SIMPLE\n");
+  printf("  -B, --basic                       open as AMBIX_BASIC\n");
   printf("  -X, --extended                    open as AMBIX_EXTENDED\n");
 
   printf("\n");

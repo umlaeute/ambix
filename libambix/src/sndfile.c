@@ -201,7 +201,7 @@ ambix_err_t _ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t
     if(read_uuidchunk(ambix) == AMBIX_ERR_SUCCESS) {
       ambix->format=AMBIX_EXTENDED;
     } else {
-      ambix->format=AMBIX_SIMPLE;
+      ambix->format=AMBIX_BASIC;
     }
   } else {
     // check whether this is an .amb file or the like...
