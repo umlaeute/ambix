@@ -309,13 +309,13 @@ static ambix_err_t _ambix_check_read(ambix_t*ambix, const void*ambidata, const v
     realframes=_ambix_readf_##type(ambix, adaptorbuffer, frames);       \
     switch(ambix->use_matrix) {                                         \
     case 1:                                                             \
-      _ambix_splitAdaptormatrix_##type(adaptorbuffer, ambix->info.ambichannels+ambix->info.extrachannels, &ambix->matrix          , ambidata, otherdata, realframes); \
+      _ambix_splitAdaptormatrix_##type(adaptorbuffer, ambix->realinfo.ambichannels+ambix->realinfo.extrachannels, &ambix->matrix          , ambidata, otherdata, realframes); \
       break;                                                            \
     case 2:                                                             \
-      _ambix_splitAdaptormatrix_##type(adaptorbuffer, ambix->info.ambichannels+ambix->info.extrachannels, &ambix->matrix2         , ambidata, otherdata, realframes); \
+      _ambix_splitAdaptormatrix_##type(adaptorbuffer, ambix->realinfo.ambichannels+ambix->realinfo.extrachannels, &ambix->matrix2         , ambidata, otherdata, realframes); \
       break;                                                            \
     default:                                                            \
-      _ambix_splitAdaptor_##type      (adaptorbuffer, ambix->info.ambichannels+ambix->info.extrachannels, ambix->info.ambichannels, ambidata, otherdata, realframes); \
+      _ambix_splitAdaptor_##type      (adaptorbuffer, ambix->realinfo.ambichannels+ambix->realinfo.extrachannels, ambix->realinfo.ambichannels, ambidata, otherdata, realframes); \
     };                                                                  \
     return realframes;                                                  \
   }
