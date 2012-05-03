@@ -1,10 +1,10 @@
 ambix-utils: collection of utilities to deal with ambix files
 
 
-ambix_info:
+ambix-info:
 	get info about an ambix file
 
-ambix_interleave -o <outfile> [-O <order>] [-X <matrixfile>] <infile1> [<infile2> ...]
+ambix-interleave -o <outfile> [-O <order>] [-X <matrixfile>] <infile1> [<infile2> ...]
 	merge several (multi-channel) audio files into a single ambix file;
 	infile1 becomes W-channel, infile2 becomes X-channel,...
 	by default this will write an 'ambix simple' file (only full sets are accepted) 
@@ -15,7 +15,7 @@ ambix_interleave -o <outfile> [-O <order>] [-X <matrixfile>] <infile1> [<infile2
 	if 'matrix' is specified, all inchannels not needed to reconstruct to a full set are 'extrachannels'
 	if both 'order' and 'matrix' are specified they must match
 
-ambix_deinterleave <infile>
+ambix-deinterleave <infile>
 	split an ambix file into ambi/non-ambi data
 	split an ambi file into separate channels (decoded)
 	if the 'infile' is called 'data.caf',
@@ -23,11 +23,19 @@ ambix_deinterleave <infile>
 	where the number for ambisonics channels is the ACN (ambisonics channel number (starting from 0))
 	and the numbers for extra channels start at 0
 
-ambix_jplay <infile>
+ambix-jplay <infile>
 	playback an ambix file via jack
 	jack channels are called "ambisonics_%02d" and "extra_%02d"
 	reduced sets are always expanded to full sets
+  Disclaimer: this is a port of jack.play from jack-tools
+	Copyright (c) 2003-2010, Rohan Drape
+	Copyright (c) 2012, IOhannes m zmölnig, IEM
+	Licensed under the GPL-2 (or later)
 
-ambix_jrec [-O <order>] [-X <matrixfile>] <outfile>
-	record an ambix file via jack (for options see ambix_interleave)
+ambix-jrec [-O <order>] [-X <matrixfile>] [-x <#extrachannels>] <outfile>
+	record an ambix file via jack (for options see ambix-interleave)
+  Disclaimer: this is a port of jack.rec from jack-tools
+	Copyright (c) 2003-2010, Rohan Drape
+	Copyright (c) 2012, IOhannes m zmölnig, IEM
+	Licensed under the GPL-2 (or later)
 
