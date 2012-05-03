@@ -323,4 +323,25 @@ void _ambix_print_info(const ambix_info_t*info);
 
 #define MARK() printf("%s:%d[%s]\n", __FILE__, __LINE__, __FUNCTION__)
 
+
+
+/** @brief create a diagonal matrix from a vector
+ * @param orgmatrix pointer to the matrix object that will hold the result or NULL
+ * @param diag array of count floats that will form the diagonal vector
+ * @param count number of elements in diag
+ * @return pointer to the resulting diagonal matrix, or NULL in case something went wrong
+ */
+ambix_matrix_t*_matrix_diag(ambix_matrix_t*orgmatrix, const float32_t*diag, uint32_t count);
+
+/** @brief create a permutation matrix
+ * @param orgmatrix pointer to the matrix object that will hold the result or NULL
+ * @param route permutation vector (if(route[1]==4)then{row#1 of output matrix will be [0 0 0 0 1 0 ...]}
+ * @param count number of elements in route
+ * @param transpose whether the result should be transposed (swapped rows and colums)
+ * @return pointer to the resulting permutation matrix, or NULL in case something went wrong
+ */
+ambix_matrix_t*_matrix_router(ambix_matrix_t*orgmatrix, const float32_t*route, uint32_t count, int transpose);
+
+
+
 #endif /* AMBIX_PRIVATE_H */

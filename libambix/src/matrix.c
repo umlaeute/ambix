@@ -29,9 +29,6 @@
 
 #include <math.h>
 
-static ambix_matrix_t*_matrix_diag(ambix_matrix_t*orgmatrix, const float32_t*diag, uint32_t count);
-static ambix_matrix_t*_matrix_router(ambix_matrix_t*orgmatrix, const float32_t*route, uint32_t count, int swap);
-
 static void _matrix_sid2acn(float32_t*data, uint32_t count);
 
 ambix_matrix_t*
@@ -408,7 +405,7 @@ MTXMULTIPLY_DATA_INT(int32);
  */
 
 
-static ambix_matrix_t*_matrix_diag(ambix_matrix_t*orgmatrix, const float32_t*diag, uint32_t count) {
+ambix_matrix_t*_matrix_diag(ambix_matrix_t*orgmatrix, const float32_t*diag, uint32_t count) {
   uint32_t i;
   ambix_matrix_t*matrix=ambix_matrix_init(count, count, orgmatrix);
   for(i=0; i<count; i++)
@@ -416,7 +413,7 @@ static ambix_matrix_t*_matrix_diag(ambix_matrix_t*orgmatrix, const float32_t*dia
 
   return matrix;
 }
-static ambix_matrix_t*_matrix_router(ambix_matrix_t*orgmatrix, const float32_t*route, uint32_t count, int swap) {
+ambix_matrix_t*_matrix_router(ambix_matrix_t*orgmatrix, const float32_t*route, uint32_t count, int swap) {
   uint32_t i;
   ambix_matrix_t*matrix=NULL;
   for(i=0; i<count; i++) {
