@@ -269,9 +269,9 @@ int signal_proc(jack_nframes_t nframes, void *PTR)
   return 0;
 }
 
-void usage(void)
+void usage(const char*filename)
 {
-  eprintf("Usage: jack.play [ options ] sound-file...\n");
+  eprintf("Usage: %s [ options ] sound-file...\n", filename);
   eprintf("    -b N : Ring buffer size in frames (default=4096).\n");
 #ifdef HAVE_SAMPLERATE
   eprintf("    -c N : ID of conversion algorithm (default=2, SRC_SINC_FASTEST).\n");
@@ -474,7 +474,7 @@ int main(int argc, char *argv[])
       o.converter = (int)strtol(optarg, NULL, 0);
       break;
     case 'h':
-      usage ();
+      usage (argv[0]);
       break;
 #ifdef HAVE_AMBIX_SEEK
     case 'i':
@@ -502,13 +502,13 @@ int main(int argc, char *argv[])
       o.unique_name = false;
       break;
     default:
-      usage ();
       eprintf("ambix-jplay: illegal option, %c\n", c);
+      usage (argv[0]);
       break;
     }
   }
   if(optind > argc - 1) {
-    usage ();
+    usage (argv[0]);
   }
   int i;
   for(i = optind; i < argc; i++) {
