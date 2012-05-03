@@ -2,4 +2,10 @@ AUTOMAKE_OPTIONS = foreign
 ACLOCAL_AMFLAGS = -I m4
 
 
-SUBDIRS=libambix utils
+SUBDIRS=libambix \
+	utils \
+	doc
+
+if DISABLED
+SUBDIRS+=pd
+endif
