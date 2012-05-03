@@ -29,7 +29,6 @@
 
 #include <math.h>
 
-static void _matrix_sid2acn(float32_t*data, uint32_t count);
 
 ambix_matrix_t*
 ambix_matrix_create(void) {
@@ -430,28 +429,4 @@ ambix_matrix_t*_matrix_router(ambix_matrix_t*orgmatrix, const float32_t*route, u
       matrix->data[i][o]=1.;
   }
   return matrix;
-}
-
-
-
-static void _matrix_sid2acn(float32_t*data, uint32_t count) {
-  float32_t*datap=data;
-  int32_t order=ambix_channels2order(count);
-  int32_t o;
-  if(order<0)return;
-
-  for(o=0; o<=order; o++) {
-    uint32_t offset=o>0?ambix_order2channels(o-1):0;
-    uint32_t maxindex=ambix_order2channels(o)-offset;
-
-    int32_t incr=2;
-    int32_t index;
-
-    for(index=1; index<maxindex; index+=2) {
-      *datap++=index+offset;
-    }
-    for(index=maxindex-1; index>=0; index-=2) {
-      *datap++=index+offset;
-    }
-  }
 }

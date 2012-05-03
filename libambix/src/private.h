@@ -344,4 +344,11 @@ ambix_matrix_t*_matrix_router(ambix_matrix_t*orgmatrix, const float32_t*route, u
 
 
 
+/** @brief calculate the permutation vector to convert from SID to ACN
+ * @param data caller-allocated array of count elements that will hold the result
+ * @param count number of elements in data
+ * @result 1 on success, 0 if something went wrong (in which case the content of data is undefined
+ */
+int _matrix_sid2acn(float32_t*data, uint32_t count);
+
 #endif /* AMBIX_PRIVATE_H */

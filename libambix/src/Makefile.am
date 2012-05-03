@@ -10,6 +10,7 @@ libambix_la_LIBADD  = $(LIBM)
 
 libambix_la_SOURCES = libambix.c \
 	adaptor.c \
+	adaptor_acn.c \
 	matrix.c \
 	utils.c \
 	uuid_chunk.c \
