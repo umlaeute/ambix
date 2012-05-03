@@ -44,17 +44,35 @@
 #endif /* HAVE_SAMPLERATE */
 
 
-//#include "jcommon/failure.h"
 //#include "jcommon/file.h"
 //#include "jcommon/int.h"
 //#include "jcommon/jack-client.h"
-//#include "jcommon/jack-ringbuffer.h"
+#include "jcommon/jack-ringbuffer.h"
+#include "jcommon/common.h"
 //#include "jcommon/jack-port.h"
 //#include "jcommon/jack-transport.h"
 //#include "jcommon/memory.h"
 //#include "jcommon/observe-signal.h"
 //#include "jcommon/print.h"
 //#include "jcommon/sound-file.h"
+
+#include <stdlib.h>
+
+
+jack_client_t *jack_client_unique_store(char *name)
+{
+  int n = (int)getpid();
+  char uniq[64];
+  snprintf(uniq, 64, "%s-%d", name, n);
+  strncpy(name,uniq,64);
+  jack_client_t *client = jack_client_open(uniq,JackNullOption,NULL);
+  if(! client) {
+    eprintf("jack_client_open() failed: %s\n", uniq);
+    FAILURE;
+  }
+  return client;
+}
+
 
 
 struct player_opt
@@ -72,15 +90,21 @@ struct player_opt
   char client_name[64];
 };
 
+static void interleave_data(float*a_buffer, int a_channels, float*e_buffer, int e_channels, float*d_buffer, int nsamples) {
+#warning interleave a_buffer+e_buffer into d_buffer
+
+}
+
 struct player
 {
   int buffer_bytes;
   int buffer_samples;
-  float *d_buffer;
-  float *j_buffer;
+  float *a_buffer, *e_buffer; /* ambix channels, extra channels */
+  float *d_buffer; /* interleaved channels */
+  float *j_buffer; /* re-sampled channels */
   float *k_buffer;
-  SNDFILE *sound_file;
-  int channels;
+  ambix_t *sound_file;
+  int channels, a_channels, e_channels;
   jack_port_t **output_port;
   float **out;
   jack_ringbuffer_t *rb;
@@ -130,18 +154,21 @@ void *disk_proc(void *PTR)
 
     int nframes =(nbytes / sizeof(float))/ d->channels;
     int nsamples = nframes * d->channels;
-    sf_count_t err = xsf_read_float(d->sound_file,
-                                    d->d_buffer,
-                                    (sf_count_t)nsamples);
+    int64_t err = ambix_readf_float32(d->sound_file,
+                                      d->a_buffer,
+                                      d->e_buffer,
+                                      nsamples);
     if(err == 0) {
       if(d->o.transport_aware) {
-        memset(d->d_buffer, 0, nsamples * sizeof(float));
+        memset(d->a_buffer, 0, nsamples * sizeof(float));
+        memset(d->e_buffer, 0, nsamples * sizeof(float));
         err = nsamples;
       } else {
         return NULL;
       }
     }
 
+    interleave_data(d->a_buffer, d->a_channels, d->e_buffer, d->e_channels, d->d_buffer, nsamples);
     /* Write data to ring buffer. */
 
     jack_ringbuffer_write(d->rb,
@@ -322,9 +349,15 @@ int jackplay(const char *file_name,
 
   /* Open sound file. */
 
-  SF_INFO sfinfo;
-  d.sound_file = xsf_open(file_name, SFM_READ, &sfinfo);
-  d.channels = sfinfo.channels;
+  ambix_info_t ambixinfo;
+  memset(&ambixinfo, 0, sizeof(ambixinfo));
+  ambixinfo.fileformat=AMBIX_BASIC;
+  d.sound_file = ambix_open(file_name, AMBIX_READ, &ambixinfo);
+
+  d.a_channels = ambixinfo.ambichannels;
+  d.e_channels = ambixinfo.extrachannels;
+
+  d.channels = d.a_channels + d.e_channels;
 
   /* Allocate channel based data. */
 
@@ -401,7 +434,7 @@ int jackplay(const char *file_name,
   /* Inform the user of sample-rate mismatch. */
 
   int osr = jack_get_sample_rate(d.client);
-  int isr = sfinfo.samplerate;
+  int isr = ambixinfo.samplerate;
   if(osr != isr) {
     d.o.src_ratio *= (osr / isr);
     eprintf("ambix-jplay: resampling, sample rate of file != server, %d != %d\n",
