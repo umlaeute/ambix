@@ -167,8 +167,9 @@ void *disk_proc(void *PTR)
                                       nframes);
     if(err == 0) {
       if(d->o.transport_aware) {
-        memset(d->a_buffer, 0, nsamples * sizeof(float32_t));
-        memset(d->e_buffer, 0, nsamples * sizeof(float32_t));
+        memset(d->a_buffer, 0, nframes * d->a_channels * sizeof(float32_t));
+        memset(d->e_buffer, 0, nframes * d->e_channels * sizeof(float32_t));
+        memset(d->d_buffer, 0, nsamples * sizeof(float));
         err = nframes;
       } else {
         return NULL;
