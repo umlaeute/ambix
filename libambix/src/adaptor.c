@@ -100,7 +100,7 @@ _AMBIX_SPLITADAPTOR(int16);
         *dest_ambi++=sum;                                               \
       }                                                                 \
       for(inchan=rawambichannels; inchan<sourcechannels; inchan++)      \
-        *dest_other++=*src++;                                           \
+        *dest_other++=src[inchan];                                      \
     }                                                                   \
     return AMBIX_ERR_SUCCESS;                                           \
   }
