@@ -351,4 +351,12 @@ ambix_matrix_t*_matrix_router(ambix_matrix_t*orgmatrix, const float32_t*route, u
  */
 int _matrix_sid2acn(float32_t*data, uint32_t count);
 
+/** @brief calculate the adaptor matrix to convert from FuMa to standard matrices
+ * @param channels number of Furse-Malham channels that need to be converted to standard set (3, 4, 5, 6, 7, 8, 9, 11, 16)
+ * @result an adaptor matrix (or NULL in case of failure); it's the responsibility of the caller to free the matrix
+ * @see http://members.tripod.com/martin_leese/Ambisonic/B-Format_file_format.html
+ */
+ambix_matrix_t*_matrix_fuma2ambix(unsigned int channels);
+
+
 #endif /* AMBIX_PRIVATE_H */

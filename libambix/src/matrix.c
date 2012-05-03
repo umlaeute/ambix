@@ -229,6 +229,7 @@ ambix_matrix_fill(ambix_matrix_t*matrix, ambix_matrixtype_t typ) {
   int32_t r, c;
   float32_t**mtx=matrix->data;
   const float32_t sqrt2=sqrt(2);
+  ambix_matrix_t*result=NULL;
 
   switch(typ) {
   default:
@@ -252,89 +253,15 @@ ambix_matrix_fill(ambix_matrix_t*matrix, ambix_matrixtype_t typ) {
     }
     break;
 
-  case (AMBIX_MATRIX_FUMA): do { /* Furse Malham -> ACN/SN3D */
-#warning fix matrix_type for FuMa2ambix
-    ambix_matrix_t*result=NULL, *weightm=NULL, *routem=NULL, *reducem=NULL;
-
-    switch(cols) {
-    case  3: /* h   = 1st order 2-D */
-      if(4==rows) {
-        float32_t weights[]={1.4142f, 1.f, 1.f, 1.f};
-        float32_t ordering[4];
-        weights[0]=sqrt2;
-        _matrix_sid2acn(ordering, sizeof(ordering)/sizeof(*ordering));
-
-        weightm=_matrix_diag(NULL, weights, sizeof(weights)/sizeof(*weights));
-        routem =_matrix_router(NULL, ordering, sizeof(ordering)/sizeof(*ordering), 0);
-        reducem=ambix_matrix_init(rows, cols, NULL);
-        reducem=ambix_matrix_fill(reducem, AMBIX_MATRIX_IDENTITY);
-      }
-      break;
-    case  4: /* f   = 1st order 3-D */
-      if(4==rows) {
-        float32_t weights[]={1.4142f, 1.f, 1.f, 1.f};
-        float32_t ordering[4];
-        weights[0]=sqrt2;
-        _matrix_sid2acn(ordering, sizeof(ordering)/sizeof(*ordering));
-
-        weightm=_matrix_diag(NULL, weights, sizeof(weights)/sizeof(*weights));
-        routem =_matrix_router(NULL, ordering, sizeof(ordering)/sizeof(*ordering), 0);
-        reducem=ambix_matrix_init(rows, cols, NULL);
-        reducem=ambix_matrix_fill(reducem, AMBIX_MATRIX_IDENTITY);
-      }
-      break;
-    case  5: /* hh  = 2nd order 2-D */
-      if(9==rows) {
-      }
-      break;
-    case  6: /* fh  = 2nd order 2-D + 1st order 3-D (formerly called 2.5 order) */
-      if(9==rows) {
-      }
-      break;
-    case  7: /* hhh = 3rd order 2-D */
-      if(16==rows) {
-      }
-      break;
-    case  8: /* fhh = 3rd order 2-D + 1st order 3-D */
-      if(16==rows) {
-      }
-      break;
-    case  9: /* ff  = 2nd order 3-D */
-      if(9==rows) {
-        float32_t ordering[9];
-        _matrix_sid2acn(ordering, sizeof(ordering)/sizeof(*ordering));
-        routem =_matrix_router(NULL, ordering, sizeof(ordering)/sizeof(*ordering), 0);
-
-      }
-      break;
-    case 11: /* ffh = 3rd order 2-D + 2nd order 3-D */
-      if(16==rows) {
-      }
-      break;
-    case 16: /* fff = 3rd order 3-D */
-      if(16==rows) {
-        float32_t ordering[16];
-        _matrix_sid2acn(ordering, sizeof(ordering)/sizeof(*ordering));
-        routem =_matrix_router(NULL, ordering, sizeof(ordering)/sizeof(*ordering), 0);
-      }
-      break;
-    default:break;
+  case (AMBIX_MATRIX_FUMA): /* Furse Malham -> ACN/SN3D */
+    result=_matrix_fuma2ambix(cols);
+    if(result) {
+      matrix=ambix_matrix_copy(result, matrix);
     }
-    if(weightm&&routem&&reducem) {
-      ambix_matrix_t*m0=ambix_matrix_multiply(weightm, routem, NULL);
-      if(m0) {
-        result=ambix_matrix_multiply(m0, reducem, matrix);
-        ambix_matrix_destroy(m0);
-      }
-    }
-    if(weightm) ambix_matrix_destroy(weightm);
-    if(routem) ambix_matrix_destroy(routem);
-    if(reducem) ambix_matrix_destroy(reducem);
-
-    return(result);
-  } while(0);
-
+    break;
   }
+  if(result) ambix_matrix_destroy(result);
+
   return matrix;
 }
 
