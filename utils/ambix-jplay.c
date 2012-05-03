@@ -108,7 +108,7 @@ void *disk_proc(void *PTR)
       sf_count_t err = sf_seek(d->sound_file,
 			       (sf_count_t)d->o.seek_request, SEEK_SET);
       if(err == -1) {
-	eprintf("jack.play: seek request failed, %ld\n",
+	eprintf("ambix-jplay: seek request failed, %ld\n",
 		(long)d->o.seek_request);
       }
       d->o.seek_request = -1;
@@ -123,7 +123,7 @@ void *disk_proc(void *PTR)
     /* Do not overflow the local buffer. */
 
     if(nbytes > d->buffer_bytes) {
-      eprintf("jack.play: impossible condition, write space.\n");
+      eprintf("ambix-jplay: impossible condition, write space.\n");
       nbytes = d->buffer_bytes;
     }
 
@@ -188,7 +188,7 @@ int signal_proc(jack_nframes_t nframes, void *PTR)
   /* Ensure the period size is workable. */
 
   if(nbytes >= d->buffer_bytes) {
-    eprintf("jack.play: period size exceeds limit\n");
+    eprintf("ambix-jplay: period size exceeds limit\n");
     FAILURE;
     return 1;
   }
@@ -222,7 +222,7 @@ int signal_proc(jack_nframes_t nframes, void *PTR)
 				(long)nframes,
 				d->j_buffer);
   if(err==0) {
-    eprintf("jack.play: sample rate converter failed: %s\n",
+    eprintf("ambix-jplay: sample rate converter failed: %s\n",
 	    src_strerror(src_error(d->src)));
     FAILURE;
   }
@@ -245,7 +245,7 @@ int signal_proc(jack_nframes_t nframes, void *PTR)
      action. */
 
   if(err < nframes) {
-    eprintf("jack.play: disk thread late (%ld < %d)\n", err, nframes);
+    eprintf("ambix-jplay: disk thread late (%ld < %d)\n", err, nframes);
     for(i = err; i < nframes; i++) {
       for(j = 0; j < d->channels; j++) {
 	d->out[j][i] = 0.0;
@@ -306,7 +306,7 @@ long read_input_from_rb(void *PTR, float **buf)
 
   /* SRC locks up if we return zero here, return a silent frame */
   if(err==0) {
-    eprintf("jack.play: ringbuffer empty... zeroing data\n");
+    eprintf("ambix-jplay: ringbuffer empty... zeroing data\n");
     memset(d->k_buffer, 0, (size_t)nsamples * sizeof(float));
     err = d->o.rb_request_frames;
   }
@@ -330,7 +330,7 @@ int jackplay(const char *file_name,
   /* Allocate channel based data. */
 
   if(d.channels < 1) {
-    eprintf("jack.play: illegal number of channels in file: %d\n",
+    eprintf("ambix-jplay: illegal number of channels in file: %d\n",
 	    d.channels);
     FAILURE;
   }
@@ -355,7 +355,7 @@ int jackplay(const char *file_name,
 			    &err,
 			    &d);
   if(!d.src) {
-    eprintf("jack.play: sample rate conversion setup failed: %s\n",
+    eprintf("ambix-jplay: sample rate conversion setup failed: %s\n",
 	    src_strerror(err));
     FAILURE;
   }
@@ -376,7 +376,7 @@ int jackplay(const char *file_name,
     d.client = jack_client_open(d.o.client_name,JackNullOption,NULL);
   }
   if(!d.client) {
-    eprintf("jack.play: could not create jack client: %s", d.o.client_name);
+    eprintf("ambix-jplay: could not create jack client: %s", d.o.client_name);
     FAILURE;
   }
 
@@ -405,7 +405,7 @@ int jackplay(const char *file_name,
   int isr = sfinfo.samplerate;
   if(osr != isr) {
     d.o.src_ratio *= (osr / isr);
-    eprintf("jack.play: resampling, sample rate of file != server, %d != %d\n",
+    eprintf("ambix-jplay: resampling, sample rate of file != server, %d != %d\n",
 	    isr,
 	    osr);
   }
@@ -463,7 +463,7 @@ int main(int argc, char *argv[])
 #ifdef HAVE_SAMPLERATE
   o.converter = SRC_SINC_FASTEST;
 #endif /* HAVE_SAMPLERATE */
-  strncpy(o.client_name, "jack.play", 64);
+  strncpy(o.client_name, "ambix-jplay", 64);
 
   while((c = getopt(argc, argv, "b:c:hi:m:n:q:r:tu")) != -1) {
     switch(c) {
@@ -502,8 +502,8 @@ int main(int argc, char *argv[])
       o.unique_name = false;
       break;
     default:
-      eprintf("jack.play: illegal option, %c\n", c);
       usage ();
+      eprintf("ambix-jplay: illegal option, %c\n", c);
       break;
     }
   }
@@ -512,7 +512,7 @@ int main(int argc, char *argv[])
   }
   int i;
   for(i = optind; i < argc; i++) {
-    printf("jack.play: %s\n", argv[i]);
+    printf("ambix-jplay: %s\n", argv[i]);
     jackplay(argv[i], o);
   }
   return EXIT_SUCCESS;
