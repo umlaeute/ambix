@@ -90,16 +90,23 @@ struct player_opt
   char client_name[64];
 };
 
-static void interleave_data(float*a_buffer, int a_channels, float*e_buffer, int e_channels, float*d_buffer, int nsamples) {
+static void interleave_data(float32_t*source1, uint32_t source1channels, float32_t*source2, uint32_t source2channels, float*destination, int64_t frames) {
 #warning interleave a_buffer+e_buffer into d_buffer
-
+  int64_t frame;
+  for(frame=0; frame<frames; frame++) {
+    uint32_t chan;
+    for(chan=0; chan<source1channels; chan++)
+      *destination++=*source1++;
+    for(chan=0; chan<source2channels; chan++)
+      *destination++=*source2++;
+  }                    
 }
 
 struct player
 {
   int buffer_bytes;
   int buffer_samples;
-  float *a_buffer, *e_buffer; /* ambix channels, extra channels */
+  float32_t *a_buffer, *e_buffer; /* ambix channels, extra channels */
   float *d_buffer; /* interleaved channels */
   float *j_buffer; /* re-sampled channels */
   float *k_buffer;
@@ -141,12 +148,14 @@ void *disk_proc(void *PTR)
     /* Wait for write space at the ring buffer. */
 
     int nbytes = d->o.minimal_frames * sizeof(float) * d->channels;
+    eprintf("nbytes=%d=%d*%d*%d\n", (int)nbytes, (int)d->o.minimal_frames, (int)sizeof(float), (int)d->channels);
     nbytes = jack_ringbuffer_wait_for_write(d->rb, nbytes, d->pipe[0]);
+    eprintf("jack ringbuffer  returned %d nbytes\n", nbytes);
 
     /* Do not overflow the local buffer. */
 
     if(nbytes > d->buffer_bytes) {
-      eprintf("ambix-jplay: impossible condition, write space.\n");
+      eprintf("ambix-jplay: impossible condition, write space (%d > %d).\n", (int)nbytes, (int)d->buffer_bytes);
       nbytes = d->buffer_bytes;
     }
 
@@ -157,23 +166,23 @@ void *disk_proc(void *PTR)
     int64_t err = ambix_readf_float32(d->sound_file,
                                       d->a_buffer,
                                       d->e_buffer,
-                                      nsamples);
+                                      nframes);
     if(err == 0) {
       if(d->o.transport_aware) {
-        memset(d->a_buffer, 0, nsamples * sizeof(float));
-        memset(d->e_buffer, 0, nsamples * sizeof(float));
-        err = nsamples;
+        memset(d->a_buffer, 0, nsamples * sizeof(float32_t));
+        memset(d->e_buffer, 0, nsamples * sizeof(float32_t));
+        err = nframes;
       } else {
         return NULL;
       }
     }
 
-    interleave_data(d->a_buffer, d->a_channels, d->e_buffer, d->e_channels, d->d_buffer, nsamples);
+    interleave_data(d->a_buffer, d->a_channels, d->e_buffer, d->e_channels, d->d_buffer, err);
     /* Write data to ring buffer. */
 
     jack_ringbuffer_write(d->rb,
                           (char *)d->d_buffer,
-                          (size_t)err * sizeof(float));
+                          (size_t)(err*d->channels) * sizeof(float));
   }
 
   return NULL;
@@ -340,6 +349,17 @@ long read_input_from_rb(void *PTR, float **buf)
   return (long)err;
 }
 
+static jack_port_t*_jack_port_register(jack_client_t *client, int direction, const char*format, int n) {
+  char name[64];
+  jack_port_t*port;
+  snprintf(name, 64, format, n);
+  port = jack_port_register(client, name, JACK_DEFAULT_AUDIO_TYPE, direction, 0);
+  if(!port) {
+    eprintf("jack_port_register() failed at %s\n", name);
+    FAILURE;
+  }
+  return port;
+}
 int jackplay(const char *file_name,
              struct player_opt o)
 {
@@ -353,6 +373,8 @@ int jackplay(const char *file_name,
   memset(&ambixinfo, 0, sizeof(ambixinfo));
   ambixinfo.fileformat=AMBIX_BASIC;
   d.sound_file = ambix_open(file_name, AMBIX_READ, &ambixinfo);
+
+  eprintf("ambixchannels=%d\textrachannels=%d\n", ambixinfo.ambichannels, ambixinfo.extrachannels);
 
   d.a_channels = ambixinfo.ambichannels;
   d.e_channels = ambixinfo.extrachannels;
@@ -373,6 +395,12 @@ int jackplay(const char *file_name,
 
   d.buffer_samples = d.o.buffer_frames * d.channels;
   d.buffer_bytes = d.buffer_samples * sizeof(float);
+
+  d.a_buffer = xmalloc(d.o.buffer_frames * d.a_channels * sizeof(float32_t));
+  d.e_buffer = xmalloc(d.o.buffer_frames * d.e_channels * sizeof(float32_t));
+
+  eprintf("%d*%d*(%d|%d) ... %d\n", (int)d.o.buffer_frames, (int)sizeof(float32_t), (int)d.a_channels, (int)d.e_channels, (int)d.buffer_bytes);
+
   d.d_buffer = xmalloc(d.buffer_bytes);
   d.j_buffer = xmalloc(d.buffer_bytes);
   d.k_buffer = xmalloc(d.buffer_bytes);
@@ -444,16 +472,32 @@ int jackplay(const char *file_name,
 
   /* Create output ports, connect if env variable set and activate
      client. */
+  //  jack_port_make_standard(d.client, d.output_port, d.channels, true);
+  do {
+    int i=0, a, e;
+    for(a=0; a<d.a_channels; a++) {
+      d.output_port[i] = _jack_port_register(d.client, JackPortIsOutput, "ACN_%d", a+1);
+      i++;
+    }
+    for(e=0; e<d.e_channels; e++) {
+      d.output_port[i] = _jack_port_register(d.client, JackPortIsOutput, "out_%d", e+1);
+      i++;
+    }
+  } while(0);
 
-  jack_port_make_standard(d.client, d.output_port, d.channels, true);
-  jack_client_activate(d.client);
+
+  if(jack_activate(d.client)) {
+    eprintf("jack_activate() failed\n");
+    FAILURE;
+  }
+#if 0
   char *dst_pattern = getenv("JACK_PLAY_CONNECT_TO");
   if (dst_pattern) {
     char src_pattern[128];
     snprintf(src_pattern,128,"%s:out_%%d",d.o.client_name);
     jack_port_connect_pattern(d.client,d.channels,src_pattern,dst_pattern);
   }
-
+#endif
   /* Wait for disk thread to end, which it does when it reaches the
      end of the file or is interrupted. */
 
@@ -463,7 +507,7 @@ int jackplay(const char *file_name,
      pipe, free data buffers, indicate success. */
 
   jack_client_close(d.client);
-  sf_close(d.sound_file);
+  ambix_close(d.sound_file);
   jack_ringbuffer_free(d.rb);
   close(d.pipe[0]);
   close(d.pipe[1]);
