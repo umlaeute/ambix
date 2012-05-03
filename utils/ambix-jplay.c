@@ -91,7 +91,6 @@ struct player_opt
 };
 
 static void interleave_data(float32_t*source1, uint32_t source1channels, float32_t*source2, uint32_t source2channels, float*destination, int64_t frames) {
-#warning interleave a_buffer+e_buffer into d_buffer
   int64_t frame;
   for(frame=0; frame<frames; frame++) {
     uint32_t chan;
@@ -99,7 +98,7 @@ static void interleave_data(float32_t*source1, uint32_t source1channels, float32
       *destination++=*source1++;
     for(chan=0; chan<source2channels; chan++)
       *destination++=*source2++;
-  }                    
+  }
 }
 
 struct player
@@ -148,13 +147,12 @@ void *disk_proc(void *PTR)
     /* Wait for write space at the ring buffer. */
 
     int nbytes = d->o.minimal_frames * sizeof(float) * d->channels;
-    eprintf("nbytes=%d=%d*%d*%d\n", (int)nbytes, (int)d->o.minimal_frames, (int)sizeof(float), (int)d->channels);
     nbytes = jack_ringbuffer_wait_for_write(d->rb, nbytes, d->pipe[0]);
-    eprintf("jack ringbuffer  returned %d nbytes\n", nbytes);
 
     /* Do not overflow the local buffer. */
 
     if(nbytes > d->buffer_bytes) {
+      // this happens whenever buffer_bytes is not power-of-two
       eprintf("ambix-jplay: impossible condition, write space (%d > %d).\n", (int)nbytes, (int)d->buffer_bytes);
       nbytes = d->buffer_bytes;
     }
@@ -222,8 +220,8 @@ int signal_proc(jack_nframes_t nframes, void *PTR)
 
   /* Ensure the period size is workable. */
 
-  if(nbytes >= d->buffer_bytes) {
-    eprintf("ambix-jplay: period size exceeds limit\n");
+  if(nbytes > d->buffer_bytes) {
+    eprintf("ambix-jplay: period size exceeds limit (%d > %d)\n", nbytes, d->buffer_bytes);
     FAILURE;
     return 1;
   }
@@ -374,8 +372,6 @@ int jackplay(const char *file_name,
   ambixinfo.fileformat=AMBIX_BASIC;
   d.sound_file = ambix_open(file_name, AMBIX_READ, &ambixinfo);
 
-  eprintf("ambixchannels=%d\textrachannels=%d\n", ambixinfo.ambichannels, ambixinfo.extrachannels);
-
   d.a_channels = ambixinfo.ambichannels;
   d.e_channels = ambixinfo.extrachannels;
 
@@ -399,11 +395,10 @@ int jackplay(const char *file_name,
   d.a_buffer = xmalloc(d.o.buffer_frames * d.a_channels * sizeof(float32_t));
   d.e_buffer = xmalloc(d.o.buffer_frames * d.e_channels * sizeof(float32_t));
 
-  eprintf("%d*%d*(%d|%d) ... %d\n", (int)d.o.buffer_frames, (int)sizeof(float32_t), (int)d.a_channels, (int)d.e_channels, (int)d.buffer_bytes);
-
   d.d_buffer = xmalloc(d.buffer_bytes);
   d.j_buffer = xmalloc(d.buffer_bytes);
   d.k_buffer = xmalloc(d.buffer_bytes);
+
   d.rb = jack_ringbuffer_create(d.buffer_bytes);
 
 #ifdef HAVE_SAMPLERATE
@@ -491,7 +486,13 @@ int jackplay(const char *file_name,
     FAILURE;
   }
 #if 0
-  char *dst_pattern = getenv("JACK_PLAY_CONNECT_TO");
+  char *dst_pattern = getenv("AMBIX_PLAY_CONNECT_ACN_TO");
+  if (dst_pattern) {
+    char src_pattern[128];
+    snprintf(src_pattern,128,"%s:ACN_%%d",d.o.client_name);
+    jack_port_connect_pattern(d.client,d.channels,src_pattern,dst_pattern);
+  }
+  dst_pattern = getenv("AMBIX_PLAY_CONNECT_EXTRA_TO");
   if (dst_pattern) {
     char src_pattern[128];
     snprintf(src_pattern,128,"%s:out_%%d",d.o.client_name);
@@ -507,17 +508,21 @@ int jackplay(const char *file_name,
      pipe, free data buffers, indicate success. */
 
   jack_client_close(d.client);
-  ambix_close(d.sound_file);
-  jack_ringbuffer_free(d.rb);
-  close(d.pipe[0]);
-  close(d.pipe[1]);
-  free(d.d_buffer);
-  free(d.j_buffer);
-  free(d.k_buffer);
-  free(d.out);
-  free(d.output_port);
+  ambix_close(d.sound_file);d.sound_file=NULL;
+  jack_ringbuffer_free(d.rb);d.rb=NULL;
+  close(d.pipe[0]);d.pipe[0]=-1;
+  close(d.pipe[1]);d.pipe[1]=-1;
+
+  free(d.d_buffer);d.d_buffer=NULL;
+  free(d.a_buffer);d.a_buffer=NULL;
+  free(d.e_buffer);d.e_buffer=NULL;
+
+  free(d.j_buffer);d.j_buffer=NULL;
+  free(d.k_buffer);d.k_buffer=NULL;
+  free(d.out);     d.out   =NULL;
+  free(d.output_port);d.output_port=NULL;
 #ifdef HAVE_SAMPLERATE
-  src_delete(d.src);
+  src_delete(d.src);d.src=NULL;
 #endif /* HAVE_SAMPLERATE */
   return 0;
 }
@@ -588,7 +593,7 @@ int main(int argc, char *argv[])
   }
   int i;
   for(i = optind; i < argc; i++) {
-    printf("ambix-jplay: %s\n", argv[i]);
+    printf("%s: %s\n", argv[0], argv[i]);
     jackplay(argv[i], o);
   }
   return EXIT_SUCCESS;
