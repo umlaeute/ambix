@@ -21,6 +21,10 @@
    License along with this program; if not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef JCOMMON_COMMON_H
+#define JCOMMON_COMMON_H
+
+#include <jack/jack.h>
 
 
 #ifndef FAILURE
@@ -29,23 +33,19 @@
 
 #define eprintf(...) fprintf(stderr,__VA_ARGS__)
 
-static void *xmalloc(size_t size)
-{
-  void *p = malloc(size);
-  if(p == NULL) {
-    fprintf(stderr, "malloc() failed: %ld\n", (long)size);  
-    FAILURE;
-  }
-  return p;
-}
+void *xmalloc(size_t size);
+int xpipe(int filedes[2]);
+ssize_t xwrite(int filedes, const void *buffer, size_t size);
+ssize_t xread(int filedes, void *buffer, size_t size);
 
-static void jack_client_minimal_error_handler(const char *desc)
-{
-  eprintf("jack error: %s\n", desc);
-}
 
-static void jack_client_minimal_shutdown_handler(void *arg)
-{
-  eprintf("jack shutdown\n");
-  FAILURE;
-}
+
+
+
+void jack_client_minimal_error_handler(const char *desc);
+void jack_client_minimal_shutdown_handler(void *arg);
+int jack_transport_is_rolling(jack_client_t *client);
+
+
+
+#endif /* JCOMMON_COMMON_H */
