@@ -18,8 +18,21 @@
 
    You should have received a copy of the GNU Lesser General Public
    License along with this program; if not, see <http://www.gnu.org/licenses/>.
-
 */
+
+/*
+#chan|fuma|   type     | xy | z | channels         | done
+  3 	h 	  horizontal 	  1 	0 	WXY                 X
+  4 	f 	  full-sphere 	1 	1 	WXYZ                X
+  5 	hh 	  horizontal   	2 	0 	WXYRS
+  6 	fh 	  mixed-order 	2 	1 	WXYZRS
+  9 	ff 	  full-sphere 	2 	2 	WXYZRSTUV           X
+  7 	hhh 	horizontal 	  3 	0 	WXYRSPQ
+  8 	fhh 	mixed-order 	3 	1 	WXYZRSPQ
+  11 	ffh 	mixed-order 	3 	2 	WXYZRSTUVPQ
+  16 	fff 	full-sphere 	3 	3 	WXYZRSTUVKLMNOPQ    X
+*/
+
 
 #include "private.h"
 
