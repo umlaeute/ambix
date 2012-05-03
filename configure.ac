@@ -12,7 +12,7 @@ AC_CONFIG_HEADERS([config.h])
 
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([libambix/Makefile libambix/src/Makefile libambix/tests/Makefile])
-AC_CONFIG_FILES([utils/Makefile])
+AC_CONFIG_FILES([utils/Makefile utils/jcommon/Makefile])
 AC_CONFIG_FILES([doc/Makefile])
 
 AC_CONFIG_FILES([pd/Makefile])
@@ -80,6 +80,31 @@ fi
 CFLAGS="$tmp_sndfile_CFLAGS"
 LIBS="$tmp_sndfile_LIBS"
 
+
+/* checks for jack */
+tmp_jack_CFLAGS="$CFLAGS"
+tmp_jack_LIBS="$LIBS"
+
+PKG_CHECK_MODULES([JACK], [jack], [have_jack="yes"], [])
+AM_CONDITIONAL(HAVE_JACK, [test "x$have_jack" = "xyes"])
+
+CFLAGS="$tmp_jack_CFLAGS"
+LIBS="$tmp_jack_LIBS"
+
+
+
+/* checks for samplerate */
+tmp_samplerate_CFLAGS="$CFLAGS"
+tmp_samplerate_LIBS="$LIBS"
+
+PKG_CHECK_MODULES([SAMPLERATE], [samplerate], [have_samplerate="yes"], [])
+AM_CONDITIONAL(HAVE_SAMPLERATE, [test "x$have_samplerate" = "xyes"])
+
+CFLAGS="$tmp_samplerate_CFLAGS"
+LIBS="$tmp_samplerate_LIBS"
+
+
+AX_PTHREAD
 
 
 AC_OUTPUT
