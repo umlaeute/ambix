@@ -19,7 +19,6 @@
 
    You should have received a copy of the GNU General Public
    License along with this program; if not, see <http://www.gnu.org/licenses/>.
-
 */
 
 
@@ -106,10 +105,10 @@ void *disk_proc(void *PTR)
     /* Handle seek request. */
     if(d->o.seek_request >= 0) {
       sf_count_t err = sf_seek(d->sound_file,
-			       (sf_count_t)d->o.seek_request, SEEK_SET);
+                               (sf_count_t)d->o.seek_request, SEEK_SET);
       if(err == -1) {
-	eprintf("ambix-jplay: seek request failed, %ld\n",
-		(long)d->o.seek_request);
+        eprintf("ambix-jplay: seek request failed, %ld\n",
+                (long)d->o.seek_request);
       }
       d->o.seek_request = -1;
     }
@@ -132,30 +131,30 @@ void *disk_proc(void *PTR)
     int nframes =(nbytes / sizeof(float))/ d->channels;
     int nsamples = nframes * d->channels;
     sf_count_t err = xsf_read_float(d->sound_file,
-				    d->d_buffer,
-				    (sf_count_t)nsamples);
+                                    d->d_buffer,
+                                    (sf_count_t)nsamples);
     if(err == 0) {
       if(d->o.transport_aware) {
-	memset(d->d_buffer, 0, nsamples * sizeof(float));
-	err = nsamples;
+        memset(d->d_buffer, 0, nsamples * sizeof(float));
+        err = nsamples;
       } else {
-	return NULL;
+        return NULL;
       }
     }
 
     /* Write data to ring buffer. */
 
     jack_ringbuffer_write(d->rb,
-			  (char *)d->d_buffer,
-			  (size_t)err * sizeof(float));
+                          (char *)d->d_buffer,
+                          (size_t)err * sizeof(float));
   }
 
   return NULL;
 }
 
 int sync_handler(jack_transport_state_t state,
-		 jack_position_t *position,
-		 void *PTR)
+                 jack_position_t *position,
+                 void *PTR)
 {
   struct player *d = PTR;
 #ifdef HAVE_AMBIX_SEEK
@@ -218,12 +217,12 @@ int signal_proc(jack_nframes_t nframes, void *PTR)
   /* Get data from sample rate converter, this returns the number of
      frames acquired. */
   long err = src_callback_read (d->src,
-				d->o.src_ratio,
-				(long)nframes,
-				d->j_buffer);
+                                d->o.src_ratio,
+                                (long)nframes,
+                                d->j_buffer);
   if(err==0) {
     eprintf("ambix-jplay: sample rate converter failed: %s\n",
-	    src_strerror(src_error(d->src)));
+            src_strerror(src_error(d->src)));
     FAILURE;
   }
 #else
@@ -248,7 +247,7 @@ int signal_proc(jack_nframes_t nframes, void *PTR)
     eprintf("ambix-jplay: disk thread late (%ld < %d)\n", err, nframes);
     for(i = err; i < nframes; i++) {
       for(j = 0; j < d->channels; j++) {
-	d->out[j][i] = 0.0;
+        d->out[j][i] = 0.0;
       }
     }
   }
@@ -299,8 +298,8 @@ long read_input_from_rb(void *PTR, float **buf)
   int nbytes = (size_t)nsamples * sizeof(float);
 
   int err = jack_ringbuffer_read(d->rb,
-				 (char *)d->k_buffer,
-				 nbytes);
+                                 (char *)d->k_buffer,
+                                 nbytes);
   err /= d->channels * sizeof(float);
   *buf = d->k_buffer;
 
@@ -331,7 +330,7 @@ int jackplay(const char *file_name,
 
   if(d.channels < 1) {
     eprintf("ambix-jplay: illegal number of channels in file: %d\n",
-	    d.channels);
+            d.channels);
     FAILURE;
   }
   d.out = xmalloc(d.channels * sizeof(float *));
@@ -350,13 +349,13 @@ int jackplay(const char *file_name,
   /* Setup sample rate conversion. */
   int err;
   d.src = src_callback_new (read_input_from_rb,
-			    d.o.converter,
-			    d.channels,
-			    &err,
-			    &d);
+                            d.o.converter,
+                            d.channels,
+                            &err,
+                            &d);
   if(!d.src) {
     eprintf("ambix-jplay: sample rate conversion setup failed: %s\n",
-	    src_strerror(err));
+            src_strerror(err));
     FAILURE;
   }
 #else
@@ -384,11 +383,11 @@ int jackplay(const char *file_name,
   /* Start disk thread, the priority number is a random guess.... */
 
   jack_client_create_thread (d.client,
-			     &(d.disk_thread),
-			     50,
-			     true,
-			     disk_proc,
-			     &d);
+                             &(d.disk_thread),
+                             50,
+                             true,
+                             disk_proc,
+                             &d);
 
   /* Set error, process and shutdown handlers. */
 
@@ -406,8 +405,8 @@ int jackplay(const char *file_name,
   if(osr != isr) {
     d.o.src_ratio *= (osr / isr);
     eprintf("ambix-jplay: resampling, sample rate of file != server, %d != %d\n",
-	    isr,
-	    osr);
+            isr,
+            osr);
   }
 
   /* Create output ports, connect if env variable set and activate
