@@ -97,7 +97,7 @@ LIBS="$tmp_jack_LIBS"
 tmp_samplerate_CFLAGS="$CFLAGS"
 tmp_samplerate_LIBS="$LIBS"
 
-PKG_CHECK_MODULES([SAMPLERATE], [samplerate], [have_samplerate="yes"], [])
+PKG_CHECK_MODULES([SAMPLERATE], [samplerate], [have_samplerate="yes"], [have_samplerate="no"])
 AM_CONDITIONAL(HAVE_SAMPLERATE, [test "x$have_samplerate" = "xyes"])
 
 CFLAGS="$tmp_samplerate_CFLAGS"
