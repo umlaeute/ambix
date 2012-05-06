@@ -7,16 +7,19 @@
 #include <string.h>
 #include <pthread.h>
 
-#include "common/failure.h"
-#include "common/file.h"
-#include "common/jack-client.h"
-#include "common/jack-port.h"
-#include "common/jack-ringbuffer.h"
-#include "common/memory.h"
-#include "common/observe-signal.h"
-#include "common/print.h"
-#include "common/signal-interleave.h"
-#include "common/sound-file.h"
+#include <ambix/ambix.h>
+
+//#include "common/failure.h"
+//#include "common/file.h"
+//#include "common/jack-client.h"
+//#include "common/jack-port.h"
+#include "jcommon/jack-ringbuffer.h"
+//#include "common/memory.h"
+//#include "common/observe-signal.h"
+//#include "common/print.h"
+//#include "common/signal-interleave.h"
+//#include "common/sound-file.h"
+#include "jcommon/common.h"
 
 struct recorder
 {
@@ -32,8 +35,7 @@ struct recorder
   float *j_buffer;
   float *u_buffer;
   int file_format;
-  SNDFILE **sound_file;
-  int multiple_sound_files;
+  ambix_t **sound_file;
   int channels;
   jack_port_t **input_port;
   float **in;
@@ -44,22 +46,11 @@ struct recorder
 
 void write_to_disk(struct recorder *d, int nframes)
 {
-  if(d->multiple_sound_files) {
-    float *p = d->u_buffer;
-    signal_uninterleave(p, d->d_buffer, nframes, d->channels);
-    int i;
-    for(i = 0; i < d->channels; i++) {
-      xsf_write_float(d->sound_file[i],
-		      p,
-		      (sf_count_t)nframes);
-      p += nframes;
-    }  
-  } else {
-    int nsamples = nframes * d->channels;
-    xsf_write_float(d->sound_file[0],
-		    d->d_buffer,
-		    (sf_count_t)nsamples);
-  }
+  int nsamples = nframes * d->channels;
+  ambix_writef_float32(d->sound_file[0],
+                       d->d_buffer,
+                       0,
+                       nsamples);
 }
 
 void *disk_thread_procedure(void *PTR)
@@ -182,8 +173,7 @@ int main(int argc, char *argv[])
   d.channels = 2;
   d.timer_seconds = -1.0;
   d.timer_counter = 0;
-  d.file_format = SF_FORMAT_WAV | SF_FORMAT_FLOAT;
-  d.multiple_sound_files = 0;
+  d.sample_format = AMBIX_SAMPLEFORMAT_FLOAT32;
   int c;
   while((c = getopt(argc, argv, "b:f:hm:n:st:")) != -1) {
     switch(c) {
@@ -201,9 +191,6 @@ int main(int argc, char *argv[])
       break;
     case 'n':
       d.channels = (int) strtol(optarg, NULL, 0);
-      break;
-    case 's':
-      d.multiple_sound_files = 1;
       break;
     case 't':
       d.timer_seconds = (float) strtod(optarg, NULL);
@@ -225,7 +212,7 @@ int main(int argc, char *argv[])
     FAILURE;
   }
   d.in = xmalloc(d.channels * sizeof(float *));
-  d.sound_file = xmalloc(d.channels * sizeof(SNDFILE *));
+  d.sound_file = xmalloc(d.channels * sizeof(ambix_t *));
   d.input_port = xmalloc(d.channels * sizeof(jack_port_t *));
 
   /* Connect to JACK. */
@@ -246,26 +233,13 @@ int main(int argc, char *argv[])
 
   /* Create sound file. */
 
-  SF_INFO sfinfo; 
+  ambix_into_t sfinfo;
+  memset(&sfinfo, 0, sizeof(sfinfo));
   sfinfo.samplerate = (int) d.sample_rate;
   sfinfo.frames = 0;
   sfinfo.format = d.file_format;
-  if(d.multiple_sound_files) {
-    if(!strstr(argv[optind], "%d")) {
-      eprintf("jack.record: illegal template, '%s'\n", argv[optind]);
-      usage ();
-    }      
-    sfinfo.channels = 1;
-    int i;
-    for(i = 0; i < d.channels; i++) {
-      char name[512];
-      snprintf(name, 512, argv[optind], i);
-      d.sound_file[i] = xsf_open(name, SFM_WRITE, &sfinfo);
-    }
-  } else {
-    sfinfo.channels = d.channels;
-    d.sound_file[0] = xsf_open(argv[optind], SFM_WRITE, &sfinfo);
-  }
+  sfinfo.channels = d.channels;
+  d.sound_file[0] = ambix_open(argv[optind], AMBIX_WRITE, &sfinfo);
 
   /* Allocate buffers. */
   
@@ -301,14 +275,7 @@ int main(int argc, char *argv[])
      pipe, free data buffers, indicate success. */
 
   jack_client_close(client);
-  if(d.multiple_sound_files) {
-    int i;
-    for(i = 0; i < d.channels; i++) {
-      sf_close(d.sound_file[i]);
-    }
-  } else {
-    sf_close(d.sound_file[0]);
-  }
+  sf_close(d.sound_file[0]);
   jack_ringbuffer_free(d.ring_buffer);
   close(d.pipe[0]);
   close(d.pipe[1]);
