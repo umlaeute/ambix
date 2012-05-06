@@ -21,6 +21,10 @@
    License along with this program; if not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif /* HAVE_CONFIG_H */
+
 
 #define HAVE_SAMPLERATE
 //#define HAVE_AMBIX_SEEK
