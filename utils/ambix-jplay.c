@@ -249,10 +249,11 @@ int signal_proc(jack_nframes_t nframes, void *PTR)
     }
   }
 
+  long err = 0;
 #ifdef HAVE_SAMPLERATE
   /* Get data from sample rate converter, this returns the number of
      frames acquired. */
-  long err = src_callback_read (d->src,
+  err = src_callback_read (d->src,
                                 d->o.src_ratio,
                                 (long)nframes,
                                 d->j_buffer);
@@ -262,9 +263,11 @@ int signal_proc(jack_nframes_t nframes, void *PTR)
     FAILURE;
   }
 #else
-# warning no-samplerate callback
+  err=jack_ringbuffer_read(d->rb,
+                           (char *)d->j_buffer,
+                           nbytes);
+  err=err/((sizeof(float))*(d->channels));
 #endif /* HAVE_SAMPLERATE */
-
 
   /* Uninterleave available data to the output buffers. */
 
