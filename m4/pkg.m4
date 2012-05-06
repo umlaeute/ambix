@@ -153,6 +153,7 @@ To get pkg-config, see <http://pkg-config.freedesktop.org/>.])[]dnl
 else
 	$1[]_CFLAGS=$pkg_cv_[]$1[]_CFLAGS
 	$1[]_LIBS=$pkg_cv_[]$1[]_LIBS
+	AC_DEFINE(HAVE_$1[], [1], [Define to 1 if you have $1])
         AC_MSG_RESULT([yes])
 	$3
 fi[]dnl
