@@ -25,10 +25,7 @@
 # include "config.h"
 #endif /* HAVE_CONFIG_H */
 
-
-#define HAVE_SAMPLERATE
 //#define HAVE_AMBIX_SEEK
-
 
 #include <unistd.h>
 #include <stdio.h>
