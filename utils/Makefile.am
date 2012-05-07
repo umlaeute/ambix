@@ -11,14 +11,9 @@ SUBDIRS =
 if HAVE_JACK
 SUBDIRS += jcommon
 bin_PROGRAMS += \
-	ambix-jplay
-endif
-
-if DISABLED
-bin_PROGRAMS += \
+	ambix-jplay \
 	ambix-jrecord
 endif
-
 
 
 INCLUDES = -I$(top_srcdir)/libambix
@@ -45,4 +40,8 @@ ambix_jplay_LDADD = $(top_builddir)/libambix/src/libambix.la \
 	@JACK_LIBS@ @SAMPLERATE_LIBS@ @PTHREAD_LIBS@
 ambix_jplay_SOURCES = ambix-jplay.c
 
+ambix_jrecord_CFLAGS = @JACK_CFLAGS@ @SAMPLERATE_CFLAGS@ @PTHREAD_CFLAGS@
+ambix_jrecord_LDADD = $(top_builddir)/libambix/src/libambix.la \
+	$(builddir)/jcommon/libjcommon.la \
+	@JACK_LIBS@ @SAMPLERATE_LIBS@ @PTHREAD_LIBS@
 ambix_jrecord_SOURCES = ambix-jrecord.c
