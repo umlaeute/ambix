@@ -448,7 +448,7 @@ int jackplay(const char *file_name,
   do {
     int i=0, a, e;
     for(a=0; a<d.a_channels; a++) {
-      d.output_port[i] = _jack_port_register(d.client, JackPortIsOutput, "ACN_%d", a+1);
+      d.output_port[i] = _jack_port_register(d.client, JackPortIsOutput, "ACN_%d", a);
       i++;
     }
     for(e=0; e<d.e_channels; e++) {
