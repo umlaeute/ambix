@@ -46,6 +46,6 @@ void jack_client_minimal_error_handler(const char *desc);
 void jack_client_minimal_shutdown_handler(void *arg);
 int jack_transport_is_rolling(jack_client_t *client);
 jack_client_t *jack_client_unique(char*name); /* this will change 'name' to the actual result */
-
+jack_port_t*_jack_port_register(jack_client_t *client, int direction, const char*format, int n);
 
 #endif /* JCOMMON_COMMON_H */

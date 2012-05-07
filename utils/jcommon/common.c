@@ -74,3 +74,16 @@ jack_client_t *jack_client_unique(char *name)
   }
   return client;
 }
+
+
+jack_port_t*_jack_port_register(jack_client_t *client, int direction, const char*format, int n) {
+  char name[64];
+  jack_port_t*port;
+  snprintf(name, 64, format, n);
+  port = jack_port_register(client, name, JACK_DEFAULT_AUDIO_TYPE, direction, 0);
+  if(!port) {
+    eprintf("jack_port_register() failed at %s\n", name);
+    FAILURE;
+  }
+  return port;
+}
