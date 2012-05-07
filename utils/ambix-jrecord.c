@@ -55,6 +55,7 @@ struct recorder
   float *d_buffer;
   float *j_buffer;
   float *u_buffer;
+  ambix_fileformat_t file_format;
   ambix_sampleformat_t sample_format;
   ambix_t *sound_file;
   int channels;
@@ -65,6 +66,54 @@ struct recorder
   pthread_t disk_thread;
   int pipe[2];
 };
+
+#include <sndfile.h>
+
+static ambix_matrix_t*matrix_read(const char*path, ambix_matrix_t*matrix) {
+  SF_INFO info;
+  uint32_t rows, cols;
+  float*data=NULL;
+  ambix_matrix_t*mtx=NULL, *result=NULL;
+  uint32_t frames;
+
+  memset(&info, 0, sizeof(info));
+  SNDFILE*file=sf_open(path, SFM_READ, &info);
+
+  if(!file) {
+    fprintf(stderr, "ambix_interleave: matrix open failed '%s'\n", path);
+    return NULL;
+  }
+  rows=info.channels;
+  cols=info.frames;
+  data=malloc(rows*cols*sizeof(float));
+  frames=sf_readf_float(file, data, cols);
+  if(cols!=frames) {
+    fprintf(stderr, "ambix_interleave: matrix reading %d frames returned %d\n", frames, cols);
+    goto cleanup;
+  }
+
+  mtx=ambix_matrix_init(cols, rows, NULL);
+  if(mtx && (AMBIX_ERR_SUCCESS==ambix_matrix_fill_data(mtx, data))) {
+    uint32_t r, c;
+    matrix=ambix_matrix_init(rows, cols, matrix);
+
+    for(r=0; r<rows; r++)
+      for(c=0; c<cols; c++)
+        matrix->data[r][c]=mtx->data[c][r];
+  }
+
+  result=matrix;
+
+  //  fprintf(stderr, "ambix_interleave: matrices not yet supported\n");
+  cleanup:
+  if(mtx)
+    ambix_matrix_destroy(mtx);
+
+  sf_close(file);
+  free(data);
+
+  return result;
+}
 
 void signal_interleave_to(float32_t *dst, const float32_t **src, uint32_t f, uint32_t c)
 {
@@ -188,7 +237,12 @@ int process(jack_nframes_t nframes, void *PTR)
 void usage(const char*name)
 {
   eprintf("Usage: %s [ options ] sound-file\n", name);
+  eprintf("    -O N : ambisonics order (default=1).\n");
+  eprintf("    -X s : sound-file holding adaptor matrix matrix to reconstruct full ambisonics set (forces AMBIX_EXTENDED).\n");
+  eprintf("    -x N : Number of non-ambisonics ('extra') channels (forces AMBIX_EXTENDED).\n");
+
   eprintf("    -b N : Ring buffer size in frames (default=4096).\n");
+  // LATER: allow user to specify the sample-format
   //  eprintf("    -f N : File format (default=0x10006).\n");
   eprintf("    -m N : Minimal disk read size in frames (default=32).\n");
   //eprintf("    -n N : Number of channels (default=2).\n");
@@ -201,15 +255,35 @@ int main(int argc, char *argv[])
   const char*myname=argv[0];
   observe_signals ();
   struct recorder d;
+
+  ambix_matrix_t*matrix=NULL;
+  uint32_t order = 1;
+
   d.buffer_frames = 4096;
   d.minimal_frames = 32;
   d.channels = 2;
   d.timer_seconds = -1.0;
   d.timer_counter = 0;
   d.sample_format = AMBIX_SAMPLEFORMAT_FLOAT32;
+  d.file_format   = AMBIX_BASIC;
   int c;
-  while((c = getopt(argc, argv, "b:f:hm:n:st:")) != -1) {
+  while((c = getopt(argc, argv, "hvx:X:O:b:fhm:n:t:")) != -1) {
     switch(c) {
+    case 'x':
+      d.e_channels = (int) strtol(optarg, NULL, 0);
+      d.file_format   = AMBIX_EXTENDED;
+      break;
+    case 'X':
+      matrix=matrix_read(optarg, matrix);
+      if(!matrix) {
+        eprintf("%s: couldn't read matrix-file '%s'\n", myname, optarg);
+        FAILURE;
+      }
+      break;
+    case 'O':
+      order = (uint32_t) strtol(optarg, NULL, 0);
+      break;
+
     case 'b':
       d.buffer_frames = (int) strtol(optarg, NULL, 0);
       break;
@@ -224,11 +298,6 @@ int main(int argc, char *argv[])
     case 'm':
       d.minimal_frames = (int) strtol(optarg, NULL, 0);
       break;
-#if 0
-    case 'n':
-      d.channels = (int) strtol(optarg, NULL, 0);
-      break;
-#endif
     case 't':
       d.timer_seconds = (float) strtod(optarg, NULL);
       break;
@@ -357,5 +426,6 @@ int main(int argc, char *argv[])
   free(d.u_buffer);
   free(d.in);
   free(d.input_port);
+  if(matrix)ambix_matrix_destroy(matrix);
   return EXIT_SUCCESS;
 }
