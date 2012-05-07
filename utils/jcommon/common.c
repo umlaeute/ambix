@@ -74,6 +74,12 @@ jack_client_t *jack_client_unique(char *name)
   }
   return client;
 }
+jack_client_t *jack_client_unique_(const char *name) 
+{
+  char uniq[64];
+  snprintf(uniq, 64, "%s", name);
+  return jack_client_unique(uniq);
+}
 
 
 jack_port_t*_jack_port_register(jack_client_t *client, int direction, const char*format, int n) {
