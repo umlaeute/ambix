@@ -59,23 +59,6 @@
 
 #include <stdlib.h>
 
-
-jack_client_t *jack_client_unique(char *name)
-{
-  int n = (int)getpid();
-  char uniq[64];
-  snprintf(uniq, 64, "%s-%d", name, n);
-  strncpy(name,uniq,64);
-  jack_client_t *client = jack_client_open(uniq,JackNullOption,NULL);
-  if(! client) {
-    eprintf("jack_client_open() failed: %s\n", uniq);
-    FAILURE;
-  }
-  return client;
-}
-
-
-
 struct player_opt
 {
   int buffer_frames;
@@ -352,17 +335,6 @@ long read_input_from_rb(void *PTR, float **buf)
   return (long)err;
 }
 
-static jack_port_t*_jack_port_register(jack_client_t *client, int direction, const char*format, int n) {
-  char name[64];
-  jack_port_t*port;
-  snprintf(name, 64, format, n);
-  port = jack_port_register(client, name, JACK_DEFAULT_AUDIO_TYPE, direction, 0);
-  if(!port) {
-    eprintf("jack_port_register() failed at %s\n", name);
-    FAILURE;
-  }
-  return port;
-}
 int jackplay(const char *file_name,
              struct player_opt o)
 {
