@@ -13,25 +13,6 @@ void *xmalloc(size_t size)
   return p;
 }
 
-void jack_client_minimal_error_handler(const char *desc)
-{
-  eprintf("jack error: %s\n", desc);
-}
-
-void jack_client_minimal_shutdown_handler(void *arg)
-{
-  eprintf("jack shutdown\n");
-  FAILURE;
-}
-
-
-int jack_transport_is_rolling(jack_client_t *client)
-{
-  jack_transport_state_t s = jack_transport_query(client , NULL);
-  return s & JackTransportRolling;
-} 
-
-
 int xpipe(int filedes[2])
 {
   int err = pipe(filedes);
@@ -61,3 +42,22 @@ ssize_t xread(int filedes, void *buffer, size_t size)
   }
   return err;
 }
+
+
+void jack_client_minimal_error_handler(const char *desc)
+{
+  eprintf("jack error: %s\n", desc);
+}
+
+void jack_client_minimal_shutdown_handler(void *arg)
+{
+  eprintf("jack shutdown\n");
+  FAILURE;
+}
+
+int jack_transport_is_rolling(jack_client_t *client)
+{
+  jack_transport_state_t s = jack_transport_query(client , NULL);
+  return s & JackTransportRolling;
+} 
+
