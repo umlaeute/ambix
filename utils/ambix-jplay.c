@@ -60,7 +60,7 @@
 #include <stdlib.h>
 
 
-jack_client_t *jack_client_unique_store(char *name)
+jack_client_t *jack_client_unique(char *name)
 {
   int n = (int)getpid();
   char uniq[64];
@@ -431,7 +431,7 @@ int jackplay(const char *file_name,
   /* Become a client of the JACK server.  */
 
   if(d.o.unique_name) {
-    d.client = jack_client_unique_store(d.o.client_name);
+    d.client = jack_client_unique(d.o.client_name);
   } else {
     d.client = jack_client_open(d.o.client_name,JackNullOption,NULL);
   }
