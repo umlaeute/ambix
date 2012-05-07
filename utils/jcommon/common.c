@@ -1,7 +1,7 @@
 #include "common.h"
 #include <stdlib.h>
 #include <stdio.h>
-
+#include <string.h>
 
 void *xmalloc(size_t size)
 {
@@ -61,3 +61,16 @@ int jack_transport_is_rolling(jack_client_t *client)
   return s & JackTransportRolling;
 } 
 
+jack_client_t *jack_client_unique(char *name)
+{
+  int n = (int)getpid();
+  char uniq[64];
+  snprintf(uniq, 64, "%s-%d", name, n);
+  strncpy(name,uniq,64);
+  jack_client_t *client = jack_client_open(uniq,JackNullOption,NULL);
+  if(! client) {
+    eprintf("jack_client_open() failed: %s\n", uniq);
+    FAILURE;
+  }
+  return client;
+}

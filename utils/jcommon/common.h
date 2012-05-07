@@ -45,7 +45,7 @@ ssize_t xread(int filedes, void *buffer, size_t size);
 void jack_client_minimal_error_handler(const char *desc);
 void jack_client_minimal_shutdown_handler(void *arg);
 int jack_transport_is_rolling(jack_client_t *client);
-
+jack_client_t *jack_client_unique(char*name); /* this will change 'name' to the actual result */
 
 
 #endif /* JCOMMON_COMMON_H */
