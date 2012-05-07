@@ -342,7 +342,6 @@ int main(int argc, char *argv[])
 
   /* Allocate channel based data. */
   if(matrix) {
-    eprintf("matrix [%dx%d]\n", matrix->rows, matrix->cols);
     if(order<0) {
       d.a_channels = matrix->cols;
     } else {
