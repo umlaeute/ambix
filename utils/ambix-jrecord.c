@@ -168,9 +168,9 @@ void usage(void)
 {
   eprintf("Usage: jack.record [ options ] sound-file\n");
   eprintf("    -b N : Ring buffer size in frames (default=4096).\n");
-  eprintf("    -f N : File format (default=0x10006).\n");
+  //  eprintf("    -f N : File format (default=0x10006).\n");
   eprintf("    -m N : Minimal disk read size in frames (default=32).\n");
-  eprintf("    -n N : Number of channels (default=2).\n");
+  //eprintf("    -n N : Number of channels (default=2).\n");
   eprintf("    -t N : Set a timer to record for N seconds (default=-1).\n");
   FAILURE;
 }
@@ -202,9 +202,11 @@ int main(int argc, char *argv[])
     case 'm':
       d.minimal_frames = (int) strtol(optarg, NULL, 0);
       break;
+#if 0
     case 'n':
       d.channels = (int) strtol(optarg, NULL, 0);
       break;
+#endif
     case 't':
       d.timer_seconds = (float) strtod(optarg, NULL);
       break;
