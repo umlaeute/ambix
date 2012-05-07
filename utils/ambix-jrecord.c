@@ -34,9 +34,10 @@ struct recorder
   float *d_buffer;
   float *j_buffer;
   float *u_buffer;
-  int file_format;
-  ambix_t **sound_file;
+  ambix_sampleformat_t sample_format;
+  ambix_t *sound_file;
   int channels;
+  uint32_t a_channels, e_channels;
   jack_port_t **input_port;
   float **in;
   jack_ringbuffer_t *ring_buffer;
@@ -44,10 +45,21 @@ struct recorder
   int pipe[2];
 };
 
+void signal_interleave_to(float32_t *dst, const float32_t **src, uint32_t f, uint32_t c)
+{
+  uint32_t i, k = 0;
+  for(i = 0; i < f; i++) {
+    uint32_t j;
+    for(j = 0; j < c; j++) {
+      dst[k++] = src[j][i];
+    }
+  }
+}
+
 void write_to_disk(struct recorder *d, int nframes)
 {
   int nsamples = nframes * d->channels;
-  ambix_writef_float32(d->sound_file[0],
+  ambix_writef_float32(d->sound_file,
                        d->d_buffer,
                        0,
                        nsamples);
@@ -159,7 +171,6 @@ void usage(void)
   eprintf("    -f N : File format (default=0x10006).\n");
   eprintf("    -m N : Minimal disk read size in frames (default=32).\n");
   eprintf("    -n N : Number of channels (default=2).\n");
-  eprintf("    -s   : Write to multiple single channel sound files.\n");
   eprintf("    -t N : Set a timer to record for N seconds (default=-1).\n");
   FAILURE;
 }
@@ -180,9 +191,11 @@ int main(int argc, char *argv[])
     case 'b':
       d.buffer_frames = (int) strtol(optarg, NULL, 0);
       break;
+#if 0
     case 'f':
       d.file_format = (int) strtol(optarg, NULL, 0);
       break;
+#endif
     case 'h':
       usage ();
       break;
@@ -212,7 +225,6 @@ int main(int argc, char *argv[])
     FAILURE;
   }
   d.in = xmalloc(d.channels * sizeof(float *));
-  d.sound_file = xmalloc(d.channels * sizeof(ambix_t *));
   d.input_port = xmalloc(d.channels * sizeof(jack_port_t *));
 
   /* Connect to JACK. */
@@ -233,13 +245,35 @@ int main(int argc, char *argv[])
 
   /* Create sound file. */
 
-  ambix_into_t sfinfo;
+  ambix_info_t sfinfo;
   memset(&sfinfo, 0, sizeof(sfinfo));
   sfinfo.samplerate = (int) d.sample_rate;
   sfinfo.frames = 0;
-  sfinfo.format = d.file_format;
+#warning ambix-info-t
+#if 0
+  sfinfo.fileformat = d.file_format;
   sfinfo.channels = d.channels;
-  d.sound_file[0] = ambix_open(argv[optind], AMBIX_WRITE, &sfinfo);
+#else
+  sfinfo.fileformat = AMBIX_BASIC;
+
+  switch(sfinfo.fileformat) {
+  case AMBIX_BASIC:
+    //d.a_channels;
+    d.e_channels=0;
+    break;
+  case AMBIX_EXTENDED:
+    //d.a_channels;
+    //d.e_channels;
+    break;
+  case AMBIX_NONE: default:
+    d.a_channels=0;
+    //d.e_channels;
+  }
+  d.channels = d.a_channels+d.e_channels;
+  sfinfo.ambichannels  = d.a_channels;
+  sfinfo.extrachannels = d.e_channels;
+#endif
+  d.sound_file = ambix_open(argv[optind], AMBIX_WRITE, &sfinfo);
 
   /* Allocate buffers. */
   
@@ -263,8 +297,23 @@ int main(int argc, char *argv[])
 
   /* Create input ports and activate client. */
 
+#if 0
   jack_port_make_standard(client, d.input_port, d.channels, false);
   jack_client_activate(client);
+#else
+  do {
+    int i=0, a, e;
+    const char*format=(sfinfo.fileformat == AMBIX_BASIC)?"ACN_%d":"ambisonics_%d";
+    for(a=0; a<d.a_channels; a++) {
+      d.input_port[i] = _jack_port_register(client, JackPortIsInput, "ACN_%d", a+1);
+      i++;
+    }
+    for(e=0; e<d.e_channels; e++) {
+      d.input_port[i] = _jack_port_register(client, JackPortIsInput, "in_%d", e+1);
+      i++;
+    }
+  } while(0);
+#endif
 
   /* Wait for disk thread to end, which it does when it reaches the
      end of the file or is interrupted. */
@@ -275,7 +324,7 @@ int main(int argc, char *argv[])
      pipe, free data buffers, indicate success. */
 
   jack_client_close(client);
-  sf_close(d.sound_file[0]);
+  ambix_close(d.sound_file);
   jack_ringbuffer_free(d.ring_buffer);
   close(d.pipe[0]);
   close(d.pipe[1]);
@@ -284,6 +333,5 @@ int main(int argc, char *argv[])
   free(d.u_buffer);
   free(d.in);
   free(d.input_port);
-  free(d.sound_file);
   return EXIT_SUCCESS;
 }
