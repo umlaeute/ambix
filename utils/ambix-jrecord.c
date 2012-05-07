@@ -1,4 +1,25 @@
-/***** jack.record.c - (c) rohan drape, 2003-2006 *****/
+/* ambix-jrecord.c -  record and ambix file via jack            -*- c -*-
+
+   Copyright © 2003-2006 Rohan Drape
+   Copyright © 2012 IOhannes m zmölnig <zmoelnig@iem.at>.
+         Institute of Electronic Music and Acoustics (IEM),
+         University of Music and Dramatic Arts, Graz
+
+   This file is based on 'jack.record' from Rohan Drape's "jack-tools" collection
+
+   you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as
+   published by the Free Software Foundation; either version 2 of
+   the License, or (at your option) any later version.
+
+   ambix-jrecord is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU Lesser General Public License for more details.
+
+   You should have received a copy of the GNU General Public
+   License along with this program; if not, see <http://www.gnu.org/licenses/>.
+*/
 
 #include <unistd.h>
 #include <stdio.h>
@@ -79,7 +100,7 @@ void *disk_thread_procedure(void *PTR)
     /* Drop excessive data to not overflow the local buffer. */
 
     if(nbytes > d->buffer_bytes) {
-      eprintf("jack.record: impossible condition, read space.\n");
+      eprintf("ambix-jrecord: impossible condition, read space.\n");
       nbytes = d->buffer_bytes;
     }
 
@@ -126,7 +147,7 @@ int process(jack_nframes_t nframes, void *PTR)
      frames, this should never be of practical concern. */
 
   if(nbytes >= d->buffer_bytes) {
-    eprintf("jack.record: period size exceeds limit\n");
+    eprintf("ambix-jrecord: period size exceeds limit\n");
     FAILURE;
     return 1;
   }
@@ -135,7 +156,7 @@ int process(jack_nframes_t nframes, void *PTR)
 
   int space = (int) jack_ringbuffer_write_space(d->ring_buffer);
   if(space < nbytes) {
-    eprintf("jack.record: overflow error, %d > %d\n", nbytes, space);
+    eprintf("ambix-jrecord: overflow error, %d > %d\n", nbytes, space);
     FAILURE;
     return 1;
   }
@@ -150,7 +171,7 @@ int process(jack_nframes_t nframes, void *PTR)
 				  (char *) d->j_buffer,
 				  (size_t) nbytes);
   if(err != nbytes) {
-    eprintf("jack.record: error writing to ringbuffer, %d != %d\n", 
+    eprintf("ambix-jrecord: error writing to ringbuffer, %d != %d\n", 
 	    err, nbytes);
     FAILURE;
     return 1;
@@ -164,9 +185,9 @@ int process(jack_nframes_t nframes, void *PTR)
   return 0;
 }
 
-void usage(void)
+void usage(const char*name)
 {
-  eprintf("Usage: jack.record [ options ] sound-file\n");
+  eprintf("Usage: %s [ options ] sound-file\n", name);
   eprintf("    -b N : Ring buffer size in frames (default=4096).\n");
   //  eprintf("    -f N : File format (default=0x10006).\n");
   eprintf("    -m N : Minimal disk read size in frames (default=32).\n");
@@ -177,6 +198,7 @@ void usage(void)
 
 int main(int argc, char *argv[])
 {
+  const char*myname=argv[0];
   observe_signals ();
   struct recorder d;
   d.buffer_frames = 4096;
@@ -197,7 +219,7 @@ int main(int argc, char *argv[])
       break;
 #endif
     case 'h':
-      usage ();
+      usage (myname);
       break;
     case 'm':
       d.minimal_frames = (int) strtol(optarg, NULL, 0);
@@ -211,19 +233,19 @@ int main(int argc, char *argv[])
       d.timer_seconds = (float) strtod(optarg, NULL);
       break;
     default:
-      eprintf("jack.record: illegal option, %c\n", c);
-      usage ();
+      eprintf("%s: illegal option, %c\n", myname, c);
+      usage (myname);
       break;
     }
   }
   if(optind != argc - 1) {
-    usage ();
+    usage (myname);
   }
 
   /* Allocate channel based data. */
 
   if(d.channels < 1) {
-    eprintf("jack.record: illegal number of channels: %d\n", d.channels);
+    eprintf("%s: illegal number of channels: %d\n", myname, d.channels);
     FAILURE;
   }
   d.in = xmalloc(d.channels * sizeof(float *));
@@ -231,7 +253,7 @@ int main(int argc, char *argv[])
 
   /* Connect to JACK. */
   
-  jack_client_t *client = jack_client_unique("jack.record");
+  jack_client_t *client = jack_client_unique("ambix-jrecord");
   jack_set_error_function(jack_client_minimal_error_handler);
   jack_on_shutdown(client, jack_client_minimal_shutdown_handler, 0);
   jack_set_process_callback(client, process, &d);
