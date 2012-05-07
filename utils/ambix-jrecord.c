@@ -252,6 +252,7 @@ void usage(const char*name)
 
 int main(int argc, char *argv[])
 {
+  const char*filename = "jtest.caf";
   const char*myname=argv[0];
   observe_signals ();
   struct recorder d;
@@ -308,8 +309,12 @@ int main(int argc, char *argv[])
       break;
     }
   }
-  if(optind != argc - 1) {
-    usage (myname);
+
+  if(optind == argc - 1) {
+    filename=argv[optind];
+  } else {
+    eprintf("opening default file '%s'\n", filename);
+    //usage (myname);
   }
 
   /* Allocate channel based data. */
@@ -380,7 +385,8 @@ int main(int argc, char *argv[])
 
   sfinfo.ambichannels  = d.a_channels;
   sfinfo.extrachannels = d.e_channels;
-  d.sound_file = ambix_open(argv[optind], AMBIX_WRITE, &sfinfo);
+
+  d.sound_file = ambix_open(filename, AMBIX_WRITE, &sfinfo);
 
   /* Allocate buffers. */
   
