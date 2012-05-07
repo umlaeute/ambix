@@ -52,6 +52,9 @@ struct recorder
   int timer_frames;
   int timer_counter;
   float sample_rate;
+
+  float32_t *a_buffer, *e_buffer;
+
   float *d_buffer;
   float *j_buffer;
   float *u_buffer;
@@ -126,12 +129,27 @@ void signal_interleave_to(float32_t *dst, const float32_t **src, uint32_t f, uin
   }
 }
 
+void interleave_split(float32_t*source, uint32_t sourcechannels, 
+                      uint32_t dst1channels, 
+                      float32_t*dst1, float32_t*dst2, 
+                      int64_t frames)
+{
+  int64_t frame;
+  for(frame=0; frame<frames; frame++) {
+    uint32_t chan;
+    for(chan=0; chan<dst1channels; chan++)
+      *dst1++=*source++;
+    for(chan=dst1channels; chan<sourcechannels; chan++)
+      *dst2++=*source++;
+  }
+}
+
 void write_to_disk(struct recorder *d, int nframes)
 {
-  int nsamples = nframes * d->channels;
+  int nsamples = nframes;
   ambix_writef_float32(d->sound_file,
-                       d->d_buffer,
-                       0,
+                       d->a_buffer,
+                       d->e_buffer,
                        nsamples);
 }
 
@@ -149,7 +167,7 @@ void *disk_thread_procedure(void *PTR)
     /* Drop excessive data to not overflow the local buffer. */
 
     if(nbytes > d->buffer_bytes) {
-      eprintf("ambix-jrecord: impossible condition, read space.\n");
+      eprintf("ambix-jrecord: impossible condition, read space (%d > %d).\n", nbytes, d->buffer_bytes);
       nbytes = d->buffer_bytes;
     }
 
@@ -163,6 +181,11 @@ void *disk_thread_procedure(void *PTR)
        number of frames. */
 
     int nframes = (nbytes / sizeof(float))/ d->channels;
+    interleave_split(d->d_buffer, d->channels, 
+                     d->a_channels,
+                     d->a_buffer, d->e_buffer,
+                     nframes);
+
     write_to_disk(d, nframes);
 
     /* Handle timer */
@@ -392,6 +415,10 @@ int main(int argc, char *argv[])
   
   d.buffer_samples = d.buffer_frames * d.channels;
   d.buffer_bytes = d.buffer_samples * sizeof(float);
+
+  d.a_buffer = xmalloc(d.buffer_frames * d.a_channels * sizeof(float32_t));
+  d.e_buffer = xmalloc(d.buffer_frames * d.e_channels * sizeof(float32_t));
+
   d.d_buffer = xmalloc(d.buffer_bytes);
   d.j_buffer = xmalloc(d.buffer_bytes);  
   d.u_buffer = xmalloc(d.buffer_bytes);
@@ -447,6 +474,10 @@ int main(int argc, char *argv[])
   jack_ringbuffer_free(d.ring_buffer);
   close(d.pipe[0]);
   close(d.pipe[1]);
+
+  free(d.a_buffer);
+  free(d.e_buffer);
+
   free(d.d_buffer);
   free(d.j_buffer);
   free(d.u_buffer);
