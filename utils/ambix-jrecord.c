@@ -257,7 +257,7 @@ int main(int argc, char *argv[])
   struct recorder d;
 
   ambix_matrix_t*matrix=NULL;
-  uint32_t order = 1;
+  int32_t order = -1;
 
   d.buffer_frames = 4096;
   d.minimal_frames = 32;
@@ -279,6 +279,7 @@ int main(int argc, char *argv[])
         eprintf("%s: couldn't read matrix-file '%s'\n", myname, optarg);
         FAILURE;
       }
+      d.file_format   = AMBIX_EXTENDED;
       break;
     case 'O':
       order = (uint32_t) strtol(optarg, NULL, 0);
@@ -312,6 +313,39 @@ int main(int argc, char *argv[])
   }
 
   /* Allocate channel based data. */
+  if(matrix) {
+    eprintf("matrix [%dx%d]\n", matrix->rows, matrix->cols);
+    if(order<0) {
+      d.a_channels = matrix->cols;
+    } else {
+      if(ambix_order2channels(order) != matrix->rows) {
+        eprintf("%s: ambisonics order:%d cannot use [%dx%d] adaptor matrix.\n", myname, order, matrix->rows, matrix->cols);
+        FAILURE;
+      }
+      d.a_channels = matrix->cols;
+    }
+  } else {
+    if(order<0)
+      order=1;
+
+    d.a_channels=ambix_order2channels(order);
+  }
+
+  switch(d.file_format) {
+  case AMBIX_BASIC:
+    //d.a_channels;
+    d.e_channels=0;
+    break;
+  case AMBIX_EXTENDED:
+    //d.a_channels;
+    //d.e_channels;
+    break;
+  case AMBIX_NONE: default:
+    d.a_channels=0;
+    //d.e_channels;
+  }
+  d.channels = d.a_channels+d.e_channels;
+
 
   if(d.channels < 1) {
     eprintf("%s: illegal number of channels: %d\n", myname, d.channels);
@@ -322,7 +356,7 @@ int main(int argc, char *argv[])
 
   /* Connect to JACK. */
   
-  jack_client_t *client = jack_client_unique("ambix-jrecord");
+  jack_client_t *client = jack_client_unique_("ambix-jrecord");
   jack_set_error_function(jack_client_minimal_error_handler);
   jack_on_shutdown(client, jack_client_minimal_shutdown_handler, 0);
   jack_set_process_callback(client, process, &d);
@@ -342,30 +376,10 @@ int main(int argc, char *argv[])
   memset(&sfinfo, 0, sizeof(sfinfo));
   sfinfo.samplerate = (int) d.sample_rate;
   sfinfo.frames = 0;
-#warning ambix-info-t
-#if 0
   sfinfo.fileformat = d.file_format;
-  sfinfo.channels = d.channels;
-#else
-  sfinfo.fileformat = AMBIX_BASIC;
 
-  switch(sfinfo.fileformat) {
-  case AMBIX_BASIC:
-    //d.a_channels;
-    d.e_channels=0;
-    break;
-  case AMBIX_EXTENDED:
-    //d.a_channels;
-    //d.e_channels;
-    break;
-  case AMBIX_NONE: default:
-    d.a_channels=0;
-    //d.e_channels;
-  }
-  d.channels = d.a_channels+d.e_channels;
   sfinfo.ambichannels  = d.a_channels;
   sfinfo.extrachannels = d.e_channels;
-#endif
   d.sound_file = ambix_open(argv[optind], AMBIX_WRITE, &sfinfo);
 
   /* Allocate buffers. */
@@ -397,8 +411,9 @@ int main(int argc, char *argv[])
   do {
     int i=0, a, e;
     const char*format=(sfinfo.fileformat == AMBIX_BASIC)?"ACN_%d":"ambisonics_%d";
+    const int a_offset=(sfinfo.fileformat == AMBIX_BASIC)?0:1;
     for(a=0; a<d.a_channels; a++) {
-      d.input_port[i] = _jack_port_register(client, JackPortIsInput, "ACN_%d", a+1);
+      d.input_port[i] = _jack_port_register(client, JackPortIsInput, format, a+a_offset);
       i++;
     }
     for(e=0; e<d.e_channels; e++) {
@@ -406,6 +421,11 @@ int main(int argc, char *argv[])
       i++;
     }
   } while(0);
+
+  if(jack_activate(client)) {
+    eprintf("jack_activate() failed\n");
+    FAILURE;
+  }
 #endif
 
   /* Wait for disk thread to end, which it does when it reaches the
