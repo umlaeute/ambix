@@ -411,6 +411,14 @@ int main(int argc, char *argv[])
 
   d.sound_file = ambix_open(filename, AMBIX_WRITE, &sfinfo);
 
+  if(matrix) {
+    ambix_err_t aerr = ambix_set_adaptormatrix(d.sound_file, matrix);
+    if(AMBIX_ERR_SUCCESS != aerr) {
+      eprintf("setting [%dx%d] matrix returned %d.\n", matrix->rows, matrix->cols, aerr);
+      FAILURE;
+    }
+  }
+
   /* Allocate buffers. */
   
   d.buffer_samples = d.buffer_frames * d.channels;
