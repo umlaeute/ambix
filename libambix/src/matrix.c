@@ -255,9 +255,9 @@ ambix_matrix_fill(ambix_matrix_t*matrix, ambix_matrixtype_t typ) {
 
   case (AMBIX_MATRIX_FUMA): /* Furse Malham -> ACN/SN3D */
     result=_matrix_fuma2ambix(cols);
-    if(result) {
-      matrix=ambix_matrix_copy(result, matrix);
-    }
+    if(!result)
+      return NULL;
+    matrix=ambix_matrix_copy(result, matrix);
     break;
   }
   if(result) ambix_matrix_destroy(result);
