@@ -341,8 +341,16 @@ ambix_matrix_t*_matrix_diag(ambix_matrix_t*orgmatrix, const float32_t*diag, uint
  * @return pointer to the resulting permutation matrix, or NULL in case something went wrong
  */
 ambix_matrix_t*_matrix_router(ambix_matrix_t*orgmatrix, const float32_t*route, uint32_t count, int transpose);
-
-
+/** @brief create a permutation matrix
+ * @param matrix pointer to a properly initialized matrix object that will hold the result
+ * @param permutate permutation vector (if(permutate[1]==4)then{row#1 of output matrix will be [0 0 0 0 1 0 ...]}; 
+ *        the permutate vector must have matrix->rows elements (matrix->cols if swap is TRUE);
+ *        negative permutation indices will skip the given row (if(permutate[3]=-1)then{row#3 will be [0 0 0 ...]};
+ *        permutation indicies exceeding the valid range will restult in an error
+ * @param transpose whether the result should be transposed (swapped rows and colums)
+ * @return pointer to the resulting permutation matrix, or NULL in case something went wrong
+ */
+ambix_matrix_t*_matrix_permutate(ambix_matrix_t*matrix, const float32_t*permutate, int swap);
 
 /** @brief calculate the permutation vector to convert from SID to ACN
  * @param data caller-allocated array of count elements that will hold the result

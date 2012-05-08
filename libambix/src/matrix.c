@@ -344,7 +344,7 @@ ambix_matrix_t*_matrix_router(ambix_matrix_t*orgmatrix, const float32_t*route, u
   ambix_matrix_t*matrix=NULL;
   for(i=0; i<count; i++) {
     uint32_t o=route[i];
-    if(i<0 || i>count)
+    if(o<0 || o>count)
       return NULL;
   }
   matrix=ambix_matrix_init(count, count, orgmatrix);
@@ -354,6 +354,29 @@ ambix_matrix_t*_matrix_router(ambix_matrix_t*orgmatrix, const float32_t*route, u
       matrix->data[o][i]=1.;
     else
       matrix->data[i][o]=1.;
+  }
+  return matrix;
+}
+
+
+ambix_matrix_t*_matrix_permutate(ambix_matrix_t*matrix, const float32_t*route, int swap) {
+  uint32_t i;
+  uint32_t count   =swap?matrix->cols:matrix->rows;
+  uint32_t maxroute=swap?matrix->rows:matrix->cols;
+
+  for(i=0; i<count; i++) {
+    uint32_t o=route[i];
+    if(o>maxroute)
+      return NULL;
+  }
+  for(i=0; i<count; i++) {
+    uint32_t o=route[i];
+    if(o>=0) {
+      if(swap)
+        matrix->data[o][i]=1.;
+      else
+        matrix->data[i][o]=1.;
+    }
   }
   return matrix;
 }
