@@ -34,6 +34,8 @@
 */
 
 
+
+
 #include "private.h"
 
 #ifdef HAVE_STDLIB_H
@@ -41,98 +43,119 @@
 #endif /* HAVE_STDLIB_H */
 
 #include <math.h>
+#include <string.h>
 
 ambix_matrix_t*
 _matrix_fuma2ambix(uint32_t cols) {
   ambix_matrix_t*result=NULL, *weightm=NULL, *routem=NULL, *reducem=NULL;
   uint32_t rows=0;
   int32_t r, c;
-  const float32_t sqrt2=sqrt(2);
+  const float32_t sqrt2=sqrt(2.);          // 1.414
 
-#warning fix matrix_type for FuMa2ambix
+  const float32_t sqrt4_3=2./sqrt(3.);     // 1.154
+  const float32_t sqrt45_32=sqrt(45./32.); // 1.185
+  const float32_t sqrt9_5=3./sqrt(5.);     // 1.341
+  const float32_t sqrt8_5=sqrt(8./5.);     // 1.264
+
+  const float32_t sqrt3_4  = sqrt(3.)/2.;      // 0.86603
+  const float32_t sqrt5_8  = sqrt(5./2.)/2.;   // 0.79057
+  const float32_t sqrt32_45= 4.*sqrt(2./5.)/3.;// 0.84327
+  const float32_t sqrt5_9  = sqrt(5.)/3.;      // 0.74536
+
+
+  float32_t order[]={
+    0,
+    2, 3, 1,
+    8, 6, 4, 5, 7,
+    15, 13, 11,  9, 10, 12, 14,
+  };
+  float32_t weights[]={
+    sqrt2,
+    -1, 1, -1,
+    sqrt3_4, -sqrt3_4, 1, -sqrt3_4, sqrt3_4,
+    -sqrt5_8, sqrt5_9, -sqrt32_45, 1, -sqrt32_45, sqrt5_9, -sqrt5_8,
+  };
+  
+  int i;
+  float32_t*reducer=NULL;
 
   switch(cols) {
   case  3: /* h   = 1st order 2-D */
-    if(1) {
-      float32_t weights[]={1.4142f, 1.f, 1.f, 1.f};
-      float32_t ordering[4];
-      rows=sizeof(ordering)/sizeof(*ordering);
-      weights[0]=sqrt2;
-      _matrix_sid2acn(ordering, sizeof(ordering)/sizeof(*ordering));
-
-      weightm=_matrix_diag(NULL, weights, sizeof(weights)/sizeof(*weights));
-      routem =_matrix_router(NULL, ordering, sizeof(ordering)/sizeof(*ordering), 0);
-      reducem=ambix_matrix_init(rows, cols, NULL);
-      reducem=ambix_matrix_fill(reducem, AMBIX_MATRIX_IDENTITY);
-    }
+    reducer=(float32_t[]) {0, 1, 2}; // WXY
+    rows=4;
     break;
   case  4: /* f   = 1st order 3-D */
-    if(1) {
-      float32_t weights[]={1.4142f, 1.f, 1.f, 1.f};
-      float32_t ordering[4];
-      rows=sizeof(ordering)/sizeof(*ordering);
-      weights[0]=sqrt2;
-      _matrix_sid2acn(ordering, sizeof(ordering)/sizeof(*ordering));
-      
-      weightm=_matrix_diag(NULL, weights, sizeof(weights)/sizeof(*weights));
-      routem =_matrix_router(NULL, ordering, sizeof(ordering)/sizeof(*ordering), 0);
-      reducem=ambix_matrix_init(rows, cols, NULL);
-      reducem=ambix_matrix_fill(reducem, AMBIX_MATRIX_IDENTITY);
-    }
+    reducer=(float32_t[]) {0, 1, 2, 3}; // WXYZ
+    rows=4;
     break;
   case  5: /* hh  = 2nd order 2-D */
-    if(9==rows) {
-    }
+    reducer=(float32_t[]) {0, 1, 2, 4, 5}; // WXYRS
+    rows=9;
     break;
   case  6: /* fh  = 2nd order 2-D + 1st order 3-D (formerly called 2.5 order) */
-    if(9==rows) {
-    }
+    reducer=(float32_t[]) {0, 1, 2, 3, 4, 5}; // WXYZRS
+    rows=9;
     break;
   case  7: /* hhh = 3rd order 2-D */
-    if(16==rows) {
-    }
+    reducer=(float32_t[]) {0, 1, 2, 4, 5, 14, 15}; // WXYRSPQ
+    rows=16;
     break;
   case  8: /* fhh = 3rd order 2-D + 1st order 3-D */
-    if(16==rows) {
-    }
+    reducer=(float32_t[]) {0, 1, 2, 3, 4, 5, 14, 15}; // WXYZRSPQ
+    rows=16;
     break;
   case  9: /* ff  = 2nd order 3-D */
-    if(1) {
-      float32_t ordering[9];
-      rows=sizeof(ordering)/sizeof(*ordering);
-      _matrix_sid2acn(ordering, sizeof(ordering)/sizeof(*ordering));
-      routem =_matrix_router(NULL, ordering, sizeof(ordering)/sizeof(*ordering), 0);
-    }
+    reducer=(float32_t[]) {0, 1, 2, 3, 4, 5, 6, 7, 8}; // WXYZRSTUV
+    rows=9;
     break;
   case 11: /* ffh = 3rd order 2-D + 2nd order 3-D */
-    if(16==rows) {
-    }
+    reducer=(float32_t[]) {0, 1, 2, 3, 4, 5, 6, 7, 8, 14, 15}; // WXYZRSTUVPQ
+    rows=16;
     break;
   case 16: /* fff = 3rd order 3-D */
-    if(1) {
-      float32_t ordering[16];
-      rows=sizeof(ordering)/sizeof(*ordering);
-      _matrix_sid2acn(ordering, sizeof(ordering)/sizeof(*ordering));
-      routem =_matrix_router(NULL, ordering, sizeof(ordering)/sizeof(*ordering), 0);
-    }
+    reducer=(float32_t[]) {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}; // WXYZRSTUVKLMNOPQ
+    rows=16;
     break;
   default:break;
   }
-  if(weightm&&routem&&reducem) {
-    ambix_matrix_t*m0=ambix_matrix_multiply(weightm, routem, NULL);
-    if(m0) {
-      result=ambix_matrix_multiply(m0, reducem, NULL);
-      ambix_matrix_destroy(m0);
+
+  if(reducer) {
+    ambix_matrix_t*expand_m=NULL;
+    ambix_matrix_t*weight_m=NULL;
+    ambix_matrix_t*order_m =NULL;
+    ambix_matrix_t*reduce_m=NULL;
+    ambix_matrix_t*temp_m=NULL;
+    ambix_matrix_t*result_m=NULL;
+
+    reduce_m=ambix_matrix_init(16, cols, reduce_m);
+    if(!_matrix_permutate(reduce_m, reducer, 1)) {
+
     }
+    //printf("reducer");_ambix_print_matrix(reduce_m);
+
+    expand_m=ambix_matrix_init(rows, 16, expand_m);
+    expand_m=ambix_matrix_fill(expand_m, AMBIX_MATRIX_IDENTITY);
+
+    weight_m=_matrix_diag  (weight_m, weights, sizeof(weights)/sizeof(*weights));
+    order_m =_matrix_router(order_m , order, sizeof(order)/sizeof(*order), 1);
+
+    temp_m=ambix_matrix_multiply(weight_m, order_m, temp_m);
+
+    //printf("weight");_ambix_print_matrix(weight_m);
+    //printf("order"); _ambix_print_matrix(order_m);
+
+    ambix_matrix_destroy(weight_m);weight_m=NULL;
+    ambix_matrix_destroy(order_m); order_m=NULL;
+
+    result_m=ambix_matrix_multiply(temp_m, reduce_m, result_m);
+    temp_m=ambix_matrix_multiply(expand_m, result_m, temp_m);
+
+    ambix_matrix_destroy(reduce_m); reduce_m=NULL;
+    ambix_matrix_destroy(result_m); result_m=NULL;
+
+    //printf("#final#");_ambix_print_matrix(temp_m);
+
+    return temp_m;
   }
-  if(weightm) ambix_matrix_destroy(weightm);
-  if(routem)  ambix_matrix_destroy(routem);
-  if(reducem) ambix_matrix_destroy(reducem);
-
-  if(0!=rows)
-    return(result);
-
-  if(result)
-    ambix_matrix_destroy(result);
   return NULL;
 }
