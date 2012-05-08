@@ -3,6 +3,7 @@ bin_PROGRAMS = \
 	ambix-interleave \
 	ambix-deinterleave \
 	ambix-dump \
+	ambix-matrix \
 	ambix-test
 
 SUBDIRS =
@@ -32,6 +33,8 @@ ambix_deinterleave_LDADD = $(top_builddir)/libambix/src/libambix.la @SNDFILE_LIB
 ambix_test_SOURCES = ambix-test.c
 
 ambix_dump_SOURCES = ambix-dump.c
+
+ambix_matrix_SOURCES = ambix-matrix.c
 
 
 ambix_jplay_CFLAGS = @JACK_CFLAGS@ @SAMPLERATE_CFLAGS@ @PTHREAD_CFLAGS@
