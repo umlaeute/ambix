@@ -64,7 +64,7 @@ void _ambix_print_matrix(const ambix_matrix_t*mtx) {
     printf(" [%dx%d] = %p\n", mtx->rows, mtx->cols, mtx->data);
     for(r=0; r<mtx->rows; r++) {
       for(c=0; c<mtx->cols; c++) {
-        printf("%03g ", data[r][c]);
+        printf("%08f ", data[r][c]);
       }
       printf("\n");
     }
