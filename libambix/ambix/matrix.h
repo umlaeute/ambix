@@ -104,7 +104,7 @@ void ambix_matrix_deinit (ambix_matrix_t* mtx);
  *
  * @param type data specification
  *
- * @return pointer to the matrix object, if the type was not valid (for the
+ * @return pointer to the matrix object, or NULL if the type was not valid (for the
  * input matrix)
  */
 AMBIX_API
