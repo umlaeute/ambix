@@ -265,6 +265,17 @@ ambix_matrix_fill(ambix_matrix_t*matrix, ambix_matrixtype_t typ) {
       return NULL;
     matrix=ambix_matrix_copy(result, matrix);
     break;
+
+  case (AMBIX_MATRIX_SID): /* SID -> ACN */ {
+    float32_t*ordering=malloc(rows*sizeof(float32_t));
+    if(!_matrix_sid2acn(ordering, rows)) {
+      free(ordering);
+      return NULL;
+    }
+    result=_matrix_router(NULL, ordering, rows, 0);
+    matrix=ambix_matrix_copy(result, matrix);
+  }
+    break;
   }
   if(result) ambix_matrix_destroy(result);
 
