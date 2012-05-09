@@ -38,17 +38,15 @@
 #include <math.h>
 #include <string.h>
 
-ambix_matrix_t*
-_matrix_fuma2ambix(uint32_t cols) {
-  uint32_t rows=0;
+static ambix_matrix_t*
+fuma2ambix_weightorder(void) {
   const float32_t sqrt2=sqrt(2.);          // 1.414
-
   const float32_t sqrt3_4  = sqrt(3.)/2.;      // 0.86603
   const float32_t sqrt5_8  = sqrt(5./2.)/2.;   // 0.79057
   const float32_t sqrt32_45= 4.*sqrt(2./5.)/3.;// 0.84327
   const float32_t sqrt5_9  = sqrt(5.)/3.;      // 0.74536
 
-  float32_t order[]={
+  static float32_t order[]={
     0,
     2, 3, 1,
     8, 6, 4, 5, 7,
@@ -60,6 +58,25 @@ _matrix_fuma2ambix(uint32_t cols) {
     sqrt3_4, -sqrt3_4, 1, -sqrt3_4, sqrt3_4,
     -sqrt5_8, sqrt5_9, -sqrt32_45, 1, -sqrt32_45, sqrt5_9, -sqrt5_8,
   };
+
+  ambix_matrix_t*result_m=NULL;
+  ambix_matrix_t*weight_m=NULL;
+  ambix_matrix_t*order_m =NULL;
+
+  weight_m=_matrix_diag  (weight_m, weights, sizeof(weights)/sizeof(*weights));
+  order_m =_matrix_router(order_m , order, sizeof(order)/sizeof(*order), 1);
+
+  result_m=ambix_matrix_multiply(weight_m, order_m, result_m);
+
+  ambix_matrix_destroy(weight_m);weight_m=NULL;
+  ambix_matrix_destroy(order_m); order_m=NULL;
+
+  return result_m;
+}
+
+ambix_matrix_t*
+_matrix_fuma2ambix(uint32_t cols) {
+  uint32_t rows=0;
   
   int i;
   float32_t*reducer=NULL;
@@ -105,42 +122,31 @@ _matrix_fuma2ambix(uint32_t cols) {
   }
 
   if(reducer) {
+    static ambix_matrix_t*weightorder_m=NULL;
+
     ambix_matrix_t*expand_m=NULL;
-    ambix_matrix_t*weight_m=NULL;
-    ambix_matrix_t*order_m =NULL;
     ambix_matrix_t*reduce_m=NULL;
-    ambix_matrix_t*temp_m=NULL;
     ambix_matrix_t*result_m=NULL;
+    ambix_matrix_t*final_m=NULL;
+    if(NULL==weightorder_m)
+      weightorder_m=fuma2ambix_weightorder();
 
     reduce_m=ambix_matrix_init(16, cols, reduce_m);
     if(!_matrix_permutate(reduce_m, reducer, 1)) {
-
+      return NULL;
     }
     //printf("reducer");_ambix_print_matrix(reduce_m);
 
     expand_m=ambix_matrix_init(rows, 16, expand_m);
     expand_m=ambix_matrix_fill(expand_m, AMBIX_MATRIX_IDENTITY);
 
-    weight_m=_matrix_diag  (weight_m, weights, sizeof(weights)/sizeof(*weights));
-    order_m =_matrix_router(order_m , order, sizeof(order)/sizeof(*order), 1);
-
-    temp_m=ambix_matrix_multiply(weight_m, order_m, temp_m);
-
-    //printf("weight");_ambix_print_matrix(weight_m);
-    //printf("order"); _ambix_print_matrix(order_m);
-
-    ambix_matrix_destroy(weight_m);weight_m=NULL;
-    ambix_matrix_destroy(order_m); order_m=NULL;
-
-    result_m=ambix_matrix_multiply(temp_m, reduce_m, result_m);
-    temp_m=ambix_matrix_multiply(expand_m, result_m, temp_m);
+    result_m=ambix_matrix_multiply(weightorder_m, reduce_m, result_m);
+    final_m=ambix_matrix_multiply(expand_m, result_m, final_m);
 
     ambix_matrix_destroy(reduce_m); reduce_m=NULL;
     ambix_matrix_destroy(result_m); result_m=NULL;
 
-    //printf("#final#");_ambix_print_matrix(temp_m);
-
-    return temp_m;
+    return final_m;
   }
   return NULL;
 }
