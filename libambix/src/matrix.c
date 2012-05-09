@@ -272,11 +272,22 @@ ambix_matrix_fill(ambix_matrix_t*matrix, ambix_matrixtype_t typ) {
       free(ordering);
       return NULL;
     }
-    result=_matrix_router(NULL, ordering, rows, 0);
+    matrix=_matrix_router(matrix, ordering, rows, 0);
     free(ordering);
-    matrix=ambix_matrix_copy(result, matrix);
   }
     break;
+  case (AMBIX_MATRIX_TO_SID): /* ACN -> SID */ {
+    float32_t*ordering=malloc(rows*sizeof(float32_t));
+    if(!_matrix_sid2acn(ordering, rows)) {
+      free(ordering);
+      return NULL;
+    }
+    matrix=_matrix_router(matrix, ordering, rows, 1);
+    free(ordering);
+  }
+    break;
+
+
   case (AMBIX_MATRIX_N3D): /* N3D -> SN3D */ {
     float32_t*weights=NULL;
     int32_t o, order=ambix_channels2order(rows);
@@ -285,9 +296,29 @@ ambix_matrix_fill(ambix_matrix_t*matrix, ambix_matrixtype_t typ) {
     weights=malloc(rows*sizeof(float32_t));
     for(o=0; o<order; o++) {
       const float32_t w=1./sqrt(2.*o+1.);
-      #warning fill in weights
+      int32_t i;
+      for(i=0; i<(2*o+1); i++) {
+        weights[i]=w;
+      }
     }
-
+    matrix=_matrix_diag(matrix, weights, rows);
+    free(weights);
+  }
+    break;
+  case (AMBIX_MATRIX_TO_N3D): /* SN3D -> N3D */ {
+    float32_t*weights=NULL;
+    int32_t o, order=ambix_channels2order(rows);
+    if(order<0)
+      return NULL;
+    weights=malloc(rows*sizeof(float32_t));
+    for(o=0; o<order; o++) {
+      const float32_t w=sqrt(2.*o+1.);
+      int32_t i;
+      for(i=0; i<(2*o+1); i++) {
+        weights[i]=w;
+      }
+    }
+    matrix=_matrix_diag(matrix, weights, rows);
     free(weights);
   }
     break;
