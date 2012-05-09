@@ -80,7 +80,7 @@ void check_inversion(const char*name, ambix_matrixtype_t typ, uint32_t rows, uin
     matrix_print(result);
   }
 
-  fail_if(!(errf<eps), __LINE__, "diffing matrices (%s) returned %f (>%f)", name, errf, eps);
+  fail_if(!(errf<eps), __LINE__, "diffing matrices (%s) returned %g-%g=%g", name, errf, eps, errf-eps);
 }
 
 void check_matrix(const char*name, ambix_matrixtype_t typ, uint32_t rows, uint32_t cols) {
