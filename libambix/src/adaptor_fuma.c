@@ -33,35 +33,20 @@
   16 	fff 	full-sphere 	3 	3 	WXYZRSTUVKLMNOPQ    X
 */
 
-
-
-
 #include "private.h"
-
-#ifdef HAVE_STDLIB_H
-# include <stdlib.h>
-#endif /* HAVE_STDLIB_H */
 
 #include <math.h>
 #include <string.h>
 
 ambix_matrix_t*
 _matrix_fuma2ambix(uint32_t cols) {
-  ambix_matrix_t*result=NULL, *weightm=NULL, *routem=NULL, *reducem=NULL;
   uint32_t rows=0;
-  int32_t r, c;
   const float32_t sqrt2=sqrt(2.);          // 1.414
-
-  const float32_t sqrt4_3=2./sqrt(3.);     // 1.154
-  const float32_t sqrt45_32=sqrt(45./32.); // 1.185
-  const float32_t sqrt9_5=3./sqrt(5.);     // 1.341
-  const float32_t sqrt8_5=sqrt(8./5.);     // 1.264
 
   const float32_t sqrt3_4  = sqrt(3.)/2.;      // 0.86603
   const float32_t sqrt5_8  = sqrt(5./2.)/2.;   // 0.79057
   const float32_t sqrt32_45= 4.*sqrt(2./5.)/3.;// 0.84327
   const float32_t sqrt5_9  = sqrt(5.)/3.;      // 0.74536
-
 
   float32_t order[]={
     0,
