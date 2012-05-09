@@ -38,7 +38,7 @@ void check_create_extended(const char*path, ambix_sampleformat_t format, uint32_
   const ambix_matrix_t*eye2=NULL;
   uint32_t err32;
   float32_t diff=0.;
-  STARTTEST();
+  STARTTEST("");
 
   printf("test using '%s' [%d] with chunks of %d and eps=%f\n", path, (int)format, (int)chunksize, eps);
 

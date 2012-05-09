@@ -48,7 +48,7 @@ static float32_t resultdata_4_2[]= {
 void mtxmul_tests(float32_t eps) {
   float32_t errf;
   ambix_matrix_t *left, *right, *result, *testresult;
-  STARTTEST();
+  STARTTEST("");
 
  /* fill in some test data */
   left=ambix_matrix_init(4, 3, NULL);
@@ -84,7 +84,7 @@ void mtxmul_tests(float32_t eps) {
 void mtxmul_eye_tests(float32_t eps) {
   float32_t errf;
   ambix_matrix_t *left, *result, *eye;
-  STARTTEST();
+  STARTTEST("");
   eye=ambix_matrix_init(4, 4, NULL);
   fail_if((eye!=ambix_matrix_fill(eye, AMBIX_MATRIX_IDENTITY)), __LINE__, "filling unity matrix %p did not return original matrix %p", eye);
 
@@ -116,7 +116,7 @@ void datamul_tests(float32_t eps) {
   float32_t*inputdata   = calloc(2*3, sizeof(float32_t));
 
   ambix_matrix_t*mtx=NULL;
-  STARTTEST();
+  STARTTEST("");
 
   mtx=ambix_matrix_init(4, 3, NULL);
   ambix_matrix_fill_data(mtx, leftdata_4_3);
@@ -166,7 +166,7 @@ void datamul_eye_tests(float32_t eps) {
   float32_t*outputdata;
   float32_t freq=500;
   ambix_matrix_t eye = {0, 0, NULL};
-  STARTTEST();
+  STARTTEST("");
 
 
   inputdata =data_sine(frames, channels, freq);
@@ -205,7 +205,7 @@ void datamul_4_2_tests(uint32_t chunksize, float32_t eps) {
   float32_t freq=500;
 
   ambix_matrix_t eye = {0, 0, NULL};
-  STARTTEST();
+  STARTTEST("");
 
 
 
@@ -271,7 +271,7 @@ void create_tests(float32_t eps) {
   int cols2=2;
   ambix_matrix_t matrix, *left, *right;
   float32_t errf;
-  STARTTEST();
+  STARTTEST("");
 
   memset(&matrix, 0, sizeof(matrix));
 
