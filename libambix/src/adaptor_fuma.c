@@ -174,7 +174,7 @@ _matrix_ambix2fuma(uint32_t cols) {
     return NULL;
 
   if(reducer_v[cols]) {
-    static ambix_matrix_t*weightorder_m=NULL;
+    ambix_matrix_t*weightorder_m=NULL;
 
     ambix_matrix_t*expand_m=NULL;
     ambix_matrix_t*reduce_m=NULL;
@@ -195,6 +195,7 @@ _matrix_ambix2fuma(uint32_t cols) {
 
     ambix_matrix_destroy(expand_m); expand_m=NULL;
     ambix_matrix_destroy(reduce_m); reduce_m=NULL;
+    ambix_matrix_destroy(weightorder_m); weightorder_m=NULL;
 
     return final_m;
   }
@@ -251,7 +252,7 @@ _matrix_fuma2ambix(uint32_t rows) {
     return NULL;
 
   if(reducer_v[rows]) {
-    static ambix_matrix_t*weightorder_m=NULL;
+    ambix_matrix_t*weightorder_m=NULL;
 
     ambix_matrix_t*expand_m=NULL;
     ambix_matrix_t*reduce_m=NULL;
@@ -272,6 +273,7 @@ _matrix_fuma2ambix(uint32_t rows) {
 
     ambix_matrix_destroy(expand_m); expand_m=NULL;
     ambix_matrix_destroy(reduce_m); reduce_m=NULL;
+    ambix_matrix_destroy(weightorder_m); weightorder_m=NULL;
 
     return final_m;
   }
