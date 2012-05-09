@@ -289,16 +289,19 @@ ambix_matrix_fill(ambix_matrix_t*matrix, ambix_matrixtype_t typ) {
 
 
   case (AMBIX_MATRIX_N3D): /* N3D -> SN3D */ {
-    float32_t*weights=NULL;
-    int32_t o, order=ambix_channels2order(rows);
+    float32_t*weights=NULL, *w_=NULL;
+    int32_t counter=0;
+    int32_t o=0, order=ambix_channels2order(rows);
     if(order<0)
       return NULL;
     weights=malloc(rows*sizeof(float32_t));
-    for(o=0; o<order; o++) {
+    w_=weights;
+    for(o=0; o<=order; o++) {
       const float32_t w=1./sqrt(2.*o+1.);
       int32_t i;
       for(i=0; i<(2*o+1); i++) {
-        weights[i]=w;
+        *w_++=w;
+        counter++;
       }
     }
     matrix=_matrix_diag(matrix, weights, rows);
@@ -306,19 +309,22 @@ ambix_matrix_fill(ambix_matrix_t*matrix, ambix_matrixtype_t typ) {
   }
     break;
   case (AMBIX_MATRIX_TO_N3D): /* SN3D -> N3D */ {
-    float32_t*weights=NULL;
+    float32_t*weights=NULL, *w_=NULL;
+    int32_t counter=0;
     int32_t o, order=ambix_channels2order(rows);
     if(order<0)
       return NULL;
     weights=malloc(rows*sizeof(float32_t));
-    for(o=0; o<order; o++) {
+    w_=weights;
+    for(o=0; o<=order; o++) {
       const float32_t w=sqrt(2.*o+1.);
       int32_t i;
       for(i=0; i<(2*o+1); i++) {
-        weights[i]=w;
+        *w_++=w;
+        counter++;
       }
     }
-    matrix=_matrix_diag(matrix, weights, rows);
+   matrix=_matrix_diag(matrix, weights, rows);
     free(weights);
   }
     break;
