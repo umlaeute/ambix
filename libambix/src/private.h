@@ -365,6 +365,7 @@ int _matrix_sid2acn(float32_t*data, uint32_t count);
  * @see http://members.tripod.com/martin_leese/Ambisonic/B-Format_file_format.html
  */
 ambix_matrix_t*_matrix_fuma2ambix(unsigned int channels);
+ambix_matrix_t*_matrix_ambix2fuma(unsigned int channels);
 
 
 #endif /* AMBIX_PRIVATE_H */
