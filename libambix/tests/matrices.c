@@ -23,6 +23,7 @@
 
 #include "common.h"
 #include <string.h>
+#include <math.h>
 
 float32_t matrix_check_diff(const char*name, ambix_matrix_t*mtx1,ambix_matrix_t*mtx2) {
   uint32_t col, row;
@@ -81,13 +82,16 @@ void check_inversion(const char*name, ambix_matrixtype_t typ, uint32_t rows, uin
   }
 
   fail_if(!(errf<eps), __LINE__, "diffing matrices (%s) returned %g-%g=%g", name, errf, eps, errf-eps);
+
+  ambix_matrix_destroy(result);
+  ambix_matrix_destroy(eye);
 }
 
 void check_matrix(const char*name, ambix_matrixtype_t typ, uint32_t rows, uint32_t cols) {
   ambix_matrix_t*mtx=NULL;
   ambix_matrix_t*result=NULL;
   ambix_matrix_t*zeros=NULL;
-  float32_t errf;
+  float32_t errf=0.f;
   float32_t eps=1e-20;
 
   STARTTEST(name);
@@ -107,10 +111,12 @@ void check_matrix(const char*name, ambix_matrixtype_t typ, uint32_t rows, uint32
   if(AMBIX_MATRIX_ZERO==typ) {
     fail_if(!(errf<eps), __LINE__, "zero matrix non-zero (%f>%f)", errf, eps);
   } else {
-    fail_if(!(errf>eps), __LINE__, "non-zero matrix zero (%f<%f)", errf, eps);
+    fail_if((errf<eps), __LINE__, "non-zero matrix zero (%f<%f)", errf, eps);
   }
 
- 
+
+  ambix_matrix_destroy(mtx);
+  ambix_matrix_destroy(zeros); 
 }
 
 int main(int argc, char**argv) {
