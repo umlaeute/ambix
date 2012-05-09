@@ -76,6 +76,43 @@ fuma2ambix_weightorder(void) {
 
 
 static ambix_matrix_t*
+ambix2fuma_weightorder(void) {
+  const float32_t sqrt1_2  = 1./sqrt(2.);      // 0.707
+  const float32_t sqrt4_3  = 2./sqrt(3.);      // 1.1547
+  const float32_t sqrt8_5  = 2.*sqrt(2./5.);   // 1.2649
+  const float32_t sqrt45_32= 3.*sqrt(5./2.)/4.;// 1.1856
+  const float32_t sqrt9_5  = 2./sqrt(5.);      // 1.3416
+
+  static float32_t order[]={
+    0,
+    2, 3, 1,
+    8, 6, 4, 5, 7,
+    15, 13, 11,  9, 10, 12, 14,
+  };
+  float32_t weights[]={
+    sqrt1_2,
+    -1, 1, -1,
+    sqrt4_3, -sqrt4_3, 1, -sqrt4_3, sqrt4_3,
+    -sqrt8_5, sqrt9_5, -sqrt45_32, 1, -sqrt45_32, sqrt9_5, -sqrt8_5,
+  };
+
+  ambix_matrix_t*result_m=NULL;
+  ambix_matrix_t*weight_m=NULL;
+  ambix_matrix_t*order_m =NULL;
+
+  weight_m=_matrix_diag  (weight_m, weights, sizeof(weights)/sizeof(*weights));
+  order_m =_matrix_router(order_m , order, sizeof(order)/sizeof(*order), 1);
+
+  result_m=ambix_matrix_multiply(weight_m, order_m, result_m);
+
+  ambix_matrix_destroy(weight_m);weight_m=NULL;
+  ambix_matrix_destroy(order_m); order_m=NULL;
+
+  return result_m;
+}
+
+
+static ambix_matrix_t*
 _matrix_multiply3(ambix_matrix_t*mtx1, 
                   ambix_matrix_t*mtx2,
                   ambix_matrix_t*mtx3,
@@ -90,7 +127,7 @@ _matrix_multiply3(ambix_matrix_t*mtx1,
 }
 
 ambix_matrix_t*
-_matrix_fuma2ambix(uint32_t cols) {
+_matrix_ambix2fuma(uint32_t cols) {
   uint32_t rows=0;
   
   int i;
@@ -144,14 +181,91 @@ _matrix_fuma2ambix(uint32_t cols) {
     ambix_matrix_t*reduce_m=NULL;
     ambix_matrix_t*final_m=NULL;
 
-    expand_m=ambix_matrix_init(rows_v[cols], 16, expand_m);
+    expand_m=ambix_matrix_init(16, rows_v[cols], expand_m);
+    expand_m=ambix_matrix_fill(expand_m, AMBIX_MATRIX_IDENTITY);
+
+    if(NULL==weightorder_m)
+      weightorder_m=ambix2fuma_weightorder();
+
+    reduce_m=ambix_matrix_init(cols, 16, reduce_m);
+    if(!_matrix_permutate(reduce_m, reducer_v[cols], 0)) {
+      return NULL;
+    }
+
+    final_m=_matrix_multiply3(reduce_m, weightorder_m, expand_m, final_m);
+
+    ambix_matrix_destroy(expand_m); expand_m=NULL;
+    ambix_matrix_destroy(reduce_m); reduce_m=NULL;
+
+    return final_m;
+  }
+  return NULL;
+}
+
+
+ambix_matrix_t*
+_matrix_fuma2ambix(uint32_t rows) {
+  uint32_t cols=0;
+  
+  int i;
+  float32_t*reducer_v[]={
+    NULL,
+    (float32_t[]) {0}, // W
+    NULL,
+    (float32_t[]) {0, 1, 2}, // WXY
+    (float32_t[]) {0, 1, 2, 3}, // WXYZ
+    (float32_t[]) {0, 1, 2, 4, 5}, // WXYRS
+    (float32_t[]) {0, 1, 2, 3, 4, 5}, // WXYZRS
+    (float32_t[]) {0, 1, 2, 4, 5, 14, 15}, // WXYRSPQ
+    (float32_t[]) {0, 1, 2, 3, 4, 5, 14, 15}, // WXYZRSPQ
+    (float32_t[]) {0, 1, 2, 3, 4, 5, 6, 7, 8}, // WXYZRSTUV
+    NULL,
+    (float32_t[]) {0, 1, 2, 3, 4, 5, 6, 7, 8, 14, 15}, // WXYZRSTUVPQ
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    (float32_t[]) {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}, // WXYZRSTUVKLMNOPQ
+  };
+
+  static const uint32_t cols_v[]={
+    0,
+    1, // W
+    0,
+    4, // WXY
+    4, // WXYZ
+    9, // WXYRS
+    9, // WXYZRS
+    16,// WXYRSPQ
+    16,// WXYZRSPQ
+    9, // WXYZRSTUV
+    0,
+    16,// WXYZRSTUVPQ
+    0,
+    0,
+    0,
+    0,
+    16,// WXYZRSTUVKLMNOPQ
+  };
+
+  if(rows<0 || rows > 16)
+    return NULL;
+
+  if(reducer_v[rows]) {
+    static ambix_matrix_t*weightorder_m=NULL;
+
+    ambix_matrix_t*expand_m=NULL;
+    ambix_matrix_t*reduce_m=NULL;
+    ambix_matrix_t*final_m=NULL;
+
+    expand_m=ambix_matrix_init(cols_v[rows], 16, expand_m);
     expand_m=ambix_matrix_fill(expand_m, AMBIX_MATRIX_IDENTITY);
 
     if(NULL==weightorder_m)
       weightorder_m=fuma2ambix_weightorder();
 
-    reduce_m=ambix_matrix_init(16, cols, reduce_m);
-    if(!_matrix_permutate(reduce_m, reducer_v[cols], 1)) {
+    reduce_m=ambix_matrix_init(16, rows, reduce_m);
+    if(!_matrix_permutate(reduce_m, reducer_v[rows], 1)) {
       return NULL;
     }
 
