@@ -84,7 +84,7 @@ static void print_matrix(const char*name, ambix_matrixtype_t typ, uint32_t rows,
 
 
 int main(int argc, char**argv) {
-  print_matrix("FuMa [ ]"  , AMBIX_MATRIX_FUMA,  1,  1);
+  print_matrix("FuMa []"   , AMBIX_MATRIX_FUMA,  1,  1);
   print_matrix("FuMa [h]"  , AMBIX_MATRIX_FUMA,  4,  3);
   print_matrix("FuMa [f]"  , AMBIX_MATRIX_FUMA,  4,  4);
   print_matrix("FuMa [hh]" , AMBIX_MATRIX_FUMA,  9,  5);
@@ -96,6 +96,17 @@ int main(int argc, char**argv) {
   print_matrix("FuMa [fff]", AMBIX_MATRIX_FUMA, 16, 16);
 
 
+
+  print_matrix("MaFu []"   , AMBIX_MATRIX_TO_FUMA,  1,  1);
+  print_matrix("MaFu [h]"  , AMBIX_MATRIX_TO_FUMA,  3,  4);
+  print_matrix("MaFu [f]"  , AMBIX_MATRIX_TO_FUMA,  4,  4);
+  print_matrix("MaFu [hh]" , AMBIX_MATRIX_TO_FUMA,  5,  9);
+  print_matrix("MaFu [fh]" , AMBIX_MATRIX_TO_FUMA,  6,  9);
+  print_matrix("MaFu [ff]" , AMBIX_MATRIX_TO_FUMA,  9,  9);
+  print_matrix("MaFu [hhh]", AMBIX_MATRIX_TO_FUMA,  7, 16);
+  print_matrix("MaFu [fhh]", AMBIX_MATRIX_TO_FUMA,  8, 16);
+  print_matrix("MaFu [ffh]", AMBIX_MATRIX_TO_FUMA, 11, 16);
+  print_matrix("MaFu [fff]", AMBIX_MATRIX_TO_FUMA, 16, 16);
 
   return 0;
 }
