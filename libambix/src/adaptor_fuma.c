@@ -74,14 +74,13 @@ fuma2ambix_weightorder(void) {
   return result_m;
 }
 
-
 static ambix_matrix_t*
 ambix2fuma_weightorder(void) {
   const float32_t sqrt1_2  = 1./sqrt(2.);      // 0.707
   const float32_t sqrt4_3  = 2./sqrt(3.);      // 1.1547
   const float32_t sqrt8_5  = 2.*sqrt(2./5.);   // 1.2649
   const float32_t sqrt45_32= 3.*sqrt(5./2.)/4.;// 1.1856
-  const float32_t sqrt9_5  = 2./sqrt(5.);      // 1.3416
+  const float32_t sqrt9_5  = 3./sqrt(5.);      // 1.3416
 
   static float32_t order[]={
     0,
@@ -101,9 +100,9 @@ ambix2fuma_weightorder(void) {
   ambix_matrix_t*order_m =NULL;
 
   weight_m=_matrix_diag  (weight_m, weights, sizeof(weights)/sizeof(*weights));
-  order_m =_matrix_router(order_m , order, sizeof(order)/sizeof(*order), 1);
+  order_m =_matrix_router(order_m , order, sizeof(order)/sizeof(*order), 0);
 
-  result_m=ambix_matrix_multiply(weight_m, order_m, result_m);
+  result_m=ambix_matrix_multiply(order_m, weight_m, result_m);
 
   ambix_matrix_destroy(weight_m);weight_m=NULL;
   ambix_matrix_destroy(order_m); order_m=NULL;
