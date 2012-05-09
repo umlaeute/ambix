@@ -25,6 +25,10 @@ TESTS += matrix
 check_PROGRAMS += matrix
 matrix_SOURCES = matrix.c common.c
 
+TESTS += matrices
+check_PROGRAMS += matrices
+matrices_SOURCES = matrices.c common.c
+
 TESTS += ambix_none
 check_PROGRAMS += ambix_none
 ambix_none_SOURCES = ambix_none.c common.c
