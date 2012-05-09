@@ -84,6 +84,7 @@ static void print_matrix(const char*name, ambix_matrixtype_t typ, uint32_t rows,
 
 
 int main(int argc, char**argv) {
+  print_matrix("FuMa [ ]"  , AMBIX_MATRIX_FUMA,  1,  1);
   print_matrix("FuMa [h]"  , AMBIX_MATRIX_FUMA,  4,  3);
   print_matrix("FuMa [f]"  , AMBIX_MATRIX_FUMA,  4,  4);
   print_matrix("FuMa [hh]" , AMBIX_MATRIX_FUMA,  9,  5);
