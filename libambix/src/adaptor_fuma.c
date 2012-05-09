@@ -81,45 +81,51 @@ _matrix_fuma2ambix(uint32_t cols) {
   int i;
   float32_t*reducer=NULL;
 
-  switch(cols) {
-  case  3: /* h   = 1st order 2-D */
-    reducer=(float32_t[]) {0, 1, 2}; // WXY
-    rows=4;
-    break;
-  case  4: /* f   = 1st order 3-D */
-    reducer=(float32_t[]) {0, 1, 2, 3}; // WXYZ
-    rows=4;
-    break;
-  case  5: /* hh  = 2nd order 2-D */
-    reducer=(float32_t[]) {0, 1, 2, 4, 5}; // WXYRS
-    rows=9;
-    break;
-  case  6: /* fh  = 2nd order 2-D + 1st order 3-D (formerly called 2.5 order) */
-    reducer=(float32_t[]) {0, 1, 2, 3, 4, 5}; // WXYZRS
-    rows=9;
-    break;
-  case  7: /* hhh = 3rd order 2-D */
-    reducer=(float32_t[]) {0, 1, 2, 4, 5, 14, 15}; // WXYRSPQ
-    rows=16;
-    break;
-  case  8: /* fhh = 3rd order 2-D + 1st order 3-D */
-    reducer=(float32_t[]) {0, 1, 2, 3, 4, 5, 14, 15}; // WXYZRSPQ
-    rows=16;
-    break;
-  case  9: /* ff  = 2nd order 3-D */
-    reducer=(float32_t[]) {0, 1, 2, 3, 4, 5, 6, 7, 8}; // WXYZRSTUV
-    rows=9;
-    break;
-  case 11: /* ffh = 3rd order 2-D + 2nd order 3-D */
-    reducer=(float32_t[]) {0, 1, 2, 3, 4, 5, 6, 7, 8, 14, 15}; // WXYZRSTUVPQ
-    rows=16;
-    break;
-  case 16: /* fff = 3rd order 3-D */
-    reducer=(float32_t[]) {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}; // WXYZRSTUVKLMNOPQ
-    rows=16;
-    break;
-  default:break;
-  }
+  float32_t*reducer_v[]={
+    NULL,
+    (float32_t[]) {0}, // W
+    NULL,
+    (float32_t[]) {0, 1, 2}, // WXY
+    (float32_t[]) {0, 1, 2, 3}, // WXYZ
+    (float32_t[]) {0, 1, 2, 4, 5}, // WXYRS
+    (float32_t[]) {0, 1, 2, 3, 4, 5}, // WXYZRS
+    (float32_t[]) {0, 1, 2, 4, 5, 14, 15}, // WXYRSPQ
+    (float32_t[]) {0, 1, 2, 3, 4, 5, 14, 15}, // WXYZRSPQ
+    (float32_t[]) {0, 1, 2, 3, 4, 5, 6, 7, 8}, // WXYZRSTUV
+    NULL,
+    (float32_t[]) {0, 1, 2, 3, 4, 5, 6, 7, 8, 14, 15}, // WXYZRSTUVPQ
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    (float32_t[]) {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}, // WXYZRSTUVKLMNOPQ
+  };
+
+  static uint32_t rows_v[]={
+    0,
+    1, // W
+    0,
+    4, // WXY
+    4, // WXYZ
+    9, // WXYRS
+    9, // WXYZRS
+    16,// WXYRSPQ
+    16,// WXYZRSPQ
+    9, // WXYZRSTUV
+    0,
+    16,// WXYZRSTUVPQ
+    0,
+    0,
+    0,
+    0,
+    16,// WXYZRSTUVKLMNOPQ
+  };
+
+  if(cols<0 || cols > 16)
+    return NULL;
+
+  reducer= reducer_v[cols];
+  rows   = rows_v   [cols];
 
   if(reducer) {
     static ambix_matrix_t*weightorder_m=NULL;
@@ -135,7 +141,6 @@ _matrix_fuma2ambix(uint32_t cols) {
     if(!_matrix_permutate(reduce_m, reducer, 1)) {
       return NULL;
     }
-    //printf("reducer");_ambix_print_matrix(reduce_m);
 
     expand_m=ambix_matrix_init(rows, 16, expand_m);
     expand_m=ambix_matrix_fill(expand_m, AMBIX_MATRIX_IDENTITY);
