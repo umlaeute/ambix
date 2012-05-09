@@ -115,11 +115,16 @@ void check_matrix(const char*name, ambix_matrixtype_t typ, uint32_t rows, uint32
 
 int main(int argc, char**argv) {
   uint32_t r, c, o;
+  char name[64];
+  name[63]=0;
   for(r=1; r<16; r++) {
     for(c=1; c<16; c++) {
-      check_matrix("zero[X,Y]", AMBIX_MATRIX_ZERO, r, c);
-      check_matrix("one[X,Y]", AMBIX_MATRIX_ONE, r, c);
-      check_matrix("identity[X,Y]", AMBIX_MATRIX_IDENTITY, r, c);
+      snprintf(name, 63, "zero[%d, %d]", r, c);
+      check_matrix(name, AMBIX_MATRIX_ZERO, r, c);
+      snprintf(name, 63, "one[%d, %d]", r, c);
+      check_matrix(name, AMBIX_MATRIX_ONE, r, c);
+      snprintf(name, 63, "identity[%d, %d]", r, c);
+      check_matrix(name, AMBIX_MATRIX_IDENTITY, r, c);
     }
   }
 
@@ -149,12 +154,15 @@ int main(int argc, char**argv) {
 
   for(o=1; o<6; o++) {
     uint32_t chan=ambix_order2channels(o);
-    printf("checking matrices of order=%d (%d channels)\n", o, chan);
-    check_matrix("n3d[X,X]", AMBIX_MATRIX_N3D, chan, chan);
-    check_matrix("sid[X,X]", AMBIX_MATRIX_SID, chan, chan);
+    snprintf(name, 63, "n3d2snd3d[%d, %d]", chan, chan);
+    check_matrix(name, AMBIX_MATRIX_N3D, chan, chan);
+    snprintf(name, 63, "sid2acn[%d, %d]", chan, chan);
+    check_matrix(name, AMBIX_MATRIX_SID, chan, chan);
 
-    check_matrix("2n3d[X,X]", AMBIX_MATRIX_TO_N3D, chan, chan);
-    check_matrix("2sid[X,X]", AMBIX_MATRIX_TO_SID, chan, chan);
+    snprintf(name, 63, "sn3d2n3d[%d, %d]", chan, chan);
+    check_matrix(name, AMBIX_MATRIX_TO_N3D, chan, chan);
+    snprintf(name, 63, "acn2sid[%d, %d]", chan, chan);
+    check_matrix(name, AMBIX_MATRIX_TO_SID, chan, chan);
   }
     
 
