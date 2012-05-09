@@ -273,7 +273,22 @@ ambix_matrix_fill(ambix_matrix_t*matrix, ambix_matrixtype_t typ) {
       return NULL;
     }
     result=_matrix_router(NULL, ordering, rows, 0);
+    free(ordering);
     matrix=ambix_matrix_copy(result, matrix);
+  }
+    break;
+  case (AMBIX_MATRIX_N3D): /* N3D -> SN3D */ {
+    float32_t*weights=NULL;
+    int32_t o, order=ambix_channels2order(rows);
+    if(order<0)
+      return NULL;
+    weights=malloc(rows*sizeof(float32_t));
+    for(o=0; o<order; o++) {
+      const float32_t w=1./sqrt(2.*o+1.);
+      #warning fill in weights
+    }
+
+    free(weights);
   }
     break;
   }
