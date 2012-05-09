@@ -74,13 +74,26 @@ fuma2ambix_weightorder(void) {
   return result_m;
 }
 
+
+static ambix_matrix_t*
+_matrix_multiply3(ambix_matrix_t*mtx1, 
+                  ambix_matrix_t*mtx2,
+                  ambix_matrix_t*mtx3,
+                  ambix_matrix_t*result) {
+  ambix_matrix_t*tmp=NULL;
+
+  tmp=ambix_matrix_multiply(mtx1, mtx2, tmp);
+  result=ambix_matrix_multiply(tmp, mtx3, result);
+
+  ambix_matrix_destroy(tmp);
+  return result;
+}
+
 ambix_matrix_t*
 _matrix_fuma2ambix(uint32_t cols) {
   uint32_t rows=0;
   
   int i;
-  float32_t*reducer=NULL;
-
   float32_t*reducer_v[]={
     NULL,
     (float32_t[]) {0}, // W
@@ -101,7 +114,7 @@ _matrix_fuma2ambix(uint32_t cols) {
     (float32_t[]) {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}, // WXYZRSTUVKLMNOPQ
   };
 
-  static uint32_t rows_v[]={
+  static const uint32_t rows_v[]={
     0,
     1, // W
     0,
@@ -124,32 +137,28 @@ _matrix_fuma2ambix(uint32_t cols) {
   if(cols<0 || cols > 16)
     return NULL;
 
-  reducer= reducer_v[cols];
-  rows   = rows_v   [cols];
-
-  if(reducer) {
+  if(reducer_v[cols]) {
     static ambix_matrix_t*weightorder_m=NULL;
 
     ambix_matrix_t*expand_m=NULL;
     ambix_matrix_t*reduce_m=NULL;
-    ambix_matrix_t*result_m=NULL;
     ambix_matrix_t*final_m=NULL;
+
+    expand_m=ambix_matrix_init(rows_v[cols], 16, expand_m);
+    expand_m=ambix_matrix_fill(expand_m, AMBIX_MATRIX_IDENTITY);
+
     if(NULL==weightorder_m)
       weightorder_m=fuma2ambix_weightorder();
 
     reduce_m=ambix_matrix_init(16, cols, reduce_m);
-    if(!_matrix_permutate(reduce_m, reducer, 1)) {
+    if(!_matrix_permutate(reduce_m, reducer_v[cols], 1)) {
       return NULL;
     }
 
-    expand_m=ambix_matrix_init(rows, 16, expand_m);
-    expand_m=ambix_matrix_fill(expand_m, AMBIX_MATRIX_IDENTITY);
+    final_m=_matrix_multiply3(expand_m, weightorder_m, reduce_m, final_m);
 
-    result_m=ambix_matrix_multiply(weightorder_m, reduce_m, result_m);
-    final_m=ambix_matrix_multiply(expand_m, result_m, final_m);
-
+    ambix_matrix_destroy(expand_m); expand_m=NULL;
     ambix_matrix_destroy(reduce_m); reduce_m=NULL;
-    ambix_matrix_destroy(result_m); result_m=NULL;
 
     return final_m;
   }
