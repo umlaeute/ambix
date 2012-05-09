@@ -32,7 +32,7 @@ float32_t matrix_check_diff(const char*name, ambix_matrix_t*mtx1,ambix_matrix_t*
 
   for(col=0; col<mtx1->cols; col++) {
     for(row=0; row<mtx1->rows; row++) {
-      errf+=abs(mtx1->data[row][col] - mtx2->data[row][col]);
+      errf+=fabs(mtx1->data[row][col] - mtx2->data[row][col]);
     }
   }
 
