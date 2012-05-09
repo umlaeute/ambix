@@ -24,11 +24,11 @@
 #include "common.h"
 #include <string.h>
 
-void matrix_check_diff(const char*name, uint32_t line, ambix_matrix_t*mtx1,ambix_matrix_t*mtx2, float32_t eps) {
+float32_t matrix_check_diff(const char*name, ambix_matrix_t*mtx1,ambix_matrix_t*mtx2) {
   uint32_t col, row;
   float32_t errf=0.;
-  fail_if((mtx1->cols != mtx2->cols), line, "matrix columns (%s) do not match %d!=%d", name, mtx1->cols, mtx2->cols);
-  fail_if((mtx1->rows != mtx2->rows), line, "matrix rows (%s) do not match %d!=%d", name, mtx1->rows, mtx2->rows);
+  fail_if((mtx1->cols != mtx2->cols), __LINE__, "matrix columns (%s) do not match %d!=%d", name, mtx1->cols, mtx2->cols);
+  fail_if((mtx1->rows != mtx2->rows), __LINE__, "matrix rows (%s) do not match %d!=%d", name, mtx1->rows, mtx2->rows);
 
   for(col=0; col<mtx1->cols; col++) {
     for(row=0; row<mtx1->rows; row++) {
@@ -36,12 +36,7 @@ void matrix_check_diff(const char*name, uint32_t line, ambix_matrix_t*mtx1,ambix
     }
   }
 
-  if(!(errf<eps)){
-    matrix_print(mtx1);
-    matrix_print(mtx2);
-  }
-
-  fail_if(!(errf<eps), line, "diffing matrices (%s) returned %f (>%f)", name, errf, eps);
+  return errf;
 }
 
 
@@ -70,16 +65,77 @@ ambix_matrix_t*inverse_matrices(ambix_matrixtype_t typ, uint32_t rows, uint32_t 
 void check_inversion(const char*name, ambix_matrixtype_t typ, uint32_t rows, uint32_t cols) {
   ambix_matrix_t*eye=NULL;
   ambix_matrix_t*result=NULL;
+  float32_t errf;
+  float32_t eps=1e-20;
+
+  STARTTEST(name);
 
   result=inverse_matrices(typ, rows, cols);
   eye=ambix_matrix_init(result->rows, result->cols, eye);
   eye=ambix_matrix_fill(eye, AMBIX_MATRIX_IDENTITY);
 
-  matrix_check_diff(name, __LINE__, result, eye, 1e-30);
+  errf=matrix_check_diff(name, result, eye);
+
+  if(!(errf<eps)){
+    matrix_print(result);
+  }
+
+  fail_if(!(errf<eps), __LINE__, "diffing matrices (%s) returned %f (>%f)", name, errf, eps);
 }
 
+void check_matrix(const char*name, ambix_matrixtype_t typ, uint32_t rows, uint32_t cols) {
+  ambix_matrix_t*mtx=NULL;
+  ambix_matrix_t*result=NULL;
+  ambix_matrix_t*zeros=NULL;
+  float32_t errf;
+  float32_t eps=1e-20;
+
+  STARTTEST(name);
+
+  mtx=ambix_matrix_init(rows, cols, mtx);
+  result=ambix_matrix_fill(mtx, typ);
+  
+  fail_if((result==NULL), __LINE__, "matrix_fill returned NULL");
+  fail_if((result!=mtx ), __LINE__, "matrix_fill did not return matrix %p (got %p)", mtx, result);
+
+  zeros=ambix_matrix_init(result->rows, result->cols, zeros);
+  zeros=ambix_matrix_fill(zeros, AMBIX_MATRIX_ZERO);
+
+
+  errf=matrix_check_diff(name, result, zeros);
+
+  if(AMBIX_MATRIX_ZERO==typ) {
+    fail_if(!(errf<eps), __LINE__, "zero matrix non-zero (%f>%f)", errf, eps);
+  } else {
+    fail_if(!(errf>eps), __LINE__, "non-zero matrix zero (%f<%f)", errf, eps);
+  }
+
+ 
+}
 
 int main(int argc, char**argv) {
+  uint32_t r, c, o;
+  for(r=1; r<16; r++) {
+    for(c=1; c<16; c++) {
+      check_matrix("zero[X,Y]", AMBIX_MATRIX_ZERO, r, c);
+      check_matrix("one[X,Y]", AMBIX_MATRIX_ONE, r, c);
+      check_matrix("identity[X,Y]", AMBIX_MATRIX_IDENTITY, r, c);
+    }
+  }
+
+  check_matrix("FuMa[ 1, 1]", AMBIX_MATRIX_FUMA,  1,  1);
+  check_matrix("FuMa[ 4, 3]", AMBIX_MATRIX_FUMA,  4,  3);
+  check_matrix("FuMa[ 4, 4]", AMBIX_MATRIX_FUMA,  4,  4);
+  check_matrix("FuMa[ 9, 5]", AMBIX_MATRIX_FUMA,  9,  5);
+  check_matrix("FuMa[ 9, 6]", AMBIX_MATRIX_FUMA,  9,  6);
+  check_matrix("FuMa[ 9, 9]", AMBIX_MATRIX_FUMA,  9,  9);
+  check_matrix("FuMa[16, 7]", AMBIX_MATRIX_FUMA, 16,  7);
+  check_matrix("FuMa[16, 8]", AMBIX_MATRIX_FUMA, 16,  8);
+  check_matrix("FuMa[16,11]", AMBIX_MATRIX_FUMA, 16, 11);
+  check_matrix("FuMa[16,16]", AMBIX_MATRIX_FUMA, 16, 16);
+
+
+
   check_inversion("FuMa[ 1, 1]", AMBIX_MATRIX_FUMA,  1,  1);
   check_inversion("FuMa[ 4, 3]", AMBIX_MATRIX_FUMA,  4,  3);
   check_inversion("FuMa[ 4, 4]", AMBIX_MATRIX_FUMA,  4,  4);
@@ -91,6 +147,16 @@ int main(int argc, char**argv) {
   check_inversion("FuMa[16,11]", AMBIX_MATRIX_FUMA, 16, 11);
   check_inversion("FuMa[16,16]", AMBIX_MATRIX_FUMA, 16, 16);
 
+  for(o=1; o<6; o++) {
+    uint32_t chan=ambix_order2channels(o);
+    printf("checking matrices of order=%d (%d channels)\n", o, chan);
+    check_matrix("n3d[X,X]", AMBIX_MATRIX_N3D, chan, chan);
+    check_matrix("sid[X,X]", AMBIX_MATRIX_SID, chan, chan);
+
+    check_matrix("2n3d[X,X]", AMBIX_MATRIX_TO_N3D, chan, chan);
+    check_matrix("2sid[X,X]", AMBIX_MATRIX_TO_SID, chan, chan);
+  }
+    
 
   pass();
   return 0;
