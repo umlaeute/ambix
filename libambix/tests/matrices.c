@@ -66,7 +66,7 @@ void check_inversion(const char*name, ambix_matrixtype_t typ, uint32_t rows, uin
   ambix_matrix_t*eye=NULL;
   ambix_matrix_t*result=NULL;
   float32_t errf;
-  float32_t eps=1e-20;
+  float32_t eps=1e-6;
 
   STARTTEST(name);
 
