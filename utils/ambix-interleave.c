@@ -47,8 +47,6 @@
 #include <string.h>
 #include <stdlib.h>
 
-#define AMBIX_INTERLEAVE_VERSION "0.1"
-
 #define MARK() printf("%s:%d[%s]\n", __FILE__, __LINE__, __FUNCTION__)
 
 
@@ -496,7 +494,7 @@ void print_usage(const char*name) {
   printf("Home page: http://ambisonics.iem.at/xchange/products/libambix\n", name);
 }
 void print_version(const char*name) {
-  printf("%s %s\n", name, AMBIX_INTERLEAVE_VERSION);
+  printf("%s %s\n", name, PACKAGE_VERSION);
   printf("\n");
   printf("Copyright (C) 2012 Institute of Electronic Music and Acoustics (IEM), University of Music and Dramatic Arts (KUG), Graz, Austria.\n");
   printf("\n");
