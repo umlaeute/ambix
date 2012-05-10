@@ -286,10 +286,27 @@ ambix_err_t	_ambix_close	(ambix_t*ambix) {
   return AMBIX_ERR_SUCCESS;
 }
 
+int64_t _ambix_seek (ambix_t* ambix, int64_t frames, int bias) {
+  int whence=0;
+  if(bias & AMBIX_RDRW) {
+    whence |= SFM_RDWR;
+  } else {
+    whence |= (bias & AMBIX_READ )?SFM_READ:0;
+    whence |= (bias & AMBIX_WRITE)?SFM_WRITE:0;
+  }
+
+  whence |= (bias & SEEK_SET);
+  whence |= (bias & SEEK_CUR);
+  whence |= (bias & SEEK_END);
+  
+  if(PRIVATE(ambix)->sf_file)
+    return (int64_t)sf_seek(PRIVATE(ambix)->sf_file, (sf_count_t)frames, whence);
+  return -1;
+}
+
 SNDFILE*_ambix_get_sndfile	(ambix_t*ambix) {
   return PRIVATE(ambix)->sf_file;
 }
-
 int64_t _ambix_readf_int16   (ambix_t*ambix, int16_t*data, int64_t frames) {
   return sf_readf_short(PRIVATE(ambix)->sf_file, (short*)data, frames) ;
 }

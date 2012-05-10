@@ -82,6 +82,21 @@ ambix_t* ambix_open (const char* path, const ambix_filemode_t mode, ambix_info_t
 AMBIX_API
 ambix_err_t ambix_close (ambix_t* ambix);
 
+/** @brief reposition the file read pointer
+ *
+ * Closes an ambix handle and cleans up all memory allocations associated with it.
+ *
+ * @param ambix The handle to an ambix file
+ * @param frames frame offset from the position given in whence
+ * @param whence location from where to seek; if whence is set to SEEK_SET, 
+ *        SEEK_CUR, or SEEK_END, the offset is relative to the start of the file,
+ *        the current position indicator, or end-of-file, respectively.
+ *
+ * @return the offset in (multichannel) frames from the start of the audio data or -1 if an error occured
+ */
+AMBIX_API
+int64_t ambix_seek (ambix_t* ambix, int64_t frames, int whence);
+
 /** @brief Read samples (as 16bit signed integer values) from the ambix file
  * @ingroup ambix_readf
  */

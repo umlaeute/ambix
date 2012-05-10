@@ -56,3 +56,6 @@ int64_t _ambix_writef_float32   (ambix_t*ambix, float32_t*data, int64_t frames) 
 ambix_err_t _ambix_write_uuidchunk(ambix_t*ax, const void*data, int64_t datasize) {
   return  AMBIX_ERR_UNKNOWN;
 }
+int64_t ambix_seek (ambix_t* ambix, int64_t frames, int whence) {
+  return -1;
+}
