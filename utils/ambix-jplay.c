@@ -279,9 +279,23 @@ void usage(const char*filename)
   eprintf("    -q N : Frames to request from ring buffer (default=64).\n");
   eprintf("    -r N : Resampling ratio multiplier (default=1.0).\n");
   eprintf("    -t   : Jack transport awareness.\n");
-  FAILURE;
+  exit(0);  FAILURE;
 }
 
+void version(const char*name)
+{
+  eprintf("%s %s\n", name, PACKAGE_VERSION);
+  eprintf("\n");
+  eprintf("Copyright (C) 2003-2010 Rohan Drape\n");
+  eprintf("Copyright (C) 2012 Institute of Electronic Music and Acoustics (IEM), University of Music and Dramatic Arts (KUG), Graz, Austria.\n");
+  eprintf("\n");
+  eprintf("License GPLv2: GNU GPL version 2 or later <http://gnu.org/licenses/gpl.html>\n");
+  eprintf("This is free software: you are free to change and redistribute it.\n");
+  eprintf("There is NO WARRANTY, to the extent permitted by law.\n");
+  eprintf("\n");
+  eprintf("Written by IOhannes m zmoelnig <zmoelnig@iem.at> based on jack.play by Rohan Drape by \n");
+  exit(0);
+}
 /* Get data from ring buffer.  Return number of frames read.  This
    could check the read size first, but then would still need to check
    the actual result size, and therefore have two error cases.  Since
@@ -496,7 +510,7 @@ int main(int argc, char *argv[])
 #endif /* HAVE_SAMPLERATE */
   strncpy(o.client_name, "ambix-jplay", 64);
 
-  while((c = getopt(argc, argv, "b:c:hi:m:n:q:r:tu")) != -1) {
+  while((c = getopt(argc, argv, "b:c:hvi:m:n:q:r:tu")) != -1) {
     switch(c) {
     case 'b':
       o.buffer_frames = (int)strtol(optarg, NULL, 0);
@@ -506,6 +520,9 @@ int main(int argc, char *argv[])
       break;
     case 'h':
       usage (argv[0]);
+      break;
+    case 'v':
+      version (argv[0]);
       break;
     case 'i':
       o.seek_request = (int64_t)strtol(optarg, NULL, 0);
