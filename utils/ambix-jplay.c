@@ -270,6 +270,9 @@ int signal_proc(jack_nframes_t nframes, void *PTR)
 void usage(const char*filename)
 {
   eprintf("Usage: %s [ options ] sound-file...\n", filename);
+  eprintf("Play back an ambix file via JACK\n");
+  eprintf("\n");
+  eprintf("Options:\n");
   eprintf("    -b N : Ring buffer size in frames (default=4096).\n");
 #ifdef HAVE_SAMPLERATE
   eprintf("    -c N : ID of conversion algorithm (default=2, SRC_SINC_FASTEST).\n");
@@ -278,7 +281,9 @@ void usage(const char*filename)
   eprintf("    -m N : Minimal disk read size in frames (default=32).\n");
   eprintf("    -q N : Frames to request from ring buffer (default=64).\n");
   eprintf("    -r N : Resampling ratio multiplier (default=1.0).\n");
-  eprintf("    -t   : Jack transport awareness.\n");
+  eprintf("    -t : Jack transport awareness.\n");
+  eprintf("    -v : Print version information.\n");
+  eprintf("    -h : Print this help.\n");
   FAILURE;
 }
 

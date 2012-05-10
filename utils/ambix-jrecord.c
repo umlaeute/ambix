@@ -252,16 +252,20 @@ int process(jack_nframes_t nframes, void *PTR)
 void usage(const char*name)
 {
   eprintf("Usage: %s [ options ] sound-file\n", name);
+  eprintf("Record an ambix file via JACK\n");
+  eprintf("\n");
+  eprintf("Options:\n");
   eprintf("    -O N : ambisonics order (default=1).\n");
-  eprintf("    -X s : sound-file holding adaptor matrix matrix to reconstruct full ambisonics set (forces AMBIX_EXTENDED).\n");
-  eprintf("    -x N : Number of non-ambisonics ('extra') channels (forces AMBIX_EXTENDED).\n");
+  eprintf("    -X s : sound-file holding adaptor matrix matrix to reconstruct full ambisonics set (forces AMBIX_EXTENDED format).\n");
+  eprintf("    -x N : Number of non-ambisonics ('extra') channels (forces AMBIX_EXTENDED format).\n");
 
   eprintf("    -b N : Ring buffer size in frames (default=4096).\n");
   // LATER: allow user to specify the sample-format
   //  eprintf("    -f N : File format (default=0x10006).\n");
   eprintf("    -m N : Minimal disk read size in frames (default=32).\n");
-  //eprintf("    -n N : Number of channels (default=2).\n");
   eprintf("    -t N : Set a timer to record for N seconds (default=-1).\n");
+  eprintf("    -v : Print version information.\n");
+  eprintf("    -h : Print this help.\n");
   FAILURE;
 }
 
