@@ -108,5 +108,16 @@ int main(int argc, char**argv) {
   print_matrix("MaFu [ffh]", AMBIX_MATRIX_TO_FUMA, 11, 16);
   print_matrix("MaFu [fff]", AMBIX_MATRIX_TO_FUMA, 16, 16);
 
+
+  print_matrix("zero [16]", AMBIX_MATRIX_ZERO, 16, 16);
+  print_matrix("one [16]", AMBIX_MATRIX_ONE, 16, 16);
+  print_matrix("identity [16]", AMBIX_MATRIX_IDENTITY, 16, 16);
+
+  print_matrix("SID [16]", AMBIX_MATRIX_SID, 16, 16);
+  print_matrix("->SID [16]", AMBIX_MATRIX_TO_SID, 16, 16);
+
+  print_matrix("N3D [16]", AMBIX_MATRIX_N3D, 16, 16);
+  print_matrix("->N3D [16]", AMBIX_MATRIX_TO_N3D, 16, 16);
+
   return 0;
 }
