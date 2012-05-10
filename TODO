@@ -2,11 +2,6 @@ FILE-FORMAT
 ===========
 ???
 
-
-API
-===
- ambix_seek()
-
 helper-library
 ==============
 library for matrix operations related to libambix
@@ -18,6 +13,4 @@ UTILITIES
 =========
 ambix-jplay
   make libsamplerate dependency optional
-
-
 
