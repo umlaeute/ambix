@@ -21,6 +21,10 @@
    License along with this program; if not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif /* HAVE_CONFIG_H */
+
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
@@ -261,6 +265,21 @@ void usage(const char*name)
   FAILURE;
 }
 
+void version(const char*name)
+{
+  eprintf("%s %s\n", name, PACKAGE_VERSION);
+  eprintf("\n");
+  eprintf("Copyright (C) 2003-2010 Rohan Drape\n");
+  eprintf("Copyright (C) 2012 Institute of Electronic Music and Acoustics (IEM), University of Music and Dramatic Arts (KUG), Graz, Austria.\n");
+  eprintf("\n");
+  eprintf("License GPLv2: GNU GPL version 2 or later <http://gnu.org/licenses/gpl.html>\n");
+  eprintf("This is free software: you are free to change and redistribute it.\n");
+  eprintf("There is NO WARRANTY, to the extent permitted by law.\n");
+  eprintf("\n");
+  eprintf("Written by IOhannes m zmoelnig <zmoelnig@iem.at>, based on jack.record by Rohan Drape\n");
+  FAILURE;
+}
+
 int main(int argc, char *argv[])
 {
   const char*filename = "jtest.caf";
@@ -305,6 +324,9 @@ int main(int argc, char *argv[])
       d.file_format = (int) strtol(optarg, NULL, 0);
       break;
 #endif
+    case 'v':
+      version (myname);
+      break;
     case 'h':
       usage (myname);
       break;

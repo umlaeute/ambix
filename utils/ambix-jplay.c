@@ -279,7 +279,7 @@ void usage(const char*filename)
   eprintf("    -q N : Frames to request from ring buffer (default=64).\n");
   eprintf("    -r N : Resampling ratio multiplier (default=1.0).\n");
   eprintf("    -t   : Jack transport awareness.\n");
-  exit(0);  FAILURE;
+  FAILURE;
 }
 
 void version(const char*name)
@@ -293,9 +293,10 @@ void version(const char*name)
   eprintf("This is free software: you are free to change and redistribute it.\n");
   eprintf("There is NO WARRANTY, to the extent permitted by law.\n");
   eprintf("\n");
-  eprintf("Written by IOhannes m zmoelnig <zmoelnig@iem.at> based on jack.play by Rohan Drape by \n");
-  exit(0);
+  eprintf("Written by IOhannes m zmoelnig <zmoelnig@iem.at>, based on jack.play by Rohan Drape\n");
+  FAILURE;
 }
+
 /* Get data from ring buffer.  Return number of frames read.  This
    could check the read size first, but then would still need to check
    the actual result size, and therefore have two error cases.  Since
