@@ -20,12 +20,18 @@
    License along with this program; if not, see <http://www.gnu.org/licenses/>.
 
 */
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif /* HAVE_CONFIG_H */
 
 #include "ambix/ambix.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
+void print_usage(const char*name);
+void print_version(const char*name);
 void createfile_basic(const char*path, uint32_t ambichannels, uint32_t extrachannels, uint64_t frames) {
   ambix_info_t info;
   ambix_t*ambix;
@@ -206,13 +212,46 @@ void createfile_extended(const char*path, uint32_t ambichannels, uint32_t extrac
 
 int main(int argc, char**argv) {
   if(argc>1) {
+    if((!strcmp(argv[1], "-V")) || (!strcmp(argv[1], "--version")))
+      print_version(argv[0]);
+    if((!strcmp(argv[1], "-h")) || (!strcmp(argv[1], "--help")))
+      print_usage(argv[0]);
+
     createfile_basic(argv[1], 9, 3, 44100);
     if(argc>2)
       createfile_extended(argv[2], 9, 3, 44100);
   }
   else {
-    fprintf(stderr, "usage: %s <ambixfilename>\n", argv[0]);
+    print_usage(argv[0]);
   }
 
   return 0;
+}
+
+void print_usage(const char*name) {
+  printf("\n");
+  printf("Usage: %s outfile_basic [outfile_extended]\n", name);
+  printf("Create ambix test-files\n");
+  printf("(this may be of limited use when not debugging libambix).\n");
+
+  printf("\n");
+  printf("Options:\n");
+  printf("  -h, --help                       Print this help\n");
+  printf("  -V, --version                    Version information\n");
+  printf("\n");
+  printf("Report bugs to: %s\n\n", PACKAGE_BUGREPORT);
+  printf("Home page: %s\n", PACKAGE_URL);
+  exit(1);
+}
+void print_version(const char*name) {
+  printf("%s %s\n", name, PACKAGE_VERSION);
+  printf("\n");
+  printf("Copyright (C) 2012 Institute of Electronic Music and Acoustics (IEM), University of Music and Dramatic Arts (KUG), Graz, Austria.\n");
+  printf("\n");
+  printf("License LGPLv2.1: GNU Lesser GPL version 2.1 or later <http://gnu.org/licenses/lgpl.html>\n");
+  printf("This is free software: you are free to change and redistribute it.\n");
+  printf("There is NO WARRANTY, to the extent permitted by law.\n");
+  printf("\n");
+  printf("Written by IOhannes m zmoelnig <zmoelnig@iem.at>\n");
+  exit(1);
 }

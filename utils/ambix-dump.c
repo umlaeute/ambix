@@ -82,7 +82,7 @@ static ai_t*ai_cmdline(const char*name, int argc, char**argv) {
       print_usage(name);
       exit(0);
     }
-    if(!strcmp(argv[0], "-v") || !strcmp(argv[0], "--version")) {
+    if(!strcmp(argv[0], "-V") || !strcmp(argv[0], "--version")) {
       print_version(name);
       exit(0);
     }
@@ -367,12 +367,12 @@ int main(int argc, char**argv) {
 void print_usage(const char*name) {
   printf("\n");
   printf("Usage: %s [options] infile\n", name);
-  printf("Split an ambix file into several mono files\n");
+  printf("Print sample values of an ambix file to the stdout\n");
 
   printf("\n");
   printf("Options:\n");
   printf("  -h, --help                       print this help\n");
-  printf("  -v, --version                    print version info\n");
+  printf("  -V, --version                    print version info\n");
   printf("  -r, --raw                        dump raw ambisonics data\n");
   printf("  -a, --ambisonics                 dump cooked ambisonics data\n");
   printf("  -x, --extra                      dump additional audio data\n");
@@ -388,8 +388,9 @@ void print_usage(const char*name) {
          "\n"
          );
 
-  printf("Report bugs to: zmoelnig@iem.at\n\n");
-  printf("Home page: http://ambisonics.iem.at/xchange/products/libambix\n", name);
+  printf("\n");
+  printf("Report bugs to: %s\n\n", PACKAGE_BUGREPORT);
+  printf("Home page: %s\n", PACKAGE_URL);
 }
 void print_version(const char*name) {
   printf("%s %s\n", name, PACKAGE_VERSION);

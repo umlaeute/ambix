@@ -27,7 +27,11 @@
 #include "ambix/ambix.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+
+void print_version(const char*name);
+void print_usage(const char*name);
 
 typedef struct {
   ambix_matrixtype_t typ;
@@ -84,6 +88,13 @@ static void print_matrix(const char*name, ambix_matrixtype_t typ, uint32_t rows,
 
 
 int main(int argc, char**argv) {
+  if(argc>1) {
+    if((!strcmp(argv[1], "-V")) || (!strcmp(argv[1], "--version")))
+      print_version(argv[0]);
+    if((!strcmp(argv[1], "-h")) || (!strcmp(argv[1], "--help")))
+      print_usage(argv[0]);
+  }
+
   print_matrix("FuMa []"   , AMBIX_MATRIX_FUMA,  1,  1);
   print_matrix("FuMa [h]"  , AMBIX_MATRIX_FUMA,  4,  3);
   print_matrix("FuMa [f]"  , AMBIX_MATRIX_FUMA,  4,  4);
@@ -120,4 +131,32 @@ int main(int argc, char**argv) {
   print_matrix("->N3D [16]", AMBIX_MATRIX_TO_N3D, 16, 16);
 
   return 0;
+}
+
+void print_usage(const char*name) {
+  printf("\n");
+  printf("Usage: %s\n", name);
+  printf("Print some standard matrices when dealing with ambisonics\n");
+  printf("(this may be of limited use when not debugging libambix).\n");
+
+  printf("\n");
+  printf("Options:\n");
+  printf("  -h, --help                       Print this help\n");
+  printf("  -V, --version                    Version information\n");
+  printf("\n");
+  printf("Report bugs to: %s\n\n", PACKAGE_BUGREPORT);
+  printf("Home page: %s\n", PACKAGE_URL);
+  exit(1);
+}
+void print_version(const char*name) {
+  printf("%s %s\n", name, PACKAGE_VERSION);
+  printf("\n");
+  printf("Copyright (C) 2012 Institute of Electronic Music and Acoustics (IEM), University of Music and Dramatic Arts (KUG), Graz, Austria.\n");
+  printf("\n");
+  printf("License LGPLv2.1: GNU Lesser GPL version 2.1 or later <http://gnu.org/licenses/lgpl.html>\n");
+  printf("This is free software: you are free to change and redistribute it.\n");
+  printf("There is NO WARRANTY, to the extent permitted by law.\n");
+  printf("\n");
+  printf("Written by IOhannes m zmoelnig <zmoelnig@iem.at>\n");
+  exit(1);
 }

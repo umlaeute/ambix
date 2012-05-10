@@ -26,9 +26,12 @@
 
 #include "ambix/ambix.h"
 
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
+void print_usage(const char*name);
+void print_version(const char*name);
 
 void printinfo(const char*path) {
   ambix_info_t info;
@@ -101,6 +104,11 @@ void printinfo(const char*path) {
 int main(int argc, char**argv) {
   if(argc>1) {
     int i;
+    if((!strcmp(argv[1], "-V")) || (!strcmp(argv[1], "--version")))
+      print_version(argv[0]);
+    if((!strcmp(argv[1], "-h")) || (!strcmp(argv[1], "--help")))
+      print_usage(argv[0]);
+
     for(i=1; i<argc; i++) {
       printinfo(argv[i]);
       printf("\n");
@@ -108,8 +116,36 @@ int main(int argc, char**argv) {
 
   }
   else {
-    fprintf(stderr, "usage: %s <ambixfilename>\n", argv[0]);
+    print_usage(argv[0]);
   }
 
   return 0;
+}
+
+
+void print_usage(const char*name) {
+  printf("\n");
+  printf("Usage: %s file1 [file2...]\n", name);
+  printf("Print information on ambix files\n");
+
+  printf("\n");
+  printf("Options:\n");
+  printf("  -h, --help                       Print this help\n");
+  printf("  -V, --version                    Version information\n");
+  printf("\n");
+  printf("Report bugs to: %s\n\n", PACKAGE_BUGREPORT);
+  printf("Home page: %s\n", PACKAGE_URL);
+  exit(1);
+}
+void print_version(const char*name) {
+  printf("%s %s\n", name, PACKAGE_VERSION);
+  printf("\n");
+  printf("Copyright (C) 2012 Institute of Electronic Music and Acoustics (IEM), University of Music and Dramatic Arts (KUG), Graz, Austria.\n");
+  printf("\n");
+  printf("License LGPLv2.1: GNU Lesser GPL version 2.1 or later <http://gnu.org/licenses/lgpl.html>\n");
+  printf("This is free software: you are free to change and redistribute it.\n");
+  printf("There is NO WARRANTY, to the extent permitted by law.\n");
+  printf("\n");
+  printf("Written by IOhannes m zmoelnig <zmoelnig@iem.at>\n");
+  exit(1);
 }

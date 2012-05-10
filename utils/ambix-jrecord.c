@@ -264,8 +264,11 @@ void usage(const char*name)
   //  eprintf("    -f N : File format (default=0x10006).\n");
   eprintf("    -m N : Minimal disk read size in frames (default=32).\n");
   eprintf("    -t N : Set a timer to record for N seconds (default=-1).\n");
-  eprintf("    -v : Print version information.\n");
+  eprintf("    -V : Print version information.\n");
   eprintf("    -h : Print this help.\n");
+  eprintf("\n");
+  eprintf("Report bugs to: %s\n\n", PACKAGE_BUGREPORT);
+  eprintf("Home page: %s\n", PACKAGE_URL);
   FAILURE;
 }
 
@@ -302,7 +305,7 @@ int main(int argc, char *argv[])
   d.sample_format = AMBIX_SAMPLEFORMAT_FLOAT32;
   d.file_format   = AMBIX_BASIC;
   int c;
-  while((c = getopt(argc, argv, "hvx:X:O:b:fhm:n:t:")) != -1) {
+  while((c = getopt(argc, argv, "hVx:X:O:b:fhm:n:t:")) != -1) {
     switch(c) {
     case 'x':
       d.e_channels = (int) strtol(optarg, NULL, 0);
@@ -328,7 +331,7 @@ int main(int argc, char *argv[])
       d.file_format = (int) strtol(optarg, NULL, 0);
       break;
 #endif
-    case 'v':
+    case 'V':
       version (myname);
       break;
     case 'h':

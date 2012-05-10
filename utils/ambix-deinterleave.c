@@ -98,7 +98,7 @@ static ai_t*ai_cmdline(const char*name, int argc, char**argv) {
       print_usage(name);
       exit(0);
     }
-    if(!strcmp(argv[0], "-v") || !strcmp(argv[0], "--version")) {
+    if(!strcmp(argv[0], "-V") || !strcmp(argv[0], "--version")) {
       print_version(name);
       exit(0);
     }
@@ -494,8 +494,9 @@ void print_usage(const char*name) {
          "\n"
          );
 
-  printf("Report bugs to: zmoelnig@iem.at\n\n");
-  printf("Home page: http://ambisonics.iem.at/xchange/products/libambix\n", name);
+  printf("\n");
+  printf("Report bugs to: %s\n\n", PACKAGE_BUGREPORT);
+  printf("Home page: %s\n", PACKAGE_URL);
 }
 void print_version(const char*name) {
   printf("%s %s\n", name, PACKAGE_VERSION);

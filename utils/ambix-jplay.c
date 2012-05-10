@@ -269,7 +269,7 @@ int signal_proc(jack_nframes_t nframes, void *PTR)
 
 void usage(const char*filename)
 {
-  eprintf("Usage: %s [ options ] sound-file...\n", filename);
+  eprintf("Usage: %s [ options ] sound-file\n", filename);
   eprintf("Play back an ambix file via JACK\n");
   eprintf("\n");
   eprintf("Options:\n");
@@ -282,8 +282,12 @@ void usage(const char*filename)
   eprintf("    -q N : Frames to request from ring buffer (default=64).\n");
   eprintf("    -r N : Resampling ratio multiplier (default=1.0).\n");
   eprintf("    -t : Jack transport awareness.\n");
-  eprintf("    -v : Print version information.\n");
+  eprintf("    -V : Print version information.\n");
   eprintf("    -h : Print this help.\n");
+  eprintf("\n");
+  eprintf("Report bugs to: %s\n\n", PACKAGE_BUGREPORT);
+  eprintf("Home page: %s\n", PACKAGE_URL);
+
   FAILURE;
 }
 
@@ -516,7 +520,7 @@ int main(int argc, char *argv[])
 #endif /* HAVE_SAMPLERATE */
   strncpy(o.client_name, "ambix-jplay", 64);
 
-  while((c = getopt(argc, argv, "b:c:hvi:m:n:q:r:tu")) != -1) {
+  while((c = getopt(argc, argv, "b:c:hVi:m:n:q:r:tu")) != -1) {
     switch(c) {
     case 'b':
       o.buffer_frames = (int)strtol(optarg, NULL, 0);
@@ -527,7 +531,7 @@ int main(int argc, char *argv[])
     case 'h':
       usage (argv[0]);
       break;
-    case 'v':
+    case 'V':
       version (argv[0]);
       break;
     case 'i':
