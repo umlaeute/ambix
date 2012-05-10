@@ -2,6 +2,10 @@ FILE-FORMAT
 ===========
 ???
 
+Pd-externals
+============
+_threaded_ reader/writer
+
 helper-library
 ==============
 library for matrix operations related to libambix
