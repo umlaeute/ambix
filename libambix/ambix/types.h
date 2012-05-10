@@ -104,9 +104,9 @@ typedef enum
 /** error codes returned by functions */
 typedef enum {
   /** open file for reading */
-  AMBIX_READ = (1<<0),
+  AMBIX_READ  = (1<<4),
   /** open file for writing */
-  AMBIX_WRITE = (1<<1),
+  AMBIX_WRITE = (1<<5),
   /** open file for reading&writing */
   AMBIX_RDRW = (AMBIX_READ|AMBIX_WRITE)
 
