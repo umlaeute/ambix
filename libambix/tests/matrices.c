@@ -162,13 +162,19 @@ int main(int argc, char**argv) {
     uint32_t chan=ambix_order2channels(o);
     snprintf(name, 63, "n3d2snd3d[%d, %d]", chan, chan);
     check_matrix(name, AMBIX_MATRIX_N3D, chan, chan);
-    snprintf(name, 63, "sid2acn[%d, %d]", chan, chan);
-    check_matrix(name, AMBIX_MATRIX_SID, chan, chan);
-
     snprintf(name, 63, "sn3d2n3d[%d, %d]", chan, chan);
     check_matrix(name, AMBIX_MATRIX_TO_N3D, chan, chan);
+    snprintf(name, 63, "n3d[%d, %d]", chan, chan);
+    check_inversion(name, AMBIX_MATRIX_N3D,  1,  1);
+
+
+    snprintf(name, 63, "sid2acn[%d, %d]", chan, chan);
+    check_matrix(name, AMBIX_MATRIX_SID, chan, chan);
     snprintf(name, 63, "acn2sid[%d, %d]", chan, chan);
     check_matrix(name, AMBIX_MATRIX_TO_SID, chan, chan);
+
+    snprintf(name, 63, "sid[%d, %d]", chan, chan);
+    check_inversion(name, AMBIX_MATRIX_SID,  1,  1);
   }
     
 
