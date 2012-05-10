@@ -22,24 +22,12 @@
 */
 
 #include <unistd.h>
-#include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
 #include <string.h>
-#include <pthread.h>
 
 #include <ambix/ambix.h>
 
-//#include "common/failure.h"
-//#include "common/file.h"
-//#include "common/jack-client.h"
-//#include "common/jack-port.h"
 #include "jcommon/jack-ringbuffer.h"
-//#include "common/memory.h"
-//#include "common/observe-signal.h"
-//#include "common/print.h"
-//#include "common/signal-interleave.h"
-//#include "common/sound-file.h"
 #include "jcommon/common.h"
 
 struct recorder

@@ -26,12 +26,9 @@
 #endif /* HAVE_CONFIG_H */
 
 #include <unistd.h>
-#include <stdio.h>
 #include <stdlib.h>
-#include <stdint.h>
+#include <stdio.h>
 #include <string.h>
-#include <stdbool.h>
-#include <pthread.h>
 
 #include <jack/jack.h>
 #include <jack/thread.h>
@@ -42,27 +39,15 @@
 # include <samplerate.h>
 #endif /* HAVE_SAMPLERATE */
 
-
-//#include "jcommon/file.h"
-//#include "jcommon/int.h"
-//#include "jcommon/jack-client.h"
 #include "jcommon/jack-ringbuffer.h"
 #include "jcommon/common.h"
-//#include "jcommon/jack-port.h"
-//#include "jcommon/jack-transport.h"
-//#include "jcommon/memory.h"
-//#include "jcommon/observe-signal.h"
-//#include "jcommon/print.h"
-//#include "jcommon/sound-file.h"
-
-#include <stdlib.h>
 
 struct player_opt
 {
   int buffer_frames;
   int minimal_frames;
   int64_t seek_request;
-  bool transport_aware;
+  int transport_aware;
   int unique_name;
   double src_ratio;
   int rb_request_frames;
@@ -408,7 +393,7 @@ int jackplay(const char *file_name,
   jack_client_create_thread (d.client,
                              &(d.disk_thread),
                              50,
-                             true,
+                             1,
                              disk_proc,
                              &d);
 
@@ -502,8 +487,8 @@ int main(int argc, char *argv[])
   o.buffer_frames = 4096;
   o.minimal_frames = 32;
   o.seek_request = -1;
-  o.transport_aware = false;
-  o.unique_name = true;
+  o.transport_aware = 0;
+  o.unique_name = 1;
   o.src_ratio = 1.0;
   o.rb_request_frames = 64;
 #ifdef HAVE_SAMPLERATE
@@ -541,9 +526,9 @@ int main(int argc, char *argv[])
       break;
 #endif /* HAVE_SAMPLERATE */
     case 't':
-      o.transport_aware = true;
+      o.transport_aware = 1;
     case 'u':
-      o.unique_name = false;
+      o.unique_name = 0;
       break;
     default:
       eprintf("ambix-jplay: illegal option, %c\n", c);
