@@ -25,8 +25,6 @@
 # include "config.h"
 #endif /* HAVE_CONFIG_H */
 
-//#define HAVE_AMBIX_SEEK
-
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -63,9 +61,7 @@ struct player_opt
 {
   int buffer_frames;
   int minimal_frames;
-#ifdef HAVE_AMBIX_SEEK
   int64_t seek_request;
-#endif /* HAVE_AMBIX_SEEK */
   bool transport_aware;
   int unique_name;
   double src_ratio;
@@ -115,18 +111,16 @@ void *disk_proc(void *PTR)
   struct player *d = (struct player *)PTR;
   while(!observe_end_of_process()) {
 
-#ifdef HAVE_AMBIX_SEEK
     /* Handle seek request. */
     if(d->o.seek_request >= 0) {
-      sf_count_t err = sf_seek(d->sound_file,
-                               (sf_count_t)d->o.seek_request, SEEK_SET);
+      int64_t err = ambix_seek(d->sound_file,
+                               (int64_t)d->o.seek_request, SEEK_SET);
       if(err == -1) {
         eprintf("ambix-jplay: seek request failed, %ld\n",
                 (long)d->o.seek_request);
       }
       d->o.seek_request = -1;
     }
-#endif /* HAVE_AMBIX_SEEK */
 
     /* Wait for write space at the ring buffer. */
 
@@ -176,9 +170,7 @@ int sync_handler(jack_transport_state_t state,
                  void *PTR)
 {
   struct player *d = PTR;
-#ifdef HAVE_AMBIX_SEEK
   d->o.seek_request = (int64_t)position->frame;
-#endif /* HAVE_AMBIX_SEEK */
   return 1;
 }
 
@@ -297,9 +289,7 @@ void usage(const char*filename)
 #ifdef HAVE_SAMPLERATE
   eprintf("    -c N : ID of conversion algorithm (default=2, SRC_SINC_FASTEST).\n");
 #endif /* HAVE_SAMPLERATE */
-#ifdef HAVE_AMBIX_SEEK
   eprintf("    -i N : Initial disk seek in frames (default=0).\n");
-#endif /* HAVE_AMBIX_SEEK */
   eprintf("    -m N : Minimal disk read size in frames (default=32).\n");
   eprintf("    -q N : Frames to request from ring buffer (default=64).\n");
   eprintf("    -r N : Resampling ratio multiplier (default=1.0).\n");
@@ -511,9 +501,7 @@ int main(int argc, char *argv[])
 
   o.buffer_frames = 4096;
   o.minimal_frames = 32;
-#ifdef HAVE_AMBIX_SEEK
   o.seek_request = -1;
-#endif /* HAVE_AMBIX_SEEK */
   o.transport_aware = false;
   o.unique_name = true;
   o.src_ratio = 1.0;
@@ -534,11 +522,9 @@ int main(int argc, char *argv[])
     case 'h':
       usage (argv[0]);
       break;
-#ifdef HAVE_AMBIX_SEEK
     case 'i':
       o.seek_request = (int64_t)strtol(optarg, NULL, 0);
       break;
-#endif /* HAVE_AMBIX_SEEK */
     case 'm':
       o.minimal_frames = (int)strtoll(optarg, NULL, 0);
       break;
