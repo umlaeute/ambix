@@ -71,7 +71,7 @@ typedef struct ai_t {
 } ai_t;
 static void print_usage(const char*path);
 static void print_version(const char*path);
-
+static ai_t*ai_close(ai_t*ai);
 
 #define DEFAULT_SUFFIX ".wav"
 
@@ -112,7 +112,7 @@ static ai_t*ai_cmdline(const char*name, int argc, char**argv) {
         argc-=2;
         continue;
       }
-      return NULL;
+      return ai_close(ai);
     }
     if(!strcmp(argv[0], "-s") || !strcmp(argv[0], "--suffix")) {
       if(argc>1) {
@@ -121,7 +121,7 @@ static ai_t*ai_cmdline(const char*name, int argc, char**argv) {
         argc-=2;
         continue;
       }
-      return NULL;
+      return ai_close(ai);
     }
     if(!strcmp(argv[0], "-b") || !strcmp(argv[0], "--blocksize")) {
       if(argc>1) {
@@ -130,7 +130,7 @@ static ai_t*ai_cmdline(const char*name, int argc, char**argv) {
         argc-=2;
         continue;
       }
-      return NULL;
+      return ai_close(ai);
     }
     if(argc) {
       ai->infilename=strdup(argv[0]);
@@ -139,7 +139,7 @@ static ai_t*ai_cmdline(const char*name, int argc, char**argv) {
   }
 
   if(!ai->infilename)
-    return NULL;
+      return ai_close(ai);
 
   if(!ai->prefix)
     ai->prefix=ai_prefix(ai->infilename);
@@ -188,6 +188,15 @@ static ai_t*ai_close(ai_t*ai) {
   if(ai->suffix)
     free(ai->suffix);
   ai->suffix=NULL;
+
+
+  if(ai->infilename)
+    free(ai->infilename);
+  ai->infilename=NULL;
+
+  ambix_matrix_deinit (&ai->matrix);
+
+  free(ai);
 
   return NULL;
 }
@@ -448,9 +457,9 @@ static int ambix_deinterleave(ai_t*ai) {
 
   if(result) {
     printf("Deinterleaving '%s' to %d files (%s*%s)\n", ai->infilename, ai->numOuts, ai->prefix, ai->suffix);
+    ai_close(result);
   }
 
-  ai_close(ai);
   //if(result)printf("success @ %d!\n", __LINE__);
   //  printf("deinterleave done %p\n", result);
   return (result!=NULL);

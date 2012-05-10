@@ -70,6 +70,8 @@ typedef struct ai_t {
 } ai_t;
 static void print_usage(const char*path);
 static void print_version(const char*path);
+static ai_t*ai_close(ai_t*ai);
+
 
 static ai_t*ai_cmdline(const char*name, int argc, char**argv) {
   ai_t*ai=calloc(1, sizeof(ai_t));
@@ -118,7 +120,7 @@ static ai_t*ai_cmdline(const char*name, int argc, char**argv) {
         argc-=2;
         continue;
       }
-      return NULL;
+      return ai_close(ai);
     }
     if(argc) {
       ai->filename=strdup(argv[0]);
@@ -126,8 +128,9 @@ static ai_t*ai_cmdline(const char*name, int argc, char**argv) {
     break;
   }
 
-  if(!ai->filename)
-    return NULL;
+  if(!ai->filename) {
+    return ai_close(ai);
+  }
 
   if(blocksize>0)
     ai->blocksize=blocksize;
@@ -163,9 +166,12 @@ static ai_t*ai_close(ai_t*ai) {
   if(ai->ambix) {
     ambix_close(ai->ambix);
   }
+  free(ai->filename); ai->filename=NULL;
+
   ai->ambix=NULL;
 
-  return NULL;
+  free(ai); ai=NULL;
+  return ai;
 }
 
 static ai_t*ai_open_input(ai_t*ai) {
@@ -341,7 +347,8 @@ static int ambix_dump(ai_t*ai) {
   result=ai_dodump(result);
   //if(result)printf("success @ %d!\n", __LINE__);
 
-  ai_close(ai);
+  if(result)
+    ai_close(result);
   //if(result)printf("success @ %d!\n", __LINE__);
   //  printf("dump done %p\n", result);
   return (result!=NULL);
