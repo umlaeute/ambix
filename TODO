@@ -2,6 +2,10 @@ FILE-FORMAT
 ===========
 ???
 
+build-system
+============
+install target of library (seems to install to /u/l/lib/pd/extra/...)
+
 Pd-externals
 ============
 _threaded_ reader/writer
@@ -12,9 +16,4 @@ library for matrix operations related to libambix
 - find a good name for it
 - analysis of existing matrices
 - (basic matrix operations and construction is now in libambix)
-
-UTILITIES
-=========
-ambix-jplay
-  make libsamplerate dependency optional
 
