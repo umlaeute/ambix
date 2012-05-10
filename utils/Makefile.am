@@ -1,7 +1,9 @@
 bin_PROGRAMS = \
 	ambix-info \
 	ambix-interleave \
-	ambix-deinterleave \
+	ambix-deinterleave
+
+noinst_PROGRAMS = \
 	ambix-dump \
 	ambix-matrix \
 	ambix-test
