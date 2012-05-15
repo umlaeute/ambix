@@ -1,8 +1,41 @@
-*.o
+# backup copies
 *~
-*.pd_*
-Makefile.in
-*.lo
-.deps/
-.libs/
-autom4te.cache/
+# build products
+*\.la
+*\.lo
+*\.o
+*\.so
+*\.dll
+*\.pd_*
+\.deps/
+\.libs/
+# autotools byproducts
+Makefile
+Makefile\.in
+aclocal\.m4
+autom4te\.cache/
+configure
+config\.guess
+config\.log
+config\.status
+config\.sub
+missing
+install-sh
+stamp-h1
+libtool
+depcomp
+ltmain\.sh
+config\.h
+config\.h\.in
+m4/libtool\.m4
+m4/ltoptions\.m4
+m4/ltsugar\.m4
+m4/ltversion\.m4
+m4/lt~obsolete\.m4
+## w32 build projects
+win-vs*/*
+*.vcproj.*.*.user
+!*.dsw
+!*.dsp
+!*.sln
+!*.vcproj
