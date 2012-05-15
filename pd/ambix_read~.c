@@ -1,5 +1,6 @@
-/* ambix_read~ -  read AMBIsonics Xchange files in Pd              -*- c -*-
+/* ambix_read~ -  read AMBIsonics Xchange files in Pd        -*- c -*-
 
+ Copyright © 1997-1999 Miller Puckette.
  Copyright © 2012 IOhannes m zmölnig <zmoelnig@iem.at>.
  Institute of Electronic Music and Acoustics (IEM),
  University of Music and Dramatic Arts, Graz
@@ -18,6 +19,9 @@
 
  You should have received a copy of the GNU Lesser General Public
  License along with this program; if not, see <http://www.gnu.org/licenses/>.
+
+ [ambix_read~] is based on Pd's [readsf~], which is released under a 
+ 3-clause BSD-License ("Standard Improved BSD License")
 
 */
 
