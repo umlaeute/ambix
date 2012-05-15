@@ -1,14 +1,15 @@
 noinst_LTLIBRARIES = libjcommon.la
 
-INCLUDES = -I$(top_srcdir)/libambix
-CFLAGS =
-LDADD =
+AM_INCLUDES = -I$(top_srcdir)/libambix
 
-CFLAGS += \
+libjcommon_la_CFLAGS =
+libjcommon_la_LIBADD =
+
+libjcommon_la_CFLAGS += \
 	@SAMPLERATE_CFLAGS@ @PTHREAD_CFLAGS@ \
 	@JACK_CFLAGS@
 
-LDADD += $(top_builddir)/libambix/src/libambix.la \
+libjcommon_la_LIBADD += $(top_builddir)/libambix/src/libambix.la \
 	@SAMPLERATE_LIBS@ @PTHREAD_LIBS@ \
 	@JACK_LIBS@
 
