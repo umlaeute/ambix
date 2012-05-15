@@ -1,6 +1,6 @@
 AUTOMAKE_OPTIONS = foreign
 
-pkglib_LTLIBRARIES=
+rte_LTLIBRARIES=
 
 AM_CFLAGS =
 AM_LDFLAGS= -module -avoid-version -shared -shrext .@RTE_EXTENSION@
@@ -16,7 +16,7 @@ AM_LDFLAGS+= @RTE_LIBS@
 
 AM_LDFLAGS+=$(top_builddir)/libambix/src/libambix.la
 
-pkglib_LTLIBRARIES+= \
+rte_LTLIBRARIES+= \
         ambix_read~.la \
         ambix_readX~.la
 
@@ -31,7 +31,7 @@ ambix_readX__la_SOURCES		= ambix_read~.c
 # convenience symlinks
 .PHONY: convenience-link clean-convenience-link
 
-convenience-link: $(pkglib_LTLIBRARIES)
+convenience-link: $(rte_LTLIBRARIES)
 	  @for lib in $^; do \
 	   for soname in `echo | $(EGREP) "^dlname=" $$lib | $(SED) -e "s|^dlname='\(.*\)'|\1|"`; do  \
 	    echo "$$soname: creating convenience link from $(abs_builddir)/.libs to $(builddir)"; \
@@ -42,7 +42,7 @@ convenience-link: $(pkglib_LTLIBRARIES)
 	  done
 
 clean-convenience-link:
-	  @for lib in $(pkglib_LTLIBRARIES); do \
+	  @for lib in $(rte_LTLIBRARIES); do \
 	   for soname in `echo | $(EGREP) "^dlname=" $$lib | $(SED) -e "s|^dlname='\(.*\)'|\1|"`; do  \
 	    echo "$$soname: cleaning convenience links"; \
 	    test -L $$soname && rm -f $$soname || true; \
@@ -53,4 +53,4 @@ all-local:: convenience-link
 clean-local:: clean-convenience-link
 
 
-foo:: $(pkglib_LTLIBRARIES)
+foo:: $(rte_LTLIBRARIES)
