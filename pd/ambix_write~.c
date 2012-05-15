@@ -1,24 +1,28 @@
-/* ambix_write~ -  write AMBIsonics Xchange files in Pd              -*- c -*-
+/* ambix_write~ -  write AMBIsonics Xchange files in Pd        -*- c -*-
 
-Copyright © 1997-1999 Miller Puckette.
-Copyright © 2012 IOhannes m zmölnig <zmoelnig@iem.at>.
-Institute of Electronic Music and Acoustics (IEM),
-University of Music and Dramatic Arts, Graz
+ Copyright © 1997-1999 Miller Puckette.
+ Copyright © 2012 IOhannes m zmölnig <zmoelnig@iem.at>.
+ Institute of Electronic Music and Acoustics (IEM),
+ University of Music and Dramatic Arts, Graz
 
-This file is part of libambix
+ This file is part of libambix
 
-libambix is free software; you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as
-published by the Free Software Foundation; either version 2.1 of
-the License, or (at your option) any later version.
+ libambix is free software; you can redistribute it and/or modify
+ it under the terms of the GNU Lesser General Public License as
+ published by the Free Software Foundation; either version 2.1 of
+ the License, or (at your option) any later version.
 
-Libgcrypt is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
+ libambix is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Lesser General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this program; if not, see <http://www.gnu.org/licenses/>.
+ You should have received a copy of the GNU Lesser General Public
+ License along with this program; if not, see <http://www.gnu.org/licenses/>.
+
+ [ambix_write~] is based on Pd's [writesf~], which is released under a 
+ 3-clause BSD-License ("Standard Improved BSD License")
+
 */
 
 
