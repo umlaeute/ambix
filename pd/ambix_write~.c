@@ -223,7 +223,6 @@ typedef struct _ambix_write
 
   int x_sigcountdown;     /* counter for signalling child for more data */
   int x_sigperiod;        /* number of ticks per signal */
-  int x_filetype;         /* ambix_write~ only; type of file to create */
 
 
   pthread_mutex_t x_mutex;
@@ -490,6 +489,8 @@ static void *ambix_write_new(t_symbol*s, int argc, t_atom*argv) {
   x->x_ambichannels = 0;
   x->x_extrachannels = nchannels;
 
+  x->x_matrix=NULL;
+
   pthread_mutex_init(&x->x_mutex, 0);
   pthread_cond_init(&x->x_requestcondition, 0);
   pthread_cond_init(&x->x_answercondition, 0);
@@ -587,7 +588,7 @@ static void ambix_write_open(t_ambix_write *x, t_symbol *s, int argc, t_atom *ar
   }
   //x->x_bytespersample = bytespersamp;
   x->x_filename = filesym->s_name;
-  x->x_filetype = fileformat;
+  x->x_fileformat = fileformat;
   x->x_requestcode = REQUEST_OPEN;
 
   x->x_fifotail = 0;
@@ -618,9 +619,6 @@ static void ambix_write_open(t_ambix_write *x, t_symbol *s, int argc, t_atom *ar
   pthread_cond_signal(&x->x_requestcondition);
   pthread_mutex_unlock(&x->x_mutex);
 }
-
-
-
 
 static void ambix_write_dsp(t_ambix_write *x, t_signal **sp) {
   int i, ninlets = x->x_ambichannels+x->x_extrachannels;
@@ -666,16 +664,74 @@ static void ambix_write_free(t_ambix_write *x) {
   pthread_cond_destroy(&x->x_answercondition);
   pthread_mutex_destroy(&x->x_mutex);
   freebytes(x->x_buf, x->x_bufsize);
+
+  if(x->x_matrix)
+    ambix_matrix_destroy(x->x_matrix);
+  x->x_matrix=NULL;
 }
+static void printmatrix(const ambix_matrix_t*mtx) {
+  if(mtx) {
+    float32_t**data=mtx->data;
+    uint32_t r, c;
+    post(" [%dx%d] = %p", mtx->rows, mtx->cols, mtx->data);
+    for(r=0; r<mtx->rows; r++) {
+      for(c=0; c<mtx->cols; c++) {
+        startpost("%08f ", data[r][c]);
+      }
+      endpost();
+    }
+  }
+  endpost();
+}
+
+static void *ambix_write_matrix(t_ambix_write *x, t_symbol*s, int argc, t_atom*argv) {
+  int rows, cols;
+  float32_t*data=NULL;
+  int count;
+  if(x->x_matrix)
+    ambix_matrix_destroy(x->x_matrix);
+  x->x_matrix=NULL;
+  if(argc>=2) {
+    rows=atom_getint(argv+0);
+    cols=atom_getint(argv+1);
+    argc-=2;
+    argv+=2;
+  } else {
+    pd_error(x, "invalid matrix message");
+    return;
+  }
+  if(argc!=rows*cols) {
+    pd_error(x, "invalid matrix");
+    return;
+  }
+  data=malloc(rows*cols*sizeof(float32_t));
+  for(count=0; count<argc; count++) {
+    data[count]=atom_getfloat(argv+count);
+  }
+
+  x->x_matrix=ambix_matrix_init(rows, cols, x->x_matrix);
+  if(AMBIX_ERR_SUCCESS!=ambix_matrix_fill_data(x->x_matrix, data)) {
+    pd_error(x, "invalid matrix data [%dx%d]=%p", rows, cols, data);
+    if(x->x_matrix)
+      ambix_matrix_destroy(x->x_matrix);
+    x->x_matrix=NULL;
+  }
+  free(data);
+
+  if(x->x_matrix)
+    printmatrix(x->x_matrix);
+}
+
 
 void ambix_write_tilde_setup(void) {
   ambix_write_class = class_new(gensym("ambix_write~"), (t_newmethod)ambix_write_new, 
                             (t_method)ambix_write_free, sizeof(t_ambix_write), 0, A_GIMME, 0);
   class_addmethod(ambix_write_class, (t_method)ambix_write_start, gensym("start"), 0);
   class_addmethod(ambix_write_class, (t_method)ambix_write_stop, gensym("stop"), 0);
+  class_addmethod(ambix_write_class, (t_method)ambix_write_matrix, gensym("matrix"), A_GIMME, 0);
+
   class_addmethod(ambix_write_class, (t_method)ambix_write_dsp, gensym("dsp"), 0);
-  class_addmethod(ambix_write_class, (t_method)ambix_write_open, gensym("open"), 
-                  A_GIMME, 0);
+  class_addmethod(ambix_write_class, (t_method)ambix_write_open, gensym("open"), A_GIMME, 0);
   class_addmethod(ambix_write_class, (t_method)ambix_write_print, gensym("print"), 0);
   CLASS_MAINSIGNALIN(ambix_write_class, t_ambix_write, x_f);
 }
