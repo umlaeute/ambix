@@ -1,4 +1,4 @@
-dnl Copyright (C) 2005 IOhannes m zmölnig
+dnl Copyright (C) 2005-2012 IOhannes m zmölnig
 dnl This file is free software; IOhannes m zmölnig
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
@@ -10,10 +10,6 @@ dnl with or without modifications, as long as this notice is preserved.
 AC_DEFUN([IEM_CHECK_RTE],
 [
 IEM_OPERATING_SYSTEM
-
-if test "x${libdir}" = "x\${exec_prefix}/lib"; then
- libdir='${exec_prefix}/lib/pd/extra'
-fi
 
 tmp_rte_orgcppflags="$CPPFLAGS"
 tmp_rte_orgcflags="$CFLAGS"
@@ -113,6 +109,11 @@ AC_SUBST(RTE_EXTENSION)
 AC_SUBST(RTE_CFLAGS)
 AC_SUBST(RTE_LIBS)
 AC_SUBST(RTE)
+AC_ARG_WITH([rtedir], 
+	[AS_HELP_STRING([--rtedir=DIR],	[externals (plugin) dir for RTE (default ${exec_prefix}/lib/pd/extra)])],
+	[rtedir=$withval],
+	[rtedir=['${exec_prefix}/lib/pd/extra']])
+AC_SUBST([rtedir],	['${exec_prefix}/lib/pd/extra'])dnl
 
 CPPFLAGS="$tmp_rte_orgcppflags"
 CFLAGS="$tmp_rte_orgcflags"
