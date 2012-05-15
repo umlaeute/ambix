@@ -190,7 +190,7 @@ static void ambixread_float(t_ambixread *x, t_floatarg f) {
   else ambixread_stop(x);
 }
 static void ambixread_open(t_ambixread *x, t_symbol *s, int argc, t_atom *argv) {
-  ambix_fileformat_t format=(NULL!=x->x_mtxout)?AMBIX_EXTENDED:AMBIX_SIMPLE;
+  ambix_fileformat_t format=(NULL!=x->x_mtxout)?AMBIX_EXTENDED:AMBIX_BASIC;
   ambixread_stop(x);
   const char*filename=atom_getsymbol(argv)->s_name;
 
