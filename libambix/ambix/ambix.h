@@ -82,9 +82,10 @@ ambix_t* ambix_open (const char* path, const ambix_filemode_t mode, ambix_info_t
 AMBIX_API
 ambix_err_t ambix_close (ambix_t* ambix);
 
-/** @brief reposition the file read pointer
+/** @brief reposition the file pointer
  *
- * Closes an ambix handle and cleans up all memory allocations associated with it.
+ * Reposition the file read (and/or file write) pointer to a new offset. 
+ * Consecutive calls to ambix_readf() (resp. ambix_writef()) will read (resp. write) from the new position
  *
  * @param ambix The handle to an ambix file
  * @param frames frame offset from the position given in whence
