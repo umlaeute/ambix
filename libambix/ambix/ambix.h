@@ -82,10 +82,10 @@ ambix_t* ambix_open (const char* path, const ambix_filemode_t mode, ambix_info_t
 AMBIX_API
 ambix_err_t ambix_close (ambix_t* ambix);
 
-/** @brief reposition the file pointer
+/** @brief Reposition the file pointer
  *
- * Reposition the file read (and/or file write) pointer to a new offset. 
- * Consecutive calls to ambix_readf() (resp. ambix_writef()) will read (resp. write) from the new position
+ * Reposition the file read (and/or write) pointer to a new offset. 
+ * Consecutive calls to @ref ambix_readf (resp. @ref ambix_writef) will read (resp. write) from the new position
  *
  * @param ambix The handle to an ambix file
  * @param frames frame offset from the position given in whence
@@ -221,7 +221,7 @@ const ambix_matrix_t* ambix_get_adaptormatrix (ambix_t* ambix);
 /** @brief Set a matrix to be pre-multiplied
  *
  * Adds an (additional) adaptor matrix to the processing. Depending on the mode
- * of operation this canhave different meanings! When READing an ambix 'BASIC'
+ * of operation this can have different meanings! When READing an ambix 'BASIC'
  * file, this tells the library to do an (additional) matrix-multiplication When
  * reconstructing the full ambisonics set; you can use use this to get the
  * ambisonics channels in a format other than SN3D/ACN (e.g. using an ambix to
