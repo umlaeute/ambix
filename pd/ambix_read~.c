@@ -25,7 +25,6 @@ License along with this program; if not, see <http://www.gnu.org/licenses/>.
 #include <ambix/ambix.h>
 #include <string.h>
 #include <stdlib.h>
-#include <stdio.h>
 
 /* ------------------------ ambixread ----------------------------- */
 #define MAXCHANS 64
@@ -91,8 +90,6 @@ static t_int *ambixread_perform(t_int *w) {
     int verbose=(x->x_banged);
     x->x_banged=0;
 
-    
-
     ambix_t*ambix=x->x_ambix;
     float32_t*ambibuffer=x->x_ambibuffer;
     float32_t*xtrabuffer=x->x_xtrabuffer;
@@ -107,22 +104,22 @@ static t_int *ambixread_perform(t_int *w) {
       if(ambibuffer) {
         buf=ambibuffer;
         channels=x->x_info.ambichannels;
-        printf("ambix: %p...%d*%d\n", buf, channels, gotframes);
+        post("ambix: %p...%d*%d", buf, channels, gotframes);
         for(fram=0; fram<gotframes; fram++) {
           for(chan=0; chan<channels; chan++)
-            printf("  %+05g", *buf++);
-          printf("\n");
+            startpost("  %+05g", *buf++);
+          endpost();
         }
       }
       /*
       if(xtrabuffer) {
         buf=xtrabuffer;
         channels=x->x_info.extrachannels;
-        printf("extra: %p...%d\n", buf, channels);
+        post("extra: %p...%d", buf, channels);
         for(fram=0; fram<gotframes; fram++) {
           for(chan=0; chan<channels; chan++)
-            printf("  %05g", *buf++);
-          printf("\n");
+            startpost("  %05g", *buf++);
+          endpost();
         }
       }
       */
