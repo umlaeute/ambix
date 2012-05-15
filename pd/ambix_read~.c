@@ -25,6 +25,7 @@ License along with this program; if not, see <http://www.gnu.org/licenses/>.
 #include <ambix/ambix.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 /* ------------------------ ambixread ----------------------------- */
 #define MAXCHANS 64
