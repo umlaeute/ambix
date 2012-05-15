@@ -2,10 +2,6 @@ FILE-FORMAT
 ===========
 ???
 
-build-system
-============
-install target of library (seems to install to /u/l/lib/pd/extra/...)
-
 Pd-externals
 ============
 _threaded_ reader/writer
