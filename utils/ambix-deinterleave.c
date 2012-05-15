@@ -217,11 +217,15 @@ static ai_t*ai_open_input(ai_t*ai) {
     return ai_close(ai);
   }
 
-  matrix=ambix_get_adaptormatrix(ai->inhandle);
-  if(!matrix) {
-    return ai_close(ai);
+  if(ai->info.ambichannels>0) {
+    matrix=ambix_get_adaptormatrix(ai->inhandle);
+    if(!matrix) {
+      return ai_close(ai);
+    }
+    ambix_matrix_copy(matrix, &ai->matrix);
+  } else {
+    ambix_matrix_deinit(&ai->matrix);
   }
-  ambix_matrix_copy(matrix, &ai->matrix);
 
   return ai;
 }
