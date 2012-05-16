@@ -129,6 +129,31 @@ static void deinterleave_samples(t_sample*inbuf, uint32_t channels,
 }
 
 
+
+/* tries to expand the given filename to it's full glory) */
+t_symbol*get_filename(t_canvas*canvas, t_symbol*s) {
+  int fd=0;
+  char buf[MAXPDSTRING];
+  char result[MAXPDSTRING];
+  char*bufptr;
+
+  if(!s || !s->s_name || !*s->s_name) {
+    return NULL;
+  }
+
+  if ((fd=canvas_open(canvas, s->s_name, "", buf, &bufptr, MAXPDSTRING, 1))>=0){
+    sys_close(fd);
+    snprintf(result, MAXPDSTRING-1, "%s/%s", buf, bufptr);
+    result[MAXPDSTRING-1]=0;
+    return gensym(result);
+  } else if(canvas) {
+    canvas_makefilename(canvas, s->s_name, result, MAXPDSTRING);
+    return gensym(result);
+  }
+  return s;
+}
+
+
 /************************* ambix_read object ******************************/
 
 /* [ambix_read~] uses the Posix threads package; for the moment we're Linux
@@ -575,9 +600,11 @@ static void ambix_read_float(t_ambix_read *x, t_floatarg f) {
    detected; thus, use the special "-1" to mean a truly headerless file.)
 */
 
-static void ambix_read_open(t_ambix_read *x, t_symbol *filesym, t_float onsetframes) {
-  if (!*filesym->s_name)
+static void ambix_read_open(t_ambix_read*x, t_symbol*s, t_float onsetframes) {
+  t_symbol*filesym=get_filename(x->x_canvas, s);
+  if (!filesym)
     return;
+
   pthread_mutex_lock(&x->x_mutex);
   x->x_requestcode = REQUEST_OPEN;
   x->x_filename = filesym->s_name;
