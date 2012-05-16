@@ -356,6 +356,8 @@ static ai_t*ai_copy_block(ai_t*ai,
 
   /* decode the ambisonics data */
   //  printf("reading ambidata %p & %p\n", rawdata, cookeddata);
+  channel=0;
+
   if(rawdata && cookeddata) {
     source=rawdata;
     dest  =cookeddata;
@@ -369,7 +371,6 @@ static ai_t*ai_copy_block(ai_t*ai,
     deinterleaver(deinterleavebuffer, cookeddata, frames, fullambichannels);
 
     /* store the ambisonics data */
-    channel=0;
     for(c=0; c<fullambichannels; c++) {
       if(frames!=sf_writef_float(ai->outhandles[channel], deinterleavebuffer+c*frames, frames)) {
         printf("failed writing %d ambiframes to %d:\n", frames, channel);
