@@ -325,6 +325,7 @@ static ai_t*ai_copy_block(ai_t*ai,
   uint32_t i;
   uint32_t ambichannels, fullambichannels, extrachannels;
   uint64_t channel, f, c, channels=0;
+  sf_count_t framed;
 
   const ambix_matrix_t*matrix;
   uint32_t rows, cols;
@@ -347,10 +348,13 @@ static ai_t*ai_copy_block(ai_t*ai,
   }
 
   /* read the raw data */
-  if(frames!=ambix_readf_float32(ai->inhandle,
-                                 rawdata,
-                                 extradata,
-                                 frames)) {
+  framed=ambix_readf_float32(ai->inhandle,
+                             rawdata,
+                             extradata,
+                             frames);
+
+  if(frames!=framed) {
+    printf("failed reading %d frames (got %d)\n", frames, framed);
     return ai_close(ai);
   }
 
@@ -372,9 +376,9 @@ static ai_t*ai_copy_block(ai_t*ai,
 
     /* store the ambisonics data */
     for(c=0; c<fullambichannels; c++) {
-      if(frames!=sf_writef_float(ai->outhandles[channel], deinterleavebuffer+c*frames, frames)) {
-        printf("failed writing %d ambiframes to %d:\n", frames, channel);
-        printf("  handle=%p, data=%p, frames=%d\n", ai->outhandles[channel], deinterleavebuffer+c*frames, frames);
+      framed=sf_writef_float(ai->outhandles[channel], deinterleavebuffer+c*frames, frames);
+      if(frames!=framed) {
+        printf("failed writing %d ambiframes to %d (got %d)\n", frames, channel, framed);
         return ai_close(ai);
       }
       channel++;
@@ -385,8 +389,9 @@ static ai_t*ai_copy_block(ai_t*ai,
   if(extradata) {
     deinterleaver(deinterleavebuffer, extradata, frames, extrachannels);
     for(c=0; c<extrachannels; c++) {
-      if(frames!=sf_writef_float(ai->outhandles[channel], deinterleavebuffer+c*frames, frames)) {
-        printf("failed writing %d extraframes to %d", frames, channel);
+      framed=sf_writef_float(ai->outhandles[channel], deinterleavebuffer+c*frames, frames);
+      if(frames!=framed) {
+        printf("failed writing %d extraframes to %d (got %d)\n", frames, channel, framed);
         return ai_close(ai);
       }
       channel++;
@@ -411,7 +416,7 @@ static ai_t*ai_copy(ai_t*ai) {
   if(ai->info.ambichannels) {
     const ambix_matrix_t*matrix=&ai->matrix;
     if(!matrix) {
-      printf("no adaptor matrix founde...\n");
+      printf("no adaptor matrix found...\n");
       return ai_close(ai);
     }
     size=(ai->info.ambichannels)*blocksize;
@@ -431,7 +436,6 @@ static ai_t*ai_copy(ai_t*ai) {
     return ai_close(ai);
   }
 
-
   while(frames>blocksize) {
     blocks++;
     if(!ai_copy_block(ai, rawdata, cookeddata, extradata, deinterleavebuf, blocksize)) {
@@ -439,6 +443,7 @@ static ai_t*ai_copy(ai_t*ai) {
     }
     frames-=blocksize;
   }
+
   if(!ai_copy_block(ai, rawdata, cookeddata, extradata, deinterleavebuf, frames)) {
     return ai_close(ai);
   }
