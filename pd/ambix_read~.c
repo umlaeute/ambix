@@ -25,7 +25,7 @@
 
 */
 
-#if 1
+#if 0
 # define MARK printf("%s[%d]:%s\t", __FILE__, __LINE__, __FUNCTION__), printf
 #else
 static void noop(const char*format, ...) {}
