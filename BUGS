@@ -2,5 +2,5 @@ ambix-interleave:
 	fails to re-interleave ambix files
 
 ambix-deinterleave:
-	fails to deinterleave non-ambix files
+	fails to deinterleave non-ambix files (even with segfault)
 
