@@ -40,12 +40,27 @@
 #include <string.h>
 #include <errno.h>
 
-#include "m_pd.h"
-
+#include <m_pd.h>
 #include <ambix/ambix.h>
 
-
 #define MAXSFCHANS 64
+#define DEFAULTVECSIZE 128
+
+#define READFRAMES 16384
+#define WRITFRAMES 16384
+#define DEFBUFPERCHAN 65536
+#define MINBUFSIZE (4 * READFRAMES)
+#define MAXBUFSIZE 4194304
+
+#define REQUEST_NOTHING 0
+#define REQUEST_OPEN 1
+#define REQUEST_CLOSE 2
+#define REQUEST_QUIT 3
+#define REQUEST_BUSY 4
+
+#define STATE_IDLE 0
+#define STATE_STARTUP 1
+#define STATE_STREAM 2
 
 /******************** soundfile access routines **********************/
 static int ambixwrite_argparse(void *obj, int *p_argc, t_atom **p_argv,
@@ -153,39 +168,6 @@ static void split_samples(t_sample*input, uint32_t frames,
    areas.
 */
 
-#define MAXBYTESPERSAMPLE 4
-#define MAXVECSIZE 128
-
-
-#if 0
-#define READSIZE 65536
-#define WRITESIZE 65536
-#define DEFBUFPERCHAN 262144
-#define MINBUFSIZE (4 * READSIZE)
-#define MAXBUFSIZE 16777216     /* arbitrary; just don't want to hang malloc */
-#else
-/* 65536 = 4*16384
- * 262144 = 4*65536
- * 16777216 = 64*262144 = 265*65536
- *
- * we scale everything by 4, since we allocate t_sample rather than char
- */
-#define READFRAMES 16384
-#define WRITFRAMES 16384
-#define DEFBUFPERCHAN 65536
-#define MINBUFSIZE (4 * READFRAMES)
-#define MAXBUFSIZE 4194304
-#endif
-
-#define REQUEST_NOTHING 0
-#define REQUEST_OPEN 1
-#define REQUEST_CLOSE 2
-#define REQUEST_QUIT 3
-#define REQUEST_BUSY 4
-
-#define STATE_IDLE 0
-#define STATE_STARTUP 1
-#define STATE_STREAM 2
 
 typedef struct _ambix_write
 {
@@ -196,7 +178,7 @@ typedef struct _ambix_write
   int       x_bufframes;                  /* buffer size in frames */
 
   int x_noutlets;                         /* number of audio outlets */
-  t_sample *(x_outvec[MAXSFCHANS]);       /* audio vectors */
+  t_sample *(x_invec[MAXSFCHANS]);       /* audio vectors */
   int x_vecsize;                          /* vector size for transfers */
 
   int x_state;                            /* opened, running, or idle */
@@ -433,7 +415,6 @@ static void *ambix_write_new(t_symbol*s, int argc, t_atom*argv) {
 
   t_sample*buf;
 
-
   switch(argc) {
   case 0:
     achannels=4;
@@ -498,7 +479,7 @@ static void *ambix_write_new(t_symbol*s, int argc, t_atom*argv) {
   pthread_mutex_init(&x->x_mutex, 0);
   pthread_cond_init(&x->x_requestcondition, 0);
   pthread_cond_init(&x->x_answercondition, 0);
-  x->x_vecsize = MAXVECSIZE;
+  x->x_vecsize = DEFAULTVECSIZE;
   x->x_insamplerate = x->x_samplerate = 0;
   x->x_state = STATE_IDLE;
 
@@ -526,7 +507,7 @@ static t_int *ambix_write_perform(t_int *w) {
       pthread_cond_signal(&x->x_requestcondition);
       pthread_cond_wait(&x->x_answercondition, &x->x_mutex);
     }
-    interleave_samples(x->x_outvec, channels, 
+    interleave_samples(x->x_invec, channels, 
                        x->x_buf+(x->x_fifohead*channels),
                        vecsize);
 
@@ -633,7 +614,7 @@ static void ambix_write_dsp(t_ambix_write *x, t_signal **sp) {
   x->x_sigperiod = (x->x_fifosize / (16 * x->x_vecsize));
  
   for (i = 0; i < ninlets; i++)
-    x->x_outvec[i] = sp[i]->s_vec;
+    x->x_invec[i] = sp[i]->s_vec;
   x->x_insamplerate = sp[0]->s_sr;
   pthread_mutex_unlock(&x->x_mutex);
   dsp_add(ambix_write_perform, 1, x);
