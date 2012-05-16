@@ -20,7 +20,7 @@
  You should have received a copy of the GNU Lesser General Public
  License along with this program; if not, see <http://www.gnu.org/licenses/>.
 
- [ambix_write~] is based on Pd's [writesf~], which is released under a 
+ [ambix_write~] is based on Pd's [writesf~], which is released under a
  3-clause BSD-License ("Standard Improved BSD License")
 
 */
@@ -73,7 +73,7 @@ static int ambixwrite_argparse(void *obj, int *p_argc, t_atom **p_argv,
   ambix_sampleformat_t sampleformat=AMBIX_SAMPLEFORMAT_PCM24;
   t_symbol *filesym;
   t_float rate = -1;
-    
+
   while (argc > 0 && argv->a_type == A_SYMBOL &&
          *argv->a_w.w_symbol->s_name == '-')
     {
@@ -108,9 +108,9 @@ static int ambixwrite_argparse(void *obj, int *p_argc, t_atom **p_argv,
   if (!argc || argv->a_type != A_SYMBOL)
     goto usage;
   filesym = argv->a_w.w_symbol;
-    
+
   argc--; argv++;
-    
+
   *p_argc = argc;
   *p_argv = argv;
   if(p_filesym)
@@ -126,7 +126,6 @@ static int ambixwrite_argparse(void *obj, int *p_argc, t_atom **p_argv,
   return (-1);
 }
 
-
 /* takes sample-blocks (per channel) and interleaves them */
 /* to be used in perform() to get Pd-channels into the fifo */
 static void interleave_samples(t_sample**invecs, uint32_t channels, t_sample*outbuf, uint32_t frames) {
@@ -140,7 +139,7 @@ static void interleave_samples(t_sample**invecs, uint32_t channels, t_sample*out
 
 /* split a block of (chan1+chan2) interleaved  samples into 2 blocks of chan1 interleaved samples and chan2 interleaved samples */
 /* to be used in the writer thread to get ambix compatible data from the fifo */
-static void split_samples(t_sample*input, uint32_t frames, 
+static void split_samples(t_sample*input, uint32_t frames,
                           float32_t*buf1, uint32_t chan1,
                           float32_t*buf2, uint32_t chan2) {
   uint32_t f=0;
@@ -167,7 +166,6 @@ static void split_samples(t_sample*input, uint32_t frames,
    is done by setting "conditions" and putting data in mutex-controlled common
    areas.
 */
-
 
 typedef struct _ambix_write
 {
@@ -201,7 +199,7 @@ typedef struct _ambix_write
   long x_bytelimit;       /* max number of data bytes to read */
 
 
-  int x_fifosize;         /* buffer size appropriately rounded down */            
+  int x_fifosize;         /* buffer size appropriately rounded down */
   int x_fifohead;         /* index of next byte to get from file */
   int x_fifotail;         /* index of next byte the ugen will read */
 
@@ -210,7 +208,6 @@ typedef struct _ambix_write
   int x_sigcountdown;     /* counter for signalling child for more data */
   int x_sigperiod;        /* number of ticks per signal */
 
-
   pthread_mutex_t x_mutex;
   pthread_cond_t x_requestcondition;
   pthread_cond_t x_answercondition;
@@ -218,13 +215,6 @@ typedef struct _ambix_write
 
   t_float x_f;            /* ambix_write~ only; scalar for signal inlet */
 } t_ambix_write;
-
-
-
-
-
-
-
 
 
 /******************************* ambix_write *******************/
@@ -244,8 +234,7 @@ static void *ambix_write_child_main(void *zz) {
     } else if (x->x_requestcode == REQUEST_OPEN) {
       int fd, sysrtn, writeframes;
       ambix_info_t ainfo;
-            
-            
+
       /* copy file stuff out of the data structure so we can
          relinquish the mutex while we're in open_soundfile(). */
       int64_t onsetframes = x->x_onsetframes;
@@ -361,7 +350,7 @@ static void *ambix_write_child_main(void *zz) {
                       ambibuf, ambichannels,
                       xtrabuf, xtrachannels);
 
-        sysrtn = ambix_writef_float32(ambix, 
+        sysrtn = ambix_writef_float32(ambix,
                                       ambibuf,
                                       xtrabuf,
                                       writeframes);
@@ -442,7 +431,7 @@ static void *ambix_write_new(t_symbol*s, int argc, t_atom*argv) {
     /* ouch, user requested too much! */
     if(achannels>MAXSFCHANS) {
       achannels=MAXSFCHANS;
-      xchannels=0;      
+      xchannels=0;
     } else {
       xchannels=MAXSFCHANS-achannels;
     }
@@ -460,12 +449,12 @@ static void *ambix_write_new(t_symbol*s, int argc, t_atom*argv) {
 
   buf = getbytes(bufsize*sizeof(t_sample));
   if (!buf) return (0);
-    
+
   x = (t_ambix_write *)pd_new(ambix_write_class);
 
   if(limiting)
     pd_error(x, "limiting to %d ambisonics channels and %d extra channels", achannels, xchannels);
-    
+
   for (i = 1; i < nchannels; i++)
     inlet_new(&x->x_obj,  &x->x_obj.ob_pd, &s_signal, &s_signal);
 
@@ -507,7 +496,7 @@ static t_int *ambix_write_perform(t_int *w) {
       pthread_cond_signal(&x->x_requestcondition);
       pthread_cond_wait(&x->x_answercondition, &x->x_mutex);
     }
-    interleave_samples(x->x_invec, channels, 
+    interleave_samples(x->x_invec, channels,
                        x->x_buf+(x->x_fifohead*channels),
                        vecsize);
 
@@ -556,7 +545,7 @@ static void ambix_write_open(t_ambix_write *x, t_symbol *s, int argc, t_atom *ar
     ambix_write_stop(x);
   }
 
-  if (ambixwrite_argparse(x, &argc, &argv, 
+  if (ambixwrite_argparse(x, &argc, &argv,
                                &filesym, &fileformat, &sampleformat, &samplerate)) {
     pd_error(x,
              "ambix_write~: usage: open [-bytes [234]] [-rate ####] filename");
@@ -612,7 +601,7 @@ static void ambix_write_dsp(t_ambix_write *x, t_signal **sp) {
 
   x->x_fifosize = x->x_bufframes-(x->x_bufframes%x->x_vecsize);
   x->x_sigperiod = (x->x_fifosize / (16 * x->x_vecsize));
- 
+
   for (i = 0; i < ninlets; i++)
     x->x_invec[i] = sp[i]->s_vec;
   x->x_insamplerate = sp[0]->s_sr;
@@ -644,7 +633,7 @@ static void ambix_write_free(t_ambix_write *x) {
   if (pthread_join(x->x_childthread, &threadrtn))
     error("ambix_write_free: join failed");
   /* post("... done."); */
-    
+
   pthread_cond_destroy(&x->x_requestcondition);
   pthread_cond_destroy(&x->x_answercondition);
   pthread_mutex_destroy(&x->x_mutex);
@@ -707,9 +696,8 @@ static void *ambix_write_matrix(t_ambix_write *x, t_symbol*s, int argc, t_atom*a
     printmatrix(x->x_matrix);
 }
 
-
 void ambix_write_tilde_setup(void) {
-  ambix_write_class = class_new(gensym("ambix_write~"), (t_newmethod)ambix_write_new, 
+  ambix_write_class = class_new(gensym("ambix_write~"), (t_newmethod)ambix_write_new,
                             (t_method)ambix_write_free, sizeof(t_ambix_write), 0, A_GIMME, 0);
   class_addmethod(ambix_write_class, (t_method)ambix_write_start, gensym("start"), 0);
   class_addmethod(ambix_write_class, (t_method)ambix_write_stop, gensym("stop"), 0);
