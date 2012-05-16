@@ -426,6 +426,10 @@ static ai_t*ai_copy(ai_t*ai) {
       size=(ai->info.extrachannels)*blocksize;
   }
   deinterleavebuf=malloc(sizeof(float32_t)*size);
+  if(NULL==deinterleavebuf) {
+    return ai_close(ai);
+  }
+
 
   while(frames>blocksize) {
     blocks++;
