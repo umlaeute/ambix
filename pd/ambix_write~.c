@@ -292,7 +292,7 @@ static void *ambix_write_child_main(void *zz) {
         matrix=NULL;
       }
 
-      if(ambix) {
+      if(ambix && onsetframes) {
         ambix_seek(ambix, onsetframes, SEEK_SET);
       }
 
