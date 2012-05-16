@@ -171,6 +171,11 @@ t_symbol*get_filename(t_canvas*canvas, t_symbol*s) {
 
 static t_class *ambix_read_class;
 
+typedef struct _infoflags {
+  int f_eof;     /* EOF notification */
+  int f_matrix;  /* send matrix */
+} t_infoflags;
+
 typedef struct _ambix_read {
   t_object x_obj;
   t_canvas *x_canvas;
@@ -181,7 +186,9 @@ typedef struct _ambix_read {
   t_sample *(x_outvec[MAXSFCHANS]);       /* audio vectors */
 
   t_clock *x_clock;                       /* to call back on EOF */
-  t_outlet *x_bangout;                    /* bang-on-done outlet */
+  t_outlet *x_infoout;                    /* bang-on-done outlet */
+  t_outlet *x_matrixout;                  /* bang-on-done outlet */
+  t_infoflags x_infoflags;                /* what to do in the callback */
 
   uint32_t x_ambichannels;                /* ambichannels of the object (const) */
   uint32_t x_xtrachannels;                /* xtrachannels of the object (const) */
@@ -280,8 +287,10 @@ static void *ambix_read_child_main(void *zz) {
 
       pthread_mutex_lock(&x->x_mutex);
       /* copy back into the instance structure. */
-      if(matrix)
+      if(matrix) {
         ambix_matrix_copy(matrix, &x->x_matrix);
+        x->x_infoflags.f_matrix=1;
+      }
       if (NULL==ambix) {
         x->x_fileerror = errno;
         x->x_eof = 1;
@@ -475,10 +484,16 @@ static void *ambix_read_new(t_symbol*s, int argc, t_atom*argv) {
   x->x_fileformat=(gensym("ambix_read~")==s)?AMBIX_BASIC:AMBIX_EXTENDED;
   memset(&x->x_matrix, 0, sizeof(x->x_matrix));
 
+
+  if(AMBIX_EXTENDED==x->x_fileformat)
+    x->x_matrixout = outlet_new(&x->x_obj, 0);
+  else
+    x->x_matrixout = NULL;
+
   for (i = 0; i < nchannels; i++)
     outlet_new(&x->x_obj, gensym("signal"));
   x->x_noutlets = nchannels;
-  x->x_bangout = outlet_new(&x->x_obj, &s_bang);
+  x->x_infoout = outlet_new(&x->x_obj, &s_bang);
 
   x->x_ambichannels = achannels;
   x->x_xtrachannels = xchannels;
@@ -499,13 +514,42 @@ static void *ambix_read_new(t_symbol*s, int argc, t_atom*argv) {
 }
 
 static void ambix_read_tick(t_ambix_read *x) {
-  outlet_bang(x->x_bangout);
+  if(x->x_infoflags.f_eof)
+    outlet_bang(x->x_infoout);
+
+  if(x->x_infoflags.f_matrix && x->x_matrixout) {
+    int size=x->x_matrix.rows*x->x_matrix.cols;
+    if(size) {
+      uint32_t r, c, index;
+      t_atom*ap=getbytes(sizeof(t_atom)*(size+2));
+      SETFLOAT(ap+0, x->x_matrix.rows);
+      SETFLOAT(ap+1, x->x_matrix.cols);
+
+      index=2;
+      for(r=0; r<x->x_matrix.rows; r++) {
+        for(c=0; c<x->x_matrix.cols; c++) {
+          SETFLOAT(ap+index, x->x_matrix.data[r][c]);
+          index++;
+        }
+      }
+
+      outlet_anything(x->x_matrixout, gensym("matrix"), size+2, ap);
+      freebytes(ap, sizeof(t_atom)*(size+2));
+    }
+  }
+
+  memset(&x->x_infoflags, 0, sizeof(x->x_infoflags));
 }
 
 static t_int *ambix_read_perform(t_int *w) {
   t_ambix_read *x = (t_ambix_read *)(w[1]);
   int vecsize = x->x_vecsize, noutlets = x->x_noutlets, i, j;
   t_sample *fp;
+
+  if(x->x_infoflags.f_matrix) {
+    clock_delay(x->x_clock, 0);
+  }
+
   if (x->x_state == STATE_STREAM) {
     int wantframes, nchannels;
     pthread_mutex_lock(&x->x_mutex);
@@ -529,6 +573,7 @@ static t_int *ambix_read_perform(t_int *w) {
                   "unknown or bad header format" :
                   strerror(x->x_fileerror)));
       }
+      x->x_infoflags.f_eof=1;
       clock_delay(x->x_clock, 0);
       x->x_state = STATE_IDLE;
 
@@ -674,6 +719,12 @@ static void ambix_read_free(t_ambix_read *x) {
   pthread_mutex_destroy(&x->x_mutex);
   freebytes(x->x_buf, x->x_bufsize);
   clock_free(x->x_clock);
+
+  outlet_free(x->x_infoout);
+  if(x->x_matrixout)
+    outlet_free(x->x_matrixout);
+
+  ambix_matrix_deinit(&x->x_matrix);
 }
 
 void ambix_read_tilde_setup(void) {
