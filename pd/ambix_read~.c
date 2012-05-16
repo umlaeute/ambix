@@ -25,7 +25,7 @@
 
 */
 
-#if 0
+#if 1
 # define MARK printf("%s[%d]:%s\t", __FILE__, __LINE__, __FUNCTION__), printf
 #else
 static void noop(const char*format, ...) {}
@@ -86,30 +86,33 @@ static void noop(const char*format, ...) {}
  */
 static void merge_samples(float32_t*buf1, uint32_t chan1, uint32_t want1,
                           float32_t*buf2, uint32_t chan2, uint32_t want2,
-                          t_sample*dest, uint32_t frames) {
+                          t_sample*dest, uint32_t destsize,
+                          uint32_t offset, uint32_t frames) {
   uint32_t left1=(want1>chan1)?want1-chan1:0;
   uint32_t left2=(want2>chan2)?want2-chan2:0;
   uint32_t use1=(chan1<want1)?chan1:want1;
   uint32_t use2=(chan2<want2)?chan2:want2;
 
-  uint32_t f, c;
+  const uint32_t framesize=want1+want2;
 
+  uint32_t f, c;
   for(f=0; f<frames; f++) {
     float32_t*in=NULL;
+    t_sample*out=dest+((offset+f)%destsize)*framesize;
     /* copy samples from buf1 */
     in=buf1+(f*chan1);
     for(c=0; c<use1; c++)
-      *dest++=*in++;
+      *out++=*in++;
     /* zero-pad if needed */
     for(c=0; c<left1; c++)
-      *dest++=0.;
+      *out++=0.;
     /* copy samples from buf2 */
     in=buf2+(f*chan2);
     for(c=0; c<use2; c++)
-      *dest++=*in++;
+      *out++=*in++;
     /* zero-pad if needed */
     for(c=0; c<left2; c++)
-      *dest++=0.;
+      *out++=0.;
   }
 }
 
@@ -193,10 +196,10 @@ typedef struct _ambix_read {
 static void *ambix_read_child_main(void *zz) {
   t_ambix_read *x = zz;
   ambix_t*ambix=NULL;
-  MARK("\n");
   pthread_mutex_lock(&x->x_mutex);
   const uint32_t want_ambichannels    = x->x_ambichannels;
   const uint32_t want_xtrachannels    = x->x_xtrachannels;
+  const uint32_t want_framesize       = want_ambichannels+want_xtrachannels; // in samples
   const ambix_fileformat_t want_fileformat = x->x_fileformat;
 
   while (1) {
@@ -235,13 +238,11 @@ static void *ambix_read_child_main(void *zz) {
       if (ambix)
         ambix_close(ambix);
       ambix=ambix_open(filename, AMBIX_READ, &ainfo);
-      MARK("ambix=%p\n", ambix);
       free(filename);
 
       if(ambix) {
         matrix=ambix_get_adaptormatrix(ambix);
         if(onsetframes) {
-          MARK("seek=%d\n", onsetframes);
           ambix_seek(ambix, onsetframes, SEEK_SET);
         }
       }
@@ -254,10 +255,8 @@ static void *ambix_read_child_main(void *zz) {
 
       pthread_mutex_lock(&x->x_mutex);
       /* copy back into the instance structure. */
-      MARK("\n");
       if(matrix)
         ambix_matrix_copy(matrix, &x->x_matrix);
-      MARK("\n");
       if (NULL==ambix) {
         x->x_fileerror = errno;
         x->x_eof = 1;
@@ -279,11 +278,8 @@ static void *ambix_read_child_main(void *zz) {
       x->x_sigcountdown = x->x_sigperiod = (x->x_fifosize / (16 * x->x_vecsize));
       /* in a loop, wait for the fifo to get hungry and feed it */
 
-      MARK("FIFO: size=%d\thead=%d\ttail=%d\n", x->x_fifosize, x->x_fifohead, x->x_fifotail);
-
       while (x->x_requestcode == REQUEST_BUSY) {
         int fifosize = x->x_fifosize, fifotail;
-        //MARK("EOF=%d & error=%d\t%d <-> %d\n", x->x_eof, x->x_fileerror, x->x_fifohead, x->x_fifotail);
         if (x->x_eof)
           break;
         if (x->x_fifohead >= x->x_fifotail) {
@@ -317,6 +313,9 @@ static void *ambix_read_child_main(void *zz) {
         fifohead = x->x_fifohead;
         fifotail = x->x_fifotail;
 
+        int bufframes = x->x_bufframes;
+        int bufsize = x->x_bufsize;
+
         pthread_mutex_unlock(&x->x_mutex);
 
         if(localfifosize<fifosize) {
@@ -324,15 +323,12 @@ static void *ambix_read_child_main(void *zz) {
           localfifosize=fifosize;
           ambibuf = malloc(sizeof(float32_t)*localfifosize*ambichannels);
           xtrabuf = malloc(sizeof(float32_t)*localfifosize*xtrachannels);
-          printf("ambibuf=%d bytes [%dx%d] at %p\n", (int)sizeof(float32_t)*localfifosize*ambichannels, (int)localfifosize, (int)ambichannels, ambibuf);
-          printf("xtrabuf=%d bytes [%dx%d] at %p\n", (int)sizeof(float32_t)*localfifosize*xtrachannels, (int)localfifosize, (int)xtrachannels, xtrabuf);
         }
-
         sysrtn = ambix_readf_float32(ambix, ambibuf, xtrabuf, wantframes);
-        MARK("read=%d/%d\n", sysrtn, wantframes);
         merge_samples(ambibuf, ambichannels, want_ambichannels,
                       xtrabuf, xtrachannels, want_xtrachannels,
-                      buf+fifotail*(want_ambichannels+want_xtrachannels), sysrtn);
+                      buf, bufframes, 
+                      fifohead, sysrtn);
 
         pthread_mutex_lock(&x->x_mutex);
         if (x->x_requestcode != REQUEST_BUSY)
@@ -493,7 +489,6 @@ static t_int *ambix_read_perform(t_int *w) {
     while (
            !x->x_eof && x->x_fifohead >= x->x_fifotail &&
            x->x_fifohead < x->x_fifotail + wantframes-1) {
-      //MARK("wait for queue: %d %d\n", x->x_fifohead, x->x_fifotail);
       pthread_cond_signal(&x->x_requestcondition);
       pthread_cond_wait(&x->x_answercondition, &x->x_mutex);
       /* resync local variables -- bug fix thanks to Shahrokh */
@@ -515,8 +510,6 @@ static t_int *ambix_read_perform(t_int *w) {
       /* if there's a partial buffer left, copy it out. */
       xfersize = (x->x_fifohead - x->x_fifotail + 1);
       if (xfersize) {
-        MARK("xgot %d\n", xfersize);
-
         deinterleave_samples(x->x_buf+(x->x_fifotail*noutlets),
                              noutlets,
                              x->x_outvec,
@@ -532,14 +525,14 @@ static t_int *ambix_read_perform(t_int *w) {
       pthread_mutex_unlock(&x->x_mutex);
       return (w+2);
     }
-    //MARK("got %d\n", vecsize);
     deinterleave_samples(x->x_buf+(x->x_fifotail*noutlets),
                          noutlets,
                          x->x_outvec,
                          vecsize);
     x->x_fifotail += wantframes;
-    if (x->x_fifotail >= x->x_fifosize)
+    if (x->x_fifotail >= x->x_fifosize) {
       x->x_fifotail = 0;
+    }
     if ((--x->x_sigcountdown) <= 0) {
       pthread_cond_signal(&x->x_requestcondition);
       x->x_sigcountdown = x->x_sigperiod;
@@ -556,7 +549,6 @@ static t_int *ambix_read_perform(t_int *w) {
 static void ambix_read_start(t_ambix_read *x) {
   /* start making output.  If we're in the "startup" state change
      to the "running" state. */
-  MARK("state %d\n", x->x_state);
   if (x->x_state == STATE_STARTUP)
     x->x_state = STATE_STREAM;
   else pd_error(x, "ambix_read: start requested with no prior 'open'");
@@ -618,6 +610,22 @@ static void ambix_read_print(t_ambix_read *x) {
   post("fifo tail %d", x->x_fifotail);
   post("fifo size %d", x->x_fifosize);
   post("eof %d", x->x_eof);
+
+#if 0
+  if(1) {
+    int c, f=0;
+    int frames=x->x_fifosize;
+    int channels=x->x_noutlets;
+    float32_t*buf=x->x_buf;
+    for(f=0; f<x->x_fifosize; f++) {
+      startpost("frame[%d]:", f);
+      for(c=0; c<channels; c++) {
+        startpost(" %g", *buf++);
+      }
+      endpost();
+    }
+  }
+#endif
 }
 
 static void ambix_read_free(t_ambix_read *x) {
