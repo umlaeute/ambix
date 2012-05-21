@@ -596,16 +596,20 @@ static t_int *ambix_read_perform(t_int *w) {
     wantframes = vecsize;
 
     while (
-           !x->x_eof && x->x_fifohead >= x->x_fifotail &&
-           x->x_fifohead < x->x_fifotail + wantframes-1) {
+           !x->x_eof &&
+           x->x_fifohead >= x->x_fifotail &&
+           x->x_fifohead < x->x_fifotail + wantframes-1
+           ) {
       pthread_cond_signal(&x->x_requestcondition);
       pthread_cond_wait(&x->x_answercondition, &x->x_mutex);
       /* resync local variables -- bug fix thanks to Shahrokh */
       vecsize = x->x_vecsize;
       wantframes = vecsize;
     }
-    if (x->x_eof && x->x_fifohead >= x->x_fifotail &&
-        x->x_fifohead < x->x_fifotail + wantframes-1) {
+    if (x->x_eof &&
+        x->x_fifohead >= x->x_fifotail &&
+        x->x_fifohead <  x->x_fifotail + wantframes-1
+        ) {
       int xfersize;
       if (x->x_fileerror) {
         pd_error(x, "dsp: %s: %s", x->x_filename,
