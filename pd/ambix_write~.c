@@ -296,8 +296,10 @@ static void *ambix_write_child_main(void *zz) {
         ambix_seek(ambix, onsetframes, SEEK_SET);
       }
 
-      ambibuf = malloc(sizeof(float32_t)*localfifosize*ambichannels);
-      xtrabuf = malloc(sizeof(float32_t)*localfifosize*xtrachannels);
+      if(ambix) {
+        ambibuf = calloc(localfifosize*ambichannels, sizeof(float32_t));
+        xtrabuf = calloc(localfifosize*xtrachannels, sizeof(float32_t));
+      }
 
       pthread_mutex_lock(&x->x_mutex);
       if(NULL==ambix) {
@@ -343,8 +345,8 @@ static void *ambix_write_child_main(void *zz) {
         if(localfifosize<fifosize) {
           free(ambibuf); free(xtrabuf);
           localfifosize=fifosize;
-          ambibuf = malloc(sizeof(float32_t)*localfifosize*ambichannels);
-          xtrabuf = malloc(sizeof(float32_t)*localfifosize*xtrachannels);
+          ambibuf = calloc(localfifosize*ambichannels, sizeof(float32_t));
+          xtrabuf = calloc(localfifosize*xtrachannels, sizeof(float32_t));
         }
         split_samples(buf+fifotail*(ambichannels+xtrachannels), writeframes,
                       ambibuf, ambichannels,
