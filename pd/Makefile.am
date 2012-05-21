@@ -18,11 +18,13 @@ AM_LDFLAGS+= @RTE_LIBS@
 AM_LDFLAGS+=$(top_builddir)/libambix/src/libambix.la
 
 rte_LTLIBRARIES+= \
-        ambix_write~.la \
+        ambix_info.la \
         ambix_read~.la \
-        ambix_readX~.la
+        ambix_readX~.la \
+        ambix_write~.la
 
 
+ambix_info_la_SOURCES		= ambix_info.c
 ambix_read__la_SOURCES		= ambix_read~.c
 ambix_readX__la_SOURCES		= ambix_read~.c
 ambix_write__la_SOURCES		= ambix_write~.c
