@@ -110,7 +110,13 @@ static void ambix_info_open(t_ambix_info *x, t_symbol*s) {
 
   if(!ambix) {
     error("[ambix_info]: unable to open '%s'", filename);
+    return;
   }
+
+
+  /* filename */
+  SETSYMBOL(atoms+0, filesym);
+  outlet_anything(x->x_outlet, gensym("filename"), 1, atoms);
 
   /* ambix fileformat */
   switch(ainfo.fileformat) {
