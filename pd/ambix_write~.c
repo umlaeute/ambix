@@ -373,6 +373,7 @@ static void *ambix_write_child_main(void *zz) {
         /* signal parent in case it's waiting for data */
         pthread_cond_signal(&x->x_answercondition);
       }
+      free(ambibuf);free(xtrabuf);
     } else if (x->x_requestcode == REQUEST_CLOSE ||
              x->x_requestcode == REQUEST_QUIT) {
       int quit = (x->x_requestcode == REQUEST_QUIT);
