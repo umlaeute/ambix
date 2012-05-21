@@ -1,0 +1,9 @@
+#N canvas 118 49 745 103 10;
+#N canvas 500 278 380 146 META 0;
+#X text 10 50 AUTHOR IOhannes m zmölnig;
+#X text 10 10 NAME ambix;
+#X text 10 30 VERSION @VERSION@;
+#X text 10 70 LICENSE LGPL-2.1;
+#X text 10 90 DESCRIPTION objects for reading/writing of AMBIsonics
+eXchange files;
+#X restore 313 37 pd META;

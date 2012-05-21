@@ -1,0 +1,57 @@
+#N canvas 518 132 758 533 10;
+#X msg 646 30 \; pd dsp 1;
+#X msg 74 161 open \$1;
+#X msg 74 49 bang;
+#X obj 74 69 openpanel;
+#X text 356 432 <buffersize> is given in samples per channels (unlike
+[readsf~] where you specify it in bytes per channel);
+#X text 43 475 see also:;
+#X text 311 412 arguments: <#ambioutlet~s:4> <#extraoutlet~s:0> <buffersize>
+;
+#X text 207 18 [ambix_write~] write an AMBIsonics eXchange file;
+#X msg 111 186 start;
+#X msg 111 215 stop;
+#X obj 166 308 osc~ 440;
+#X obj 145 477 ambix_read~;
+#X obj 235 477 ambix_readX~;
+#X obj 145 499 writesf~;
+#X text 233 308 ACN0;
+#X text 243 328 ACN1;
+#X obj 188 349 osc~ 220;
+#X text 253 348 ACN2;
+#X text 263 368 ACN3;
+#X obj 178 329 osc~ 110;
+#X obj 198 369 osc~ 330;
+#X obj 184 396 noise~;
+#X obj 74 418 ambix_write~ 4 1;
+#X text 240 396 extra0;
+#X text 216 47 The [ambix_write~] writes audio signals into an ambix
+soundfile \, much like [writesf~] for normal soundfiles.;
+#X text 217 78 [ambix_write~] creates a subthread whose task is to
+write audio streams to disk. You need not provide any disk access time
+between "open" and "start" \, but between "stop" and the next "open"
+you must give the object time to flush all the output to disk.;
+#X text 217 204 You can also write EXTENDED ambix files \, by specifying
+an adaptor-matrix _before_ sending the "open" message.;
+#X msg 113 252 matrix 4 4 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1;
+#X msg 116 273 matrix;
+#X text 167 273 specify NONE-matrix (switch to BASIC mode);
+#X text 434 257 (switches to EXTENDED mode);
+#X text 416 246 specify [4x4] identity matrix;
+#X text 214 149 When writing BASIC ambix files (the default \, if no
+extra channels are requested) \, the ambisonics channels will always
+be periphonic (3D) semi-normalized (SN3D) and ordered after their ACN.
+;
+#X obj 330 477 ambix_info;
+#X connect 1 0 22 0;
+#X connect 2 0 3 0;
+#X connect 3 0 1 0;
+#X connect 8 0 22 0;
+#X connect 9 0 22 0;
+#X connect 10 0 22 0;
+#X connect 16 0 22 2;
+#X connect 19 0 22 1;
+#X connect 20 0 22 3;
+#X connect 21 0 22 4;
+#X connect 27 0 22 0;
+#X connect 28 0 22 0;

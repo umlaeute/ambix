@@ -1,4 +1,4 @@
-#N canvas 268 482 707 404 10;
+#N canvas 171 231 707 524 10;
 #X obj 103 91 ambix_info;
 #X obj 103 141 print info;
 #X msg 103 70 open \$1;
@@ -37,6 +37,10 @@
 #X obj 321 141 symbol;
 #X text 266 12 [ambix_info];
 #X text 266 30 get information about an AMBIsonics eXchange file;
+#X obj 145 477 ambix_read~;
+#X obj 235 477 ambix_readX~;
+#X obj 330 477 ambix_info;
+#X text 48 477 see also:;
 #X connect 0 0 4 0;
 #X connect 2 0 0 0;
 #X connect 3 0 5 0;

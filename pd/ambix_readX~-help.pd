@@ -1,0 +1,95 @@
+#N canvas 200 134 758 600 10;
+#X declare -lib iemmatrix;
+#X obj 405 363 route bang;
+#X obj 405 383 print EOF;
+#X obj 535 387 print info;
+#X msg 111 216 1;
+#X obj 495 429 /;
+#X floatatom 495 449 5 0 0 1 seconds - -;
+#X obj 495 387 t a a;
+#X obj 495 409 route frames samplerate;
+#X obj 264 388 env~;
+#X floatatom 264 408 5 0 0 3 xtra0 - -;
+#X obj 299 388 env~;
+#X floatatom 299 408 5 0 0 3 xtra1 - -;
+#X msg 111 245 0;
+#X msg 646 30 \; pd dsp 1;
+#X msg 74 161 open \$1;
+#X msg 74 49 bang;
+#X obj 74 69 openpanel;
+#X obj 145 549 readsf~;
+#X text 217 81 You must "open" the ambix file in advance \, to allow
+the buffer to be filled up \, and the send "1" to start playback.;
+#X text 219 107 Sending "0" stops playback.;
+#X text 219 129 Some information on the file is sent to the last outlet
+of the object \, e.g. the number of frames (samples per channel) \,
+the number of ambisonics- and nonambisonics- channels found in the
+file and the samplerate;
+#X obj 495 486 route resamplerate;
+#X obj 630 471 t a;
+#X floatatom 495 503 0 0 0 0 - - -;
+#X text 491 518 samplerate (after evtl. re-sampling);
+#X text 286 296 <buffersize> is given in samples per channels (unlike
+[readsf~] where you specify it in bytes per channel);
+#X text 43 525 see also:;
+#X text 222 280 arguments: <#ambioutlet~s:4> <#extraoutlet~s:0> <buffersize>
+;
+#X text 207 18 [ambix_readX~] read an AMBIsonics eXchange file (EXTENDED
+;
+#X text 216 47 The [ambix_readX~] reads an ambix soundfile into it's
+signal outputs \, much like [readsf~] for normal soundfiles.;
+#X obj 74 277 ambix_readX~ 4 2;
+#X obj 45 468 print matrix;
+#X obj 45 313 t a a;
+#X text 223 186 The ambisonics channels will be presented AS-IS. In
+order to obtain a full standard set of ambisonics channels (SN3D \,
+ACN) \, you will need to multiply the channels with the adaptor matrix
+you will get through the 1st outlet (e.g. using iemmatrix' [mtx_*~]
+;
+#X obj 145 527 ambix_read~;
+#X obj 77 372 env~;
+#X floatatom 77 392 5 0 0 3 ACN0 - -;
+#X obj 112 406 env~;
+#X floatatom 112 426 5 0 0 3 ACN1 - -;
+#X obj 152 406 env~;
+#X floatatom 152 426 5 0 0 3 ACN2 - -;
+#X obj 192 406 env~;
+#X floatatom 192 426 5 0 0 3 ACN3 - -;
+#X obj 77 350 mtx_*~ 4 4;
+#X obj 496 552 declare -lib iemmatrix;
+#X obj 232 527 ambix_info;
+#X connect 0 0 1 0;
+#X connect 0 1 6 0;
+#X connect 3 0 30 0;
+#X connect 4 0 5 0;
+#X connect 6 0 7 0;
+#X connect 6 1 2 0;
+#X connect 7 0 4 0;
+#X connect 7 1 4 1;
+#X connect 7 2 22 0;
+#X connect 8 0 9 0;
+#X connect 10 0 11 0;
+#X connect 12 0 30 0;
+#X connect 14 0 30 0;
+#X connect 15 0 16 0;
+#X connect 16 0 14 0;
+#X connect 21 0 23 0;
+#X connect 22 0 21 0;
+#X connect 30 0 32 0;
+#X connect 30 1 43 1;
+#X connect 30 2 43 2;
+#X connect 30 3 43 3;
+#X connect 30 4 43 4;
+#X connect 30 5 8 0;
+#X connect 30 6 10 0;
+#X connect 30 7 0 0;
+#X connect 32 0 31 0;
+#X connect 32 1 43 0;
+#X connect 35 0 36 0;
+#X connect 37 0 38 0;
+#X connect 39 0 40 0;
+#X connect 41 0 42 0;
+#X connect 43 0 35 0;
+#X connect 43 1 37 0;
+#X connect 43 2 39 0;
+#X connect 43 3 41 0;
