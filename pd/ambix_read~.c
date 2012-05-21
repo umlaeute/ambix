@@ -286,11 +286,7 @@ static void *ambix_read_child_main(void *zz) {
       xtrabuf = malloc(sizeof(float32_t)*localfifosize*xtrachannels);
 
       pthread_mutex_lock(&x->x_mutex);
-      /* copy back into the instance structure. */
-      if(matrix) {
-        ambix_matrix_copy(matrix, &x->x_matrix);
-        x->x_infoflags.f_matrix=1;
-      }
+
       if (NULL==ambix) {
         x->x_fileerror = errno;
         x->x_eof = 1;
@@ -299,6 +295,12 @@ static void *ambix_read_child_main(void *zz) {
       /* check if another request has been made; if so, field it */
       if (x->x_requestcode != REQUEST_BUSY)
         goto lost;
+
+      /* copy back into the instance structure. */
+      if(matrix) {
+        ambix_matrix_copy(matrix, &x->x_matrix);
+        x->x_infoflags.f_matrix=1;
+      }
       x->x_fifohead = 0;
       /* set fifosize from bufsize.  fifosize must be a
          multiple of the number of bytes eaten for each DSP
