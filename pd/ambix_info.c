@@ -170,6 +170,7 @@ static void ambix_info_open(t_ambix_info *x, t_symbol*s) {
       freebytes(ap, sizeof(t_atom)*(size+2));
     }
   }
+  ambix_close(ambix);
 }
 
 static void ambix_info_free(t_ambix_info *x) {
