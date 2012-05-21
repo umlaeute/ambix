@@ -522,6 +522,8 @@ static void *ambix_read_new(t_symbol*s, int argc, t_atom*argv) {
 }
 
 static void ambix_read_tick(t_ambix_read *x) {
+  pthread_mutex_lock(&x->x_mutex);
+
   if(x->x_infoflags.f_eof)
     outlet_bang(x->x_infoout);
 
@@ -573,6 +575,8 @@ static void ambix_read_tick(t_ambix_read *x) {
   }
 
   memset(&x->x_infoflags, 0, sizeof(x->x_infoflags));
+
+  pthread_mutex_unlock(&x->x_mutex);
 }
 
 static t_int *ambix_read_perform(t_int *w) {
