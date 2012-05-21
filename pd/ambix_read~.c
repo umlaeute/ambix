@@ -284,8 +284,8 @@ static void *ambix_read_child_main(void *zz) {
       ambichannels=ainfo.ambichannels;
       xtrachannels=ainfo.extrachannels;
 
-      ambibuf = malloc(sizeof(float32_t)*localfifosize*ambichannels);
-      xtrabuf = malloc(sizeof(float32_t)*localfifosize*xtrachannels);
+      ambibuf = calloc(localfifosize*ambichannels, sizeof(float32_t));
+      xtrabuf = calloc(localfifosize*xtrachannels, sizeof(float32_t));
 
       pthread_mutex_lock(&x->x_mutex);
 
@@ -306,6 +306,9 @@ static void *ambix_read_child_main(void *zz) {
       }
       memcpy(&x->x_ambix, &ainfo, sizeof(ainfo));
       x->x_infoflags.f_ambix=1;
+
+      /* clear the FIFO */
+      memset(x->x_buf, 0, x->x_bufsize);
 
       x->x_fifohead = 0;
       /* set fifosize from bufsize.  fifosize must be a
@@ -363,15 +366,14 @@ static void *ambix_read_child_main(void *zz) {
         if(localfifosize<fifosize) {
           free(ambibuf); free(xtrabuf);
           localfifosize=fifosize;
-          ambibuf = malloc(sizeof(float32_t)*localfifosize*ambichannels);
-          xtrabuf = malloc(sizeof(float32_t)*localfifosize*xtrachannels);
+          ambibuf = calloc(localfifosize*ambichannels, sizeof(float32_t));
+          xtrabuf = calloc(localfifosize*xtrachannels, sizeof(float32_t));
         }
         sysrtn = ambix_readf_float32(ambix, ambibuf, xtrabuf, wantframes);
         merge_samples(ambibuf, ambichannels, want_ambichannels,
                       xtrabuf, xtrachannels, want_xtrachannels,
-                      buf, bufframes, 
+                      buf, bufframes,
                       fifohead, sysrtn);
-
         pthread_mutex_lock(&x->x_mutex);
         if (x->x_requestcode != REQUEST_BUSY)
           break;
