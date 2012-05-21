@@ -19,7 +19,7 @@ bin_PROGRAMS += \
 endif
 
 
-INCLUDES = -I$(top_srcdir)/libambix
+AM_CPPFLAGS = -I$(top_srcdir)/libambix
 LDADD = $(top_builddir)/libambix/src/libambix.la
 
 ambix_info_SOURCES = ambix-info.c

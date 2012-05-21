@@ -9,6 +9,7 @@ if WINDOWS
 AM_LDFLAGS+= -no-undefined
 endif
 
+AM_CPPFLAGS = -I$(top_srcdir)/libambix
 
 # RTE
 AM_CFLAGS += @RTE_CFLAGS@
@@ -21,14 +22,10 @@ rte_LTLIBRARIES+= \
         ambix_read~.la \
         ambix_readX~.la
 
-INCLUDES = -I$(top_srcdir)/libambix
 
 ambix_read__la_SOURCES		= ambix_read~.c
 ambix_readX__la_SOURCES		= ambix_read~.c
 ambix_write__la_SOURCES		= ambix_write~.c
-
-
-
 
 # convenience symlinks
 .PHONY: convenience-link clean-convenience-link
