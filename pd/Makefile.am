@@ -51,5 +51,3 @@ all-local:: convenience-link
 
 clean-local:: clean-convenience-link
 
-
-foo:: $(rte_LTLIBRARIES)
