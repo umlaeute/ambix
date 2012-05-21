@@ -174,6 +174,7 @@ static t_class *ambix_read_class;
 typedef struct _infoflags {
   int f_eof;     /* EOF notification */
   int f_matrix;  /* send matrix */
+  int f_ambix;   /* send ambix_info */
 } t_infoflags;
 
 typedef struct _ambix_read {
@@ -208,6 +209,7 @@ typedef struct _ambix_read {
   long x_onsetframes;     /* number of sample frames to skip */
 
   ambix_matrix_t x_matrix;
+  ambix_info_t   x_ambix;
 
   int x_fifosize;         /* buffer size appropriately rounded down */
   int x_fifohead;         /* index of next byte to get from file */
@@ -292,6 +294,7 @@ static void *ambix_read_child_main(void *zz) {
         x->x_eof = 1;
         goto lost;
       }
+
       /* check if another request has been made; if so, field it */
       if (x->x_requestcode != REQUEST_BUSY)
         goto lost;
@@ -301,6 +304,9 @@ static void *ambix_read_child_main(void *zz) {
         ambix_matrix_copy(matrix, &x->x_matrix);
         x->x_infoflags.f_matrix=1;
       }
+      memcpy(&x->x_ambix, &ainfo, sizeof(ainfo));
+      x->x_infoflags.f_ambix=1;
+
       x->x_fifohead = 0;
       /* set fifosize from bufsize.  fifosize must be a
          multiple of the number of bytes eaten for each DSP
@@ -519,6 +525,32 @@ static void ambix_read_tick(t_ambix_read *x) {
   if(x->x_infoflags.f_eof)
     outlet_bang(x->x_infoout);
 
+  if(x->x_infoflags.f_ambix) {
+    t_atom atoms[1];
+
+    /* number of ambisonics channels */
+    SETFLOAT(atoms+0, (t_float)(x->x_ambix.ambichannels));
+    outlet_anything(x->x_infoout, gensym("ambichannels"), 1, atoms);
+
+    /* number of non-ambisonics channels */
+    SETFLOAT(atoms+0, (t_float)(x->x_ambix.extrachannels));
+    outlet_anything(x->x_infoout, gensym("extrachannels"), 1, atoms);
+
+    /* playback samplerate (might be different if we did resampling) */
+    SETFLOAT(atoms+0, (t_float)(x->x_ambix.samplerate));
+    outlet_anything(x->x_infoout, gensym("resamplerate"), 1, atoms);
+
+    /* samplerate of file */
+    SETFLOAT(atoms+0, (t_float)(x->x_ambix.samplerate));
+    outlet_anything(x->x_infoout, gensym("samplerate"), 1, atoms);
+
+    /* number of sample frames in file */
+    SETFLOAT(atoms+0, (t_float)(x->x_ambix.frames));
+    outlet_anything(x->x_infoout, gensym("frames"), 1, atoms);
+  }
+
+
+
   if(x->x_infoflags.f_matrix && x->x_matrixout) {
     int size=x->x_matrix.rows*x->x_matrix.cols;
     if(size) {
@@ -548,7 +580,7 @@ static t_int *ambix_read_perform(t_int *w) {
   int vecsize = x->x_vecsize, noutlets = x->x_noutlets, i, j;
   t_sample *fp;
 
-  if(x->x_infoflags.f_matrix) {
+  if(x->x_infoflags.f_matrix || x->x_infoflags.f_ambix ) {
     clock_delay(x->x_clock, 0);
   }
 
