@@ -606,9 +606,11 @@ static t_int *ambix_read_perform(t_int *w) {
       vecsize = x->x_vecsize;
       wantframes = vecsize;
     }
+
+    /* check for EOF (and buffer is about to drain) */
     if (x->x_eof &&
-        x->x_fifohead >= x->x_fifotail &&
-        x->x_fifohead <  x->x_fifotail + wantframes-1
+        x->x_fifohead > x->x_fifotail &&
+        x->x_fifohead <=  x->x_fifotail + wantframes-1
         ) {
       int xfersize;
       if (x->x_fileerror) {
@@ -639,6 +641,8 @@ static t_int *ambix_read_perform(t_int *w) {
       pthread_mutex_unlock(&x->x_mutex);
       return (w+2);
     }
+
+
     deinterleave_samples(x->x_buf+(x->x_fifotail*noutlets),
                          noutlets,
                          x->x_outvec,
