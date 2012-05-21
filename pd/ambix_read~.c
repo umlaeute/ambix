@@ -585,12 +585,14 @@ static t_int *ambix_read_perform(t_int *w) {
   t_ambix_read *x = (t_ambix_read *)(w[1]);
   int vecsize = x->x_vecsize, noutlets = x->x_noutlets, i, j;
   t_sample *fp;
+  int skip=0;
 
   if(x->x_infoflags.f_matrix || x->x_infoflags.f_ambix ) {
     clock_delay(x->x_clock, 0);
+    skip=1;
   }
 
-  if (x->x_state == STATE_STREAM) {
+  if (!skip && x->x_state == STATE_STREAM) {
     int wantframes, nchannels;
     pthread_mutex_lock(&x->x_mutex);
     wantframes = vecsize;
