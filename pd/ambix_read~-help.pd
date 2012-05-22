@@ -1,0 +1,82 @@
+#N canvas 518 132 758 533 10;
+#X obj 405 333 route bang;
+#X obj 405 353 print EOF;
+#X obj 535 357 print info;
+#X msg 111 186 1;
+#X obj 74 298 env~;
+#X floatatom 74 318 5 0 0 3 ACN0 - -;
+#X obj 495 399 /;
+#X floatatom 495 419 5 0 0 1 seconds - -;
+#X obj 495 357 t a a;
+#X obj 495 379 route frames samplerate;
+#X obj 109 330 env~;
+#X floatatom 109 350 5 0 0 3 ACN1 - -;
+#X obj 149 330 env~;
+#X floatatom 149 350 5 0 0 3 ACN2 - -;
+#X obj 189 330 env~;
+#X floatatom 189 350 5 0 0 3 ACN3 - -;
+#X obj 74 238 ambix_read~ 4 2;
+#X obj 264 358 env~;
+#X floatatom 264 378 5 0 0 3 xtra0 - -;
+#X obj 299 358 env~;
+#X floatatom 299 378 5 0 0 3 xtra1 - -;
+#X msg 111 215 0;
+#X msg 646 30 \; pd dsp 1;
+#X msg 74 161 open \$1;
+#X msg 74 49 bang;
+#X obj 74 69 openpanel;
+#X obj 145 499 readsf~;
+#X text 207 18 [ambix_read~] read an AMBIsonics eXchange file (SIMPLE
+mode);
+#X text 216 47 The [ambix_read~] reads an ambix soundfile into it's
+signal outputs \, much like [readsf~] for normal soundfiles.;
+#X text 217 81 You must "open" the ambix file in advance \, to allow
+the buffer to be filled up \, and the send "1" to start playback.;
+#X text 219 107 Sending "0" stops playback.;
+#X text 219 129 Some information on the file is sent to the last outlet
+of the object \, e.g. the number of frames (samples per channel) \,
+the number of ambisonics- and nonambisonics- channels found in the
+file and the samplerate;
+#X obj 495 456 route resamplerate;
+#X obj 630 441 t a;
+#X floatatom 495 471 0 0 0 0 - - -;
+#X text 491 486 samplerate (after evtl. re-sampling);
+#X text 286 266 <buffersize> is given in samples per channels (unlike
+[readsf~] where you specify it in bytes per channel);
+#X text 43 475 see also:;
+#X obj 145 477 ambix_readX~;
+#X text 223 186 The ambisonics channels will always be periphonic (3D)
+semi-normalized (SN3D) and ordered after their ACN.;
+#X text 225 213 If you work with a Furse-Malham decoder \, you will
+need to transform the output data.;
+#X text 219 243 arguments: <#ambioutlet~s:4> <#extraoutlet~s:0> <buffersize>
+;
+#X obj 242 477 ambix_info;
+#X connect 0 0 1 0;
+#X connect 0 1 8 0;
+#X connect 3 0 16 0;
+#X connect 4 0 5 0;
+#X connect 6 0 7 0;
+#X connect 8 0 9 0;
+#X connect 8 1 2 0;
+#X connect 9 0 6 0;
+#X connect 9 1 6 1;
+#X connect 9 2 33 0;
+#X connect 10 0 11 0;
+#X connect 12 0 13 0;
+#X connect 14 0 15 0;
+#X connect 16 0 4 0;
+#X connect 16 1 10 0;
+#X connect 16 2 12 0;
+#X connect 16 3 14 0;
+#X connect 16 4 17 0;
+#X connect 16 5 19 0;
+#X connect 16 6 0 0;
+#X connect 17 0 18 0;
+#X connect 19 0 20 0;
+#X connect 21 0 16 0;
+#X connect 23 0 16 0;
+#X connect 24 0 25 0;
+#X connect 25 0 23 0;
+#X connect 32 0 34 0;
+#X connect 33 0 32 0;

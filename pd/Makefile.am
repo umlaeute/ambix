@@ -1,6 +1,9 @@
 AUTOMAKE_OPTIONS = foreign
 
-rte_LTLIBRARIES=
+rteambixdir = @rtedir@/ambix
+
+rteambix_LTLIBRARIES=
+rteambix_DATA=
 
 AM_CFLAGS =
 AM_LDFLAGS= -module -avoid-version -shared -shrext .@RTE_EXTENSION@
@@ -9,6 +12,7 @@ if WINDOWS
 AM_LDFLAGS+= -no-undefined
 endif
 
+AM_CPPFLAGS = -I$(top_srcdir)/libambix
 
 # RTE
 AM_CFLAGS += @RTE_CFLAGS@
@@ -16,24 +20,29 @@ AM_LDFLAGS+= @RTE_LIBS@
 
 AM_LDFLAGS+=$(top_builddir)/libambix/src/libambix.la
 
-rte_LTLIBRARIES+= \
-        ambix_write~.la \
+rteambix_LTLIBRARIES+= \
+        ambix_info.la \
         ambix_read~.la \
-        ambix_readX~.la
+        ambix_readX~.la \
+        ambix_write~.la
 
-INCLUDES = -I$(top_srcdir)/libambix
+rteambix_DATA+= \
+	ambix-meta.pd \
+	ambix_read~-help.pd \
+	ambix_readX~-help.pd \
+	ambix_write~-help.pd \
+	ambix_info-help.pd
 
+
+ambix_info_la_SOURCES		= ambix_info.c
 ambix_read__la_SOURCES		= ambix_read~.c
 ambix_readX__la_SOURCES		= ambix_read~.c
 ambix_write__la_SOURCES		= ambix_write~.c
 
-
-
-
 # convenience symlinks
 .PHONY: convenience-link clean-convenience-link
 
-convenience-link: $(rte_LTLIBRARIES)
+convenience-link: $(rteambix_LTLIBRARIES)
 	  @for lib in $^; do \
 	   for soname in `echo | $(EGREP) "^dlname=" $$lib | $(SED) -e "s|^dlname='\(.*\)'|\1|"`; do  \
 	    echo "$$soname: creating convenience link from $(abs_builddir)/.libs to $(builddir)"; \
@@ -44,7 +53,7 @@ convenience-link: $(rte_LTLIBRARIES)
 	  done
 
 clean-convenience-link:
-	  @for lib in $(rte_LTLIBRARIES); do \
+	  @for lib in $(rteambix_LTLIBRARIES); do \
 	   for soname in `echo | $(EGREP) "^dlname=" $$lib | $(SED) -e "s|^dlname='\(.*\)'|\1|"`; do  \
 	    echo "$$soname: cleaning convenience links"; \
 	    test -L $$soname && rm -f $$soname || true; \
@@ -54,5 +63,3 @@ all-local:: convenience-link
 
 clean-local:: clean-convenience-link
 
-
-foo:: $(rte_LTLIBRARIES)

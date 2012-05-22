@@ -1,7 +1,5 @@
 noinst_LTLIBRARIES = libjcommon.la
 
-AM_INCLUDES = -I$(top_srcdir)/libambix
-
 libjcommon_la_CFLAGS =
 libjcommon_la_LIBADD =
 

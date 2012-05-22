@@ -3,7 +3,7 @@ AUTOMAKE_OPTIONS = foreign
 #TESTS_ENVIRONMENT = RUNTESTS_NOLOG=yes TESTDIR=$(srcdir)
 TESTS_ENVIRONMENT = TESTDIR=$(srcdir)
 
-INCLUDES = -I$(top_srcdir)/libambix
+AM_CPPFLAGS = -I$(top_srcdir)/libambix
 LDADD = $(top_builddir)/libambix/src/libambix.la
 
 TESTS = \
