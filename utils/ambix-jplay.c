@@ -154,7 +154,7 @@ int sync_handler(jack_transport_state_t state,
                  jack_position_t *position,
                  void *PTR)
 {
-  struct player *d = PTR;
+  struct player *d = (struct player*)PTR;
   d->o.seek_request = (int64_t)position->frame;
   return 1;
 }
@@ -314,7 +314,7 @@ void version(const char*name)
 
 long read_input_from_rb(void *PTR, float **buf)
 {
-  struct player *d = PTR;
+  struct player *d = (struct player*)PTR;
   int nsamples = d->channels * d->o.rb_request_frames;
   int nbytes = (size_t)nsamples * sizeof(float);
 

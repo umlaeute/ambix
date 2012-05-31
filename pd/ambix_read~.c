@@ -228,7 +228,7 @@ typedef struct _ambix_read {
 /************** the child thread which performs file I/O ***********/
 
 static void *ambix_read_child_main(void *zz) {
-  t_ambix_read *x = zz;
+  t_ambix_read *x = (t_ambix_read*)zz;
   ambix_t*ambix=NULL;
   pthread_mutex_lock(&x->x_mutex);
   const uint32_t want_ambichannels    = x->x_ambichannels;

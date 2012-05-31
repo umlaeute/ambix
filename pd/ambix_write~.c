@@ -224,7 +224,7 @@ static t_class *ambix_write_class;
 /************** the child thread which performs file I/O ***********/
 
 static void *ambix_write_child_main(void *zz) {
-  t_ambix_write *x = zz;
+  t_ambix_write *x = (t_ambix_write*)zz;
   ambix_t*ambix=NULL;
   pthread_mutex_lock(&x->x_mutex);
   while (1) {
