@@ -4,8 +4,5 @@ SUBDIRS=src
 SUBDIRS+=tests
 
 nobase_include_HEADERS = \
-	ambix/ambix.h \
 	ambix/exportdefs.h \
-	ambix/matrix.h \
-	ambix/types.h \
-	ambix/utils.h
+	ambix/ambix.h

@@ -33,13 +33,196 @@
 #define AMBIX_AMBIX_H
 
 #include "exportdefs.h"
-#include "types.h"
-#include "matrix.h"
-#include "utils.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
+
+/** 32bit floating point number */
+typedef float float32_t;
+
+#if defined (__linux__) || defined(__apple__)
+# include <stdint.h>
+#else
+/** 16bit signed integer */
+typedef signed short int16_t;
+/** 16bit unsigned integer */
+typedef unsigned short uint16_t;
+/** 32bit signed integer */
+typedef signed int int32_t;
+/** 32bit unsigned integer */
+typedef unsigned int uint32_t;
+/** 64bit signed integer */
+typedef signed long int64_t;
+/** 64bit unsigned integer */
+typedef unsigned long uint64_t;
+#endif
+
+/** a 32bit number (either float or int), useful for endianess operations */
+typedef union {
+  /** 32bit floating point */
+  float32_t f;
+  /** 32bit signed integer */
+  int32_t   i;
+  /** 32bit unsigned integer */
+  uint32_t  u;
+} number32_t;
+
+
+/** opaque handle to an ambix file */
+typedef struct ambix_t ambix_t;
+
+
+/** error codes returned by functions */
+typedef enum
+{
+  /** an unknown error */
+  AMBIX_ERR_UNKNOWN=-1,
+
+  /** no error encountered */
+  AMBIX_ERR_SUCCESS= 0,
+
+  /** an invalid ambix handle was passed to the function */
+  AMBIX_ERR_INVALID_HANDLE,
+  /** the file in question is invalid (e.g. doesn't contain audio) */
+  AMBIX_ERR_INVALID_FILE,
+  /** matrix dimension mismatch */
+  AMBIX_ERR_INVALID_DIMENSION,
+  /** the ambix handle is in a format that does not allow the function (e.g.
+   * setting a premultiply matrix for a format other than AMBIX_BASIC)
+   */
+  AMBIX_ERR_INVALID_FORMAT,
+
+  /** you specified an invalid matrix */
+  AMBIX_ERR_INVALID_MATRIX,
+
+} ambix_err_t;
+
+
+/** error codes returned by functions */
+typedef enum {
+  /** open file for reading */
+  AMBIX_READ  = (1<<4),
+  /** open file for writing */
+  AMBIX_WRITE = (1<<5),
+  /** open file for reading&writing */
+  AMBIX_RDRW = (AMBIX_READ|AMBIX_WRITE)
+
+} ambix_filemode_t;
+
+
+/** ambix file types */
+typedef enum {
+  /** file is not an ambix file (or unknown) */
+  AMBIX_NONE     = 0,
+  /** basic ambix file (w/ pre-multiplication matrix) */
+  AMBIX_BASIC   = 1,
+  /** extended ambix file (w pre-multiplication matrix ) */
+  AMBIX_EXTENDED = 2
+} ambix_fileformat_t;
+
+/** ambix sample formats */
+typedef enum {
+/** unknown (or illegal) sample formats */
+  AMBIX_SAMPLEFORMAT_NONE=0,
+  /** signed 16 bit integer */
+  AMBIX_SAMPLEFORMAT_PCM16,
+  /** signed 24 bit integer */
+  AMBIX_SAMPLEFORMAT_PCM24,
+  /** signed 32 bit integer */
+  AMBIX_SAMPLEFORMAT_PCM32,
+  /** 32 bit floating point */
+  AMBIX_SAMPLEFORMAT_FLOAT32,
+} ambix_sampleformat_t;
+
+
+/** ambix matrix types */
+typedef enum {
+  /** invalid matrix format */
+  AMBIX_MATRIX_INVALID = -1,
+  /** a matrix filled with zeros */
+  AMBIX_MATRIX_ZERO = 0,
+  /** a matrix filled with ones */
+  AMBIX_MATRIX_ONE = 1,
+  /** an identity matrix (diagonal is 1, rest is 0) */
+  AMBIX_MATRIX_IDENTITY,
+
+  /** matrices with the 0x8000 bit set convert between ambix and other ambisonics formats:
+   * if the 0x4000 bit is set to 0, the matrix converts to ambix,
+   * if the 0x4000 but is set to 1, the matrix converts from ambix.
+   * @remark some of the following matrixes might not be implemented yet
+   * @remark AMBIX_MATRIX_AMBIX converts from ambix to ambix (and is quite useless by itself)
+   */
+  AMBIX_MATRIX_AMBIX = 0x8000,
+  /** conversion matrix N3D -> SN3D */
+  AMBIX_MATRIX_N3D  =  1 | AMBIX_MATRIX_AMBIX,
+  /** conversion matrix SID -> ACN */
+  AMBIX_MATRIX_SID  =  2 | AMBIX_MATRIX_AMBIX,
+  /** conversion matrix Furse-Malham -> ambix */
+  AMBIX_MATRIX_FUMA =  3 | AMBIX_MATRIX_AMBIX,
+  
+  /** back conversion matrix ambix -> ambix */
+  AMBIX_MATRIX_TO_AMBIX = 0x4000 | AMBIX_MATRIX_AMBIX,
+
+  /** conversion matrix SN3D -> N3D */
+  AMBIX_MATRIX_TO_N3D  = AMBIX_MATRIX_TO_AMBIX | AMBIX_MATRIX_N3D,
+  /** conversion matrix SID -> ACN */
+  AMBIX_MATRIX_TO_SID  = AMBIX_MATRIX_TO_AMBIX | AMBIX_MATRIX_SID,
+  /** conversion matrix ambix -> Furse-Malham */
+  AMBIX_MATRIX_TO_FUMA = AMBIX_MATRIX_TO_AMBIX | AMBIX_MATRIX_FUMA,
+
+} ambix_matrixtype_t;
+
+
+
+/** a 2-dimensional floating point matrix */
+typedef struct ambix_matrix_t {
+  /** number of rows */
+  uint32_t rows;
+  /** number of columns */
+  uint32_t cols;
+  /** matrix data (as vector (length: rows) of row-vectors (length: cols)) */
+  float32_t**data;
+} ambix_matrix_t;
+
+/** this is for passing data about the opened ambix file between the host
+ * application and the library
+*/
+typedef struct ambix_info_t {
+  /** number of frames in the file */
+  uint64_t frames;
+  /** samplerate in Hz */
+  double samplerate;
+  /** sample type of the ambix file */
+  ambix_sampleformat_t sampleformat;
+  /** layout type of the ambix file */
+  ambix_fileformat_t fileformat;
+
+  /** number of non-ambisonics channels in the file
+   * @remark think of a better name, like 'uncodedchannels'
+   */
+  uint32_t extrachannels;
+
+  /** number of (raw) ambisonics channels present in the file.
+   *
+   * If the file contains a full set of ambisonics channels (always true if
+   * ambixformat==AMBIX_BASIC), then \f$ambichannel=(order_{ambi}+1)^2\f$; if
+   * the file contains an adaptor matrix, it has to be used to reconstruct the
+   * full set by multiplying the adaptor matrix with the channels present.
+   */
+  uint32_t ambichannels;
+} ambix_info_t;
+
+/**
+ * typedef from libsndfile
+ * @private
+ */
+typedef struct SNDFILE_tag SNDFILE;
+
+
+/*
+ * @section api_main Main Interface
+ */
 
 /** @brief Open an ambix file
  *
@@ -244,6 +427,201 @@ const ambix_matrix_t* ambix_get_adaptormatrix (ambix_t* ambix);
  */
 AMBIX_API
 ambix_err_t ambix_set_adaptormatrix (ambix_t* ambix, const ambix_matrix_t* matrix);
+
+
+/* 
+ * @section api_matrix matrix utility functions
+ */
+
+/** @brief Create a matrix
+ *
+ * Allocates a new (empty) matrix object.
+ * It's equivalent to calling ambix_matrix_init(0, 0, NULL);
+ *
+ * @return a new matrix object or NULL
+ */
+AMBIX_API
+ambix_matrix_t* ambix_matrix_create (void);
+
+/** @brief Destroy a matrix
+ *
+ * Frees all ressources allocated for the matrix object.
+ * It's a shortcut for ambix_matrix_deinit(mtx), free(mtx)
+ *
+ * @param mtx matrix object to destroy
+ */
+AMBIX_API
+void ambix_matrix_destroy (ambix_matrix_t* mtx);
+
+/** @brief Initialize a matrix
+ *
+ * Allocates memory for matrix-data of given dimensions
+ *
+ * @param rows number of rows in the newly initialized matrix
+ *
+ * @param cols number of columns in the newly initialized matrix
+ *
+ * @param mtx pointer to a matrix object; if NULL a new matrix object will be
+ * created, else the given matrix object will be re-initialized.
+ *
+ * @return pointer to a newly initialized (and/or allocated) matrix, or NULL on
+ * error.
+ */
+AMBIX_API
+ambix_matrix_t* ambix_matrix_init (uint32_t rows, uint32_t cols, ambix_matrix_t* mtx);
+
+
+/** @brief De-initialize a matrix
+ *
+ * Frees associated ressources and sets rows/columns to 0
+ *
+ * @param mtx matrix object to deinitialize
+ */
+AMBIX_API
+void ambix_matrix_deinit (ambix_matrix_t* mtx);
+
+
+/** @brief Fill a matrix according to specs
+ *
+ * Fill a properly initialized matrix according to type. You can use this to
+ * generate standard matrices (e.g. using AMBIX_MATRIX_ONE will set all elements
+ * of the matrix to 1.0). Since this call will not change the matrix layout
+ * (e.g. the dimension), it is the responsibility of the caller to ensure that
+ * the matrix has a proper layout for the requested type (e.g. it is an error to
+ * fill a Furse-Malham matrix into a matrix that holds more than 3rd order
+ * ambisonics).
+ *
+ * @param matrix initialized matrix object to fill
+ *
+ * @param type data specification
+ *
+ * @return pointer to the matrix object, or NULL if the type was not valid (for the
+ * input matrix)
+ */
+AMBIX_API
+ambix_matrix_t* ambix_matrix_fill (ambix_matrix_t* matrix, ambix_matrixtype_t type);
+
+/** @brief Fill a matrix with values
+ *
+ * Fill data into a properly initialized matrix
+ *
+ * @param mtx initialized matrix object to copy data into
+ *
+ * @param data pointer to at least (mtx->rows*mtx->cols) values; data is ordered
+ * row-by-row with no padding (A[0,0], A[0,1], .., A[0,cols-1],  A[1, 0], ..
+ * A[rows-1, cols-1])
+ *
+ * @return an error code indicating success
+ */
+AMBIX_API
+ambix_err_t ambix_matrix_fill_data (ambix_matrix_t* mtx, const float32_t* data);
+
+/** @brief Copy a matrix to another matrix
+ *
+ * Copy a matrix, possibly resizing or creating the destination
+ *
+ * @param src the source matrix to copy the data from
+ *
+ * @param dest the destination matrix (if NULL a new matrix will be created)
+ *
+ * @return pointer to the destination matrix
+ */
+AMBIX_API
+ambix_matrix_t* ambix_matrix_copy (const ambix_matrix_t* src, ambix_matrix_t* dest);
+/** @brief Multiply two matrices
+ *
+ * Multiply matrices dest=A*B, possibly resizing or creating the destination
+ * matrix.
+ *
+ * @param A left-hand operator
+ *
+ * @param B right-hand operator
+ *
+ * @param result pointer to the matrix object that will hold the result or NULL
+ *
+ * @return pointer to the result matrix, or NULL in case the matrix
+ * multiplication did not succeed.
+ *
+ * @remark If this returns a newly allocated matrix object (result!=return
+ * value), the host has to take care of calling ambix_matrix_destroy().
+ */
+AMBIX_API
+ambix_matrix_t* ambix_matrix_multiply (const ambix_matrix_t* A, const ambix_matrix_t* B, ambix_matrix_t* result);
+
+
+/** @brief Multiply a matrix with data
+ * @defgroup ambix_matrix_multiply_data ambix_matrix_multiply_data()
+ *
+ * Multiply a [rows*cols] matrix with an array of [cols*frames] source data to
+ * get [rows*frames] dest data.
+ *
+ * @param dest a pointer to hold the output data; it must be large enough to
+ * hold at least rows*frames samples (allocated by the user).
+ *
+ * @param mtx the matrix to multiply source with.
+ *
+ * @param source a pointer to an array that holds cols*frames samples (allocated
+ * by the user).
+ *
+ * @param frames number of frames in source
+ *
+ * @return an error code indicating success
+ *
+ * @remark Both source and dest data are arranged column-wise (as is the default
+ * for interleaved audio-data).
+ */
+/** @brief Multiply a matrix with (32bit floating point) data
+ *
+ * @ingroup ambix_matrix_multiply_data
+ */
+AMBIX_API
+ambix_err_t ambix_matrix_multiply_float32(float32_t* dest, const ambix_matrix_t* mtx, const float32_t* source, int64_t frames);
+/** @brief Multiply a matrix with (32bit signed integer) data
+ *
+ * @ingroup ambix_matrix_multiply_data
+ */
+AMBIX_API
+ambix_err_t ambix_matrix_multiply_int32(int32_t* dest, const ambix_matrix_t* mtx, const int32_t* source, int64_t frames);
+/** @brief Multiply a matrix with (16 bit signed integer) data
+ *
+ * @ingroup ambix_matrix_multiply_data
+ */
+AMBIX_API
+ambix_err_t ambix_matrix_multiply_int16(int16_t* dest, const ambix_matrix_t* mtx, const int16_t* source, int64_t frames);
+
+
+/*
+ * @section api_utils utility functions
+ */
+
+
+/** @brief Calculate the number of channels for a full 3d ambisonics set of a
+ * given order.
+ *
+ * @param order the order of the full set
+ * @return the number of channels of the full set
+ */
+AMBIX_API
+uint32_t ambix_order2channels(uint32_t order);
+
+/** @brief Calculate the order of a full 3d ambisonics set for a given number of
+ * channels.
+ *
+ * @param channels the number of channels of the full set
+ * @return the order of the full set, or -1 if the channels don't form a full
+ * set.
+ */
+AMBIX_API
+int32_t ambix_channels2order(uint32_t channels);
+
+/** @brief Checks whether the channel can form a full 3d ambisonics set.
+ *
+ * @param channels the number of channels supposed to form a full set.
+ *
+ * @return TRUE if the channels can form full set, FALSE otherwise.
+ */
+AMBIX_API
+int ambix_is_fullset(uint32_t channels);
 
 
 #ifdef __cplusplus
