@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <unistd.h>
+
 void *xmalloc(size_t size)
 {
   void *p = malloc(size);
