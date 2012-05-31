@@ -75,7 +75,7 @@ static ai_t*ai_close(ai_t*ai);
 
 static char*ai_prefix(const char*filename) {
   char*result=NULL;
-  char*last=rindex(filename, '.');
+  const char*last=rindex(filename, '.');
   if(last) {
     int length=last-filename;
     result=(char*)calloc(sizeof(char), strlen(filename));
