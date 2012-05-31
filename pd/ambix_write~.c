@@ -661,7 +661,7 @@ static void printmatrix(const ambix_matrix_t*mtx) {
   endpost();
 }
 
-static void *ambix_write_matrix(t_ambix_write *x, t_symbol*s, int argc, t_atom*argv) {
+static void ambix_write_matrix(t_ambix_write *x, t_symbol*s, int argc, t_atom*argv) {
   int rows, cols;
   float32_t*data=NULL;
   int count;
