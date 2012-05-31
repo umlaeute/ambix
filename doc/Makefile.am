@@ -9,7 +9,7 @@ endif
 apiref/*: all-local
 
 all-local:
-	$(DOXYGEN) libambix.doxy
+	$(DOXYGEN) $(srcdir)/libambix.doxy
 
 clean-local:
 	-rm -rf apiref
