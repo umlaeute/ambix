@@ -701,13 +701,13 @@ static void *ambix_write_matrix(t_ambix_write *x, t_symbol*s, int argc, t_atom*a
 
 void ambix_write_tilde_setup(void) {
   ambix_write_class = class_new(gensym("ambix_write~"), (t_newmethod)ambix_write_new,
-                            (t_method)ambix_write_free, sizeof(t_ambix_write), 0, A_GIMME, 0);
-  class_addmethod(ambix_write_class, (t_method)ambix_write_start, gensym("start"), 0);
-  class_addmethod(ambix_write_class, (t_method)ambix_write_stop, gensym("stop"), 0);
-  class_addmethod(ambix_write_class, (t_method)ambix_write_matrix, gensym("matrix"), A_GIMME, 0);
+                            (t_method)ambix_write_free, sizeof(t_ambix_write), 0, A_GIMME, A_NULL);
+  class_addmethod(ambix_write_class, (t_method)ambix_write_start, gensym("start"), A_NULL);
+  class_addmethod(ambix_write_class, (t_method)ambix_write_stop, gensym("stop"), A_NULL);
+  class_addmethod(ambix_write_class, (t_method)ambix_write_matrix, gensym("matrix"), A_GIMME, A_NULL);
 
-  class_addmethod(ambix_write_class, (t_method)ambix_write_dsp, gensym("dsp"), 0);
-  class_addmethod(ambix_write_class, (t_method)ambix_write_open, gensym("open"), A_GIMME, 0);
-  class_addmethod(ambix_write_class, (t_method)ambix_write_print, gensym("print"), 0);
+  class_addmethod(ambix_write_class, (t_method)ambix_write_dsp, gensym("dsp"), A_NULL);
+  class_addmethod(ambix_write_class, (t_method)ambix_write_open, gensym("open"), A_GIMME, A_NULL);
+  class_addmethod(ambix_write_class, (t_method)ambix_write_print, gensym("print"), A_NULL);
   CLASS_MAINSIGNALIN(ambix_write_class, t_ambix_write, x_f);
 }

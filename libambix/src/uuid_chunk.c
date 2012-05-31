@@ -36,7 +36,7 @@
  * this can be converted to an UUID(v5), using a small perl-script like
  * @code
  #!/usr/bin/perl
- use UUID::Tiny; 
+ use UUID::Tiny;
  my $v5_url_UUIDs    = create_UUID_as_string(UUID_V5, UUID_NS_URL, $ARGV[0]);
  print "$v5_url_UUIDs\n";
  * @endcode
@@ -48,11 +48,11 @@
  */
 
  /*
-  * uarg, this is not a UUID! 
-  * (well it is...UUID::Tiny thinks it's a v2 (DCE security) UUID 
+  * uarg, this is not a UUID!
+  * (well it is...UUID::Tiny thinks it's a v2 (DCE security) UUID
   */
 static const char _ambix_uuid_v1_[]="IEM.AT/AMBIX/XML";
-/* 
+/*
  * that's a better UUID, based on a SHA1-hash of "http://ambisonics.iem.at/xchange/format/1.0"
  */
 static const char _ambix_uuid_v1[]={0x1a, 0xd3, 0x18, 0xc3, 0x00, 0xe5, 0x55, 0x76, 0xbe, 0x2d, 0x0d, 0xca, 0x24, 0x60, 0xbc, 0x89};
