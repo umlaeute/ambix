@@ -49,7 +49,7 @@ static ambix_err_t _check_write_ambixinfo(ambix_info_t*info) {
   return AMBIX_ERR_SUCCESS;
 }
 
-static _ambix_info_set(ambix_t*ambix
+static void _ambix_info_set(ambix_t*ambix
                        , ambix_fileformat_t format
                        , int32_t otherchannels
                        , int32_t ambichannels

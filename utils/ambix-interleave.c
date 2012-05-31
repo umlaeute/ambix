@@ -352,7 +352,7 @@ static ai_t*ai_open_output(ai_t*ai) {
 }
 
 
-static interleaver(float*dest, const float*source, uint64_t frames, uint32_t channels) {
+static void interleaver(float*dest, const float*source, uint64_t frames, uint32_t channels) {
   uint64_t frame;
 
 
