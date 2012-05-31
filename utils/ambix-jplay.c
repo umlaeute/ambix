@@ -40,6 +40,7 @@
 #endif /* HAVE_SAMPLERATE */
 
 #include "jcommon/jack-ringbuffer.h"
+#include "jcommon/observe-signal.h"
 #include "jcommon/common.h"
 
 struct player_opt

@@ -32,6 +32,7 @@
 #include <ambix/ambix.h>
 
 #include "jcommon/jack-ringbuffer.h"
+#include "jcommon/observe-signal.h"
 #include "jcommon/common.h"
 
 struct recorder
