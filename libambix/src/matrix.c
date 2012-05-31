@@ -134,7 +134,7 @@ _ambix_matrix_fill_data_byteswapped(ambix_matrix_t*mtx, const number32_t*data) {
 
 ambix_err_t
 ambix_matrix_fill_data_transposed(ambix_matrix_t*mtx, const float32_t*data, int byteswap) {
-  ambix_err_t err=0;
+  ambix_err_t err=AMBIX_ERR_SUCCESS;
   ambix_matrix_t*xtm=ambix_matrix_init(mtx->cols, mtx->rows, NULL);
 
   if(!xtm)

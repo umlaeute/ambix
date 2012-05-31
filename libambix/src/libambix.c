@@ -175,7 +175,7 @@ ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambix_info_
 }
 
 ambix_err_t	ambix_close	(ambix_t*ambix) {
-  int res=AMBIX_ERR_SUCCESS;
+  ambix_err_t res=AMBIX_ERR_SUCCESS;
   if(NULL==ambix) {
     return AMBIX_ERR_INVALID_HANDLE;
   }

@@ -43,11 +43,12 @@ float32_t matrix_check_diff(const char*name, ambix_matrix_t*mtx1,ambix_matrix_t*
 
 
 ambix_matrix_t*inverse_matrices(ambix_matrixtype_t typ, uint32_t rows, uint32_t cols) {
+  ambix_matrixtype_t pyt = (ambix_matrixtype_t)(AMBIX_MATRIX_TO_AMBIX | typ);
   ambix_matrix_t*mtx=ambix_matrix_init(rows, cols, NULL);
   ambix_matrix_t*xtm=ambix_matrix_init(cols, rows, NULL);
 
   ambix_matrix_t*a2f=ambix_matrix_fill(mtx, typ);
-  ambix_matrix_t*f2a=ambix_matrix_fill(xtm,  AMBIX_MATRIX_TO_AMBIX | typ);
+  ambix_matrix_t*f2a=ambix_matrix_fill(xtm,  pyt);
 
   //  ambix_matrix_t*result=ambix_matrix_multiply(a2f, f2a, NULL);
   ambix_matrix_t*result=ambix_matrix_multiply(f2a, a2f, NULL);
