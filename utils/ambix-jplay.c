@@ -360,20 +360,20 @@ int jackplay(const char *file_name,
             d.channels);
     FAILURE;
   }
-  d.out = xmalloc(d.channels * sizeof(float *));
-  d.output_port = xmalloc(d.channels * sizeof(jack_port_t *));
+  d.out = (float**)xmalloc(d.channels * sizeof(float *));
+  d.output_port = (jack_port_t**)xmalloc(d.channels * sizeof(jack_port_t *));
 
   /* Allocate buffers. */
 
   d.buffer_samples = d.o.buffer_frames * d.channels;
   d.buffer_bytes = d.buffer_samples * sizeof(float);
 
-  d.a_buffer = xmalloc(d.o.buffer_frames * d.a_channels * sizeof(float32_t));
-  d.e_buffer = xmalloc(d.o.buffer_frames * d.e_channels * sizeof(float32_t));
+  d.a_buffer = (float32_t*)xmalloc(d.o.buffer_frames * d.a_channels * sizeof(float32_t));
+  d.e_buffer = (float32_t*)xmalloc(d.o.buffer_frames * d.e_channels * sizeof(float32_t));
 
-  d.d_buffer = xmalloc(d.buffer_bytes);
-  d.j_buffer = xmalloc(d.buffer_bytes);
-  d.k_buffer = xmalloc(d.buffer_bytes);
+  d.d_buffer = (float*)xmalloc(d.buffer_bytes);
+  d.j_buffer = (float*)xmalloc(d.buffer_bytes);
+  d.k_buffer = (float*)xmalloc(d.buffer_bytes);
 
   d.rb = jack_ringbuffer_create(d.buffer_bytes);
 

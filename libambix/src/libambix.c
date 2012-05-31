@@ -89,7 +89,7 @@ ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambix_info_
     otherchannels=ambixinfo->extrachannels;
   }
 
-  ambix=calloc(1, sizeof(ambix_t));
+  ambix=(ambix_t*)calloc(1, sizeof(ambix_t));
   if(AMBIX_ERR_SUCCESS == _ambix_open(ambix, path, mode, ambixinfo)) {
     const ambix_fileformat_t wantformat=ambixinfo->fileformat;
     ambix_fileformat_t haveformat;

@@ -37,8 +37,8 @@ void check_create_simple(const char*path, ambix_sampleformat_t format, float32_t
 
   printf("test using '%s' [%d]\n", path, (int)format);
 
-  resultdata=calloc(channels*frames, sizeof(float32_t));
-  data=calloc(channels*frames, sizeof(float32_t));
+  resultdata=(float32_t*)calloc(channels*frames, sizeof(float32_t));
+  data=(float32_t*)calloc(channels*frames, sizeof(float32_t));
 
   memset(&winfo, 0, sizeof(winfo));
   memset(&info, 0, sizeof(info));

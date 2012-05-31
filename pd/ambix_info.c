@@ -160,7 +160,7 @@ static void ambix_info_open(t_ambix_info *x, t_symbol*s) {
     int size=matrix->rows*matrix->cols;
     if(size) {
       uint32_t r, c, index;
-      t_atom*ap=getbytes(sizeof(t_atom)*(size+2));
+      t_atom*ap=(t_atom*)getbytes(sizeof(t_atom)*(size+2));
       SETFLOAT(ap+0, matrix->rows);
       SETFLOAT(ap+1, matrix->cols);
       

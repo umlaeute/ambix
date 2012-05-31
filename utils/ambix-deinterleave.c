@@ -78,7 +78,7 @@ static char*ai_prefix(const char*filename) {
   char*last=rindex(filename, '.');
   if(last) {
     int length=last-filename;
-    result=calloc(1, strlen(filename));
+    result=(char*)calloc(sizeof(char), strlen(filename));
     strncpy(result, filename, length);
     result[length]='-';
     result[length+1]='\0';
@@ -90,7 +90,7 @@ static char*ai_prefix(const char*filename) {
 }
 
 static ai_t*ai_cmdline(const char*name, int argc, char**argv) {
-  ai_t*ai=calloc(1, sizeof(ai_t));
+  ai_t*ai=(ai_t*)calloc(1, sizeof(ai_t));
   uint32_t blocksize=0;
 
   while(argc) {
@@ -241,8 +241,8 @@ static ai_t*ai_open_output(ai_t*ai) {
 
   if(!ai->outhandles) {
     ai->numOuts=ambichannels+extrachannels;
-    ai->outhandles=calloc(ai->numOuts, sizeof(SNDFILE*));
-    ai->outinfo   =calloc(ai->numOuts, sizeof(SF_INFO));
+    ai->outhandles=(SNDFILE**)calloc(ai->numOuts, sizeof(SNDFILE*));
+    ai->outinfo   =(SF_INFO*)calloc(ai->numOuts, sizeof(SF_INFO));
   }
   switch(ai->info.sampleformat) {
   case(AMBIX_SAMPLEFORMAT_PCM16)  : format |= SF_FORMAT_PCM_16; break;
@@ -420,18 +420,18 @@ static ai_t*ai_copy(ai_t*ai) {
       return ai_close(ai);
     }
     size=(ai->info.ambichannels)*blocksize;
-    rawdata=malloc(sizeof(float32_t)*size);
-    cookeddata=malloc(sizeof(float32_t)*(matrix->rows)*blocksize);
+    rawdata=(float32_t*)malloc(sizeof(float32_t)*size);
+    cookeddata=(float32_t*)malloc(sizeof(float32_t)*(matrix->rows)*blocksize);
     if((matrix->rows)*blocksize > size)
       size=(matrix->rows)*blocksize;
 
   }
   if(ai->info.extrachannels) {
-    extradata=malloc(sizeof(float32_t)*(ai->info.extrachannels)*blocksize);
+    extradata=(float32_t*)malloc(sizeof(float32_t)*(ai->info.extrachannels)*blocksize);
     if((ai->info.extrachannels)*blocksize > size)
       size=(ai->info.extrachannels)*blocksize;
   }
-  deinterleavebuf=malloc(sizeof(float32_t)*size);
+  deinterleavebuf=(float32_t*)malloc(sizeof(float32_t)*size);
   if(NULL==deinterleavebuf) {
     return ai_close(ai);
   }

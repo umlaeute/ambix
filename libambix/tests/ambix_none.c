@@ -36,8 +36,8 @@ void check_create_none(const char*path, ambix_sampleformat_t format) {
   uint32_t err32;
   float32_t diff=0., eps=1e-30;
 
-  resultdata=calloc(channels*frames, sizeof(float32_t));
-  data=calloc(channels*frames, sizeof(float32_t));
+  resultdata=(float32_t*)calloc(channels*frames, sizeof(float32_t));
+  data=(float32_t*)calloc(channels*frames, sizeof(float32_t));
 
   memset(&winfo, 0, sizeof(winfo));
   memset(&info, 0, sizeof(info));

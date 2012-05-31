@@ -284,8 +284,8 @@ static void *ambix_read_child_main(void *zz) {
       ambichannels=ainfo.ambichannels;
       xtrachannels=ainfo.extrachannels;
 
-      ambibuf = calloc(localfifosize*ambichannels, sizeof(float32_t));
-      xtrabuf = calloc(localfifosize*xtrachannels, sizeof(float32_t));
+      ambibuf = (float32_t*)calloc(localfifosize*ambichannels, sizeof(float32_t));
+      xtrabuf = (float32_t*)calloc(localfifosize*xtrachannels, sizeof(float32_t));
 
       pthread_mutex_lock(&x->x_mutex);
 
@@ -366,8 +366,8 @@ static void *ambix_read_child_main(void *zz) {
         if(localfifosize<fifosize) {
           free(ambibuf); free(xtrabuf);
           localfifosize=fifosize;
-          ambibuf = calloc(localfifosize*ambichannels, sizeof(float32_t));
-          xtrabuf = calloc(localfifosize*xtrachannels, sizeof(float32_t));
+          ambibuf = (float32_t*)calloc(localfifosize*ambichannels, sizeof(float32_t));
+          xtrabuf = (float32_t*)calloc(localfifosize*xtrachannels, sizeof(float32_t));
         }
         sysrtn = ambix_readf_float32(ambix, ambibuf, xtrabuf, wantframes);
         merge_samples(ambibuf, ambichannels, want_ambichannels,
@@ -486,7 +486,7 @@ static void *ambix_read_new(t_symbol*s, int argc, t_atom*argv) {
   else if (bufframes > MAXBUFSIZE)
     bufframes = MAXBUFSIZE;
   bufsize=bufframes*nchannels;
-  buf = getbytes(bufsize*sizeof(t_sample));
+  buf = (t_sample*)getbytes(bufsize*sizeof(t_sample));
   if (!buf) return (0);
 
   x = (t_ambix_read *)pd_new(ambix_read_class);
@@ -559,7 +559,7 @@ static void ambix_read_tick(t_ambix_read *x) {
     int size=x->x_matrix.rows*x->x_matrix.cols;
     if(size) {
       uint32_t r, c, index;
-      t_atom*ap=getbytes(sizeof(t_atom)*(size+2));
+      t_atom*ap=(t_atom*)getbytes(sizeof(t_atom)*(size+2));
       SETFLOAT(ap+0, x->x_matrix.rows);
       SETFLOAT(ap+1, x->x_matrix.cols);
 

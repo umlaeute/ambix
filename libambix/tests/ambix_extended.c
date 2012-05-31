@@ -42,11 +42,11 @@ void check_create_extended(const char*path, ambix_sampleformat_t format, uint32_
 
   printf("test using '%s' [%d] with chunks of %d and eps=%f\n", path, (int)format, (int)chunksize, eps);
 
-  resultambidata=calloc(ambichannels*framesize, sizeof(float32_t));
-  ambidata=calloc(ambichannels*framesize, sizeof(float32_t));
+  resultambidata=(float32_t*)calloc(ambichannels*framesize, sizeof(float32_t));
+  ambidata=(float32_t*)calloc(ambichannels*framesize, sizeof(float32_t));
 
-  resultotherdata=calloc(extrachannels*framesize, sizeof(float32_t));
-  otherdata=calloc(extrachannels*framesize, sizeof(float32_t));
+  resultotherdata=(float32_t*)calloc(extrachannels*framesize, sizeof(float32_t));
+  otherdata=(float32_t*)calloc(extrachannels*framesize, sizeof(float32_t));
 
   ambix_matrix_init(ambichannels, ambichannels, &eye);
   ambix_matrix_fill(&eye, AMBIX_MATRIX_IDENTITY);

@@ -297,8 +297,8 @@ static void *ambix_write_child_main(void *zz) {
       }
 
       if(ambix) {
-        ambibuf = calloc(localfifosize*ambichannels, sizeof(float32_t));
-        xtrabuf = calloc(localfifosize*xtrachannels, sizeof(float32_t));
+        ambibuf = (float32_t*)calloc(localfifosize*ambichannels, sizeof(float32_t));
+        xtrabuf = (float32_t*)calloc(localfifosize*xtrachannels, sizeof(float32_t));
       }
 
       pthread_mutex_lock(&x->x_mutex);
@@ -345,8 +345,8 @@ static void *ambix_write_child_main(void *zz) {
         if(localfifosize<fifosize) {
           free(ambibuf); free(xtrabuf);
           localfifosize=fifosize;
-          ambibuf = calloc(localfifosize*ambichannels, sizeof(float32_t));
-          xtrabuf = calloc(localfifosize*xtrachannels, sizeof(float32_t));
+          ambibuf = (float32_t*)calloc(localfifosize*ambichannels, sizeof(float32_t));
+          xtrabuf = (float32_t*)calloc(localfifosize*xtrachannels, sizeof(float32_t));
         }
         split_samples(buf+fifotail*(ambichannels+xtrachannels), writeframes,
                       ambibuf, ambichannels,
@@ -450,7 +450,7 @@ static void *ambix_write_new(t_symbol*s, int argc, t_atom*argv) {
 
   bufsize=bufframes*nchannels;
 
-  buf = getbytes(bufsize*sizeof(t_sample));
+  buf = (t_sample*)getbytes(bufsize*sizeof(t_sample));
   if (!buf) return (0);
 
   x = (t_ambix_write *)pd_new(ambix_write_class);
@@ -681,7 +681,7 @@ static void *ambix_write_matrix(t_ambix_write *x, t_symbol*s, int argc, t_atom*a
     pd_error(x, "invalid matrix");
     return;
   }
-  data=malloc(rows*cols*sizeof(float32_t));
+  data=(float32_t*)malloc(rows*cols*sizeof(float32_t));
   for(count=0; count<argc; count++) {
     data[count]=atom_getfloat(argv+count);
   }

@@ -88,7 +88,7 @@ static ai_t*ai_matrix(ai_t*ai, const char*path) {
   }
   rows=info.channels;
   cols=info.frames;
-  data=malloc(rows*cols*sizeof(float));
+  data=(float*)malloc(rows*cols*sizeof(float));
   frames=sf_readf_float(file, data, cols);
   if(cols!=frames) {
     fprintf(stderr, "ambix_interleave: matrix reading %d frames returned %d\n", frames, cols);
@@ -117,7 +117,7 @@ static ai_t*ai_matrix(ai_t*ai, const char*path) {
 }
 
 static ai_t*ai_cmdline(const char*name, int argc, char**argv) {
-  ai_t*ai=calloc(1, sizeof(ai_t));
+  ai_t*ai=(ai_t*)calloc(1, sizeof(ai_t));
   uint32_t channels=0;
   uint32_t order=0;
   uint32_t blocksize=0;
@@ -250,8 +250,8 @@ static ai_t*ai_open_input(ai_t*ai) {
   uint32_t channels=0;
   if(!ai)return ai;
   if(!ai->inhandles) {
-    ai->inhandles=calloc(ai->numIns, sizeof(SNDFILE*));
-    ai->ininfo   =calloc(ai->numIns, sizeof(SF_INFO));
+    ai->inhandles=(SNDFILE**)calloc(ai->numIns, sizeof(SNDFILE*));
+    ai->ininfo   =(SF_INFO*)calloc(ai->numIns, sizeof(SF_INFO));
   }
 
   for(i=0; i<ai->numIns; i++) {
@@ -413,11 +413,11 @@ static ai_t*ai_copy(ai_t*ai) {
   channels=(ai->info.ambichannels+ai->info.extrachannels);
 
   if(ai->info.ambichannels>0)
-    ambidata =malloc(sizeof(float32_t)*ai->info.ambichannels *blocksize);
+    ambidata =(float32_t*)malloc(sizeof(float32_t)*ai->info.ambichannels *blocksize);
   if(ai->info.extrachannels>0)
-  extradata=malloc(sizeof(float32_t)*ai->info.extrachannels*blocksize);
+    extradata=(float32_t*)malloc(sizeof(float32_t)*ai->info.extrachannels*blocksize);
 
-  interleavebuffer=malloc(sizeof(float32_t)*channels*blocksize);
+  interleavebuffer=(float32_t*)malloc(sizeof(float32_t)*channels*blocksize);
 
   while(frames>blocksize) {
     blocks++;

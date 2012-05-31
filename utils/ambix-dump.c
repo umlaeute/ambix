@@ -72,7 +72,7 @@ static ai_t*ai_close(ai_t*ai);
 
 
 static ai_t*ai_cmdline(const char*name, int argc, char**argv) {
-  ai_t*ai=calloc(1, sizeof(ai_t));
+  ai_t*ai=(ai_t*)calloc(1, sizeof(ai_t));
   uint32_t blocksize=0;
   int dumpRaw=0, dumpCooked=0, dumpXtra=0;
   ambix_fileformat_t format=AMBIX_EXTENDED;
@@ -301,9 +301,9 @@ static ai_t*ai_dodump(ai_t*ai) {
       //      return ai_close(ai);
     }
     size=(ai->info.ambichannels)*blocksize;
-    rawdata=malloc(sizeof(float32_t)*size);
+    rawdata=(float32_t*)malloc(sizeof(float32_t)*size);
     if(matrix) {
-      cookeddata=malloc(sizeof(float32_t)*(matrix->rows)*blocksize);
+      cookeddata=(float32_t*)malloc(sizeof(float32_t)*(matrix->rows)*blocksize);
       if((matrix->rows)*blocksize > size)
         size=(matrix->rows)*blocksize;
     }
@@ -311,11 +311,11 @@ static ai_t*ai_dodump(ai_t*ai) {
   }
 
   if(ai->info.extrachannels) {
-    extradata=malloc(sizeof(float32_t)*(ai->info.extrachannels)*blocksize);
+    extradata=(float32_t*)malloc(sizeof(float32_t)*(ai->info.extrachannels)*blocksize);
     if((ai->info.extrachannels)*blocksize > size)
       size=(ai->info.extrachannels)*blocksize;
   }
-  dumpbuf=malloc(sizeof(float32_t)*size);
+  dumpbuf=(float32_t*)malloc(sizeof(float32_t)*size);
 
   while(frames>blocksize) {
     blocks++;

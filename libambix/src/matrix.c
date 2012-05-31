@@ -267,7 +267,7 @@ ambix_matrix_fill(ambix_matrix_t*matrix, ambix_matrixtype_t typ) {
     break;
 
   case (AMBIX_MATRIX_SID): /* SID -> ACN */ {
-    float32_t*ordering=malloc(rows*sizeof(float32_t));
+    float32_t*ordering=(float32_t*)malloc(rows*sizeof(float32_t));
     if(!_matrix_sid2acn(ordering, rows)) {
       free(ordering);
       return NULL;
@@ -277,7 +277,7 @@ ambix_matrix_fill(ambix_matrix_t*matrix, ambix_matrixtype_t typ) {
   }
     break;
   case (AMBIX_MATRIX_TO_SID): /* ACN -> SID */ {
-    float32_t*ordering=malloc(rows*sizeof(float32_t));
+    float32_t*ordering=(float32_t*)malloc(rows*sizeof(float32_t));
     if(!_matrix_sid2acn(ordering, rows)) {
       free(ordering);
       return NULL;
@@ -294,7 +294,7 @@ ambix_matrix_fill(ambix_matrix_t*matrix, ambix_matrixtype_t typ) {
     int32_t o=0, order=ambix_channels2order(rows);
     if(order<0)
       return NULL;
-    weights=malloc(rows*sizeof(float32_t));
+    weights=(float32_t*)malloc(rows*sizeof(float32_t));
     w_=weights;
     for(o=0; o<=order; o++) {
       const float32_t w=1./sqrt(2.*o+1.);
@@ -314,7 +314,7 @@ ambix_matrix_fill(ambix_matrix_t*matrix, ambix_matrixtype_t typ) {
     int32_t o, order=ambix_channels2order(rows);
     if(order<0)
       return NULL;
-    weights=malloc(rows*sizeof(float32_t));
+    weights=(float32_t*)malloc(rows*sizeof(float32_t));
     w_=weights;
     for(o=0; o<=order; o++) {
       const float32_t w=sqrt(2.*o+1.);

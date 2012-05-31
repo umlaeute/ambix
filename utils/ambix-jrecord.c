@@ -80,7 +80,7 @@ static ambix_matrix_t*matrix_read(const char*path, ambix_matrix_t*matrix) {
   }
   rows=info.channels;
   cols=info.frames;
-  data=malloc(rows*cols*sizeof(float));
+  data=(float*)malloc(rows*cols*sizeof(float));
   frames=sf_readf_float(file, data, cols);
   if(cols!=frames) {
     fprintf(stderr, "ambix_interleave: matrix reading %d frames returned %d\n", frames, cols);
@@ -395,8 +395,8 @@ int main(int argc, char *argv[])
     eprintf("%s: illegal number of channels: %d\n", myname, d.channels);
     FAILURE;
   }
-  d.in = xmalloc(d.channels * sizeof(float *));
-  d.input_port = xmalloc(d.channels * sizeof(jack_port_t *));
+  d.in = (float**)xmalloc(d.channels * sizeof(float *));
+  d.input_port = (jack_port_t**)xmalloc(d.channels * sizeof(jack_port_t *));
 
   /* Connect to JACK. */
   
@@ -440,12 +440,12 @@ int main(int argc, char *argv[])
   d.buffer_samples = d.buffer_frames * d.channels;
   d.buffer_bytes = d.buffer_samples * sizeof(float);
 
-  d.a_buffer = xmalloc(d.buffer_frames * d.a_channels * sizeof(float32_t));
-  d.e_buffer = xmalloc(d.buffer_frames * d.e_channels * sizeof(float32_t));
+  d.a_buffer = (float32_t*)xmalloc(d.buffer_frames * d.a_channels * sizeof(float32_t));
+  d.e_buffer = (float32_t*)xmalloc(d.buffer_frames * d.e_channels * sizeof(float32_t));
 
-  d.d_buffer = xmalloc(d.buffer_bytes);
-  d.j_buffer = xmalloc(d.buffer_bytes);  
-  d.u_buffer = xmalloc(d.buffer_bytes);
+  d.d_buffer = (float*)xmalloc(d.buffer_bytes);
+  d.j_buffer = (float*)xmalloc(d.buffer_bytes);
+  d.u_buffer = (float*)xmalloc(d.buffer_bytes);
   d.ring_buffer = jack_ringbuffer_create(d.buffer_bytes);
 
   /* Create communication pipe. */

@@ -127,7 +127,7 @@ void data_transpose(float32_t*outdata, const float32_t*indata, uint32_t inrows, 
 
 float32_t*data_sine(uint64_t frames, uint32_t channels, float32_t freq) {
   float32_t periods=44100./freq;
-  float32_t*data=calloc(frames*channels, sizeof(float32_t));
+  float32_t*data=(float32_t*)calloc(frames*channels, sizeof(float32_t));
   float32_t*datap=data;
   int64_t frame;
   for(frame=0; frame<frames; frame++) {
@@ -142,7 +142,7 @@ float32_t*data_sine(uint64_t frames, uint32_t channels, float32_t freq) {
 }
 
 float32_t*data_ramp(uint64_t frames, uint32_t channels) {
-  float32_t*data=calloc(frames*channels, sizeof(float32_t));
+  float32_t*data=(float32_t*)calloc(frames*channels, sizeof(float32_t));
   float32_t*datap=data;
   double increment=1./(double)frames;
   double value=0.;
