@@ -1,16 +1,15 @@
 EXTRA_DIST=libambix.doxy \
 	libambix.h
 
-html_DATA=apiref/*
+html_DATA=
+if HAVE_DOXYGEN
+html_DATA+=apiref/*
+endif
 
 apiref/*: all-local
 
 all-local:
-	doxygen libambix.doxy
-
-#install-html:
-#	test -z "$(DESTDIR)$(docdir)/apiref" || $(mkdir_p) "$(DESTDIR)$(docdir)/apiref"
-#	$(INSTALL_DATA) apiref/* $(DESTDIR)$(docdir)/apiref
+	$(DOXYGEN) libambix.doxy
 
 clean-local:
 	-rm -rf apiref
