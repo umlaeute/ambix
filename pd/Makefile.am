@@ -3,7 +3,7 @@ AUTOMAKE_OPTIONS = foreign
 rteambixdir = @rtedir@/ambix
 
 rteambix_LTLIBRARIES=
-rteambix_DATA=
+dist_rteambix_DATA=
 
 AM_CFLAGS =
 AM_LDFLAGS= -module -avoid-version -shared -shrext .@RTE_EXTENSION@
@@ -26,12 +26,12 @@ rteambix_LTLIBRARIES+= \
         ambix_readX~.la \
         ambix_write~.la
 
-rteambix_DATA+= \
-	ambix-meta.pd \
+dist_rteambix_DATA+= \
 	ambix_read~-help.pd \
 	ambix_readX~-help.pd \
 	ambix_write~-help.pd \
-	ambix_info-help.pd
+	ambix_info-help.pd \
+	ambix-meta.pd
 
 
 ambix_info_la_SOURCES		= ambix_info.c
