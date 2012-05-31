@@ -104,6 +104,12 @@ CFLAGS="$tmp_samplerate_CFLAGS"
 LIBS="$tmp_samplerate_LIBS"
 
 
+
+AC_CHECK_PROGS([DOXYGEN], [doxygen], [true])
+AM_CONDITIONAL(HAVE_DOXYGEN, [test "x${DOXYGEN}" != "xtrue"])
+AC_SUBST(DOXYGEN)
+
+
 AX_PTHREAD
 
 
