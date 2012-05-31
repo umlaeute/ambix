@@ -31,6 +31,10 @@
 #endif /* HAVE_STRING_H */
 
 
+/* forward declarations */
+ambix_err_t	_ambix_write_header	(ambix_t*ambix);
+
+
 static ambix_err_t _check_write_ambixinfo(ambix_info_t*info) {
   /* FIXXME: rather than failing, we could force the values to be correct */
   switch(info->fileformat) {

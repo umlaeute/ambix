@@ -115,6 +115,14 @@ ambix_err_t	_ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t
  */
 ambix_err_t	_ambix_close	(ambix_t*ambix);
 
+/** @brief seek in ambix-file
+ * @param ambix The handle to an ambix file
+ * @param frames frame offset from the position given in whence
+ * @param whence location from where to seek; (see lseek)
+ * @return the offset in (multichannel) frames from the start of the audio data or -1 if an error occured
+ */
+int64_t _ambix_seek (ambix_t* ambix, int64_t frames, int bias);
+
 /** @brief Do get an libsndfile handle
  *
  * this is implemented by the various backends (currently only libsndfile)
@@ -123,8 +131,6 @@ ambix_err_t	_ambix_close	(ambix_t*ambix);
  * @return an SNDFILE handle or NULL if not possible
  */
 SNDFILE*_ambix_get_sndfile	(ambix_t*ambix);
-
-
 
 /** @brief read 32bit float data from file
  * @param ambix a pointer to a valid ambix structure
@@ -165,7 +171,6 @@ int64_t _ambix_writef_int16   (ambix_t*ambix, const int16_t*data, int64_t frames
  *         future versions of the standard might add additional UUIDs
  */
 const char* _ambix_getUUID(uint32_t version);
-
 /** @brief Check data for ambix UUID
  * @param data Array holding the UUID
  * @return ambix-version this UUID is associated with, or 0 on failure
@@ -173,7 +178,6 @@ const char* _ambix_getUUID(uint32_t version);
  *         future versions of the standard might add additional UUIDs
  */
 uint32_t _ambix_checkUUID(const char UUID[16]);
-
 /** @brief extract matrix from ambix UUID-chunk (v1)
  * @param data Array holding the payload data (excluding the UUID itself)
  * @param datasize size of data
@@ -183,7 +187,6 @@ uint32_t _ambix_checkUUID(const char UUID[16]);
  * @remark only use data from a uuid-chunk for which _ambix_parseuuid() that returned '1'
  */
 ambix_matrix_t*_ambix_uuid1_to_matrix(const void*data, uint64_t datasize, ambix_matrix_t*mtx, int byteswap);
-
 /** @brief generate UUID-chunk (v1) from matrix
  * @param matrix data to store in chunk
  * @param data pointer to memory to store the UUID-chunk in (or NULL)
@@ -193,8 +196,6 @@ ambix_matrix_t*_ambix_uuid1_to_matrix(const void*data, uint64_t datasize, ambix_
  *         then you allocate enough data (datasize bytes) and call the function again
  */
 uint64_t _ambix_matrix_to_uuid1(const ambix_matrix_t*matrix, void*data, int byteswap);
-
-
 /** @brief write UUID chunk to file
  * @param ambix valid ambix handle
  * @param data pointer to memory holding the UUID-chunk
