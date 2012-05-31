@@ -77,7 +77,7 @@ void _ambix_print_ambix(const ambix_t*ambix) {
   printf("AMBIX 0x%X\n", ambix);
   if(!ambix)return;
 
-  printf("  private\t: %p\n", ambix->private);
+  printf("  private\t: %p\n", ambix->private_data);
   printf("  is_AMBIX\t: %d\n", ambix->is_AMBIX);
   printf("  format\t: %d\n", ambix->format);
   printf("  filemode\t: %d\n", ambix->filemode);

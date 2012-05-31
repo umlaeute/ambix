@@ -50,7 +50,7 @@ typedef struct ambixsndfile_private_t {
 #elif defined HAVE_SF_UUID_INFO
 #endif
 }ambixsndfile_private_t;
-static inline ambixsndfile_private_t*PRIVATE(ambix_t*ax) { return ((ambixsndfile_private_t*)(ax->private)); }
+static inline ambixsndfile_private_t*PRIVATE(ambix_t*ax) { return ((ambixsndfile_private_t*)(ax->private_data)); }
 
 
 static  ambix_sampleformat_t
@@ -174,7 +174,7 @@ ambix_err_t _ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t
   int sfmode=0;
   int caf=0;
 
-  ambix->private=calloc(1, sizeof(ambixsndfile_private_t));
+  ambix->private_data=calloc(1, sizeof(ambixsndfile_private_t));
   ambix2sndfile_info(ambixinfo, &PRIVATE(ambix)->sf_info);
 
   if((mode & AMBIX_READ) & (mode & AMBIX_WRITE))

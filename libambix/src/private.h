@@ -46,7 +46,7 @@
 /** this is for passing data about the opened ambix file between the host application and the library */
 typedef struct ambix_t {
   /** private data by the actual backend */
-  void*private;
+  void*private_data;
 
   /** whether the file is a valid AMBIX file (CAF) */
   int is_AMBIX;
