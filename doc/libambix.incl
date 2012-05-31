@@ -1,9 +1,4 @@
-/** @file
- *  @brief General documentation using doxygen
- *  @private
- */
-
-/* libambix.h -  Documentation for Ambisonics Xchange Library         -*- c -*-
+/* libambix.incl -  Documentation for Ambisonics Xchange Library         -*- c -*-
 
    Copyright © 2012 IOhannes m zmölnig <zmoelnig@iem.at>.
          Institute of Electronic Music and Acoustics (IEM),
@@ -312,9 +307,9 @@
  *
  * @subsection format_bugfix_UUID UUID-chunk
  *
- * The original format proposal defined a UUID @b 49454d2e-4154-2f41-4d42-49582f584d4c, 
+ * The original format proposal defined a UUID @b 49454d2e-4154-2f41-4d42-49582f584d4c,
  * which is equivalent to the literal "IEM.AT/AMBIX/XML".
- * Unfortunately this does not take into account, that while UUIDs can be @e random, 
+ * Unfortunately this does not take into account, that while UUIDs can be @e random,
  * certain bits are reserved (e.g. indicating the UUID variant).
  * The originally suggested UUID is - according to it's reserved bits - a v2 variant (DCE Security),
  * though in reality it is not. This makes name clashes probable and counteracts the idea of using UUIDs.
@@ -345,12 +340,12 @@
  *
  * @subsection format_bugfix_extrachannels Extra (non-ambisonics) channels
  *
- * The original format proposal speaks only of full ambisonics sets (in the case of the "BASIC" format, all audio channels 
+ * The original format proposal speaks only of full ambisonics sets (in the case of the "BASIC" format, all audio channels
  * in the CAF-file must form exactly a full ambisonics set; in the case of the "EXTENDED" format, all audio channels in the
  * CAF-file multiplied by the adaptor matrix must form a full ambisonics set).
  * When implementing libambix, this was interpreted to allow room for "extra" (non-ambisonics) channels in the "EXTENDED" format:
  * If a file holds (C+X) audio channels (with both C and X being positive integers),
- * the first C channels are converted into a full ambisonics set by multiplying it with the [L*C] adaptor matrix. 
+ * the first C channels are converted into a full ambisonics set by multiplying it with the [L*C] adaptor matrix.
  * The remaining X channels are provided "as-is", and can be used to store extra data (like click-tracks,...)
  *
  */
