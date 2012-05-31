@@ -1,5 +1,5 @@
 EXTRA_DIST=libambix.doxy \
-	libambix.h
+	libambix.incl
 
 html_DATA=
 if HAVE_DOXYGEN
