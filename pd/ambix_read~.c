@@ -67,18 +67,6 @@ static void noop(const char*format, ...) {}
 #define STATE_STARTUP 1
 #define STATE_STREAM 2
 
-
-#if 0
-# define MAXBYTESPERSAMPLE 4
-# define MAXVECSIZE 128
-
-# define READSIZE 65536
-# define WRITESIZE 65536
-# define DEFBUFPERCHAN 262144
-# define MINBUFSIZE (4 * READSIZE)
-# define MAXBUFSIZE 16777216     /* arbitrary; just don't want to hang malloc */
-#endif
-
 /* merge to buffers of interleaved samples into a single interleaved buffer
  * buf1 holds chan1 samples per frame, buf2 holds chan2 samples per frame
  * the dest buffer holds (want1+want2) samples per frame
