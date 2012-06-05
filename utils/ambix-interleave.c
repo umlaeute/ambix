@@ -40,8 +40,8 @@
 # include "config.h"
 #endif /* HAVE_CONFIG_H */
 
-#include "ambix/ambix.h"
 #include "sndfile.h"
+#include "ambix/ambix.h"
 
 #include <stdio.h>
 #include <string.h>

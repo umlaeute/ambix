@@ -157,7 +157,6 @@ static ai_t*ai_cmdline(const char*name, int argc, char**argv) {
 }
 
 static ai_t*ai_close(ai_t*ai) {
-  uint32_t i;
   if(!ai)return NULL;
 
   //  printf("closing %d outhandles %p\n", ai->numOuts, ai->outhandles);
@@ -173,7 +172,6 @@ static ai_t*ai_close(ai_t*ai) {
 }
 
 static ai_t*ai_open_input(ai_t*ai) {
-  uint32_t i;
   uint32_t channels=0;
   const ambix_matrix_t*matrix=NULL;
   if(!ai)return ai;
@@ -216,9 +214,8 @@ static ai_t*ai_dump_block(ai_t*ai,
                           float*extradata,
                           float*dumpbuffer,
                           uint64_t frames) {
-  uint32_t i;
   uint32_t ambichannels, fullambichannels, extrachannels;
-  uint64_t channel, f, c, channels=0;
+  uint64_t channels=0;
 
   const ambix_matrix_t*matrix;
   float*source, *dest;
@@ -283,7 +280,7 @@ static ai_t*ai_dump_block(ai_t*ai,
 
 static ai_t*ai_dodump(ai_t*ai) {
   uint64_t blocksize=0, blocks=0;
-  uint64_t f, frames=0, channels=0;
+  uint64_t frames=0, channels=0;
   float32_t*rawdata=NULL, *cookeddata=NULL, *extradata=NULL,*dumpbuf=NULL;
   uint64_t size=0;
   if(!ai)return ai;
