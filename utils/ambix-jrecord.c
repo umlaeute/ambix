@@ -1,7 +1,7 @@
 /* ambix-jrecord.c -  record and ambix file via jack            -*- c -*-
 
-   Copyright © 2003-2006 Rohan Drape
-   Copyright © 2012 IOhannes m zmölnig <zmoelnig@iem.at>.
+   Copyright Â© 2003-2006 Rohan Drape
+   Copyright Â© 2012 IOhannes m zmÃ¶lnig <zmoelnig@iem.at>.
          Institute of Electronic Music and Acoustics (IEM),
          University of Music and Dramatic Arts, Graz
 
