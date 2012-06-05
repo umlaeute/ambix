@@ -41,7 +41,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;LIBAMBIX_EXPORTS"
+				AdditionalIncludeDirectories="..\..\libambix;..\..\..\libsndfile\Win32\include"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;LIBAMBIX_EXPORTS;AMBIX_INTERNAL;HAVE_STDLIB_H;HAVE_STRING_H;HAVE_SNDFILE_H"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -60,7 +61,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="libsndfile-1.lib"
 				LinkIncremental="2"
+				AdditionalLibraryDirectories="..\..\..\libsndfile\Win32\bin"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				TargetMachine="1"
@@ -170,12 +173,56 @@
 			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
+			<File
+				RelativePath="..\..\libambix\src\adaptor.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libambix\src\adaptor_acn.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libambix\src\adaptor_fuma.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libambix\src\libambix.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libambix\src\matrix.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libambix\src\private.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libambix\src\sndfile.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libambix\src\utils.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libambix\src\uuid_chunk.c"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Headerdateien"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath="..\..\libambix\ambix\ambix.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libambix\ambix\exportdefs.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Ressourcendateien"
