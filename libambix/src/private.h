@@ -41,6 +41,10 @@
 # include "config.h"
 #endif /* HAVE_CONFIG_H */
 
+#ifdef _MSC_VER
+# define inline __inline
+#endif
+
 #include <ambix/ambix.h>
 
 /** this is for passing data about the opened ambix file between the host application and the library */
