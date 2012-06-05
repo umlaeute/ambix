@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="libsndfile"
+	>
+	<Tool
+		Name="VCCLCompilerTool"
+		AdditionalIncludeDirectories="..\..\..\libsndfile\Win32\include"
+	/>
+	<Tool
+		Name="VCLinkerTool"
+		AdditionalDependencies="libsndfile-1.lib"
+		AdditionalLibraryDirectories="..\..\..\libsndfile\Win32\bin"
+	/>
+</VisualStudioPropertySheet>

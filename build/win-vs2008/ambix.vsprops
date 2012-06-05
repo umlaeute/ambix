@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="ambix"
+	>
+	<Tool
+		Name="VCCLCompilerTool"
+		AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\..\libambix&quot;"
+		PreprocessorDefinitions="HAVE_STDLIB_H;HAVE_STRING_H;HAVE_SNDFILE_H;PACKAGE_BUGREPORT=\&quot;zmoelnig@iem.at\&quot;;PACKAGE_URL=\&quot;http://ambisonics.iem.at/xchange/format\&quot;;PACKAGE_VERSION=\&quot;0.0.1\&quot;"
+	/>
+	<Tool
+		Name="VCLinkerTool"
+		AdditionalLibraryDirectories=""
+	/>
+</VisualStudioPropertySheet>
