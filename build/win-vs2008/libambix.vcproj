@@ -117,7 +117,8 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;LIBAMBIX_EXPORTS"
+				AdditionalIncludeDirectories="..\..\libambix;..\..\..\libsndfile\Win32\include"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;LIBAMBIX_EXPORTS;AMBIX_INTERNAL;HAVE_STDLIB_H;HAVE_STRING_H;HAVE_SNDFILE_H"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
@@ -135,7 +136,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="libsndfile-1.lib"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="..\..\..\libsndfile\Win32\bin"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
