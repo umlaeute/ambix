@@ -41,9 +41,7 @@ extern "C" {
 /** 32bit floating point number */
 typedef float float32_t;
 
-#if defined (__linux__) || defined(__apple__)
-# include <stdint.h>
-#else
+#ifdef _MSC_VER
 /** 16bit signed integer */
 typedef signed short int16_t;
 /** 16bit unsigned integer */
@@ -56,6 +54,8 @@ typedef unsigned int uint32_t;
 typedef signed long int64_t;
 /** 64bit unsigned integer */
 typedef unsigned long uint64_t;
+#else
+# include <stdint.h>
 #endif
 
 /** a 32bit number (either float or int), useful for endianess operations */
