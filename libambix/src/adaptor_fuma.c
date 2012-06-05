@@ -128,9 +128,28 @@ _matrix_multiply3(ambix_matrix_t*mtx1,
 ambix_matrix_t*
 _matrix_ambix2fuma(uint32_t cols) {
   uint32_t rows=0;
-  
-  int i;
-  float32_t*reducer_v[]={
+#if 1
+  float32_t reducer_v[17][16]={
+    {0}, /* NULL */
+    {0}, // W
+    {0}, /* NULL */
+    {0, 1, 2}, // WXY
+    {0, 1, 2, 3}, // WXYZ
+    {0, 1, 2, 4, 5}, // WXYRS
+    {0, 1, 2, 3, 4, 5}, // WXYZRS
+    {0, 1, 2, 4, 5, 14, 15}, // WXYRSPQ
+    {0, 1, 2, 3, 4, 5, 14, 15}, // WXYZRSPQ
+    {0, 1, 2, 3, 4, 5, 6, 7, 8}, // WXYZRSTUV
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, /* NULL */
+    {0, 1, 2, 3, 4, 5, 6, 7, 8, 14, 15}, // WXYZRSTUVPQ
+    {0}, /* NULL */
+    {0}, /* NULL */
+    {0}, /* NULL */
+    {0}, /* NULL */
+    {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}, // WXYZRSTUVKLMNOPQ
+  };
+#else
+  float32_t * reducer_v[]={
     NULL,
     (float32_t[]) {0}, // W
     NULL,
@@ -149,7 +168,7 @@ _matrix_ambix2fuma(uint32_t cols) {
     NULL,
     (float32_t[]) {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}, // WXYZRSTUVKLMNOPQ
   };
-
+#endif
   static const uint32_t rows_v[]={
     0,
     1, // W
@@ -206,8 +225,28 @@ _matrix_ambix2fuma(uint32_t cols) {
 ambix_matrix_t*
 _matrix_fuma2ambix(uint32_t rows) {
   uint32_t cols=0;
-  
-  int i;
+
+#if 1
+  float32_t reducer_v[17][16]={
+    {0}, /* NULL */
+    {0}, // W
+    {0}, /* NULL */
+    {0, 1, 2}, // WXY
+    {0, 1, 2, 3}, // WXYZ
+    {0, 1, 2, 4, 5}, // WXYRS
+    {0, 1, 2, 3, 4, 5}, // WXYZRS
+    {0, 1, 2, 4, 5, 14, 15}, // WXYRSPQ
+    {0, 1, 2, 3, 4, 5, 14, 15}, // WXYZRSPQ
+    {0, 1, 2, 3, 4, 5, 6, 7, 8}, // WXYZRSTUV
+    {0}, /* NULL */
+    {0, 1, 2, 3, 4, 5, 6, 7, 8, 14, 15}, // WXYZRSTUVPQ
+    {0}, /* NULL */
+    {0}, /* NULL */
+    {0}, /* NULL */
+    {0}, /* NULL */
+    {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}, // WXYZRSTUVKLMNOPQ
+  };
+#else
   float32_t*reducer_v[]={
     NULL,
     (float32_t[]) {0}, // W
@@ -227,6 +266,7 @@ _matrix_fuma2ambix(uint32_t rows) {
     NULL,
     (float32_t[]) {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}, // WXYZRSTUVKLMNOPQ
   };
+#endif
 
   static const uint32_t cols_v[]={
     0,
