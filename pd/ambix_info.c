@@ -1,4 +1,4 @@
-/* ambix_info -  get information on AMBIsonics Xchange files into Pd        -*- c -*-
+/* ambix_info -  get information on AMBIsonics eXchange files into Pd        -*- c -*-
 
  Copyright © 2012 IOhannes m zmölnig <zmoelnig@iem.at>.
  Institute of Electronic Music and Acoustics (IEM),

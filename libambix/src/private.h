@@ -1,4 +1,4 @@
-/* private.h -  Ambisonics Xchange Library Private Interface              -*- c -*-
+/* private.h -  AMBIsonics eXchange Library Private Interface              -*- c -*-
 
    Copyright © 2012 IOhannes m zmölnig <zmoelnig@iem.at>.
          Institute of Electronic Music and Acoustics (IEM),
@@ -23,7 +23,7 @@
 
 /**
  * @file	private.h
- * @brief	Ambisonics Xchange Library Private Interface
+ * @brief	AMBIsonics eXchange Library Private Interface
  * @details This file is part of libambix
  * @author IOhannes m zmölnig <zmoelnig@iem.at>
  * @date 2012

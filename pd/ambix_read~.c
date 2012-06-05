@@ -1,4 +1,4 @@
-/* ambix_read~ -  read AMBIsonics Xchange files in Pd        -*- c -*-
+/* ambix_read~ -  read AMBIsonics eXchange files in Pd        -*- c -*-
 
  Copyright © 1997-1999 Miller Puckette.
  Copyright © 2012 IOhannes m zmölnig <zmoelnig@iem.at>.

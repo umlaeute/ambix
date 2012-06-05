@@ -1,4 +1,4 @@
-/* libambix.c -  Ambisonics Xchange Library              -*- c -*-
+/* libambix.c -  AMBIsonics eXchange Library              -*- c -*-
 
    Copyright © 2012 IOhannes m zmölnig <zmoelnig@iem.at>.
          Institute of Electronic Music and Acoustics (IEM),

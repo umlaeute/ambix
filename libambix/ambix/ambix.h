@@ -1,5 +1,5 @@
 
-/* ambix/ambix.h -  Ambisonics Xchange Library Interface              -*- c -*-
+/* ambix/ambix.h -  AMBIsonics eXchange Library Interface              -*- c -*-
 
    Copyright © 2012 IOhannes m zmölnig <zmoelnig@iem.at>.
          Institute of Electronic Music and Acoustics (IEM),
@@ -23,7 +23,7 @@
 
 /**
  * @file	ambix/ambix.h
- * @brief	Ambisonics Xchange Library Interface
+ * @brief	AMBIsonics eXchange Library Interface
  * @details This file is part of libambix
  * @author IOhannes m zmölnig <zmoelnig@iem.at>
  * @date 2012
