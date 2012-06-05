@@ -97,7 +97,7 @@ _AMBIX_SPLITADAPTOR(int16);
         for(inchan=0; inchan<rawambichannels; inchan++) {               \
           sum+=mtx[outchan][inchan] * src[inchan];                      \
         }                                                               \
-        *dest_ambi++=sum;                                               \
+		*dest_ambi++=(type##_t)sum;  /* FIXXXME: integer saturation */   \
       }                                                                 \
       for(inchan=rawambichannels; inchan<sourcechannels; inchan++)      \
         *dest_other++=src[inchan];                                      \

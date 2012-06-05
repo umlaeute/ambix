@@ -82,7 +82,7 @@ typedef struct ambix_t {
   /** buffer for adaptor signals */
   void*adaptorbuffer;
   /** size of the adaptor buffer (in bytes) */
-  int64_t adaptorbuffersize;
+  uint64_t adaptorbuffersize;
   /** default adaptorbuffer size in frames */
 #define DEFAULT_ADAPTORBUFFER_SIZE 64
 
