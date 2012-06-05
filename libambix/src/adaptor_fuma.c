@@ -192,7 +192,7 @@ _matrix_ambix2fuma(uint32_t cols) {
   if(cols<0 || cols > 16)
     return NULL;
 
-  if(reducer_v[cols]) {
+  if(rows_v[cols]) {
     ambix_matrix_t*weightorder_m=NULL;
 
     ambix_matrix_t*expand_m=NULL;
@@ -291,7 +291,7 @@ _matrix_fuma2ambix(uint32_t rows) {
   if(rows<0 || rows > 16)
     return NULL;
 
-  if(reducer_v[rows]) {
+  if(cols_v[rows]) {
     ambix_matrix_t*weightorder_m=NULL;
 
     ambix_matrix_t*expand_m=NULL;
