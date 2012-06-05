@@ -160,7 +160,7 @@ _ambix_matrix_to_uuid1(const ambix_matrix_t*matrix, void*vdata, int swap) {
 
   if(vdata) {
     uint32_t*uidata=(uint32_t*)vdata;
-    uint64_t i, r, c;
+    uint64_t r;
     uint32_t*swapdata;
     uint64_t elements=(uint64_t)rows*(uint64_t)cols;
     memcpy(cdata, uuid, 16);

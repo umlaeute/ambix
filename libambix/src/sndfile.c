@@ -87,7 +87,7 @@ static void print_sfinfo(SF_INFO*info) {
 static void
 ambix2sndfile_info(const ambix_info_t*axinfo, SF_INFO *sfinfo) {
   sfinfo->frames=axinfo->frames;
-  sfinfo->samplerate=axinfo->samplerate;
+  sfinfo->samplerate=(int)axinfo->samplerate;
   sfinfo->channels=axinfo->ambichannels+axinfo->extrachannels;
   sfinfo->format=SF_FORMAT_CAF | ambix2sndfile_sampleformat(axinfo->sampleformat);
   sfinfo->sections=0;
@@ -95,7 +95,7 @@ ambix2sndfile_info(const ambix_info_t*axinfo, SF_INFO *sfinfo) {
 }
 static void
 sndfile2ambix_info(const SF_INFO*sfinfo, ambix_info_t*axinfo) {
-  axinfo->frames=sfinfo->frames;
+  axinfo->frames=(uint64_t)sfinfo->frames;
   axinfo->samplerate=(double)(sfinfo->samplerate);
   axinfo->extrachannels=sfinfo->channels;
   axinfo->sampleformat=sndfile2ambix_sampleformat(sfinfo->format & SF_FORMAT_SUBMASK);
@@ -308,23 +308,23 @@ SNDFILE*_ambix_get_sndfile	(ambix_t*ambix) {
   return PRIVATE(ambix)->sf_file;
 }
 int64_t _ambix_readf_int16   (ambix_t*ambix, int16_t*data, int64_t frames) {
-  return sf_readf_short(PRIVATE(ambix)->sf_file, (short*)data, frames) ;
+  return (int64_t)sf_readf_short(PRIVATE(ambix)->sf_file, (short*)data, frames) ;
 }
 int64_t _ambix_readf_int32   (ambix_t*ambix, int32_t*data, int64_t frames) {
-  return sf_readf_int(PRIVATE(ambix)->sf_file, (int*)data, frames) ;
+  return (int64_t)sf_readf_int(PRIVATE(ambix)->sf_file, (int*)data, frames) ;
 }
 int64_t _ambix_readf_float32   (ambix_t*ambix, float32_t*data, int64_t frames) {
-  return sf_readf_float(PRIVATE(ambix)->sf_file, (float*)data, frames) ;
+  return (int64_t)sf_readf_float(PRIVATE(ambix)->sf_file, (float*)data, frames) ;
 }
 
 int64_t _ambix_writef_int16   (ambix_t*ambix, const int16_t*data, int64_t frames) {
-  return sf_writef_short(PRIVATE(ambix)->sf_file, (short*)data, frames) ;
+  return (int64_t)sf_writef_short(PRIVATE(ambix)->sf_file, (short*)data, frames) ;
 }
 int64_t _ambix_writef_int32   (ambix_t*ambix, const int32_t*data, int64_t frames) {
-  return sf_writef_int(PRIVATE(ambix)->sf_file, (int*)data, frames) ;
+  return (int64_t)sf_writef_int(PRIVATE(ambix)->sf_file, (int*)data, frames) ;
 }
 int64_t _ambix_writef_float32   (ambix_t*ambix, const float32_t*data, int64_t frames) {
-  return sf_writef_float(PRIVATE(ambix)->sf_file, (float*)data, frames) ;
+  return (int64_t)sf_writef_float(PRIVATE(ambix)->sf_file, (float*)data, frames) ;
 }
 ambix_err_t _ambix_write_uuidchunk(ambix_t*ax, const void*data, int64_t datasize) {
 #if defined HAVE_SF_SET_CHUNK && defined (HAVE_SF_CHUNK_INFO)

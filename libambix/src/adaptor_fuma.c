@@ -40,11 +40,11 @@
 
 static ambix_matrix_t*
 fuma2ambix_weightorder(void) {
-  const float32_t sqrt2=sqrt(2.);          // 1.414
-  const float32_t sqrt3_4  = sqrt(3.)/2.;      // 0.86603
-  const float32_t sqrt5_8  = sqrt(5./2.)/2.;   // 0.79057
-  const float32_t sqrt32_45= 4.*sqrt(2./5.)/3.;// 0.84327
-  const float32_t sqrt5_9  = sqrt(5.)/3.;      // 0.74536
+  const float32_t sqrt2    = (float32_t)(sqrt(2.));         // 1.414
+  const float32_t sqrt3_4  = (float32_t)(sqrt(3.)/2.);      // 0.86603
+  const float32_t sqrt5_8  = (float32_t)(sqrt(5./2.)/2.);   // 0.79057
+  const float32_t sqrt32_45= (float32_t)(4.*sqrt(2./5.)/3.);// 0.84327
+  const float32_t sqrt5_9  = (float32_t)(sqrt(5.)/3.);      // 0.74536
 
   static float32_t order[]={
     0,
@@ -76,11 +76,11 @@ fuma2ambix_weightorder(void) {
 
 static ambix_matrix_t*
 ambix2fuma_weightorder(void) {
-  const float32_t sqrt1_2  = 1./sqrt(2.);      // 0.707
-  const float32_t sqrt4_3  = 2./sqrt(3.);      // 1.1547
-  const float32_t sqrt8_5  = 2.*sqrt(2./5.);   // 1.2649
-  const float32_t sqrt45_32= 3.*sqrt(5./2.)/4.;// 1.1856
-  const float32_t sqrt9_5  = 3./sqrt(5.);      // 1.3416
+  const float32_t sqrt1_2  = (float32_t)(1./sqrt(2.));       // 0.707
+  const float32_t sqrt4_3  = (float32_t)(2./sqrt(3.));      // 1.1547
+  const float32_t sqrt8_5  = (float32_t)(2.*sqrt(2./5.));   // 1.2649
+  const float32_t sqrt45_32= (float32_t)(3.*sqrt(5./2.)/4.);// 1.1856
+  const float32_t sqrt9_5  = (float32_t)(3./sqrt(5.));      // 1.3416
 
   static float32_t order[]={
     0,

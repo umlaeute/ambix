@@ -216,7 +216,7 @@ ambix_matrix_multiply(const ambix_matrix_t*left, const ambix_matrix_t*right, amb
         rv=rdat[i][c];
         sum+=lv*rv;
       }
-      ddat[r][c]=sum;
+      ddat[r][c]=(float32_t)sum;
     }
 
   return dest;
@@ -228,7 +228,7 @@ ambix_matrix_fill(ambix_matrix_t*matrix, ambix_matrixtype_t typ) {
   int32_t cols=matrix->cols;
   int32_t r, c;
   float32_t**mtx=matrix->data;
-  const float32_t sqrt2=sqrt(2);
+  const float32_t sqrt2=(float32_t)sqrt(2.);
   ambix_matrix_t*result=NULL;
 
   switch(typ) {
@@ -249,7 +249,7 @@ ambix_matrix_fill(ambix_matrix_t*matrix, ambix_matrixtype_t typ) {
   case (AMBIX_MATRIX_IDENTITY):
     for(r=0; r<rows; r++) {
       for(c=0; c<cols; c++)
-        mtx[r][c]=(r==c)?1.:0.;
+        mtx[r][c]=(float32_t)((r==c)?1.:0.);
     }
     break;
 
@@ -297,7 +297,7 @@ ambix_matrix_fill(ambix_matrix_t*matrix, ambix_matrixtype_t typ) {
     weights=(float32_t*)malloc(rows*sizeof(float32_t));
     w_=weights;
     for(o=0; o<=order; o++) {
-      const float32_t w=1./sqrt(2.*o+1.);
+      const float32_t w=(float32_t)(1./sqrt(2.*o+1.));
       int32_t i;
       for(i=0; i<(2*o+1); i++) {
         *w_++=w;
@@ -317,7 +317,7 @@ ambix_matrix_fill(ambix_matrix_t*matrix, ambix_matrixtype_t typ) {
     weights=(float32_t*)malloc(rows*sizeof(float32_t));
     w_=weights;
     for(o=0; o<=order; o++) {
-      const float32_t w=sqrt(2.*o+1.);
+      const float32_t w=(float32_t)(sqrt(2.*o+1.));
       int32_t i;
       for(i=0; i<(2*o+1); i++) {
         *w_++=w;
@@ -353,7 +353,7 @@ ambix_err_t ambix_matrix_multiply_float32(float32_t*dest, const ambix_matrix_t*m
         //        printf("....%f[%d|%d]*%f\n", (float)scale, (int)outchan, (int)inchan, (float)in);
         sum+=scale*in;
       }
-      dst[frame*outchannels+outchan]=sum;
+      dst[frame*outchannels+outchan]=(float32_t)sum;
     }
   }
   return AMBIX_ERR_SUCCESS;
@@ -376,7 +376,7 @@ ambix_err_t ambix_matrix_multiply_float32(float32_t*dest, const ambix_matrix_t*m
           double in=src[inchan*frames];                                 \
           sum+=scale * in;                                              \
         }                                                               \
-        dst[frames*outchan]=sum;                                        \
+		dst[frames*outchan]=(typ##_t)(sum);  /* FIXXXME: saturation */  \
       }                                                                 \
     }                                                                   \
     return AMBIX_ERR_SUCCESS;                                           \
@@ -412,13 +412,13 @@ ambix_matrix_t*_matrix_router(ambix_matrix_t*orgmatrix, const float32_t*route, u
   uint32_t i;
   ambix_matrix_t*matrix=NULL;
   for(i=0; i<count; i++) {
-    uint32_t o=route[i];
+    uint32_t o=(uint32_t)route[i];
     if(o<0 || o>count)
       return NULL;
   }
   matrix=ambix_matrix_init(count, count, orgmatrix);
   for(i=0; i<count; i++) {
-    uint32_t o=route[i];
+    uint32_t o=(uint32_t)route[i];
     if(swap)
       matrix->data[o][i]=1.;
     else
@@ -434,12 +434,12 @@ ambix_matrix_t*_matrix_permutate(ambix_matrix_t*matrix, const float32_t*route, i
   uint32_t maxroute=swap?matrix->rows:matrix->cols;
 
   for(i=0; i<count; i++) {
-    uint32_t o=route[i];
+    uint32_t o=(uint32_t)route[i];
     if(o>maxroute)
       return NULL;
   }
   for(i=0; i<count; i++) {
-    uint32_t o=route[i];
+    uint32_t o=(uint32_t)route[i];
     if(o>=0) {
       if(swap)
         matrix->data[o][i]=1.;
