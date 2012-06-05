@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9,00"
 	Name="ambix-test"
-	ProjectGUID="{D61D2BAE-0ED9-48D8-9C5B-EB8FEA6D7457}"
+	ProjectGUID="{443E3B23-86A2-48AB-A6E2-CC116B24EB57}"
 	RootNamespace="ambixinfo"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="196613"

@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9,00"
 	Name="ambix-dump"
-	ProjectGUID="{D61D2BAE-0ED9-48D8-9C5B-EB8FEA6D7457}"
+	ProjectGUID="{06652754-6A83-4512-A720-70F79563443D}"
 	RootNamespace="ambixinfo"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="196613"

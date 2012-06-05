@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9,00"
 	Name="ambix-interleave"
-	ProjectGUID="{D61D2BAE-0ED9-48D8-9C5B-EB8FEA6D7457}"
+	ProjectGUID="{BD1F767A-12B0-4EF6-9867-575B3B615E31}"
 	RootNamespace="ambixinfo"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="196613"
@@ -21,7 +21,7 @@
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
-			InheritedPropertySheets=".\libambix.vsprops;.\ambix.vsprops"
+			InheritedPropertySheets=".\libambix.vsprops;.\ambix.vsprops;.\libsndfile.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -94,7 +94,7 @@
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
-			InheritedPropertySheets=".\libambix.vsprops;.\ambix.vsprops"
+			InheritedPropertySheets=".\libambix.vsprops;.\ambix.vsprops;.\libsndfile.vsprops"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>

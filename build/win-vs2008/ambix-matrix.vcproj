@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9,00"
 	Name="ambix-matrix"
-	ProjectGUID="{D61D2BAE-0ED9-48D8-9C5B-EB8FEA6D7457}"
+	ProjectGUID="{08361B4D-AF20-4CBE-8E88-D2E6037337DE}"
 	RootNamespace="ambixinfo"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="196613"
