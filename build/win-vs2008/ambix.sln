@@ -3,6 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libambix", "libambix.vcproj", "{26716438-5563-43B5-8D7E-D8B8ADBC4630}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ambix-info", "ambix-info.vcproj", "{D61D2BAE-0ED9-48D8-9C5B-EB8FEA6D7457}"
+	ProjectSection(ProjectDependencies) = postProject
+		{26716438-5563-43B5-8D7E-D8B8ADBC4630} = {26716438-5563-43B5-8D7E-D8B8ADBC4630}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -13,6 +18,10 @@ Global
 		{26716438-5563-43B5-8D7E-D8B8ADBC4630}.Debug|Win32.Build.0 = Debug|Win32
 		{26716438-5563-43B5-8D7E-D8B8ADBC4630}.Release|Win32.ActiveCfg = Release|Win32
 		{26716438-5563-43B5-8D7E-D8B8ADBC4630}.Release|Win32.Build.0 = Release|Win32
+		{D61D2BAE-0ED9-48D8-9C5B-EB8FEA6D7457}.Debug|Win32.ActiveCfg = Debug|Win32
+		{D61D2BAE-0ED9-48D8-9C5B-EB8FEA6D7457}.Debug|Win32.Build.0 = Debug|Win32
+		{D61D2BAE-0ED9-48D8-9C5B-EB8FEA6D7457}.Release|Win32.ActiveCfg = Release|Win32
+		{D61D2BAE-0ED9-48D8-9C5B-EB8FEA6D7457}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
