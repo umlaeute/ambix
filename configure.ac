@@ -60,7 +60,7 @@ AC_CHECK_LIB([m],[sqrt])
 /* checks for libsndfile */
 tmp_sndfile_CFLAGS="$CFLAGS"
 tmp_sndfile_LIBS="$LIBS"
-PKG_CHECK_MODULES([SNDFILE], [sndfile], [have_sndfile="yes"], [])
+PKG_CHECK_MODULES([SNDFILE], [sndfile], [have_sndfile="yes"], [have_sndfile="no"])
 AM_CONDITIONAL(HAVE_SNDFILE, [test "x$have_sndfile" = "xyes"])
 
 AM_CONDITIONAL(DISABLED, [test "xno" = "xyes"])
@@ -86,7 +86,7 @@ LIBS="$tmp_sndfile_LIBS"
 tmp_jack_CFLAGS="$CFLAGS"
 tmp_jack_LIBS="$LIBS"
 
-PKG_CHECK_MODULES([JACK], [jack], [have_jack="yes"], [])
+PKG_CHECK_MODULES([JACK], [jack], [have_jack="yes"], [have_jack="no"])
 AM_CONDITIONAL(HAVE_JACK, [test "x$have_jack" = "xyes"])
 
 CFLAGS="$tmp_jack_CFLAGS"
