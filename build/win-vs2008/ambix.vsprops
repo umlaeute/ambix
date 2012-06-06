@@ -3,6 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="ambix"
+	BuildLogFile="$(IntDir)\BuildLog_$(ProjectName).htm"
 	>
 	<Tool
 		Name="VCCLCompilerTool"
