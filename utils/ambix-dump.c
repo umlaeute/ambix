@@ -46,6 +46,26 @@
 #include <string.h>
 #include <stdlib.h>
 
+#ifdef _WIN32
+static char *
+strndup (const char *s, size_t n)
+{
+  char *result = NULL;
+  size_t len = strlen (s);
+
+  if (n < len)
+    len = n;
+
+  result = (char *) malloc (len + 1);
+  if (!result)
+    return 0;
+
+  result[len] = '\0';
+  return (char *) memcpy (result, s, len);
+}
+#endif /* _WIN32 */
+
+
 #define MARK() printf("%s:%d[%s]\n", __FILE__, __LINE__, __FUNCTION__)
 
 typedef struct ai_t {
@@ -121,7 +141,7 @@ static ai_t*ai_cmdline(const char*name, int argc, char**argv) {
       return ai_close(ai);
     }
     if(argc) {
-      ai->filename=strdup(argv[0]);
+      ai->filename=strndup(argv[0], 1024);
     }
     break;
   }
