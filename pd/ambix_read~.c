@@ -316,7 +316,7 @@ static void *ambix_read_child_main(void *zz) {
       while (x->x_requestcode == REQUEST_BUSY) {
         int fifosize = x->x_fifosize, fifotail;
         int bufframes = 0;
-		int bufsize = 0;
+        int bufsize = 0;
         if (x->x_eof)
           break;
         if (x->x_fifohead >= x->x_fifotail) {
@@ -335,7 +335,7 @@ static void *ambix_read_child_main(void *zz) {
             pthread_cond_wait(&x->x_requestcondition, &x->x_mutex);
             continue;
           }
-		} else {
+        } else {
           /* otherwise check if there are at least READFRAMES
              bytes to read.  If not, wait and loop back. */
           wantframes =  x->x_fifotail - x->x_fifohead - 1;
