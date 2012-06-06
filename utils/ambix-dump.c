@@ -299,7 +299,6 @@ static ai_t*ai_dodump(ai_t*ai) {
   if(blocksize<1)
     blocksize=DEFAULT_BLOCKSIZE;
   frames=ai->info.frames;
-  channels=(ai->info.ambichannels+ai->info.extrachannels);
 
   if(ai->info.ambichannels) {
     const ambix_matrix_t*matrix=ai->matrix;
