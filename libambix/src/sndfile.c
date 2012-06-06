@@ -39,6 +39,10 @@
 # include <sndfile.h>
 #endif /* HAVE_SNDFILE_H */
 
+#ifdef _MSC_VER
+# define snprintf _snprintf
+#endif /* _MSC_VER */
+
 typedef struct ambixsndfile_private_t {
   /** handle to the libsndfile object */
   SNDFILE*sf_file;
