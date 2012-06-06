@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9,00"
 	Name="ambix_readX~"
-	ProjectGUID="{E6210FAD-6764-48A8-A357-DAD63B7A44E0}"
+	ProjectGUID="{95B89D46-7697-48C4-B45C-8B01BE1E64ED}"
 	RootNamespace="ambix_readX~"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="196613"
@@ -21,7 +21,7 @@
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="2"
-			InheritedPropertySheets=".\ambix.vsprops;.\libambix.vsprops;.\puredata.vsprops"
+			InheritedPropertySheets=".\ambix.vsprops;.\libambix.vsprops;.\puredata.vsprops;.\pthread.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -94,7 +94,7 @@
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="2"
-			InheritedPropertySheets=".\ambix.vsprops;.\libambix.vsprops;.\puredata.vsprops"
+			InheritedPropertySheets=".\ambix.vsprops;.\libambix.vsprops;.\puredata.vsprops;.\pthread.vsprops"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
