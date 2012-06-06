@@ -47,6 +47,11 @@
 #include <string.h>
 #include <stdlib.h>
 
+#ifdef _MSC_VER
+# define strdup _strdup
+# define snprintf _snprintf
+#endif
+
 #define MARK() printf("%s:%d[%s]\n", __FILE__, __LINE__, __FUNCTION__)
 
 typedef struct ai_t {
@@ -75,7 +80,7 @@ static ai_t*ai_close(ai_t*ai);
 
 static char*ai_prefix(const char*filename) {
   char*result=NULL;
-  const char*last=rindex(filename, '.');
+  const char*last=strrchr(filename, '.');
   if(last) {
     int length=last-filename;
     result=(char*)calloc(sizeof(char), strlen(filename));
@@ -200,7 +205,6 @@ static ai_t*ai_close(ai_t*ai) {
 }
 
 static ai_t*ai_open_input(ai_t*ai) {
-  uint32_t i;
   uint32_t channels=0;
   const ambix_matrix_t*matrix=NULL;
   if(!ai)return ai;
@@ -231,7 +235,7 @@ static ai_t*ai_open_input(ai_t*ai) {
 }
 
 static ai_t*ai_open_output(ai_t*ai) {
-  SF_INFO info, tmpinfo;
+  SF_INFO info;
   int format=0;
   int32_t chan, channel, ambichannels, extrachannels;
   if(!ai)return ai;
@@ -255,7 +259,7 @@ static ai_t*ai_open_output(ai_t*ai) {
   info.format = format | SF_FORMAT_WAV;
   info.frames = ai->info.frames;
 
-  info.samplerate = ai->info.samplerate;
+  info.samplerate = (int)(ai->info.samplerate);
   info.channels = 1;
 
   if(!sf_format_check(&info)) {
@@ -322,9 +326,8 @@ static ai_t*ai_copy_block(ai_t*ai,
                           float*extradata,
                           float*deinterleavebuffer,
                           uint64_t frames) {
-  uint32_t i;
   uint32_t ambichannels, fullambichannels, extrachannels;
-  uint64_t channel, f, c, channels=0;
+  uint64_t channel, c, channels=0;
   sf_count_t framed;
 
   const ambix_matrix_t*matrix;
@@ -403,7 +406,7 @@ static ai_t*ai_copy_block(ai_t*ai,
 
 static ai_t*ai_copy(ai_t*ai) {
   uint64_t blocksize=0, blocks=0;
-  uint64_t f, frames=0, channels=0;
+  uint64_t frames=0, channels=0;
   float32_t*rawdata=NULL, *cookeddata=NULL, *extradata=NULL,*deinterleavebuf=NULL;
   uint64_t size=0;
   if(!ai)return ai;
