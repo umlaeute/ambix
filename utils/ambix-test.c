@@ -55,7 +55,7 @@ void createfile_basic(const char*path, uint32_t ambichannels, uint32_t extrachan
   } else
     printf("OK\n");
 
-  printf("Frames\t: %d\n", info.frames);
+  printf("Frames\t: %d\n", (int)info.frames);
 
   printf("Samplerate\t: %f\n", info.samplerate);
 
@@ -132,7 +132,7 @@ void createfile_extended(const char*path, uint32_t ambichannels, uint32_t extrac
   } else
     printf("OK\n");
 
-  printf("Frames\t: %d\n", info.frames);
+  printf("Frames\t: %d\n", (int)info.frames);
 
   printf("Samplerate\t: %f\n", info.samplerate);
 
@@ -178,7 +178,7 @@ void createfile_extended(const char*path, uint32_t ambichannels, uint32_t extrac
   }
 
   /* no write some data... */
-  printf("Writing %d frames\n", frames);
+  printf("Writing %d frames\n", (int)frames);
   do {
     const unsigned int blocksize=64;
     uint64_t res;
@@ -187,13 +187,13 @@ void createfile_extended(const char*path, uint32_t ambichannels, uint32_t extrac
     while(frames>blocksize) {
       res=ambix_writef_float32(ambix, ambidata, otherdata, blocksize);
       if(res!=blocksize)
-        printf("write returned %d!=%d\n", res, blocksize);
+        printf("write returned %d!=%d\n", (int)res, blocksize);
       frames-=blocksize;
     }
     if(frames>0) {
       res=ambix_writef_float32(ambix, ambidata, otherdata, frames);
       if(res!=frames)
-        printf("write returned %d!=%d\n", res, frames);
+        printf("write returned %d!=%d\n", (int)res, (int)frames);
     }
 	free(ambidata);ambidata=NULL;
 	free(otherdata);otherdata=NULL;

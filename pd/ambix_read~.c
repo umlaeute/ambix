@@ -222,12 +222,11 @@ static void *ambix_read_child_main(void *zz) {
   ambix_t*ambix=NULL;
   const uint32_t want_ambichannels    = x->x_ambichannels;
   const uint32_t want_xtrachannels    = x->x_xtrachannels;
-  const uint32_t want_framesize       = want_ambichannels+want_xtrachannels; // in samples
   const ambix_fileformat_t want_fileformat = x->x_fileformat;
   pthread_mutex_lock(&x->x_mutex);
 
   while (1) {
-    int fd, fifohead;
+    int fifohead;
     t_sample *buf=NULL;
     if (x->x_requestcode == REQUEST_NOTHING) {
       pthread_cond_signal(&x->x_answercondition);
@@ -314,9 +313,8 @@ static void *ambix_read_child_main(void *zz) {
       /* in a loop, wait for the fifo to get hungry and feed it */
 
       while (x->x_requestcode == REQUEST_BUSY) {
-        int fifosize = x->x_fifosize, fifotail;
+        int fifosize = x->x_fifosize;
         int bufframes = 0;
-        int bufsize = 0;
         if (x->x_eof)
           break;
         if (x->x_fifohead >= x->x_fifotail) {
@@ -348,10 +346,8 @@ static void *ambix_read_child_main(void *zz) {
         }
         buf = x->x_buf;
         fifohead = x->x_fifohead;
-        fifotail = x->x_fifotail;
 
         bufframes = x->x_bufframes;
-        bufsize = x->x_bufsize;
 
         pthread_mutex_unlock(&x->x_mutex);
 
@@ -585,7 +581,7 @@ static t_int *ambix_read_perform(t_int *w) {
   }
 
   if (!skip && x->x_state == STATE_STREAM) {
-    int wantframes, nchannels;
+    int wantframes;
     pthread_mutex_lock(&x->x_mutex);
     wantframes = vecsize;
 

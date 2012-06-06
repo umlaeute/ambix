@@ -322,7 +322,7 @@ static ai_t*ai_open_input(ai_t*ai) {
   }
 
   printf("format: %s\n", (ai->info.fileformat==AMBIX_BASIC)?"basic":"extended");
-  printf("got %d input channels each %d frames\n", channels, ai->info.frames);
+  printf("got %d input channels each %d frames\n", channels, (int)(ai->info.frames));
   printf("ambichannels: %d\n", ai->info.ambichannels);
   printf("extrachannels: %d\n", ai->info.extrachannels);
   if(ai->matrix)

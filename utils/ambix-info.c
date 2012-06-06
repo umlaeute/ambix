@@ -48,7 +48,7 @@ void printinfo(const char*path) {
   } else
     printf("OK\n");
 
-  printf("Frames\t: %d\n", info.frames);
+  printf("Frames\t: %d\n", (int)(info.frames));
 
   printf("Samplerate\t: %f\n", info.samplerate);
 

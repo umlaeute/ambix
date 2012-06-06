@@ -228,7 +228,6 @@ ambix_matrix_fill(ambix_matrix_t*matrix, ambix_matrixtype_t typ) {
   int32_t cols=matrix->cols;
   int32_t r, c;
   float32_t**mtx=matrix->data;
-  const float32_t sqrt2=(float32_t)sqrt(2.);
   ambix_matrix_t*result=NULL;
 
   switch(typ) {

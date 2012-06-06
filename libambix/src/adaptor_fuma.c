@@ -127,7 +127,6 @@ _matrix_multiply3(ambix_matrix_t*mtx1,
 
 ambix_matrix_t*
 _matrix_ambix2fuma(uint32_t cols) {
-  uint32_t rows=0;
 #if 1
   float32_t reducer_v[17][16]={
     {0}, /* NULL */
@@ -224,8 +223,6 @@ _matrix_ambix2fuma(uint32_t cols) {
 
 ambix_matrix_t*
 _matrix_fuma2ambix(uint32_t rows) {
-  uint32_t cols=0;
-
 #if 1
   float32_t reducer_v[17][16]={
     {0}, /* NULL */

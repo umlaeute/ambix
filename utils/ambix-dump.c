@@ -192,8 +192,6 @@ static ai_t*ai_close(ai_t*ai) {
 }
 
 static ai_t*ai_open_input(ai_t*ai) {
-  uint32_t channels=0;
-  const ambix_matrix_t*matrix=NULL;
   if(!ai)return ai;
   if(!ai->ambix) {
     ai->info.fileformat=ai->format;
@@ -235,18 +233,13 @@ static ai_t*ai_dump_block(ai_t*ai,
                           float*dumpbuffer,
                           uint64_t frames) {
   uint32_t ambichannels, fullambichannels, extrachannels;
-  uint64_t channels=0;
 
   const ambix_matrix_t*matrix;
-  float*source, *dest;
-
   //printf("rawdata=%p\tcookeddata=%p\textradata=%p\n", rawdata, cookeddata, extradata);
 
   if(!ai)return ai;
   ambichannels=ai->info.ambichannels;
   extrachannels=ai->info.extrachannels;
-
-
 
   matrix=ai->matrix;
   if(matrix) {
@@ -276,9 +269,6 @@ static ai_t*ai_dump_block(ai_t*ai,
   /* decode the ambisonics data */
   //  printf("reading ambidata %p & %p\n", rawdata, cookeddata);
   if(rawdata && cookeddata && matrix) {
-    source=rawdata;
-    dest  =cookeddata;
-
     if(AMBIX_ERR_SUCCESS!=ambix_matrix_multiply_float32(cookeddata, matrix, rawdata, frames)) {
       printf("failed decoding\n");
       return ai_close(ai);
@@ -300,7 +290,7 @@ static ai_t*ai_dump_block(ai_t*ai,
 
 static ai_t*ai_dodump(ai_t*ai) {
   uint64_t blocksize=0, blocks=0;
-  uint64_t frames=0, channels=0;
+  uint64_t frames=0;
   float32_t*rawdata=NULL, *cookeddata=NULL, *extradata=NULL,*dumpbuf=NULL;
   uint64_t size=0;
   if(!ai)return ai;

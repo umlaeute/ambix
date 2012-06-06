@@ -46,9 +46,9 @@ int ambix_is_fullset(uint32_t channels) {
 
 
 void _ambix_print_info(const ambix_info_t*info) {
-  printf("AMBIX_INFO 0x%X\n", info);
+  printf("AMBIX_INFO %p\n", info);
   if(!info)return;
-  printf("  frames\t: %d\n", info->frames);
+  printf("  frames\t: %d\n", (int)(info->frames));
   printf("  samplerate\t: %f\n", info->samplerate);
   printf("  sampleformat\t: %d\n", info->sampleformat);
   printf("  fileformat\t: %d\n", info->fileformat);
@@ -57,7 +57,7 @@ void _ambix_print_info(const ambix_info_t*info) {
 }
 
 void _ambix_print_matrix(const ambix_matrix_t*mtx) {
-  printf("matrix 0x%X", mtx);
+  printf("matrix %p", mtx);
   if(mtx) {
     float32_t**data=mtx->data;
     uint32_t r, c;
@@ -74,7 +74,7 @@ void _ambix_print_matrix(const ambix_matrix_t*mtx) {
 }
 
 void _ambix_print_ambix(const ambix_t*ambix) {
-  printf("AMBIX 0x%X\n", ambix);
+  printf("AMBIX %p\n", ambix);
   if(!ambix)return;
 
   printf("  private\t: %p\n", ambix->private_data);
@@ -93,7 +93,7 @@ void _ambix_print_ambix(const ambix_t*ambix) {
   _ambix_print_matrix(&ambix->matrix2);
   printf("  use_matrix\t: %d\n", ambix->use_matrix);
   printf("  adaptorbuffer\t: %p\n", ambix->adaptorbuffer);
-  printf("  adaptorbuffersize\t: %d\n", ambix->adaptorbuffersize);
+  printf("  adaptorbuffersize\t: %d\n", (int)(ambix->adaptorbuffersize));
   printf("  ambisonics_order\t: %d\n", ambix->ambisonics_order);
   printf("  startedReading\t: %d\n", ambix->startedReading);
   printf("  startedWriting\t: %d\n", ambix->startedWriting);

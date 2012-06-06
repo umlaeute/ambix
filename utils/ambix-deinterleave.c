@@ -168,7 +168,10 @@ static ai_t*ai_close(ai_t*ai) {
       SNDFILE*outhandle=ai->outhandles[i];
       if(outhandle) {
         int err=sf_close(outhandle);
-        //    printf("closing outhandle[%d] returned %d\n", i, err);
+        if(err!=0) {
+          ;
+          //    printf("closing outhandle[%d] returned %d\n", i, err);
+        }
       }
       ai->outhandles[i]=NULL;
     }
@@ -205,7 +208,6 @@ static ai_t*ai_close(ai_t*ai) {
 }
 
 static ai_t*ai_open_input(ai_t*ai) {
-  uint32_t channels=0;
   const ambix_matrix_t*matrix=NULL;
   if(!ai)return ai;
   if(!ai->inhandle) {
@@ -327,13 +329,11 @@ static ai_t*ai_copy_block(ai_t*ai,
                           float*deinterleavebuffer,
                           uint64_t frames) {
   uint32_t ambichannels, fullambichannels, extrachannels;
-  uint64_t channel, c, channels=0;
+  uint64_t channel, c;
   sf_count_t framed;
 
   const ambix_matrix_t*matrix;
   uint32_t rows, cols;
-  float32_t**mtx;
-  float*source, *dest;
 
   //printf("rawdata=%p\tcookeddata=%p\textradata=%p\n", rawdata, cookeddata, extradata);
 
@@ -341,7 +341,6 @@ static ai_t*ai_copy_block(ai_t*ai,
   matrix=&ai->matrix;
   rows=matrix->rows;
   cols=matrix->cols;
-  mtx =matrix->data;
 
   ambichannels=ai->info.ambichannels;
   extrachannels=ai->info.extrachannels;
@@ -357,7 +356,7 @@ static ai_t*ai_copy_block(ai_t*ai,
                              frames);
 
   if(frames!=framed) {
-    printf("failed reading %d frames (got %d)\n", frames, framed);
+    printf("failed reading %d frames (got %d)\n", (int)frames, (int)framed);
     return ai_close(ai);
   }
 
@@ -366,8 +365,6 @@ static ai_t*ai_copy_block(ai_t*ai,
   channel=0;
 
   if(rawdata && cookeddata) {
-    source=rawdata;
-    dest  =cookeddata;
 
     if(AMBIX_ERR_SUCCESS!=ambix_matrix_multiply_float32(cookeddata, matrix, rawdata, frames)) {
       printf("failed decoding\n");
@@ -381,7 +378,7 @@ static ai_t*ai_copy_block(ai_t*ai,
     for(c=0; c<fullambichannels; c++) {
       framed=sf_writef_float(ai->outhandles[channel], deinterleavebuffer+c*frames, frames);
       if(frames!=framed) {
-        printf("failed writing %d ambiframes to %d (got %d)\n", frames, channel, framed);
+        printf("failed writing %d ambiframes to %d (got %d)\n", (int)frames, (int)channel, (int)framed);
         return ai_close(ai);
       }
       channel++;
@@ -394,7 +391,7 @@ static ai_t*ai_copy_block(ai_t*ai,
     for(c=0; c<extrachannels; c++) {
       framed=sf_writef_float(ai->outhandles[channel], deinterleavebuffer+c*frames, frames);
       if(frames!=framed) {
-        printf("failed writing %d extraframes to %d (got %d)\n", frames, channel, framed);
+        printf("failed writing %d extraframes to %d (got %d)\n", (int)frames, (int)channel, (int)framed);
         return ai_close(ai);
       }
       channel++;
@@ -406,7 +403,7 @@ static ai_t*ai_copy_block(ai_t*ai,
 
 static ai_t*ai_copy(ai_t*ai) {
   uint64_t blocksize=0, blocks=0;
-  uint64_t frames=0, channels=0;
+  uint64_t frames=0;
   float32_t*rawdata=NULL, *cookeddata=NULL, *extradata=NULL,*deinterleavebuf=NULL;
   uint64_t size=0;
   if(!ai)return ai;

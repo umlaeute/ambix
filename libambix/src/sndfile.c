@@ -75,12 +75,13 @@ ambix2sndfile_sampleformat(ambix_sampleformat_t asformat) {
   case(AMBIX_SAMPLEFORMAT_PCM24):   return SF_FORMAT_PCM_24;
   case(AMBIX_SAMPLEFORMAT_PCM32):   return SF_FORMAT_PCM_32;
   case(AMBIX_SAMPLEFORMAT_FLOAT32): return SF_FORMAT_FLOAT;
+  default:break;
   }
   return SF_FORMAT_PCM_24;
 }
 static void print_sfinfo(SF_INFO*info) {
-  printf("SF_INFO 0x%X\n", info);
-  printf("  frames\t: %d\n", info->frames);
+  printf("SF_INFO %p\n", info);
+  printf("  frames\t: %d\n", (int)(info->frames));
   printf("  samplerate\t: %d\n", info->samplerate);
   printf("  channels\t: %d\n", info->channels);
   printf("  format\t: %d\n", info->format);
@@ -109,7 +110,6 @@ static int
 read_uuidchunk(ambix_t*ax) {
 #if defined HAVE_SF_GET_CHUNK_ITERATOR && defined (HAVE_SF_CHUNK_INFO)
 	int				err ;
-  int result=0;
 	SF_CHUNK_INFO	chunk_info ;
   SNDFILE*file=PRIVATE(ax)->sf_file;
   SF_CHUNK_ITERATOR *iterator;
@@ -271,6 +271,10 @@ ambix_err_t _ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t
       ambix->is_AMBIX=0;
       ambix->format=AMBIX_NONE;
     }
+  }
+
+  if(0) {
+    print_sfinfo( &PRIVATE(ambix)->sf_info);
   }
 
   return AMBIX_ERR_SUCCESS;

@@ -38,6 +38,7 @@ typedef struct {
   const char*name;
 } matrix_map_t;
 
+#if 0
 static matrix_map_t matrixmap[] = {
   AMBIX_MATRIX_ZERO, "MATRIX_ZERO",
   AMBIX_MATRIX_ONE, "MATRIX_ONE",
@@ -50,11 +51,11 @@ static matrix_map_t matrixmap[] = {
   AMBIX_MATRIX_TO_SID, "MATRIX_TO_SID",
   AMBIX_MATRIX_TO_FUMA, "MATRIX_TO_FUMA",
 };
-
+#endif
 
 
 static void printmatrix(const ambix_matrix_t*mtx) {
-  printf("matrix 0x%X", mtx);
+  printf("matrix %p", mtx);
   if(mtx) {
     float32_t**data=mtx->data;
     uint32_t r, c;

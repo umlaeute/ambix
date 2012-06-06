@@ -235,7 +235,7 @@ static void *ambix_write_child_main(void *zz) {
       pthread_cond_signal(&x->x_answercondition);
       pthread_cond_wait(&x->x_requestcondition, &x->x_mutex);
     } else if (x->x_requestcode == REQUEST_OPEN) {
-      int fd, sysrtn, writeframes;
+      int sysrtn, writeframes;
       ambix_info_t ainfo;
 
       /* copy file stuff out of the data structure so we can
@@ -492,8 +492,7 @@ static void *ambix_write_new(t_symbol*s, int argc, t_atom*argv) {
 static t_int *ambix_write_perform(t_int *w) {
   t_ambix_write *x = (t_ambix_write *)(w[1]);
   uint32_t achannels = x->x_ambichannels, xchannels=x->x_extrachannels;
-  int vecsize = x->x_vecsize, i, j;
-  t_sample *fp;
+  int vecsize = x->x_vecsize;
   uint32_t channels=achannels+xchannels;
   if (x->x_state == STATE_STREAM) {
     pthread_mutex_lock(&x->x_mutex);

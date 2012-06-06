@@ -67,7 +67,7 @@ float32_t matrix_diff(uint32_t line, const ambix_matrix_t*A, const ambix_matrix_
     }
 
   if(overcount>MAX_OVER)
-    printf("accumulated error %f over %d/%d frames\n", sum, overcount, (int)(A->cols*B->rows));
+    printf("accumulated error %f over %d/%d frames\n", sum, (int)overcount, (int)(A->cols*B->rows));
   return maxdiff;
 }
 
@@ -91,7 +91,7 @@ float32_t data_diff(uint32_t line, const float32_t*A, const float32_t*B, uint64_
     if(vabs>eps) {
       overcount++;
       if(overcount<MAX_OVER)
-        printf("%f - %f=%f @ %d\n", A[i], B[i], v, i);
+        printf("%f - %f=%f @ %d\n", A[i], B[i], v, (int)i);
     }
 
   }
@@ -105,7 +105,6 @@ float32_t data_diff(uint32_t line, const float32_t*A, const float32_t*B, uint64_
 
 void data_print(const float32_t*data, uint64_t frames) {
   uint64_t i;
-  float f100=data[100];
   for(i=0; i<frames; i++) {
     float f=*data++;
     printf("%05d: %f\n", (int)i, f);

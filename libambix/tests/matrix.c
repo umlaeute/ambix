@@ -270,7 +270,6 @@ void create_tests(float32_t eps) {
   int cols=3;
   int cols2=2;
   ambix_matrix_t matrix, *left, *right;
-  float32_t errf;
   STARTTEST("");
 
   memset(&matrix, 0, sizeof(matrix));

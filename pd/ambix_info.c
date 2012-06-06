@@ -192,4 +192,7 @@ void ambix_info_setup(void) {
                                (t_method)ambix_info_free, sizeof(t_ambix_info), 0, A_GIMME, A_NULL);
 
   class_addmethod(ambix_info_class, (t_method)ambix_info_open, gensym("open"), A_SYMBOL, A_NULL);
+  if(0) {
+    MARK("setup");
+  }
 }
