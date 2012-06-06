@@ -47,6 +47,10 @@
 #include <string.h>
 #include <stdlib.h>
 
+#ifdef _MSC_VER
+# define strdup _strdup
+#endif
+
 #define MARK() printf("%s:%d[%s]\n", __FILE__, __LINE__, __FUNCTION__)
 
 
@@ -73,6 +77,7 @@ static ai_t*ai_close(ai_t*ai);
 
 static ai_t*ai_matrix(ai_t*ai, const char*path) {
   SF_INFO info;
+  SNDFILE*file=NULL;
   uint32_t rows, cols;
   float*data=NULL;
   ai_t*result=NULL;
@@ -80,16 +85,16 @@ static ai_t*ai_matrix(ai_t*ai, const char*path) {
   uint32_t frames;
 
   memset(&info, 0, sizeof(info));
-  SNDFILE*file=sf_open(path, SFM_READ, &info);
+  file=sf_open(path, SFM_READ, &info);
 
   if(!file) {
     fprintf(stderr, "ambix_interleave: matrix open failed '%s'\n", path);
     return NULL;
   }
   rows=info.channels;
-  cols=info.frames;
+  cols=(uint32_t)info.frames;
   data=(float*)malloc(rows*cols*sizeof(float));
-  frames=sf_readf_float(file, data, cols);
+  frames=(uint32_t)sf_readf_float(file, data, cols);
   if(cols!=frames) {
     fprintf(stderr, "ambix_interleave: matrix reading %d frames returned %d\n", frames, cols);
     goto cleanup;
@@ -261,7 +266,7 @@ static ai_t*ai_open_input(ai_t*ai) {
       inhandle=sf_open(ai->infilenames[i], SFM_READ, info);
     }
     if(ai->info.frames==0 || (ai->info.frames > (info->frames)))
-      ai->info.frames=info->frames;
+      ai->info.frames=(uint64_t)info->frames;
     if(ai->info.samplerate<1.)
       ai->info.samplerate=info->samplerate;
     if(ai->info.sampleformat==AMBIX_SAMPLEFORMAT_NONE) {
@@ -403,7 +408,7 @@ static ai_t*ai_copy_block(ai_t*ai,
 
 static ai_t*ai_copy(ai_t*ai) {
   uint64_t blocksize=0, blocks=0;
-  uint64_t f, frames=0, channels=0;
+  uint64_t frames=0, channels=0;
   float32_t*ambidata=NULL,*extradata=NULL,*interleavebuffer=NULL;
   if(!ai)return ai;
   blocksize=ai->blocksize;

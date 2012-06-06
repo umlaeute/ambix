@@ -35,7 +35,6 @@ void print_version(const char*name);
 void createfile_basic(const char*path, uint32_t ambichannels, uint32_t extrachannels, uint64_t frames) {
   ambix_info_t info;
   ambix_t*ambix;
-  const ambix_matrix_t*matrix;
 
   extrachannels=0;
 
@@ -85,11 +84,11 @@ void createfile_basic(const char*path, uint32_t ambichannels, uint32_t extrachan
 
 
 
-  /* no write some data... */
+  /* now write some data... */
   do {
     uint64_t res;
-    float32_t ambidata[64*ambichannels];
-    float32_t otherdata[64*extrachannels];
+    float32_t*ambidata =(float32_t*)malloc(sizeof(float32_t)*64*ambichannels);
+    float32_t*otherdata=(float32_t*)malloc(sizeof(float32_t)*64*extrachannels);
     while(frames>64) {
       res=ambix_writef_float32(ambix, ambidata, otherdata, 64);
       frames-=64;
@@ -97,6 +96,8 @@ void createfile_basic(const char*path, uint32_t ambichannels, uint32_t extrachan
     if(frames>0)
       res=ambix_writef_float32(ambix, ambidata, otherdata, frames);
 
+	free(ambidata);ambidata=NULL;
+	free(otherdata);otherdata=NULL;
   } while(0);
 
 
@@ -111,7 +112,6 @@ void createfile_basic(const char*path, uint32_t ambichannels, uint32_t extrachan
 void createfile_extended(const char*path, uint32_t ambichannels, uint32_t extrachannels, uint64_t frames) {
   ambix_info_t info;
   ambix_t*ambix;
-  const ambix_matrix_t*matrix;
   ambix_matrix_t adaptmatrix;
   ambix_err_t err;
 
@@ -167,7 +167,7 @@ void createfile_extended(const char*path, uint32_t ambichannels, uint32_t extrac
     float32_t**data=adaptmatrix.data;
     for(r=0; r<rows; r++) {
       for(c=0; c<cols; c++) {
-        data[r][c]=(float32_t)r+((float32_t)c)/25.;
+        data[r][c]=(float32_t)r+((float32_t)c)/25.f;
       }
     }
   } while(0);
@@ -180,10 +180,10 @@ void createfile_extended(const char*path, uint32_t ambichannels, uint32_t extrac
   /* no write some data... */
   printf("Writing %d frames\n", frames);
   do {
-    const int blocksize=64;
+    const unsigned int blocksize=64;
     uint64_t res;
-    float32_t ambidata[blocksize*ambichannels];
-    float32_t otherdata[blocksize*extrachannels];
+    float32_t*ambidata=(float32_t*)malloc(sizeof(float32_t)*blocksize*ambichannels);
+    float32_t*otherdata=(float32_t*)malloc(sizeof(float32_t)*blocksize*extrachannels);
     while(frames>blocksize) {
       res=ambix_writef_float32(ambix, ambidata, otherdata, blocksize);
       if(res!=blocksize)
@@ -195,6 +195,8 @@ void createfile_extended(const char*path, uint32_t ambichannels, uint32_t extrac
       if(res!=frames)
         printf("write returned %d!=%d\n", res, frames);
     }
+	free(ambidata);ambidata=NULL;
+	free(otherdata);otherdata=NULL;
   } while(0);
 
 
