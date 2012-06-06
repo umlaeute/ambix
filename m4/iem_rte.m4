@@ -17,8 +17,8 @@ tmp_rte_orgcxxflags="$CXXFLAGS"
 tmp_rte_orgldflags="$LDFLAGS"
 tmp_rte_orglibs="$LIBS"
 
-rmp_rte_cflags="-DPD"
-rmp_rte_libs=""
+tmp_rte_cflags="-DPD"
+tmp_rte_libs=""
 RTE="Pure Data"
 
 AC_ARG_WITH([pd], 
@@ -40,31 +40,31 @@ fi
 
 if test -d "$with_pd" ; then
  if test -d "${with_pd}/src" ; then
-   AC_LIB_APPENDTOVAR([rmp_rte_cflags],"-I${with_pd}/src")
+   AC_LIB_APPENDTOVAR([tmp_rte_cflags],"-I${with_pd}/src")
  elif test -d "${with_pd}/include/pd" ; then
-   AC_LIB_APPENDTOVAR([rmp_rte_cflags],"-I${with_pd}/include/pd")
+   AC_LIB_APPENDTOVAR([tmp_rte_cflags],"-I${with_pd}/include/pd")
  elif test -d "${with_pd}/include" ; then
-   AC_LIB_APPENDTOVAR([rmp_rte_cflags],"-I${with_pd}/include")
+   AC_LIB_APPENDTOVAR([tmp_rte_cflags],"-I${with_pd}/include")
  else
-   AC_LIB_APPENDTOVAR([rmp_rte_cflags],"-I${with_pd}")
+   AC_LIB_APPENDTOVAR([tmp_rte_cflags],"-I${with_pd}")
  fi
  if test -d "${with_pd}/bin" ; then
-   rmp_rte_libs="${rmp_rte_libs}${rmp_rte_libs:+ }-L${with_pd}/bin"
+   tmp_rte_libs="${tmp_rte_libs}${tmp_rte_libs:+ }-L${with_pd}/bin"
  else
-   rmp_rte_libs="${rmp_rte_libs}${rmp_rte_libs:+ }-L${with_pd}"
+   tmp_rte_libs="${tmp_rte_libs}${tmp_rte_libs:+ }-L${with_pd}"
  fi
 
- CPPFLAGS="$CPPFLAGS ${rmp_rte_cflags}"
- CFLAGS="$CFLAGS ${rmp_rte_cflags}"
- CXXFLAGS="$CXXFLAGS ${rmp_rte_cflags}"
- LIBS="$LIBS ${rmp_rte_libs}"
+ CPPFLAGS="$CPPFLAGS ${tmp_rte_cflags}"
+ CFLAGS="$CFLAGS ${tmp_rte_cflags}"
+ CXXFLAGS="$CXXFLAGS ${tmp_rte_cflags}"
+ LIBS="$LIBS ${tmp_rte_libs}"
 fi
 
 AC_CHECK_LIB([:pd.dll], [nullfn], [have_pddll="yes"], [have_pddll="no"])
 if test "x$have_pddll" = "xyes"; then
- rmp_rte_libs="${rmp_rte_libs}${rmp_rte_libs:+ }-Xlinker -l:pd.dll"
+ tmp_rte_libs="${tmp_rte_libs}${tmp_rte_libs:+ }-Xlinker -l:pd.dll"
 else
- AC_CHECK_LIB([pd], [nullfn], [rmp_rte_libs="${rmp_rte_libs}${rmp_rte_libs:+ }-lpd"])
+ AC_CHECK_LIB([pd], [nullfn], [tmp_rte_libs="${tmp_rte_libs}${tmp_rte_libs:+ }-lpd"])
 fi
 
 AC_CHECK_HEADERS([m_pd.h], [have_pd="yes"], [have_pd="no"])
