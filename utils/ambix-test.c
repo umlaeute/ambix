@@ -91,7 +91,7 @@ void createfile_basic(const char*path, uint32_t ambichannels, uint32_t extrachan
     float32_t*otherdata=(float32_t*)malloc(sizeof(float32_t)*64*extrachannels);
     while(frames>64) {
       res=ambix_writef_float32(ambix, ambidata, otherdata, 64);
-      frames-=64;
+      frames-=res;
     }
     if(frames>0)
       res=ambix_writef_float32(ambix, ambidata, otherdata, frames);
