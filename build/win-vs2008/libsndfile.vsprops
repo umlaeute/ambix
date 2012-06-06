@@ -7,7 +7,7 @@
 	<Tool
 		Name="VCCLCompilerTool"
 		AdditionalIncludeDirectories="..\..\..\libsndfile\Win32\include"
-		PreprocessorDefinitions="HAVE_SNDFILE_H"
+		PreprocessorDefinitions="HAVE_SNDFILE_H;HAVE_SF_GET_CHUNK_ITERATOR;HAVE_SF_CHUNK_INFO"
 	/>
 	<Tool
 		Name="VCLinkerTool"
