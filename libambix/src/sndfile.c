@@ -198,7 +198,7 @@ ambix_err_t _ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t
   ambix->byteswap=(sf_command(PRIVATE(ambix)->sf_file, SFC_RAW_DATA_NEEDS_ENDSWAP, NULL, 0) == SF_TRUE);
   ambix->channels = PRIVATE(ambix)->sf_info.channels;
 
-  caf=((SF_FORMAT_CAF == (SF_FORMAT_TYPEMASK & PRIVATE(ambix)->sf_info.format) != 0));
+  caf=((SF_FORMAT_CAF == (SF_FORMAT_TYPEMASK & PRIVATE(ambix)->sf_info.format)) != 0);
   if(caf) {
     ambix->is_AMBIX=1;
     
