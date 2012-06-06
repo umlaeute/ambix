@@ -48,6 +48,10 @@ static void noop(const char*format, ...) {}
 #include <m_pd.h>
 #include <ambix/ambix.h>
 
+#ifdef _MSC_VER
+# define snprintf _snprintf
+#endif
+
 #define MAXSFCHANS 64
 #define DEFAULTVECSIZE 128
 
@@ -218,11 +222,11 @@ typedef struct _ambix_read {
 static void *ambix_read_child_main(void *zz) {
   t_ambix_read *x = (t_ambix_read*)zz;
   ambix_t*ambix=NULL;
-  pthread_mutex_lock(&x->x_mutex);
   const uint32_t want_ambichannels    = x->x_ambichannels;
   const uint32_t want_xtrachannels    = x->x_xtrachannels;
   const uint32_t want_framesize       = want_ambichannels+want_xtrachannels; // in samples
   const ambix_fileformat_t want_fileformat = x->x_fileformat;
+  pthread_mutex_lock(&x->x_mutex);
 
   while (1) {
     int fd, fifohead;
@@ -313,6 +317,8 @@ static void *ambix_read_child_main(void *zz) {
 
       while (x->x_requestcode == REQUEST_BUSY) {
         int fifosize = x->x_fifosize, fifotail;
+        int bufframes = 0;
+		int bufsize = 0;
         if (x->x_eof)
           break;
         if (x->x_fifohead >= x->x_fifotail) {
@@ -331,7 +337,7 @@ static void *ambix_read_child_main(void *zz) {
             pthread_cond_wait(&x->x_requestcondition, &x->x_mutex);
             continue;
           }
-        } else {
+		} else {
           /* otherwise check if there are at least READFRAMES
              bytes to read.  If not, wait and loop back. */
           wantframes =  x->x_fifotail - x->x_fifohead - 1;
@@ -346,8 +352,8 @@ static void *ambix_read_child_main(void *zz) {
         fifohead = x->x_fifohead;
         fifotail = x->x_fifotail;
 
-        int bufframes = x->x_bufframes;
-        int bufsize = x->x_bufsize;
+        bufframes = x->x_bufframes;
+        bufsize = x->x_bufsize;
 
         pthread_mutex_unlock(&x->x_mutex);
 
