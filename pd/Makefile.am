@@ -39,6 +39,16 @@ ambix_read__la_SOURCES		= ambix_read~.c
 ambix_readX__la_SOURCES		= ambix_read~.c
 ambix_write__la_SOURCES		= ambix_write~.c
 
+SOURCES				= winhacks.h
+
+if WINDOWS
+ambix_info_la_SOURCES		+= winhacks.c 
+ambix_read__la_SOURCES		+= winhacks.c 
+ambix_readX__la_SOURCES		+= winhacks.c 
+ambix_write__la_SOURCES		+= winhacks.c 
+endif WINDOWS
+
+
 # convenience symlinks
 .PHONY: convenience-link clean-convenience-link
 
