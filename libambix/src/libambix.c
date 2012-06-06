@@ -74,7 +74,7 @@ static void _ambix_info_set(ambix_t*ambix
   ambix->realinfo.fileformat=format;
   ambix->realinfo.ambichannels=ambichannels;
   ambix->realinfo.extrachannels=otherchannels;
-  ambix->ambisonics_order==fullambichannels>0?ambix_channels2order(fullambichannels):0;
+  ambix->ambisonics_order=(fullambichannels>0)?ambix_channels2order(fullambichannels):0;
 }
 
 ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambix_info_t*ambixinfo) {
