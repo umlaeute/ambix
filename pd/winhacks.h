@@ -26,10 +26,14 @@
 
 #ifdef __MINGW32__
 int _get_output_format( void );
-#endif
-#ifdef _MSC_VER
+#endif /* mingw */
+
+#ifdef _WIN32
 char *strndup (const char *s, size_t n);
-#endif
+#endif /* w32 */
 
+#ifdef _MSC_VER
+# define snprintf _snprintf
+#endif /* MSVC */
 
-#endif WINHACKS_H
+#endif /* WINHACKS_H */

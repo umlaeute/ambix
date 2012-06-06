@@ -28,9 +28,9 @@
 int _get_output_format( void ) { 
 	return 1; 
 }
-#endif
+#endif /* __MINGW32__ */
 
-#ifdef _MSC_VER
+#ifdef _WIN32
 #include <string.h>
 #include <stdlib.h>
 char *
@@ -49,4 +49,4 @@ strndup (const char *s, size_t n)
   result[len] = '\0';
   return (char *) memcpy (result, s, len);
 }
-#endif
+#endif /* _WIN32 */
