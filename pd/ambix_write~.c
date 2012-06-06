@@ -458,8 +458,12 @@ static void *ambix_write_new(t_symbol*s, int argc, t_atom*argv) {
 
   x = (t_ambix_write *)pd_new(ambix_write_class);
 
-  if(limiting)
+  if(limiting) {
     pd_error(x, "limiting to %d ambisonics channels and %d extra channels", achannels, xchannels);
+    if(have_x) {
+      /* FIXXME: remove 'have_x' variable */
+    }
+  }
 
   for (i = 1; i < nchannels; i++)
     inlet_new(&x->x_obj,  &x->x_obj.ob_pd, &s_signal, &s_signal);

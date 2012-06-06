@@ -468,6 +468,13 @@ static void *ambix_read_new(t_symbol*s, int argc, t_atom*argv) {
   }
   nchannels=achannels+xchannels;
 
+  if(limiting) {
+    /* FIXXME: warning on channel limiting */
+  }
+  if(have_x) {
+    /* FIXXME: remove 'have_x' variable */
+  }
+
   if (bufframes <= 0) bufframes = DEFBUFPERCHAN;
   else if (bufframes < MINBUFSIZE)
     bufframes = MINBUFSIZE;
@@ -777,6 +784,9 @@ void ambix_read_tilde_setup(void) {
   class_addmethod(ambix_read_class, (t_method)ambix_read_dsp, gensym("dsp"), A_NULL);
   class_addmethod(ambix_read_class, (t_method)ambix_read_open, gensym("open"), A_SYMBOL, A_DEFFLOAT, A_NULL);
   class_addmethod(ambix_read_class, (t_method)ambix_read_print, gensym("print"), A_NULL);
+
+  if(0)
+    MARK("[ambix_read~] setup done");
 }
 
 AMBIX_EXPORT
