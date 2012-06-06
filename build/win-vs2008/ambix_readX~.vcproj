@@ -178,6 +178,18 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="winhacks"
+			>
+			<File
+				RelativePath="..\..\pd\winhacks.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\pd\winhacks.h"
+				>
+			</File>
+		</Filter>
 	</Files>
 	<Globals>
 	</Globals>
