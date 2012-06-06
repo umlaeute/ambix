@@ -117,7 +117,7 @@ read_uuidchunk(ambix_t*ax) {
 
   const char*id="uuid";
 	memset (&chunk_info, 0, sizeof (chunk_info)) ;
-	snprintf (chunk_info.id, sizeof (chunk_info.id), id) ;
+	snprintf (chunk_info.id, sizeof (chunk_info.id), "%s", id) ;
 	chunk_info.id_size = 4 ;
 
   for(iterator = sf_get_chunk_iterator (file, &chunk_info); NULL!=iterator; iterator=sf_next_chunk_iterator (iterator)) {
