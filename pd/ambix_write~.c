@@ -25,14 +25,15 @@
 
 */
 
-
 #ifndef _WIN32
-#include <unistd.h>
-#include <fcntl.h>
+# include <unistd.h>
+# include <fcntl.h>
 #endif
+
 #include <pthread.h>
+
 #ifdef _WIN32
-#include <io.h>
+# include <io.h>
 #endif
 
 #include <stdio.h>
@@ -42,6 +43,8 @@
 
 #include <m_pd.h>
 #include <ambix/ambix.h>
+
+#include "winhacks.h"
 
 #define MAXSFCHANS 64
 #define DEFAULTVECSIZE 128
@@ -699,6 +702,7 @@ static void ambix_write_matrix(t_ambix_write *x, t_symbol*s, int argc, t_atom*ar
     printmatrix(x->x_matrix);
 }
 
+AMBIX_EXPORT
 void ambix_write_tilde_setup(void) {
   ambix_write_class = class_new(gensym("ambix_write~"), (t_newmethod)ambix_write_new,
                             (t_method)ambix_write_free, sizeof(t_ambix_write), 0, A_GIMME, A_NULL);

@@ -32,12 +32,12 @@ static void noop(const char*format, ...) {}
 # define MARK noop
 #endif
 #ifndef _WIN32
-#include <unistd.h>
-#include <fcntl.h>
+# include <unistd.h>
+# include <fcntl.h>
 #endif
 #include <pthread.h>
 #ifdef _WIN32
-#include <io.h>
+# include <io.h>
 #endif
 
 #include <stdlib.h>
@@ -48,9 +48,7 @@ static void noop(const char*format, ...) {}
 #include <m_pd.h>
 #include <ambix/ambix.h>
 
-#ifdef _MSC_VER
-# define snprintf _snprintf
-#endif
+#include "winhacks.h"
 
 #define MAXSFCHANS 64
 #define DEFAULTVECSIZE 128
@@ -771,6 +769,7 @@ static void ambix_read_free(t_ambix_read *x) {
   ambix_matrix_deinit(&x->x_matrix);
 }
 
+AMBIX_EXPORT
 void ambix_read_tilde_setup(void) {
   ambix_read_class = class_new(gensym("ambix_read~"), (t_newmethod)ambix_read_new,
                                (t_method)ambix_read_free, sizeof(t_ambix_read), 0, A_GIMME, A_NULL);
@@ -784,6 +783,7 @@ void ambix_read_tilde_setup(void) {
   class_addmethod(ambix_read_class, (t_method)ambix_read_print, gensym("print"), A_NULL);
 }
 
+AMBIX_EXPORT
 void ambix_readX_tilde_setup(void) {
   ambix_read_tilde_setup();
 }

@@ -36,6 +36,8 @@ static void noop(const char*format, ...) {}
 #include <m_pd.h>
 #include <ambix/ambix.h>
 
+#include "winhacks.h"
+
 /************************* ambix_info object ******************************/
 
 /* [ambix_info~] uses the Posix threads package; for the moment we're Linux
@@ -184,6 +186,7 @@ static void ambix_info_free(t_ambix_info *x) {
   outlet_free(x->x_outlet);
 }
 
+AMBIX_EXPORT
 void ambix_info_setup(void) {
   ambix_info_class = class_new(gensym("ambix_info"), (t_newmethod)ambix_info_new,
                                (t_method)ambix_info_free, sizeof(t_ambix_info), 0, A_GIMME, A_NULL);
