@@ -17,8 +17,19 @@ AM_CPPFLAGS = -I$(top_srcdir)/libambix
 # RTE
 AM_CFLAGS += @RTE_CFLAGS@
 AM_LDFLAGS+= @RTE_LIBS@
-
 AM_LDFLAGS+=$(top_builddir)/libambix/src/libambix.la
+
+ambix_read__la_CFLAGS	 = @RTE_CFLAGS@ @PTHREAD_CFLAGS@
+ambix_read__la_LDFLAGS	 = $(top_builddir)/libambix/src/libambix.la
+ambix_read__la_LDFLAGS	+= @RTE_LIBS@ @PTHREAD_LDFLAGS@
+
+ambix_readX__la_CFLAGS	 = @RTE_CFLAGS@ @PTHREAD_CFLAGS@
+ambix_readX__la_LDFLAGS	 = $(top_builddir)/libambix/src/libambix.la
+ambix_readX__la_LDFLAGS	+= @RTE_LIBS@ @PTHREAD_LDFLAGS@
+
+ambix_write__la_CFLAGS	 = @RTE_CFLAGS@ @PTHREAD_CFLAGS@
+ambix_write__la_LDFLAGS	 = $(top_builddir)/libambix/src/libambix.la
+ambix_write__la_LDFLAGS	+= @RTE_LIBS@ @PTHREAD_LDFLAGS@
 
 rteambix_LTLIBRARIES+= \
         ambix_info.la \
