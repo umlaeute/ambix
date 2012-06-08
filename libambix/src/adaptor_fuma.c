@@ -188,7 +188,7 @@ _matrix_ambix2fuma(uint32_t cols) {
     16,// WXYZRSTUVKLMNOPQ
   };
 
-  if(cols<0 || cols > 16)
+  if(cols > 16)
     return NULL;
 
   if(rows_v[cols]) {
@@ -285,7 +285,7 @@ _matrix_fuma2ambix(uint32_t rows) {
     16,// WXYZRSTUVKLMNOPQ
   };
 
-  if(rows<0 || rows > 16)
+  if(rows > 16)
     return NULL;
 
   if(cols_v[rows]) {
