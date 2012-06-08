@@ -135,6 +135,9 @@ read_uuidchunk(ambix_t*ax) {
     }
 
     chunk_info.data = malloc (chunk_info.datalen) ;
+    if(!chunk_info.data) {
+      return AMBIX_ERR_UNKNOWN;
+    }
     err = sf_get_chunk_data (iterator, &chunk_info) ;
     if(err != SF_ERR_NO_ERROR) {
       continue;

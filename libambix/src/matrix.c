@@ -267,6 +267,8 @@ ambix_matrix_fill(ambix_matrix_t*matrix, ambix_matrixtype_t typ) {
 
   case (AMBIX_MATRIX_SID): /* SID -> ACN */ {
     float32_t*ordering=(float32_t*)malloc(rows*sizeof(float32_t));
+    if(!ordering)
+      return NULL;
     if(!_matrix_sid2acn(ordering, rows)) {
       free(ordering);
       return NULL;
