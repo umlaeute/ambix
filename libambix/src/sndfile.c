@@ -342,7 +342,7 @@ ambix_err_t _ambix_write_uuidchunk(ambix_t*ax, const void*data, int64_t datasize
 
   if(datasize4*4 < datasize)
     datasize4++;
-	memset (chunk, 0, sizeof (chunk)) ;
+	memset (chunk, 0, sizeof (*chunk)) ;
 	snprintf (chunk->id, sizeof (chunk->id), "uuid") ;
 	chunk->id_size = 4 ;
   if(chunk->data)
