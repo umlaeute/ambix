@@ -39,10 +39,13 @@ ambix_err_t _ambix_adaptorbuffer_resize(ambix_t*ambix, uint64_t frames, uint16_t
 
   if(size > ambix->adaptorbuffersize) {
     /* re-allocate memory! */
-    ambix->adaptorbuffer=realloc(ambix->adaptorbuffer, size);
-    if(ambix->adaptorbuffer)
+    void*newbuf=realloc(ambix->adaptorbuffer, size);
+    if(newbuf) {
+      ambix->adaptorbuffer=newbuf;
       ambix->adaptorbuffersize=size;
-    else {
+    } else {
+      free(ambix->adaptorbuffer);
+      ambix->adaptorbuffer=NULL;
       ambix->adaptorbuffersize=0;
       return AMBIX_ERR_UNKNOWN;
     }

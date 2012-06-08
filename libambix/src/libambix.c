@@ -314,7 +314,8 @@ static ambix_err_t _ambix_check_read(ambix_t*ambix, const void*ambidata, const v
     type##_t*adaptorbuffer;                                             \
     ambix_err_t err= _ambix_check_read(ambix, (const void*)ambidata, (const void*)otherdata, frames); \
     if(AMBIX_ERR_SUCCESS != err) return -err;                           \
-    _ambix_adaptorbuffer_resize(ambix, frames, sizeof(type##_t));       \
+    err=_ambix_adaptorbuffer_resize(ambix, frames, sizeof(type##_t));   \
+    if(AMBIX_ERR_SUCCESS != err) return -err;                           \
     adaptorbuffer=(type##_t*)ambix->adaptorbuffer;                      \
     realframes=_ambix_readf_##type(ambix, adaptorbuffer, frames);       \
     switch(ambix->use_matrix) {                                         \
@@ -335,7 +336,8 @@ static ambix_err_t _ambix_check_read(ambix_t*ambix, const void*ambidata, const v
     type##_t*adaptorbuffer;                                             \
     ambix_err_t err= _ambix_check_write(ambix, (const void*)ambidata, (const void*)otherdata, frames); \
     if(AMBIX_ERR_SUCCESS != err) return -err;                           \
-    _ambix_adaptorbuffer_resize(ambix, frames, sizeof(type##_t));       \
+    err=_ambix_adaptorbuffer_resize(ambix, frames, sizeof(type##_t));   \
+    if(AMBIX_ERR_SUCCESS != err) return -err;                           \
     adaptorbuffer=(type##_t*)ambix->adaptorbuffer;                      \
     _ambix_mergeAdaptor_##type(ambidata, ambix->info.ambichannels, otherdata, ambix->info.extrachannels, adaptorbuffer, frames); \
     return _ambix_writef_##type(ambix, adaptorbuffer, frames);          \
