@@ -70,7 +70,7 @@ typedef union {
 
 
 /** opaque handle to an ambix file */
-typedef struct ambix_t ambix_t;
+typedef struct ambix_t_struct ambix_t;
 
 
 /** error codes returned by functions */

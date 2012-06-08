@@ -48,7 +48,7 @@
 #include <ambix/ambix.h>
 
 /** this is for passing data about the opened ambix file between the host application and the library */
-typedef struct ambix_t {
+struct ambix_t_struct {
   /** private data by the actual backend */
   void*private_data;
 
@@ -96,7 +96,7 @@ typedef struct ambix_t {
 
   /** whether we have pending headers to write */
   int pendingHeaders;
-} ambix_t;
+};
 
 
 /** @brief Do open an ambix file
