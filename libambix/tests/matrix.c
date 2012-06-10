@@ -115,6 +115,10 @@ void datamul_tests(float32_t eps) {
   float32_t*resultdataT = (float32_t*)calloc(4*2, sizeof(float32_t));
   float32_t*inputdata   = (float32_t*)calloc(2*3, sizeof(float32_t));
 
+  fail_if((NULL==resultdata), __LINE__, "couldn't callocate resultdata");
+  fail_if((NULL==resultdataT), __LINE__, "couldn't callocate resultdataT");
+  fail_if((NULL==inputdata), __LINE__, "couldn't callocate inputdata");
+
   ambix_matrix_t*mtx=NULL;
   STARTTEST("");
 
@@ -171,6 +175,8 @@ void datamul_eye_tests(float32_t eps) {
 
   inputdata =data_sine(frames, channels, freq);
   outputdata=(float32_t*)malloc(sizeof(float32_t)*frames*channels);
+  fail_if((NULL==outputdata), __LINE__, "couldn't mallocate outputdata");
+
   ambix_matrix_init(channels, channels, &eye);
   ambix_matrix_fill(&eye, AMBIX_MATRIX_IDENTITY);
 
@@ -213,6 +219,7 @@ void datamul_4_2_tests(uint32_t chunksize, float32_t eps) {
   targetdata=data_sine(frames, cokchannels, freq);
 
   outputdata=(float32_t*)malloc(sizeof(float32_t)*frames*cokchannels);
+  fail_if((NULL==outputdata), __LINE__, "couldn't allocate outputdata");
 
   ambix_matrix_init(cokchannels, rawchannels, &eye);
   rows=eye.rows;
