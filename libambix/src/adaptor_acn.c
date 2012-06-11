@@ -31,7 +31,7 @@ int _matrix_sid2acn(float32_t*data, uint32_t count) {
 
   for(o=0; o<=order; o++) {
     uint32_t offset=o>0?ambix_order2channels(o-1):0;
-    uint32_t maxindex=ambix_order2channels(o)-offset;
+    int32_t maxindex=ambix_order2channels(o)-offset;
 
     int32_t index;
 
