@@ -1,6 +1,6 @@
 /* ambix_read~ -  read AMBIsonics eXchange files in Pd        -*- c -*-
 
- Copyright © 1997-1999 Miller Puckette.
+ Copyright © 1997-1999 Miller Puckette <msp@ucsd.edu>.
  Copyright © 2012 IOhannes m zmölnig <zmoelnig@iem.at>.
  Institute of Electronic Music and Acoustics (IEM),
  University of Music and Dramatic Arts, Graz

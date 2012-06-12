@@ -1,5 +1,5 @@
-#ifndef _COMMON_OBSERVE_SIGNAL_H
-#define _COMMON_OBSERVE_SIGNAL_H
+#ifndef JCOMMON_OBSERVE_SIGNAL_H
+#define JCOMMON_OBSERVE_SIGNAL_H
 
 #include <stdbool.h>
 

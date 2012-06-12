@@ -123,7 +123,7 @@ ambix_err_t	_ambix_close	(ambix_t*ambix);
  * @param ambix The handle to an ambix file
  * @param frames frame offset from the position given in whence
  * @param whence location from where to seek; (see lseek)
- * @return the offset in (multichannel) frames from the start of the audio data or -1 if an error occured
+ * @return the offset in (multichannel) frames from the start of the audio data or -1 if an error occurred
  */
 int64_t _ambix_seek (ambix_t* ambix, int64_t frames, int bias);
 
@@ -342,7 +342,7 @@ ambix_matrix_t*_matrix_diag(ambix_matrix_t*orgmatrix, const float32_t*diag, uint
  * @param orgmatrix pointer to the matrix object that will hold the result or NULL
  * @param route permutation vector (if(route[1]==4)then{row#1 of output matrix will be [0 0 0 0 1 0 ...]}
  * @param count number of elements in route
- * @param transpose whether the result should be transposed (swapped rows and colums)
+ * @param transpose whether the result should be transposed (swapped rows and columns)
  * @return pointer to the resulting permutation matrix, or NULL in case something went wrong
  */
 ambix_matrix_t*_matrix_router(ambix_matrix_t*orgmatrix, const float32_t*route, uint32_t count, int transpose);
@@ -352,7 +352,7 @@ ambix_matrix_t*_matrix_router(ambix_matrix_t*orgmatrix, const float32_t*route, u
  *        the permutate vector must have matrix->rows elements (matrix->cols if swap is TRUE);
  *        negative permutation indices will skip the given row (if(permutate[3]=-1)then{row#3 will be [0 0 0 ...]};
  *        permutation indicies exceeding the valid range will restult in an error
- * @param transpose whether the result should be transposed (swapped rows and colums)
+ * @param transpose whether the result should be transposed (swapped rows and columns)
  * @return pointer to the resulting permutation matrix, or NULL in case something went wrong
  */
 ambix_matrix_t*_matrix_permutate(ambix_matrix_t*matrix, const float32_t*permutate, int swap);

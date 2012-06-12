@@ -21,7 +21,7 @@
 
 
    SF_UUID_ code is:
-   Copyright © 2012 Christian Nachbar,
+   Copyright © 2012 Christian Nachbar <christian.nachbar@student.kug.ac.at>,
          Institute of Electronic Music and Acoustics (IEM),
          University of Music and Dramatic Arts, Graz
 

@@ -1,5 +1,5 @@
-#ifndef _COMMON_JACK_RINGBUFFER_H
-#define _COMMON_JACK_RINGBUFFER_H
+#ifndef JCOMMON_JACK_RINGBUFFER_H
+#define JCOMMON_JACK_RINGBUFFER_H
 
 #include <jack/jack.h>
 #include <jack/ringbuffer.h>

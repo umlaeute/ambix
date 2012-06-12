@@ -1,6 +1,6 @@
 /* jcommon/common.h -  common helper functions for jack-utils            -*- c -*-
 
-   Copyright © 2003-2001 Rohan Drape
+   Copyright © 2003-2001 Rohan Drape <rd@slavepianos.org>
    Copyright © 2012 IOhannes m zmölnig <zmoelnig@iem.at>.
          Institute of Electronic Music and Acoustics (IEM),
          University of Music and Dramatic Arts, Graz
