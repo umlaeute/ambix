@@ -46,25 +46,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#ifdef _WIN32
-static char *
-strndup (const char *s, size_t n)
-{
-  char *result = NULL;
-  size_t len = strlen (s);
-
-  if (n < len)
-    len = n;
-
-  result = (char *) malloc (len + 1);
-  if (!result)
-    return 0;
-
-  result[len] = '\0';
-  return (char *) memcpy (result, s, len);
-}
-#endif /* _WIN32 */
-
+#include "replacement/strndup.h"
 
 #define MARK() printf("%s:%d[%s]\n", __FILE__, __LINE__, __FUNCTION__)
 
