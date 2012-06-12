@@ -1,10 +1,10 @@
 /* winhacks.h -  AMBIsonics eXchange hacks for w32 compilation     -*- c -*-
 
-   Copyright © 2012 IOhannes m zmölnig <zmoelnig@iem.at>.
+   Copyright Â© 2012 IOhannes m zmÃ¶lnig <zmoelnig@iem.at>.
          Institute of Electronic Music and Acoustics (IEM),
          University of Music and Dramatic Arts, Graz
 
-   Copyright © 2005 Free Software Foundation, Inc.
+   Copyright Â© 2005 Free Software Foundation, Inc.
          Written by Kaveh R. Ghazi <ghazi@caip.rutgers.edu>.
 
    This file is part of libambix
