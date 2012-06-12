@@ -45,6 +45,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ambix_read~", "ambix_read~.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ambix_readX~", "ambix_readX~.vcproj", "{95B89D46-7697-48C4-B45C-8B01BE1E64ED}"
 	ProjectSection(ProjectDependencies) = postProject
+		{0932801D-7075-486D-BB4F-FEBC2AA15FFC} = {0932801D-7075-486D-BB4F-FEBC2AA15FFC}
 		{26716438-5563-43B5-8D7E-D8B8ADBC4630} = {26716438-5563-43B5-8D7E-D8B8ADBC4630}
 	EndProjectSection
 EndProject
