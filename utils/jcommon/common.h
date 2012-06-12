@@ -24,6 +24,10 @@
 #ifndef JCOMMON_COMMON_H
 #define JCOMMON_COMMON_H
 
+#ifdef HAVE_SYS_TYPES_H
+# include <sys/types.h>
+#endif \* HAVE_SYS_TYPES_H *\
+
 #include <jack/jack.h>
 
 
