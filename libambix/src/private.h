@@ -125,7 +125,7 @@ ambix_err_t	_ambix_close	(ambix_t*ambix);
  * @param whence location from where to seek; (see lseek)
  * @return the offset in (multichannel) frames from the start of the audio data or -1 if an error occured
  */
-int64_t _ambix_seek (ambix_t* ambix, int64_t frames, int bias);
+int64_t _ambix_seek (ambix_t* ambix, int64_t frames, int whence);
 
 /** @brief Do get an libsndfile handle
  *
