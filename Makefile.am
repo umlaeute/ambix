@@ -7,3 +7,5 @@ SUBDIRS=libambix \
 	doc
 
 SUBDIRS+=pd
+
+SUBDIRS+=build

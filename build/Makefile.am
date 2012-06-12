@@ -1,0 +1,1 @@
+SUBDIRS=w32-vs2008

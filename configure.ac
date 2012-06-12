@@ -19,6 +19,8 @@ AC_CONFIG_FILES([replacement/Makefile])
 
 AC_CONFIG_FILES([pd/Makefile pd/ambix-meta.pd])
 
+AC_CONFIG_FILES([build/Makefile build/w32-vs2008/Makefile])
+
 IEM_OPERATING_SYSTEM
 
 
