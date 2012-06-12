@@ -7,8 +7,9 @@
 	>
 	<Tool
 		Name="VCCLCompilerTool"
-		AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\..\libambix&quot;"
+		AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\..\libambix&quot;;&quot;$(SolutionDir)\..\..&quot;"
 		PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS;HAVE_STDLIB_H;HAVE_STRING_H;PACKAGE_BUGREPORT=\&quot;zmoelnig@iem.at\&quot;;PACKAGE_URL=\&quot;http://ambisonics.iem.at/xchange/format\&quot;;PACKAGE_VERSION=\&quot;0.0.1\&quot;"
+		ProgramDataBaseFileName="$(IntDir)\$(TargetName)-vc90.pdb"
 	/>
 	<Tool
 		Name="VCLinkerTool"
