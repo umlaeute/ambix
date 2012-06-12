@@ -20,18 +20,9 @@
 		3A45EDE915877EA7006FE6D6 /* sndfile.c in Sources */ = {isa = PBXBuildFile; fileRef = 3A45EDE815877EA7006FE6D6 /* sndfile.c */; };
 		3A45EDEB15877F6C006FE6D6 /* libsndfile.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A45EDEA15877F6C006FE6D6 /* libsndfile.1.dylib */; };
 		3A45EE8015879729006FE6D6 /* private.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A45EDAC1587797F006FE6D6 /* private.h */; };
-		3A45EE8115879732006FE6D6 /* sndfile.c in Sources */ = {isa = PBXBuildFile; fileRef = 3A45EDE815877EA7006FE6D6 /* sndfile.c */; };
 		3A45EE8215879732006FE6D6 /* ambix.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A45EDBA158779CF006FE6D6 /* ambix.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3A45EE8315879732006FE6D6 /* exportdefs.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A45EDBB158779CF006FE6D6 /* exportdefs.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3A45EE8415879732006FE6D6 /* uuid_chunk.c in Sources */ = {isa = PBXBuildFile; fileRef = 3A45EDA71587797F006FE6D6 /* uuid_chunk.c */; };
-		3A45EE8515879732006FE6D6 /* adaptor.c in Sources */ = {isa = PBXBuildFile; fileRef = 3A45EDA81587797F006FE6D6 /* adaptor.c */; };
-		3A45EE8615879732006FE6D6 /* adaptor_fuma.c in Sources */ = {isa = PBXBuildFile; fileRef = 3A45EDA91587797F006FE6D6 /* adaptor_fuma.c */; };
-		3A45EE8715879732006FE6D6 /* libambix.c in Sources */ = {isa = PBXBuildFile; fileRef = 3A45EDAA1587797F006FE6D6 /* libambix.c */; };
-		3A45EE8815879732006FE6D6 /* matrix.c in Sources */ = {isa = PBXBuildFile; fileRef = 3A45EDAB1587797F006FE6D6 /* matrix.c */; };
-		3A45EE8A15879732006FE6D6 /* utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 3A45EDAE1587797F006FE6D6 /* utils.c */; };
-		3A45EE8B15879732006FE6D6 /* adaptor_acn.c in Sources */ = {isa = PBXBuildFile; fileRef = 3A45EDAF1587797F006FE6D6 /* adaptor_acn.c */; };
-		3A45EE8C158798CE006FE6D6 /* libsndfile.1.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 3A45EDEA15877F6C006FE6D6 /* libsndfile.1.dylib */; };
-		3A45EE8D158798E7006FE6D6 /* AmbiX-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3A45EE6915879685006FE6D6 /* AmbiX-Info.plist */; };
+		3A45EECE15879E83006FE6D6 /* libambix.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 3A45ED9F15877872006FE6D6 /* libambix.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -48,7 +39,7 @@
 		3A45EDBB158779CF006FE6D6 /* exportdefs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = exportdefs.h; path = ../../libambix/ambix/exportdefs.h; sourceTree = SOURCE_ROOT; };
 		3A45EDE815877EA7006FE6D6 /* sndfile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sndfile.c; path = ../../libambix/src/sndfile.c; sourceTree = SOURCE_ROOT; };
 		3A45EDEA15877F6C006FE6D6 /* libsndfile.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsndfile.1.dylib; path = usr/local/lib/libsndfile.1.dylib; sourceTree = SDKROOT; };
-		3A45EE6815879685006FE6D6 /* AmbiX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = AmbiX.framework; path = build/Release/AmbiX.framework; sourceTree = "<group>"; };
+		3A45EE6815879685006FE6D6 /* AmbiX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AmbiX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3A45EE6915879685006FE6D6 /* AmbiX-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "AmbiX-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -85,9 +76,8 @@
 		08FB7795FE84155DC02AAC07 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				3A45EEAC15879C55006FE6D6 /* ambix */,
 				3A45EDE815877EA7006FE6D6 /* sndfile.c */,
-				3A45EDBA158779CF006FE6D6 /* ambix.h */,
-				3A45EDBB158779CF006FE6D6 /* exportdefs.h */,
 				3A45EDA71587797F006FE6D6 /* uuid_chunk.c */,
 				3A45EDA81587797F006FE6D6 /* adaptor.c */,
 				3A45EDA91587797F006FE6D6 /* adaptor_fuma.c */,
@@ -107,6 +97,15 @@
 				3A45EE6815879685006FE6D6 /* AmbiX.framework */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		3A45EEAC15879C55006FE6D6 /* ambix */ = {
+			isa = PBXGroup;
+			children = (
+				3A45EDBA158779CF006FE6D6 /* ambix.h */,
+				3A45EDBB158779CF006FE6D6 /* exportdefs.h */,
+			);
+			name = ambix;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -194,8 +193,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3A45EE8D158798E7006FE6D6 /* AmbiX-Info.plist in Resources */,
-				3A45EE8C158798CE006FE6D6 /* libsndfile.1.dylib in Resources */,
+				3A45EECE15879E83006FE6D6 /* libambix.dylib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -221,14 +219,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3A45EE8115879732006FE6D6 /* sndfile.c in Sources */,
-				3A45EE8415879732006FE6D6 /* uuid_chunk.c in Sources */,
-				3A45EE8515879732006FE6D6 /* adaptor.c in Sources */,
-				3A45EE8615879732006FE6D6 /* adaptor_fuma.c in Sources */,
-				3A45EE8715879732006FE6D6 /* libambix.c in Sources */,
-				3A45EE8815879732006FE6D6 /* matrix.c in Sources */,
-				3A45EE8A15879732006FE6D6 /* utils.c in Sources */,
-				3A45EE8B15879732006FE6D6 /* adaptor_acn.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -336,13 +326,23 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				GCC_PREFIX_HEADER = "";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					AMBIX_INTERNAL,
+					HAVE_STDLIB_H,
+					HAVE_STRING_H,
+					HAVE_SNDFILE_H,
+					HAVE_SF_CHUNK_INFO,
+					HAVE_SF_GET_CHUNK_ITERATOR,
+					HAVE_SF_SET_CHUNK,
+				);
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
+					../../libambix,
+				);
 				INFOPLIST_FILE = "AmbiX-Info.plist";
 				INSTALL_PATH = "$(HOME)/Library/Frameworks";
-				OTHER_LDFLAGS = (
-					"-framework",
-					Carbon,
-				);
+				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
 				PRODUCT_NAME = AmbiX;
 			};
@@ -360,13 +360,23 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				GCC_PREFIX_HEADER = "";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					AMBIX_INTERNAL,
+					HAVE_STDLIB_H,
+					HAVE_STRING_H,
+					HAVE_SNDFILE_H,
+					HAVE_SF_CHUNK_INFO,
+					HAVE_SF_GET_CHUNK_ITERATOR,
+					HAVE_SF_SET_CHUNK,
+				);
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
+					../../libambix,
+				);
 				INFOPLIST_FILE = "AmbiX-Info.plist";
 				INSTALL_PATH = "$(HOME)/Library/Frameworks";
-				OTHER_LDFLAGS = (
-					"-framework",
-					Carbon,
-				);
+				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
 				PRODUCT_NAME = AmbiX;
 				ZERO_LINK = NO;
