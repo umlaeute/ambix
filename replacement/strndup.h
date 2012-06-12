@@ -32,7 +32,7 @@
 # include <string.h>
 # include <stdlib.h>
 
-char *
+static char *
 strndup (const char *s, size_t n)
 {
   char *result = NULL;
