@@ -1,2 +1,1 @@
-SOURCES = \
-	strndup.h
+noinst_HEADERS = strndup.h
