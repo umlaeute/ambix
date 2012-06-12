@@ -505,7 +505,9 @@ void print_usage(const char*name) {
 #endif
 }
 void print_version(const char*name) {
+#ifdef PACKAGE_VERSION
   printf("%s %s\n", name, PACKAGE_VERSION);
+#endif
   printf("\n");
   printf("Copyright (C) 2012 Institute of Electronic Music and Acoustics (IEM), University of Music and Dramatic Arts (KUG), Graz, Austria.\n");
   printf("\n");

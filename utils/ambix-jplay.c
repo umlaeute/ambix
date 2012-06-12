@@ -299,7 +299,9 @@ void usage(const char*filename)
 
 void version(const char*name)
 {
+#ifdef PACKAGE_VERSION
   eprintf("%s %s\n", name, PACKAGE_VERSION);
+#endif
   eprintf("\n");
   eprintf("Copyright (C) 2003-2010 Rohan Drape\n");
   eprintf("Copyright (C) 2012 Institute of Electronic Music and Acoustics (IEM), University of Music and Dramatic Arts (KUG), Graz, Austria.\n");
