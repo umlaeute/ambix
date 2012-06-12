@@ -15,6 +15,7 @@ AC_CONFIG_FILES([libambix/Makefile libambix/src/Makefile libambix/tests/Makefile
 AC_CONFIG_FILES([libambix/libambix.pc])
 AC_CONFIG_FILES([utils/Makefile utils/jcommon/Makefile])
 AC_CONFIG_FILES([doc/Makefile])
+AC_CONFIG_FILES([replacement/Makefile])
 
 AC_CONFIG_FILES([pd/Makefile pd/ambix-meta.pd])
 
@@ -110,6 +111,7 @@ AC_CHECK_PROGS([DOXYGEN], [doxygen], [true])
 AM_CONDITIONAL(HAVE_DOXYGEN, [test "x${DOXYGEN}" != "xtrue"])
 AC_SUBST(DOXYGEN)
 
+AC_CHECK_FUNCS([strndup])
 
 AX_PTHREAD
 
