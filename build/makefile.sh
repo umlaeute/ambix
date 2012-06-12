@@ -3,7 +3,7 @@
 usage_print() {
   echo "usage: $0 <directory>"
   echo "	will generate <directory>/Makefile.am by adding all files in"
-  echo "	<directory> to the noinst_DATA target"
+  echo "	<directory> to the EXTRA_DIST target"
 }
 
 usage() {
@@ -25,7 +25,7 @@ listfiles() {
 }
 
 doit() {
-echo -n "nodist_DATA="
+echo -n "EXTRA_DIST="
 listfiles | while read line; do
  echo " \\"
  echo -n "	${line}"
