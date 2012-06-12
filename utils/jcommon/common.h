@@ -26,7 +26,7 @@
 
 #ifdef HAVE_SYS_TYPES_H
 # include <sys/types.h>
-#endif \* HAVE_SYS_TYPES_H *\
+#endif /* HAVE_SYS_TYPES_H */
 
 #include <jack/jack.h>
 
