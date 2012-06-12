@@ -12,7 +12,7 @@ if WINDOWS
 AM_LDFLAGS+= -no-undefined
 endif
 
-AM_CPPFLAGS = -I$(top_srcdir)/libambix
+AM_CPPFLAGS = -I$(top_srcdir)/libambix -I$(top_srcdir)
 
 # RTE
 AM_CFLAGS += @RTE_CFLAGS@

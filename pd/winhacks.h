@@ -28,9 +28,7 @@
 int _get_output_format( void );
 #endif /* mingw */
 
-#ifdef _WIN32
-char *strndup (const char *s, size_t n);
-#endif /* w32 */
+#include "replacement/strndup.h"
 
 #ifdef _MSC_VER
 # define snprintf _snprintf
