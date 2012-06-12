@@ -2,6 +2,10 @@
 
 #define _XOPEN_SOURCE 600 /* To use SA_RESTART and SA_RESETHAND */
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
