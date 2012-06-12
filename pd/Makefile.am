@@ -47,7 +47,7 @@ ambix_read__la_SOURCES		= ambix_read~.c
 ambix_readX__la_SOURCES		= ambix_read~.c
 ambix_write__la_SOURCES		= ambix_write~.c
 
-SOURCES				= winhacks.h
+noinst_HEADERS			= winhacks.h
 
 if WINDOWS
 ambix_info_la_SOURCES		+= winhacks.c 
