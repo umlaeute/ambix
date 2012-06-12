@@ -217,7 +217,7 @@ typedef struct ambix_info_t {
  * typedef from libsndfile
  * @private
  */
-typedef struct SNDFILE_tag SNDFILE;
+struct SNDFILE_tag;
 
 
 /*
@@ -375,7 +375,7 @@ int64_t ambix_writef_float32 (ambix_t* ambix, const float32_t* ambidata, const f
  * @return A libsndfile handle or NULL
  */
 AMBIX_API
-SNDFILE* ambix_get_sndfile (ambix_t* ambix);
+struct SNDFILE_tag* ambix_get_sndfile (ambix_t* ambix);
 
 /** @brief Get the adaptor matrix
  *

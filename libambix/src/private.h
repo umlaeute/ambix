@@ -134,7 +134,7 @@ int64_t _ambix_seek (ambix_t* ambix, int64_t frames, int whence);
  * @param ambix a pointer to a valid ambix structure
  * @return an SNDFILE handle or NULL if not possible
  */
-SNDFILE*_ambix_get_sndfile	(ambix_t*ambix);
+struct SNDFILE_tag*_ambix_get_sndfile	(ambix_t*ambix);
 
 /** @brief read 32bit float data from file
  * @param ambix a pointer to a valid ambix structure
