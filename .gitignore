@@ -33,9 +33,11 @@ m4/ltsugar\.m4
 m4/ltversion\.m4
 m4/lt~obsolete\.m4
 ## w32 build projects
-win-vs*/*
+build/w32-vs*/*
 *.vcproj.*.*.user
 !*.dsw
 !*.dsp
 !*.sln
 !*.vcproj
+!*.vsprops
+!Makefile.am
