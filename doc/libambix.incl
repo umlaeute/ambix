@@ -49,7 +49,7 @@
  * @section read_usage Reading ambix files
  *
  * When opening a file for read, the ambix_info_t struct should be set to 0. On
- * successfull open, all fields are filled by the library. If the open fails,
+ * successful open, all fields are filled by the library. If the open fails,
  * the state of the ambix_info_t fields is undefined.
  *
  * The only exception to this is, if you want to force the ambix file to be read
@@ -112,7 +112,7 @@
  * You can read an ambix file as "EXTENDED" by setting the 'fileformat' member
  * of the ambix_info_t struct to AMBIX_EXTENDED prior to opening the file. You
  * will then have to retrieve the adaptor matrix from the file, in order to be
- * able to reconstruct the full ambisonics set. You can also analyse the matrix
+ * able to reconstruct the full ambisonics set. You can also analyze the matrix
  * to make educated guesses about the original channel layout.
  *
  * @code
@@ -194,7 +194,7 @@
  * To write data to an ambix file, you have to open it with the AMBIX_WRITE
  * flag. You also need to specify some global properties of the output data,
  * namely the samplerate and the sampleformat, as well as the number of
- * ambisonics channels and the number of extra channels that are phyiscally
+ * ambisonics channels and the number of extra channels that are physically
  * stored on the disk.
  *
  * @subsection writebasic_usage Writing BASIC ambix files
