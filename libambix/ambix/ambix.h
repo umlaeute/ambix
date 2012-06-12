@@ -276,7 +276,7 @@ ambix_err_t ambix_close (ambix_t* ambix);
  *        SEEK_CUR, or SEEK_END, the offset is relative to the start of the file,
  *        the current position indicator, or end-of-file, respectively.
  *
- * @return the offset in (multichannel) frames from the start of the audio data or -1 if an error occured
+ * @return the offset in (multichannel) frames from the start of the audio data or -1 if an error occurred
  */
 AMBIX_API
 int64_t ambix_seek (ambix_t* ambix, int64_t frames, int whence);
@@ -313,7 +313,7 @@ int64_t ambix_readf_int32 (ambix_t* ambix, int32_t* ambidata, int32_t* otherdata
  *
  * @param frames number of sample frames you want to read
  *
- * @return the number of sample frames sucessfully read
+ * @return the number of sample frames successfully read
  */
 /** @brief Read samples (as single prevision floating point values) from the
  * ambix file
@@ -355,7 +355,7 @@ int64_t ambix_writef_int32 (ambix_t* ambix, const int32_t* ambidata, const int32
  *
  * @param frames number of sample frames you want to write
  *
- * @return the number of sample frames sucessfully written
+ * @return the number of sample frames successfully written
  */
 /** @brief Write (32bit floating point) samples to the ambix file
  * @ingroup ambix_writef
@@ -445,7 +445,7 @@ ambix_matrix_t* ambix_matrix_create (void);
 
 /** @brief Destroy a matrix
  *
- * Frees all ressources allocated for the matrix object.
+ * Frees all resources allocated for the matrix object.
  * It's a shortcut for ambix_matrix_deinit(mtx), free(mtx)
  *
  * @param mtx matrix object to destroy
@@ -473,7 +473,7 @@ ambix_matrix_t* ambix_matrix_init (uint32_t rows, uint32_t cols, ambix_matrix_t*
 
 /** @brief De-initialize a matrix
  *
- * Frees associated ressources and sets rows/columns to 0
+ * Frees associated resources and sets rows/columns to 0
  *
  * @param mtx matrix object to deinitialize
  */
