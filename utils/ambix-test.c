@@ -241,8 +241,14 @@ void print_usage(const char*name) {
   printf("  -h, --help                       Print this help\n");
   printf("  -V, --version                    Version information\n");
   printf("\n");
+
+#ifdef PACKAGE_BUGREPORT
   printf("Report bugs to: %s\n\n", PACKAGE_BUGREPORT);
+#endif
+#ifdef PACKAGE_URL
   printf("Home page: %s\n", PACKAGE_URL);
+#endif
+
   exit(1);
 }
 void print_version(const char*name) {

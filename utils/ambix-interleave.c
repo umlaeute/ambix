@@ -496,8 +496,13 @@ void print_usage(const char*name) {
          );
 
   printf("\n");
+
+#ifdef PACKAGE_BUGREPORT
   printf("Report bugs to: %s\n\n", PACKAGE_BUGREPORT);
+#endif
+#ifdef PACKAGE_URL
   printf("Home page: %s\n", PACKAGE_URL);
+#endif
 }
 void print_version(const char*name) {
   printf("%s %s\n", name, PACKAGE_VERSION);

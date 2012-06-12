@@ -268,8 +268,14 @@ void usage(const char*name)
   eprintf("    -V : Print version information.\n");
   eprintf("    -h : Print this help.\n");
   eprintf("\n");
+
+#ifdef PACKAGE_BUGREPORT
   eprintf("Report bugs to: %s\n\n", PACKAGE_BUGREPORT);
+#endif
+#ifdef PACKAGE_URL
   eprintf("Home page: %s\n", PACKAGE_URL);
+#endif
+
   FAILURE;
 }
 
