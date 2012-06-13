@@ -173,6 +173,7 @@
 			);
 			buildRules = (
 			);
+			comments = "embedding libsndfile:\n\n- make sure libsndfile.1.dylib ends up in <Framework>/Resources/\n- change the rpath of \"ambix\" to @loader_path/Resources/libsndfile.1.dylib\ne.g., with \n  $ install_name_tool -change /usr/local/lib/libsndfile.1.dylib @loader_path/Resources/libsndfile.1.dylib ambix\n\n\nalternatively, copy libsndfile via a new \"copy files\" target to destination \"executables\", so it will end up in <Framework>/Version/Current/";
 			dependencies = (
 			);
 			name = ambix;
