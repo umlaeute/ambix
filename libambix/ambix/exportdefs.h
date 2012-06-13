@@ -21,7 +21,6 @@
 
 */
 
-
 /**
  * @file	ambix/exportdefs.h
  * @brief	export definitions for various compilers
@@ -38,7 +37,6 @@
 /* MSVC always uses dllimport/dllexport */
 # define DLL_EXPORT
 #endif /* _MSC_VER */
-
 
 #ifdef DLL_EXPORT
 /* Windows requires explicit import and exporting of functions and classes.
@@ -68,7 +66,6 @@
 # define AMBIX_DEPRECATED
 #endif
 
-
 #ifdef AMBIX_INTERNAL
 /** mark symbols to be useable outside the library */
 # define AMBIX_API AMBIX_EXPORT
@@ -76,8 +73,5 @@
 /** mark symbols to be useable outside the library */
 # define AMBIX_API AMBIX_IMPORT
 #endif
-
-
-
 
 #endif /* AMBIX_EXPORTDEFS_H */
