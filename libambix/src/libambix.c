@@ -201,7 +201,7 @@ int64_t ambix_seek (ambix_t* ambix, int64_t frames, int whence) {
   return _ambix_seek(ambix, frames, whence);
 }
 
-SNDFILE*ambix_get_sndfile	(ambix_t*ambix) {
+struct SNDFILE_tag*ambix_get_sndfile	(ambix_t*ambix) {
   return _ambix_get_sndfile(ambix);
 }
 

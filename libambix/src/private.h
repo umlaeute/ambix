@@ -125,7 +125,7 @@ ambix_err_t	_ambix_close	(ambix_t*ambix);
  * @param whence location from where to seek; (see lseek)
  * @return the offset in (multichannel) frames from the start of the audio data or -1 if an error occurred
  */
-int64_t _ambix_seek (ambix_t* ambix, int64_t frames, int bias);
+int64_t _ambix_seek (ambix_t* ambix, int64_t frames, int whence);
 
 /** @brief Do get an libsndfile handle
  *
@@ -134,7 +134,7 @@ int64_t _ambix_seek (ambix_t* ambix, int64_t frames, int bias);
  * @param ambix a pointer to a valid ambix structure
  * @return an SNDFILE handle or NULL if not possible
  */
-SNDFILE*_ambix_get_sndfile	(ambix_t*ambix);
+struct SNDFILE_tag*_ambix_get_sndfile	(ambix_t*ambix);
 
 /** @brief read 32bit float data from file
  * @param ambix a pointer to a valid ambix structure
