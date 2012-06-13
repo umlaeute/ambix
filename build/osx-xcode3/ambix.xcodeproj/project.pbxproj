@@ -361,7 +361,7 @@
 					../../libambix,
 				);
 				INFOPLIST_FILE = "AmbiX-Info.plist";
-				INSTALL_PATH = "$(HOME)/Library/Frameworks";
+				INSTALL_PATH = "@rpath";
 				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
 				PRODUCT_NAME = ambix;
@@ -397,7 +397,7 @@
 					../../libambix,
 				);
 				INFOPLIST_FILE = "AmbiX-Info.plist";
-				INSTALL_PATH = "$(HOME)/Library/Frameworks";
+				INSTALL_PATH = "@rpath";
 				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
 				PRODUCT_NAME = ambix;
