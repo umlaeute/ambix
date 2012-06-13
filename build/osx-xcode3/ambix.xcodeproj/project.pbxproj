@@ -22,7 +22,16 @@
 		3A45EE8015879729006FE6D6 /* private.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A45EDAC1587797F006FE6D6 /* private.h */; };
 		3A45EE8215879732006FE6D6 /* ambix.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A45EDBA158779CF006FE6D6 /* ambix.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3A45EE8315879732006FE6D6 /* exportdefs.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A45EDBB158779CF006FE6D6 /* exportdefs.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3A45EECE15879E83006FE6D6 /* libambix.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 3A45ED9F15877872006FE6D6 /* libambix.dylib */; };
+		3A45EF1315887F85006FE6D6 /* libsndfile.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A45EDEA15877F6C006FE6D6 /* libsndfile.1.dylib */; };
+		3A45EF1715887FA2006FE6D6 /* libsndfile.1.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 3A45EDEA15877F6C006FE6D6 /* libsndfile.1.dylib */; };
+		3A45EF4F15888A13006FE6D6 /* uuid_chunk.c in Sources */ = {isa = PBXBuildFile; fileRef = 3A45EDA71587797F006FE6D6 /* uuid_chunk.c */; };
+		3A45EF5015888A13006FE6D6 /* adaptor.c in Sources */ = {isa = PBXBuildFile; fileRef = 3A45EDA81587797F006FE6D6 /* adaptor.c */; };
+		3A45EF5115888A13006FE6D6 /* adaptor_fuma.c in Sources */ = {isa = PBXBuildFile; fileRef = 3A45EDA91587797F006FE6D6 /* adaptor_fuma.c */; };
+		3A45EF5215888A13006FE6D6 /* libambix.c in Sources */ = {isa = PBXBuildFile; fileRef = 3A45EDAA1587797F006FE6D6 /* libambix.c */; };
+		3A45EF5315888A13006FE6D6 /* matrix.c in Sources */ = {isa = PBXBuildFile; fileRef = 3A45EDAB1587797F006FE6D6 /* matrix.c */; };
+		3A45EF5415888A13006FE6D6 /* utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 3A45EDAE1587797F006FE6D6 /* utils.c */; };
+		3A45EF5515888A13006FE6D6 /* adaptor_acn.c in Sources */ = {isa = PBXBuildFile; fileRef = 3A45EDAF1587797F006FE6D6 /* adaptor_acn.c */; };
+		3A45EF5615888A13006FE6D6 /* sndfile.c in Sources */ = {isa = PBXBuildFile; fileRef = 3A45EDE815877EA7006FE6D6 /* sndfile.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -39,7 +48,7 @@
 		3A45EDBB158779CF006FE6D6 /* exportdefs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = exportdefs.h; path = ../../libambix/ambix/exportdefs.h; sourceTree = SOURCE_ROOT; };
 		3A45EDE815877EA7006FE6D6 /* sndfile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sndfile.c; path = ../../libambix/src/sndfile.c; sourceTree = SOURCE_ROOT; };
 		3A45EDEA15877F6C006FE6D6 /* libsndfile.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsndfile.1.dylib; path = usr/local/lib/libsndfile.1.dylib; sourceTree = SDKROOT; };
-		3A45EE6815879685006FE6D6 /* AmbiX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AmbiX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		3A45EE6815879685006FE6D6 /* ambix.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ambix.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3A45EE6915879685006FE6D6 /* AmbiX-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "AmbiX-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -56,6 +65,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3A45EF1315887F85006FE6D6 /* libsndfile.1.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -94,7 +104,7 @@
 			isa = PBXGroup;
 			children = (
 				3A45ED9F15877872006FE6D6 /* libambix.dylib */,
-				3A45EE6815879685006FE6D6 /* AmbiX.framework */,
+				3A45EE6815879685006FE6D6 /* ambix.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -152,9 +162,9 @@
 			productReference = 3A45ED9F15877872006FE6D6 /* libambix.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
-		3A45EE6715879685006FE6D6 /* AmbiX */ = {
+		3A45EE6715879685006FE6D6 /* ambix */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 3A45EE6C15879688006FE6D6 /* Build configuration list for PBXNativeTarget "AmbiX" */;
+			buildConfigurationList = 3A45EE6C15879688006FE6D6 /* Build configuration list for PBXNativeTarget "ambix" */;
 			buildPhases = (
 				3A45EE6315879685006FE6D6 /* Headers */,
 				3A45EE6415879685006FE6D6 /* Resources */,
@@ -165,9 +175,9 @@
 			);
 			dependencies = (
 			);
-			name = AmbiX;
+			name = ambix;
 			productName = AmbiX;
-			productReference = 3A45EE6815879685006FE6D6 /* AmbiX.framework */;
+			productReference = 3A45EE6815879685006FE6D6 /* ambix.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
@@ -183,7 +193,7 @@
 			projectRoot = "";
 			targets = (
 				3A45ED9E15877872006FE6D6 /* libambix */,
-				3A45EE6715879685006FE6D6 /* AmbiX */,
+				3A45EE6715879685006FE6D6 /* ambix */,
 			);
 		};
 /* End PBXProject section */
@@ -193,7 +203,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3A45EECE15879E83006FE6D6 /* libambix.dylib in Resources */,
+				3A45EF1715887FA2006FE6D6 /* libsndfile.1.dylib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -219,6 +229,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3A45EF4F15888A13006FE6D6 /* uuid_chunk.c in Sources */,
+				3A45EF5015888A13006FE6D6 /* adaptor.c in Sources */,
+				3A45EF5115888A13006FE6D6 /* adaptor_fuma.c in Sources */,
+				3A45EF5215888A13006FE6D6 /* libambix.c in Sources */,
+				3A45EF5315888A13006FE6D6 /* matrix.c in Sources */,
+				3A45EF5415888A13006FE6D6 /* utils.c in Sources */,
+				3A45EF5515888A13006FE6D6 /* adaptor_acn.c in Sources */,
+				3A45EF5615888A13006FE6D6 /* sndfile.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -275,7 +293,7 @@
 					../../libambix,
 					/usr/local/include,
 				);
-				INSTALL_PATH = /usr/local/lib;
+				INSTALL_PATH = "@loader_path";
 				ONLY_ACTIVE_ARCH = NO;
 				PREBINDING = NO;
 				PRODUCT_NAME = libambix;
@@ -305,7 +323,7 @@
 					../../libambix,
 					/usr/local/include,
 				);
-				INSTALL_PATH = /usr/local/lib;
+				INSTALL_PATH = "@loader_path";
 				ONLY_ACTIVE_ARCH = NO;
 				PREBINDING = NO;
 				PRODUCT_NAME = libambix;
@@ -317,7 +335,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 0.0.1;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
@@ -344,7 +364,7 @@
 				INSTALL_PATH = "$(HOME)/Library/Frameworks";
 				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
-				PRODUCT_NAME = AmbiX;
+				PRODUCT_NAME = ambix;
 			};
 			name = Debug;
 		};
@@ -352,7 +372,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 0.0.1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -378,7 +400,7 @@
 				INSTALL_PATH = "$(HOME)/Library/Frameworks";
 				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
-				PRODUCT_NAME = AmbiX;
+				PRODUCT_NAME = ambix;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -404,7 +426,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		3A45EE6C15879688006FE6D6 /* Build configuration list for PBXNativeTarget "AmbiX" */ = {
+		3A45EE6C15879688006FE6D6 /* Build configuration list for PBXNativeTarget "ambix" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3A45EE6A15879688006FE6D6 /* Debug */,
