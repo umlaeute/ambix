@@ -101,7 +101,11 @@ AC_ARG_WITH([CoreAudio],
             [],
             [with_CoreAudio=check])
 AS_IF([test "x$with_CoreAudio" != xno],
-      [IEM_CHECK_FRAMEWORK([AudioToolbox])],
+      [
+       IEM_CHECK_FRAMEWORK([Foundation],
+		       	   IEM_CHECK_FRAMEWORK([AudioToolbox])
+                          )
+      ],
       [AM_CONDITIONAL([HAVE_FRAMEWORK_AUDIOTOOLBOX], [test "xyes" = "xyes"])]
      )
 
