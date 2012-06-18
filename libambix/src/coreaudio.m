@@ -380,8 +380,43 @@ int64_t _ambix_writef_float32   (ambix_t*ambix, const float32_t*data, int64_t fr
 ambix_err_t _ambix_write_uuidchunk(ambix_t*ax, const void*data, int64_t datasize) {
   return  AMBIX_ERR_UNKNOWN;
 }
+
+static int64_t _ambix_tell(ambix_t*ambix) {
+  SInt64 pos=0;
+  OSStatus err = ExtAudioFileTell (PRIVATE(ambix)->xfile, &pos);
+  if(noErr==err)
+    return pos;
+  else
+    return -1;
+}
+
 int64_t _ambix_seek (ambix_t* ambix, int64_t frames, int whence) {
-  return -1;
+  OSStatus err=noErr;
+  SInt64           inFrameOffset;
+  int64_t offset=0;
+  switch(whence) {
+  case SEEK_SET:
+    offset=0;
+    break;
+  case SEEK_END:
+    offset=ambix->realinfo.frames;
+    break;
+  case SEEK_CUR:
+    offset=_ambix_tell(ambix);
+    break;
+  default:
+    return -1;
+  }
+  if(offset<0)
+    return -1;
+
+  inFrameOffset=frames+offset;
+
+  err=ExtAudioFileSeek (
+   PRIVATE(ambix)->xfile, 
+   inFrameOffset);
+
+  return _ambix_tell(ambix);
 }
 
 
