@@ -66,6 +66,12 @@ AM_CONDITIONAL(ENABLED, [test "xyes" = "xyes"])
 AC_CHECK_LIB([m],[sqrt])
 
 ## checks for libsndfile
+AC_ARG_WITH([sndfile],
+            [AS_HELP_STRING([--with-sndfile],
+              [use libsndfile as backend for reading ambix-files])],
+            [],
+            [with_sndfile=yes])
+
 tmp_sndfile_CFLAGS="$CFLAGS"
 tmp_sndfile_LIBS="$LIBS"
 PKG_CHECK_MODULES([SNDFILE], [sndfile], [have_sndfile="yes"], [have_sndfile="no"])
