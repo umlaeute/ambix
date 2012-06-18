@@ -45,6 +45,74 @@ static inline AmbixData*PRIVATE(ambix_t*ax) {
 @implementation AmbixData
 @end
 
+static int _coreaudio_isCAF(const AudioFileID*file) {
+  /* trying to read format (is it caf?) */
+  char caf[]={'c', 'a', 'f', 'f'};
+  UInt32 myformat=0;
+  UInt32 formatSize=sizeof(myformat);
+
+  OSStatus err=AudioFileGetProperty (
+   *file,
+   kAudioFilePropertyFileFormat,
+   &formatSize,
+   &myformat
+  );
+  return (0==memcmp(&myformat, caf, 4));
+}
+
+static int
+read_uuidchunk(ambix_t*ax) {
+  /* read UUID */
+  UInt32 index=0; 
+  OSStatus err = noErr;
+  char*data=NULL;
+
+  for(index=0; ; index++) {
+    UInt32 size=0;
+    UInt32 datasize=0;
+    uint32_t chunkver=0;
+
+    if(data) free(data);
+    data=NULL;
+
+    err = AudioFileGetUserDataSize (
+     PRIVATE(ax)->file,
+     'uuid',
+     index,
+     &size);
+    if(noErr!=err)
+	break;
+    if(0==size)
+	continue;
+
+    datasize=size;
+    data=calloc(datasize, sizeof(char));
+    err = AudioFileGetUserData (
+     PRIVATE(ax)->file,
+     'uuid',
+     index,
+     &datasize, data);
+
+    if(datasize<16)
+	continue;
+
+    chunkver=_ambix_checkUUID(data);
+    switch(chunkver) {
+      case(1):
+        if(_ambix_uuid1_to_matrix(data+16, datasize-16, &ax->matrix, ax->byteswap)) {
+          if(data) free(data) ;
+          return AMBIX_ERR_SUCCESS;
+        }
+	break;
+      default:
+	break;
+    }
+  }
+
+  if(data) free(data);
+  data=NULL;
+  return AMBIX_ERR_UNKNOWN;
+}
 
 static void
 ambix2coreaudio_info(const ambix_info_t*axinfo, ExtAudioFileRef cainfo) {
@@ -76,7 +144,6 @@ coreaudio2ambix_info(const ExtAudioFileRef cainfo, ambix_info_t*axinfo) {
 
   datasize=sizeof(SInt64);
   if(noErr == ExtAudioFileGetProperty(cainfo, kExtAudioFileProperty_FileLengthFrames, &datasize, &frames)) {
-    printf("frames(%d bytes): %d\n", (int)datasize, (int)frames);
     axinfo->frames=(uint64_t)frames;
   }
 
@@ -89,11 +156,6 @@ coreaudio2ambix_info(const ExtAudioFileRef cainfo, ambix_info_t*axinfo) {
   }
   print_caformat(&format);
 
-  datasize=sizeof(format);
-  memset(&format, 0, sizeof(format));
-  if(noErr == ExtAudioFileGetProperty(cainfo, 'UUID', &datasize, &format)) {
-    printf("UUIDUUIDUUIDUUIDUUID\n");
-  } else printf("no uuid\n");
 }
 
 
@@ -113,18 +175,14 @@ ambix_err_t _ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t
 
   NSURL *inURL = [NSURL fileURLWithPath:[NSString stringWithUTF8String:path]];
 
-MARK();
-//  err = ExtAudioFileOpenURL((CFURLRef)inURL, &inputAudioFileRef);
-MARK();
   err = AudioFileOpenURL((CFURLRef)inURL, 
-			0x01, // kAudioFileReadPermission,
+			0x01, /* kAudioFileReadPermission, */
 			0,
 			&(PRIVATE(ambix)->file));
   if(noErr!=err) {
     _ambix_close(ambix);
     return AMBIX_ERR_INVALID_FILE;
   }
-  MARK();
 
   err = ExtAudioFileWrapAudioFileID (
 			(PRIVATE(ambix)->file),
@@ -134,28 +192,32 @@ MARK();
     _ambix_close(ambix);
     return AMBIX_ERR_INVALID_FILE;
   }
-  MARK();
-
-//  if(!inputAudioFileRef) {
   if(NULL==(PRIVATE(ambix)->xfile)) {
     _ambix_close(ambix);
     return AMBIX_ERR_INVALID_FILE;
   }
-MARK();
+  memset(&ambix->realinfo, 0, sizeof(*ambixinfo));
   coreaudio2ambix_info(PRIVATE(ambix)->xfile, &ambix->realinfo);
   _ambix_print_info(&ambix->realinfo);
-MARK();
 
   ambix->byteswap = 0; /* FIXXXME: assuming wrong defaults */
   ambix->channels = ambix->realinfo.extrachannels; /* FIXXXME: realinfo is a bad vehicle */
-  ambix->format = AMBIX_BASIC; /* FIXXXME: assuming wrong defaults */
 
+  int caf=_coreaudio_isCAF(&PRIVATE(ambix)->file);
+  int is_ambix=0;
+  if(caf) {
+    is_ambix=1;
+    if(AMBIX_ERR_SUCCESS == read_uuidchunk(ambix)) {
+       ambix->format=AMBIX_EXTENDED;
+    } else {
+       ambix->format=AMBIX_BASIC;
+    }
+  } else {
+    ambix->format=AMBIX_NONE;
+  }
+  ambix->is_AMBIX=is_ambix;
 
-
-
-
-  _ambix_close(ambix);
-  return AMBIX_ERR_INVALID_FILE;
+  return AMBIX_ERR_SUCCESS;
 }
 
 ambix_err_t	_ambix_close	(ambix_t*ambix) {
@@ -164,18 +226,15 @@ ambix_err_t	_ambix_close	(ambix_t*ambix) {
     ambixcoreaudio_private_t*priv=(ambixcoreaudio_private_t*)ambix->private_data;
     /* FIRST close the file itself */
     if(PRIVATE(ambix)) {
-MARK();
       if(PRIVATE(ambix)->xfile)
         ExtAudioFileDispose(PRIVATE(ambix)->xfile);
       PRIVATE(ambix)->xfile=NULL;
 
-MARK();
       if(PRIVATE(ambix)->file)
         AudioFileClose(PRIVATE(ambix)->file);
       PRIVATE(ambix)->file=NULL;
 
-MARK();
-        [priv->data release];
+      [priv->data release];
     } else {
       err=AMBIX_ERR_INVALID_FILE;
     }
