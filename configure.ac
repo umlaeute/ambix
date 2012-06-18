@@ -57,10 +57,10 @@ IEM_CHECK_RTE
 
 AC_HEADER_STDC
 
-/* check for math */
+## check for math
 AC_CHECK_LIB([m],[sqrt])
 
-/* checks for libsndfile */
+## checks for libsndfile
 tmp_sndfile_CFLAGS="$CFLAGS"
 tmp_sndfile_LIBS="$LIBS"
 PKG_CHECK_MODULES([SNDFILE], [sndfile], [have_sndfile="yes"], [have_sndfile="no"])
@@ -85,7 +85,7 @@ CFLAGS="$tmp_sndfile_CFLAGS"
 LIBS="$tmp_sndfile_LIBS"
 
 
-/* checks for jack */
+## checks for jack
 tmp_jack_CFLAGS="$CFLAGS"
 tmp_jack_LIBS="$LIBS"
 
@@ -97,7 +97,7 @@ LIBS="$tmp_jack_LIBS"
 
 
 
-/* checks for samplerate */
+## checks for samplerate
 tmp_samplerate_CFLAGS="$CFLAGS"
 tmp_samplerate_LIBS="$LIBS"
 
