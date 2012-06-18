@@ -195,8 +195,7 @@ coreaudio2ambix_info(const ExtAudioFileRef cainfo, ambix_info_t*axinfo) {
     axinfo->samplerate = (double)format.mSampleRate;
     axinfo->extrachannels = format.mChannelsPerFrame;
   }
-  print_caformat(&format);
-
+  return AMBIX_ERR_SUCCESS;
 }
 
 
@@ -237,8 +236,10 @@ ambix_err_t _ambix_open_read(ambix_t*ambix, const char *path, const ambix_info_t
     return AMBIX_ERR_INVALID_FILE;
   }
   memset(&ambix->realinfo, 0, sizeof(*ambixinfo));
-  coreaudio2ambix_info(PRIVATE(ambix)->xfile, &ambix->realinfo);
-  _ambix_print_info(&ambix->realinfo);
+  if(AMBIX_ERR_SUCCESS!=coreaudio2ambix_info(PRIVATE(ambix)->xfile, &ambix->realinfo)) {
+    _ambix_close(ambix);
+    return AMBIX_ERR_INVALID_FILE;
+  }
 
   ambix->byteswap = 0; /* FIXXXME: assuming wrong defaults */
   ambix->channels = ambix->realinfo.extrachannels; /* FIXXXME: realinfo is a bad vehicle */
