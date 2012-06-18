@@ -31,6 +31,8 @@ AC_PROG_CC
 AC_PROG_MAKE_SET
 AM_PROG_CC_C_O
 
+m4_ifdef([AC_PROG_OBJC], [AC_PROG_OBJC])
+
 #------------------------------------------------------------------------------------
 # Rules for library version information:
 #
