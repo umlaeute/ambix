@@ -100,14 +100,16 @@ AC_ARG_WITH([CoreAudio],
               [use CoreAudio as backend for reading ambix-files])],
             [],
             [with_CoreAudio=check])
+have_audiotoolbox="no"
 AS_IF([test "x$with_CoreAudio" != xno],
       [
        IEM_CHECK_FRAMEWORK([Foundation],
-		       	   IEM_CHECK_FRAMEWORK([AudioToolbox])
+		       	   IEM_CHECK_FRAMEWORK([AudioToolbox],
+                                               [have_audiotoolbox="yes"])
                           )
-      ],
-      [AM_CONDITIONAL([HAVE_FRAMEWORK_AUDIOTOOLBOX], [test "xyes" = "xyes"])]
+      ]
      )
+AM_CONDITIONAL([HAVE_FRAMEWORK_AUDIOTOOLBOX], [test "x$have_audiotoolbox" = "xyes"])]
 
 ## checks for jack
 AC_ARG_WITH([jack],
