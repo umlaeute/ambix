@@ -40,13 +40,13 @@ fi
 
 if test -d "$with_pd" ; then
  if test -d "${with_pd}/src" ; then
-   AC_LIB_APPENDTOVAR([tmp_rte_cflags],"-I${with_pd}/src")
+   tmp_rte_cflags="${tmp_rte_cflags}${tmp_rte_cflags:+ }-I${with_pd}/src"
  elif test -d "${with_pd}/include/pd" ; then
-   AC_LIB_APPENDTOVAR([tmp_rte_cflags],"-I${with_pd}/include/pd")
+   tmp_rte_cflags="${tmp_rte_cflags}${tmp_rte_cflags:+ }-I${with_pd}/include/pd"
  elif test -d "${with_pd}/include" ; then
-   AC_LIB_APPENDTOVAR([tmp_rte_cflags],"-I${with_pd}/include")
+   tmp_rte_cflags="${tmp_rte_cflags}${tmp_rte_cflags:+ }-I${with_pd}/include"
  else
-   AC_LIB_APPENDTOVAR([tmp_rte_cflags],"-I${with_pd}")
+   tmp_rte_cflags="${tmp_rte_cflags}${tmp_rte_cflags:+ }-I${with_pd}"
  fi
  if test -d "${with_pd}/bin" ; then
    tmp_rte_libs="${tmp_rte_libs}${tmp_rte_libs:+ }-L${with_pd}/bin"
