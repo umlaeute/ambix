@@ -54,9 +54,13 @@ if HAVE_SNDFILE
 libambix_la_SOURCES += sndfile.c
 libambix_la_CFLAGS += @SNDFILE_CFLAGS@
 libambix_la_LIBADD += @SNDFILE_LIBS@
-else
+else !HAVE_SNDFILE
+if HAVE_FRAMEWORK_AUDIOTOOLBOX
+libambix_la_SOURCES += coreaudio.m
+else !HAVE_FRAMEWORK_AUDIOTOOLBOX
 libambix_la_SOURCES += null.c
-endif
+endif !HAVE_FRAMEWORK_AUDIOTOOLBOX
+endif !HAVE_SNDFILE
 
 
 
