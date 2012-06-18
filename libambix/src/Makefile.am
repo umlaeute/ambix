@@ -41,6 +41,8 @@ libambix_la_CFLAGS  = -DAMBIX_INTERNAL
 libambix_la_CFLAGS += -fvisibility=hidden
 libambix_la_LIBADD  = $(LIBM)
 
+libambix_la_OBJCFLAGS = $(libambix_la_CFLAGS)
+
 libambix_la_SOURCES = libambix.c \
 	adaptor.c \
 	adaptor_acn.c \
