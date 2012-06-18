@@ -165,7 +165,7 @@ printf("	BitsPerChannel=%ul\n", (unsigned long)format->mBitsPerChannel);
 printf("	Reserved=%ul\n", (unsigned long)format->mReserved);
 }
 
-static void
+static ambix_err_t
 coreaudio2ambix_info(const ExtAudioFileRef cainfo, ambix_info_t*axinfo) {
   AudioStreamBasicDescription format;
   UInt32 datasize=0;
@@ -179,9 +179,21 @@ coreaudio2ambix_info(const ExtAudioFileRef cainfo, ambix_info_t*axinfo) {
   datasize=sizeof(format);
   memset(&format, 0, sizeof(format));
   if(noErr == ExtAudioFileGetProperty(cainfo, kExtAudioFileProperty_FileDataFormat, &datasize, &format)) {
+    int samplesize=0;
+    int isFloat=(format.mFormatFlags & kAudioFormatFlagIsFloat);
+    int isInt  =(format.mFormatFlags & kAudioFormatFlagIsSignedInteger);
+
+    samplesize=format.mBitsPerChannel;
+
+    if(0) {}
+    else if(isFloat && 32==samplesize) {axinfo->sampleformat = AMBIX_SAMPLEFORMAT_FLOAT32;}
+    else if(isInt && 32==samplesize) {axinfo->sampleformat = AMBIX_SAMPLEFORMAT_PCM32;}
+    else if(isInt && 24==samplesize) {axinfo->sampleformat = AMBIX_SAMPLEFORMAT_PCM24;}
+    else if(isInt && 16==samplesize) {axinfo->sampleformat = AMBIX_SAMPLEFORMAT_PCM16;}
+    else return AMBIX_ERR_INVALID_FORMAT;
+
     axinfo->samplerate = (double)format.mSampleRate;
     axinfo->extrachannels = format.mChannelsPerFrame;
-    axinfo->sampleformat = AMBIX_SAMPLEFORMAT_PCM24; /* FIXXXME: this is only a dummy */
   }
   print_caformat(&format);
 
