@@ -123,17 +123,23 @@ LIBS="$tmp_jack_LIBS"
 ])
 AM_CONDITIONAL(HAVE_JACK, [test "x$have_jack" = "xyes"])
 
-
-
 ## checks for samplerate
+AC_ARG_WITH([samplerate],
+            [AS_HELP_STRING([--with-samplerate],
+              [use libsamplerate for samplerate-conversion])],
+            [],
+            [with_samplerate=yes])
+have_samplerate="no"
+AS_IF([test "x$with_samplerate" != xno], [
 tmp_samplerate_CFLAGS="$CFLAGS"
 tmp_samplerate_LIBS="$LIBS"
 
 PKG_CHECK_MODULES([SAMPLERATE], [samplerate], [have_samplerate="yes"], [have_samplerate="no"])
-AM_CONDITIONAL(HAVE_SAMPLERATE, [test "x$have_samplerate" = "xyes"])
 
 CFLAGS="$tmp_samplerate_CFLAGS"
 LIBS="$tmp_samplerate_LIBS"
+])
+AM_CONDITIONAL(HAVE_SAMPLERATE, [test "x$have_samplerate" = "xyes"])
 
 
 
