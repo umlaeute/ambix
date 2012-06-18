@@ -59,6 +59,9 @@ IEM_CHECK_RTE
 
 AC_HEADER_STDC
 
+AM_CONDITIONAL(DISABLED, [test "xno" = "xyes"])
+AM_CONDITIONAL(ENABLED, [test "xyes" = "xyes"])
+
 ## check for math
 AC_CHECK_LIB([m],[sqrt])
 
@@ -67,9 +70,6 @@ tmp_sndfile_CFLAGS="$CFLAGS"
 tmp_sndfile_LIBS="$LIBS"
 PKG_CHECK_MODULES([SNDFILE], [sndfile], [have_sndfile="yes"], [have_sndfile="no"])
 AM_CONDITIONAL(HAVE_SNDFILE, [test "x$have_sndfile" = "xyes"])
-
-AM_CONDITIONAL(DISABLED, [test "xno" = "xyes"])
-AM_CONDITIONAL(ENABLED, [test "xyes" = "xyes"])
 
 if test "x$have_sndfile" = "xyes"; then
  CFLAGS="$CFLAGS $SNDFILE_CFLAGS"
