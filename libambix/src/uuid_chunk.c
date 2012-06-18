@@ -47,6 +47,27 @@
  *  http://ambisonics.iem.at/xchange/format/3.0 50c26359-d96d-5a67-bc19-db124f7606d0
  */
 
+#include <stdio.h>
+static void _ambix_printUUID4(const char data[2]) {
+ printf("%02x%02x", (signed char)data[0], (signed char)data[1]);
+
+}
+static void _ambix_printUUID(const char data[16]) {
+ /* 8-4-4-4-12 */
+ _ambix_printUUID4(data);data+=2;
+ _ambix_printUUID4(data);data+=2;
+  printf("-");
+ _ambix_printUUID4(data);data+=2;
+  printf("-");
+ _ambix_printUUID4(data);data+=2;
+  printf("-");
+ _ambix_printUUID4(data);data+=2;
+  printf("-");
+ _ambix_printUUID4(data);data+=2;
+ _ambix_printUUID4(data);data+=2;
+ _ambix_printUUID4(data);data+=2;
+}
+
  /*
   * uarg, this is not a UUID!
   * (well it is...UUID::Tiny thinks it's a v2 (DCE security) UUID
@@ -70,11 +91,9 @@ uint32_t
 _ambix_checkUUID(const char data[16]) {
   if(!memcmp(data, _ambix_uuid_v1, 16))
     return 1;
-
   /* compat mode: old AMBIXv1 UUID */
   if(!memcmp(data, _ambix_uuid_v1_, 16))
     return 1;
-
   return 0;
 }
 
