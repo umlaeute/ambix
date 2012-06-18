@@ -71,11 +71,11 @@ AC_ARG_WITH([sndfile],
               [use libsndfile as backend for reading ambix-files])],
             [],
             [with_sndfile=yes])
-
+have_sndfile = "no"
+AS_IF([test "x$with_sndfile" != xno], [
 tmp_sndfile_CFLAGS="$CFLAGS"
 tmp_sndfile_LIBS="$LIBS"
 PKG_CHECK_MODULES([SNDFILE], [sndfile], [have_sndfile="yes"], [have_sndfile="no"])
-AM_CONDITIONAL(HAVE_SNDFILE, [test "x$have_sndfile" = "xyes"])
 
 if test "x$have_sndfile" = "xyes"; then
  CFLAGS="$CFLAGS $SNDFILE_CFLAGS"
@@ -91,6 +91,8 @@ fi
 
 CFLAGS="$tmp_sndfile_CFLAGS"
 LIBS="$tmp_sndfile_LIBS"
+])
+AM_CONDITIONAL(HAVE_SNDFILE, [test "x$have_sndfile" = "xyes"])
 
 ## checks for CoreAudio frameworks
 IEM_CHECK_FRAMEWORK([AudioToolbox])
