@@ -97,7 +97,7 @@ AM_CONDITIONAL(HAVE_SNDFILE, [test "x$have_sndfile" = "xyes"])
 ## checks for CoreAudio frameworks
 AC_ARG_WITH([CoreAudio],
             [AS_HELP_STRING([--with-CoreAudio],
-              [use libCoreAudio as backend for reading ambix-files])],
+              [use CoreAudio as backend for reading ambix-files])],
             [],
             [with_CoreAudio=check])
 AS_IF([test "x$with_CoreAudio" != xno],
