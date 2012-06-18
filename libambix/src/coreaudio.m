@@ -30,10 +30,6 @@ ambix_err_t	_ambix_close	(ambix_t*ambix) {
   return AMBIX_ERR_INVALID_FILE;
 }
 
-SNDFILE*_ambix_get_sndfile	(ambix_t*ambix) {
-  return 0;
-}
-
 int64_t _ambix_readf_int16   (ambix_t*ambix, int16_t*data, int64_t frames) {
   return -1;
 }
@@ -59,3 +55,11 @@ ambix_err_t _ambix_write_uuidchunk(ambix_t*ax, const void*data, int64_t datasize
 int64_t _ambix_seek (ambix_t* ambix, int64_t frames, int whence) {
   return -1;
 }
+
+
+/* no sndfile when using CoreAudio */
+struct SNDFILE_tag*_ambix_get_sndfile	(ambix_t*ambix) {
+  return 0;
+}
+
+
