@@ -45,6 +45,17 @@ static inline AmbixData*PRIVATE(ambix_t*ax) {
 @implementation AmbixData
 @end
 
+static int _coreaudio_isNativeEndian(const ExtAudioFileRef cainfo) {
+  AudioStreamBasicDescription f;
+  UInt32 datasize=sizeof(f);
+  memset(&f, 0, sizeof(f));
+  if(noErr == ExtAudioFileGetProperty(cainfo, kExtAudioFileProperty_FileDataFormat, &datasize, &f)) {
+    return ((f.mFormatID == kAudioFormatLinearPCM) 
+         && ((f.mFormatFlags & kAudioFormatFlagIsBigEndian) == kAudioFormatFlagsNativeEndian));
+  }
+
+  return 0;
+}
 static int _coreaudio_isCAF(const AudioFileID*file) {
   /* trying to read format (is it caf?) */
   UInt32 myformat=0;
@@ -240,7 +251,7 @@ ambix_err_t _ambix_open_read(ambix_t*ambix, const char *path, const ambix_info_t
     return AMBIX_ERR_INVALID_FILE;
   }
 
-  ambix->byteswap = 0; /* FIXXXME: assuming wrong defaults */
+  ambix->byteswap = !_coreaudio_isNativeEndian(PRIVATE(ambix)->xfile);
   ambix->channels = ambix->realinfo.extrachannels; /* FIXXXME: realinfo is a bad vehicle */
 
   int caf=_coreaudio_isCAF(&PRIVATE(ambix)->file);
