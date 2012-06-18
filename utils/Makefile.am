@@ -1,23 +1,24 @@
+SUBDIRS =
+
 bin_PROGRAMS = \
-	ambix-info \
-	ambix-interleave \
-	ambix-deinterleave
+	ambix-info
 
 noinst_PROGRAMS = \
 	ambix-dump \
 	ambix-matrix \
 	ambix-test
 
-SUBDIRS =
-
-
+if HAVE_SNDFILE
+bin_PROGRAMS += \
+	ambix-interleave \
+	ambix-deinterleave
 if HAVE_JACK
 SUBDIRS += jcommon
 bin_PROGRAMS += \
 	ambix-jplay \
 	ambix-jrecord
-endif
-
+endif HAVE_JACK
+endif HAVE_SNDFILE
 
 AM_CPPFLAGS = -I$(top_srcdir)/libambix -I$(top_srcdir)
 LDADD = $(top_builddir)/libambix/src/libambix.la
