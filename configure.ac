@@ -106,14 +106,22 @@ AS_IF([test "x$with_CoreAudio" != xno],
      )
 
 ## checks for jack
+AC_ARG_WITH([jack],
+            [AS_HELP_STRING([--with-jack],
+              [use JACK for playback/recording of live sound])],
+            [],
+            [with_jack=yes])
+have_jack="no"
+AS_IF([test "x$with_jack" != xno], [
 tmp_jack_CFLAGS="$CFLAGS"
 tmp_jack_LIBS="$LIBS"
 
 PKG_CHECK_MODULES([JACK], [jack], [have_jack="yes"], [have_jack="no"])
-AM_CONDITIONAL(HAVE_JACK, [test "x$have_jack" = "xyes"])
 
 CFLAGS="$tmp_jack_CFLAGS"
 LIBS="$tmp_jack_LIBS"
+])
+AM_CONDITIONAL(HAVE_JACK, [test "x$have_jack" = "xyes"])
 
 
 
