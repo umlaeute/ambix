@@ -180,6 +180,7 @@ read_uuidchunk(ambix_t*ax) {
 ambix_err_t _ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t mode, const ambix_info_t*ambixinfo) {
   int sfmode=0;
   int caf=0;
+  int is_ambix=0;
 
   ambix->private_data=calloc(1, sizeof(ambixsndfile_private_t));
   ambix2sndfile_info(ambixinfo, &PRIVATE(ambix)->sf_info);
@@ -203,7 +204,7 @@ ambix_err_t _ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t
 
   caf=((SF_FORMAT_CAF == (SF_FORMAT_TYPEMASK & PRIVATE(ambix)->sf_info.format)) != 0);
   if(caf) {
-    ambix->is_AMBIX=1;
+    is_ambix=1;
     
     if(read_uuidchunk(ambix) == AMBIX_ERR_SUCCESS) {
       ambix->format=AMBIX_EXTENDED;
@@ -264,18 +265,19 @@ ambix_err_t _ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t
         break;
       }
       if(NULL != ambix_matrix_fill(&ambix->matrix, AMBIX_MATRIX_FUMA)) {
-        ambix->is_AMBIX=1;
+        is_ambix=1;
         ambix->format=AMBIX_EXTENDED;
       } else {
-        ambix->is_AMBIX=0;
+        is_ambix=0;
         ambix->format=AMBIX_NONE;
       }
     } else {
-      ambix->is_AMBIX=0;
+      is_ambix=0;
       ambix->format=AMBIX_NONE;
     }
   }
 
+  ambix->is_AMBIX=is_ambix;
   if(0) {
     print_sfinfo( &PRIVATE(ambix)->sf_info);
   }
