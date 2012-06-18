@@ -47,7 +47,6 @@ static inline AmbixData*PRIVATE(ambix_t*ax) {
 
 static int _coreaudio_isCAF(const AudioFileID*file) {
   /* trying to read format (is it caf?) */
-  char caf[]={'c', 'a', 'f', 'f'};
   UInt32 myformat=0;
   UInt32 formatSize=sizeof(myformat);
 
@@ -57,7 +56,7 @@ static int _coreaudio_isCAF(const AudioFileID*file) {
    &formatSize,
    &myformat
   );
-  return (0==memcmp(&myformat, caf, 4));
+  return (kAudioFileCAFType==myformat);
 }
 
 static int
