@@ -109,7 +109,7 @@ AS_IF([test "x$with_CoreAudio" != xno],
                           )
       ]
      )
-AM_CONDITIONAL([HAVE_FRAMEWORK_AUDIOTOOLBOX], [test "x$have_audiotoolbox" = "xyes"])]
+AM_CONDITIONAL([HAVE_FRAMEWORK_AUDIOTOOLBOX], [test "x$have_audiotoolbox" = "xyes"])
 
 ## checks for jack
 AC_ARG_WITH([jack],
