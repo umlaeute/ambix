@@ -71,7 +71,7 @@ AC_ARG_WITH([sndfile],
               [use libsndfile as backend for reading ambix-files])],
             [],
             [with_sndfile=yes])
-have_sndfile = "no"
+have_sndfile="no"
 AS_IF([test "x$with_sndfile" != xno], [
 tmp_sndfile_CFLAGS="$CFLAGS"
 tmp_sndfile_LIBS="$LIBS"
