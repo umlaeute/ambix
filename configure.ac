@@ -84,6 +84,8 @@ fi
 CFLAGS="$tmp_sndfile_CFLAGS"
 LIBS="$tmp_sndfile_LIBS"
 
+## checks for CoreAudio frameworks
+IEM_CHECK_FRAMEWORK([AudioToolbox])
 
 ## checks for jack
 tmp_jack_CFLAGS="$CFLAGS"
