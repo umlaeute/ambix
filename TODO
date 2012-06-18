@@ -2,6 +2,13 @@ FILE-FORMAT
 ===========
 ???
 
+DEPENDENCIES
+============
+(optionally) getting rid of libsndfile
+ - create our own minimal CAF-reader/writer
+ - on OSX/iOS, use CoreAudio
+	e.g. http://www.modejong.com/iOS/ExtAudioFileDemo.tar.bz2
+
 helper-library
 ==============
 library for matrix operations related to libambix
