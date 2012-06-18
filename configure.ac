@@ -95,7 +95,15 @@ LIBS="$tmp_sndfile_LIBS"
 AM_CONDITIONAL(HAVE_SNDFILE, [test "x$have_sndfile" = "xyes"])
 
 ## checks for CoreAudio frameworks
-IEM_CHECK_FRAMEWORK([AudioToolbox])
+AC_ARG_WITH([CoreAudio],
+            [AS_HELP_STRING([--with-CoreAudio],
+              [use libCoreAudio as backend for reading ambix-files])],
+            [],
+            [with_CoreAudio=check])
+AS_IF([test "x$with_CoreAudio" != xno],
+      [IEM_CHECK_FRAMEWORK([AudioToolbox])],
+      [AM_CONDITIONAL([HAVE_FRAMEWORK_AUDIOTOOLBOX], [test "xyes" = "xyes"])]
+     )
 
 ## checks for jack
 tmp_jack_CFLAGS="$CFLAGS"
