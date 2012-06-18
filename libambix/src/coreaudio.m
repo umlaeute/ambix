@@ -115,13 +115,42 @@ read_uuidchunk(ambix_t*ax) {
 }
 
 static void
-ambix2coreaudio_info(const ambix_info_t*axinfo, ExtAudioFileRef cainfo) {
-#if 0
-  cainfo->frames=axinfo->frames;
-  cainfo->samplerate=(int)axinfo->samplerate;
-  cainfo->channels=axinfo->ambichannels+axinfo->extrachannels;
-  cainfo->format=SF_FORMAT_CAF | ambix2coreaudio_sampleformat(axinfo->sampleformat);
-#endif
+ambix2coreaudio_info(const ambix_info_t*axinfo, AudioStreamBasicDescription*format) {
+  UInt32 flags=0;
+  UInt32 samplesize=3;
+  UInt32 channels=(UInt32)(axinfo->ambichannels+axinfo->extrachannels);
+
+  memset(format, 0, sizeof(*format));
+
+  format->mSampleRate=(Float64)axinfo->samplerate;
+  format->mChannelsPerFrame=channels;
+  format->mFormatID=kAudioFormatLinearPCM;
+  format->mFramesPerPacket=1;
+  format->mBytesPerPacket=1;
+
+  switch(axinfo->sampleformat) {
+      case AMBIX_SAMPLEFORMAT_PCM16:
+	samplesize=2;
+        flags|=kAudioFormatFlagIsSignedInteger;
+	break;
+      default: case AMBIX_SAMPLEFORMAT_PCM24:
+	samplesize=3;
+        flags|=kAudioFormatFlagIsSignedInteger;
+	break;
+      case AMBIX_SAMPLEFORMAT_PCM32:
+	samplesize=4;
+        flags|=kAudioFormatFlagIsSignedInteger;
+	break;
+      case AMBIX_SAMPLEFORMAT_FLOAT32:
+	samplesize=4;
+        flags|=kAudioFormatFlagIsFloat;
+	break;
+  }
+
+  format->mFormatFlags=flags;
+
+  format->mBytesPerFrame=channels*samplesize;
+  format->mBitsPerChannel=8*samplesize;
 }
 
 static void print_caformat(AudioStreamBasicDescription*format) {
@@ -159,9 +188,8 @@ coreaudio2ambix_info(const ExtAudioFileRef cainfo, ambix_info_t*axinfo) {
 }
 
 
-ambix_err_t _ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t mode, const ambix_info_t*ambixinfo) {
+ambix_err_t _ambix_open_read(ambix_t*ambix, const char *path, const ambix_info_t*ambixinfo) {
   OSStatus err = noErr;
-  ExtAudioFileRef inputAudioFileRef = NULL;
   ambixcoreaudio_private_t*priv=0;
   ambix->private_data=calloc(1, sizeof(ambixcoreaudio_private_t));
   priv=(ambixcoreaudio_private_t*)ambix->private_data;
@@ -218,6 +246,58 @@ ambix_err_t _ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t
   ambix->is_AMBIX=is_ambix;
 
   return AMBIX_ERR_SUCCESS;
+}
+ambix_err_t _ambix_open_write(ambix_t*ambix, const char *path, const ambix_info_t*ambixinfo) {
+  OSStatus err = noErr;
+  ambixcoreaudio_private_t*priv=0;
+  AudioStreamBasicDescription format;
+  ambix2coreaudio_info(ambixinfo, &format);
+
+  ambix->private_data=calloc(1, sizeof(ambixcoreaudio_private_t));
+  priv=(ambixcoreaudio_private_t*)ambix->private_data;
+  priv->pool = [[NSAutoreleasePool alloc] init];
+
+  priv->data = [[AmbixData alloc] init];
+
+  PRIVATE(ambix)->file=NULL;
+  PRIVATE(ambix)->xfile=NULL;
+
+  NSURL *inURL = [NSURL fileURLWithPath:[NSString stringWithUTF8String:path]];
+
+  err = AudioFileCreateWithURL((CFURLRef)inURL,
+                        kAudioFileCAFType,
+			&format,
+                        0,
+                        &(PRIVATE(ambix)->file));
+  if(noErr!=err) {
+    _ambix_close(ambix);
+    return AMBIX_ERR_INVALID_FILE;
+  }
+
+  err = ExtAudioFileWrapAudioFileID (
+                        (PRIVATE(ambix)->file),
+                        true,
+                        &(PRIVATE(ambix)->xfile));
+  if(noErr!=err) {
+    _ambix_close(ambix);
+    return AMBIX_ERR_INVALID_FILE;
+  }
+  if(NULL==(PRIVATE(ambix)->xfile)) {
+    _ambix_close(ambix);
+    return AMBIX_ERR_INVALID_FILE;
+  }
+  
+  return AMBIX_ERR_INVALID_FILE;
+}
+ambix_err_t _ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t mode, const ambix_info_t*ambixinfo) {
+  if((mode & AMBIX_READ) & (mode & AMBIX_WRITE))
+    return AMBIX_ERR_INVALID_FILE;
+  else if (mode & AMBIX_WRITE)
+    return _ambix_open_write(ambix, path, ambixinfo);
+  else if (mode & AMBIX_READ)
+    return _ambix_open_read(ambix, path, ambixinfo);
+
+  return AMBIX_ERR_INVALID_FILE;
 }
 
 ambix_err_t	_ambix_close	(ambix_t*ambix) {
