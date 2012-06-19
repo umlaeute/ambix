@@ -33,7 +33,7 @@ void check_create_none(const char*path, ambix_sampleformat_t format) {
   uint32_t frames=44100;
   uint32_t channels=6;
   float32_t periods=10;
-  uint32_t err32;
+  int64_t err64, gotframes;
   float32_t diff=0., eps=1e-30;
 
   resultdata=(float32_t*)calloc(channels*frames, sizeof(float32_t));
@@ -60,8 +60,8 @@ void check_create_none(const char*path, ambix_sampleformat_t format) {
 
   fail_if((NULL==data), __LINE__, "couldn't create data %dx%d sine @ %f", frames, channels, periods);
 
-  err32=ambix_writef_float32(ambix, NULL, data, frames);
-  fail_if((err32!=frames), __LINE__, "wrote only %d frames of %d", err32, frames);
+  err64=ambix_writef_float32(ambix, NULL, data, frames);
+  fail_if((err64!=frames), __LINE__, "wrote only %d frames of %d", err64, frames);
 
   diff=data_diff(__LINE__, orgdata, data, frames*channels, eps);
   fail_if((diff>eps), __LINE__, "data diff %f > %f", diff, eps);
@@ -78,8 +78,12 @@ void check_create_none(const char*path, ambix_sampleformat_t format) {
   fail_if((info.ambichannels!=rinfo.ambichannels), __LINE__, "ambichannels mismatch %d!=%d", info.ambichannels, rinfo.ambichannels);
   fail_if((info.extrachannels!=rinfo.extrachannels), __LINE__, "extrachannels mismatch %d!=%d", info.extrachannels, rinfo.extrachannels);
 
-  err32=ambix_readf_float32(ambix, NULL, resultdata, frames);
-  fail_if((err32!=frames), __LINE__, "wrote only %d frames of %d", err32, frames);
+  gotframes=0;
+  do {
+    err64=ambix_readf_float32(ambix, NULL, resultdata+(gotframes*channels), (frames-gotframes));
+    fail_if((err64<0), __LINE__, "reading frames failed after %d/%d frames", (int)gotframes, (int)frames);
+    gotframes+=err64;
+  } while(err64>0 && gotframes<frames);
 
   diff=data_diff(__LINE__, orgdata, resultdata, frames*channels, eps);
   fail_if((diff>eps), __LINE__, "data diff %f > %f", diff, eps);

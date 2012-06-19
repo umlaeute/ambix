@@ -83,7 +83,6 @@ void check_create_simple(const char*path, ambix_sampleformat_t format, float32_t
   gotframes=0;
   do {
     err64=ambix_readf_float32(ambix, resultdata+(gotframes*channels), NULL, (frames-gotframes));
-    /* fail_if((err64!=frames), __LINE__, "wrote only %d frames of %d", (int)err64, (int)frames); */
     fail_if((err64<0), __LINE__, "reading frames failed after %d/%d frames", (int)gotframes, (int)frames);
     gotframes+=err64;
   } while(err64>0 && gotframes<frames);

@@ -36,7 +36,7 @@ void check_create_extended(const char*path, ambix_sampleformat_t format, uint32_
   float32_t periods=20000;
   ambix_matrix_t eye={0,0,NULL};
   const ambix_matrix_t*eye2=NULL;
-  uint32_t err32;
+  int64_t err64, gotframes;
   float32_t diff=0.;
   STARTTEST("");
 
@@ -84,18 +84,18 @@ void check_create_extended(const char*path, ambix_sampleformat_t format, uint32_
     uint32_t frame;
     printf("writing %d chunks of %d frames\n", (int)chunks, (int)chunksize);
     for(frame=0; frame<chunks; frame++) {
-      err32=ambix_writef_float32(ambix, ambidata+ambichannels*frame*chunksize, otherdata+extrachannels*frame*chunksize, chunksize);
-      fail_if((err32!=chunksize), __LINE__, "wrote only %d chunksize of %d", err32, chunksize);
+      err64=ambix_writef_float32(ambix, ambidata+ambichannels*frame*chunksize, otherdata+extrachannels*frame*chunksize, chunksize);
+      fail_if((err64!=chunksize), __LINE__, "wrote only %d chunksize of %d", err64, chunksize);
       framesleft-=chunksize;
     }
     subframe=framesleft;
     printf("writing rest of %d frames\n", (int)subframe);
-    err32=ambix_writef_float32(ambix, ambidata+ambichannels*frame*chunksize, otherdata+extrachannels*frame*chunksize, subframe);
-    fail_if((err32!=subframe), __LINE__, "wrote only %d subframe of %d", err32, subframe);
+    err64=ambix_writef_float32(ambix, ambidata+ambichannels*frame*chunksize, otherdata+extrachannels*frame*chunksize, subframe);
+    fail_if((err64!=subframe), __LINE__, "wrote only %d subframe of %d", err64, subframe);
 
   } else {
-    err32=ambix_writef_float32(ambix, ambidata, otherdata, framesize);
-    fail_if((err32!=framesize), __LINE__, "wrote only %d frames of %d", err32, framesize);
+    err64=ambix_writef_float32(ambix, ambidata, otherdata, framesize);
+    fail_if((err64!=framesize), __LINE__, "wrote only %d frames of %d", err64, framesize);
   }
 
   diff=data_diff(__LINE__, orgambidata, ambidata, framesize*ambichannels, eps);
@@ -124,8 +124,17 @@ void check_create_extended(const char*path, ambix_sampleformat_t format, uint32_
   diff=matrix_diff(__LINE__, &eye, eye2, eps);
   fail_if((diff>eps), __LINE__, "adaptormatrix diff %f > %f", diff, eps);
 
-  err32=ambix_readf_float32(ambix, resultambidata, resultotherdata, framesize);
-  fail_if((err32!=framesize), __LINE__, "read only %d frames of %d", err32, framesize);
+
+  gotframes=0;
+  do {
+    //err64=ambix_readf_float32(ambix, resultambidata, resultotherdata, framesize);
+      err64=ambix_readf_float32(ambix,
+			resultambidata +(gotframes*ambichannels ),
+			resultotherdata+(gotframes*extrachannels), 
+			(framesize-gotframes));
+    fail_if((err64<0), __LINE__, "reading frames failed after %d/%d frames", (int)gotframes, (int)framesize);
+    gotframes+=err64;
+  } while(err64>0 && gotframes<framesize);
 
   diff=data_diff(__LINE__, orgambidata, resultambidata, framesize*ambichannels, eps);
   fail_if((diff>eps), __LINE__, "ambidata diff %f > %f", diff, eps);
