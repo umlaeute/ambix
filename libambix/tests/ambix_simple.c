@@ -32,8 +32,9 @@ void check_create_simple(const char*path, ambix_sampleformat_t format, float32_t
   uint32_t frames=441000;
   uint32_t channels=4;
   float32_t periods=20000;
-  uint32_t err32;
+  int64_t err64;
   float32_t diff=0.;
+  uint32_t gotframes;
 
   printf("test using '%s' [%d]\n", path, (int)format);
 
@@ -59,10 +60,10 @@ void check_create_simple(const char*path, ambix_sampleformat_t format, float32_t
 
   memcpy(data, orgdata, frames*channels*sizeof(float32_t));
 
-  fail_if((NULL==data), __LINE__, "couldn't create data %dx%d sine @ %f", frames, channels, periods);
+  fail_if((NULL==data), __LINE__, "couldn't create data %dx%d sine @ %f", (int)frames, (int)channels, (float)periods);
 
-  err32=ambix_writef_float32(ambix, data, NULL, frames);
-  fail_if((err32!=frames), __LINE__, "wrote only %d frames of %d", err32, frames);
+  err64=ambix_writef_float32(ambix, data, NULL, frames);
+  fail_if((err64!=frames), __LINE__, "wrote only %d frames of %d", (int)err64, (int)frames);
 
   diff=data_diff(__LINE__, orgdata, data, frames*channels, eps);
   fail_if((diff>eps), __LINE__, "data diff %f > %f", diff, eps);
@@ -73,14 +74,19 @@ void check_create_simple(const char*path, ambix_sampleformat_t format, float32_t
   ambix=ambix_open(path, AMBIX_READ, &rinfo);
   fail_if((NULL==ambix), __LINE__, "couldn't create ambix file '%s' for reading", path);
 
-  fail_if((info.fileformat!=rinfo.fileformat), __LINE__, "fileformat mismatch %d!=%d", info.fileformat, rinfo.fileformat);
+  fail_if((info.fileformat!=rinfo.fileformat), __LINE__, "fileformat mismatch %d!=%d", (int)info.fileformat, (int)rinfo.fileformat);
   fail_if((info.samplerate!=rinfo.samplerate), __LINE__, "samplerate mismatch %g!=%g", info.samplerate, rinfo.samplerate);
-  fail_if((info.sampleformat!=rinfo.sampleformat), __LINE__, "sampleformat mismatch %d!=%d", info.sampleformat, rinfo.sampleformat);
-  fail_if((info.ambichannels!=rinfo.ambichannels), __LINE__, "ambichannels mismatch %d!=%d", info.ambichannels, rinfo.ambichannels);
-  fail_if((info.extrachannels!=rinfo.extrachannels), __LINE__, "extrachannels mismatch %d!=%d", info.extrachannels, rinfo.extrachannels);
+  fail_if((info.sampleformat!=rinfo.sampleformat), __LINE__, "sampleformat mismatch %d!=%d", (int)info.sampleformat, (int)rinfo.sampleformat);
+  fail_if((info.ambichannels!=rinfo.ambichannels), __LINE__, "ambichannels mismatch %d!=%d", (int)info.ambichannels, (int)rinfo.ambichannels);
+  fail_if((info.extrachannels!=rinfo.extrachannels), __LINE__, "extrachannels mismatch %d!=%d", (int)info.extrachannels, (int)rinfo.extrachannels);
 
-  err32=ambix_readf_float32(ambix, resultdata, NULL, frames);
-  fail_if((err32!=frames), __LINE__, "wrote only %d frames of %d", err32, frames);
+  gotframes=0;
+  do {
+    err64=ambix_readf_float32(ambix, resultdata+(gotframes*channels), NULL, (frames-gotframes));
+    /* fail_if((err64!=frames), __LINE__, "wrote only %d frames of %d", (int)err64, (int)frames); */
+    fail_if((err64<0), __LINE__, "reading frames failed after %d/%d frames", (int)gotframes, (int)frames);
+    gotframes+=err64;
+  } while(err64>0 && gotframes<frames);
 
   diff=data_diff(__LINE__, orgdata, resultdata, frames*channels, eps);
   fail_if((diff>eps), __LINE__, "data diff %f > %f", diff, eps);
@@ -101,7 +107,6 @@ int main(int argc, char**argv) {
   check_create_simple("test-float32.caf",  AMBIX_SAMPLEFORMAT_FLOAT32, 1e-7);
   check_create_simple("test-pcm32.caf",  AMBIX_SAMPLEFORMAT_PCM32, 1e-5);
   check_create_simple("test-pcm16.caf",  AMBIX_SAMPLEFORMAT_PCM16, 1./20000.);
-
 
   pass();
   return 0;
