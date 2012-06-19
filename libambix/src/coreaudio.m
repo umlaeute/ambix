@@ -336,6 +336,7 @@ ambix_err_t _ambix_open_read(ambix_t*ambix, const char *path, const ambix_info_t
   return AMBIX_ERR_SUCCESS;
 }
 ambix_err_t _ambix_open_write(ambix_t*ambix, const char *path, const ambix_info_t*ambixinfo) {
+  int is_ambix=0;
   OSStatus err = noErr;
   ambixcoreaudio_private_t*priv=0;
   AudioStreamBasicDescription format;
@@ -355,6 +356,8 @@ ambix_err_t _ambix_open_write(ambix_t*ambix, const char *path, const ambix_info_
   PRIVATE(ambix)->xfile=NULL;
   PRIVATE(ambix)->sampleformat=ambixinfo->sampleformat;
 
+  if(ambixinfo->ambichannels>0) is_ambix=1;
+
   NSURL *inURL = [NSURL fileURLWithPath:[NSString stringWithUTF8String:path]];
 
   err = AudioFileCreateWithURL((CFURLRef)inURL,
@@ -372,7 +375,6 @@ ambix_err_t _ambix_open_write(ambix_t*ambix, const char *path, const ambix_info_
                                      true,
                                      &(PRIVATE(ambix)->xfile));
   if(noErr!=err) {
-    print_error(err);
     _ambix_close(ambix);
     return AMBIX_ERR_INVALID_FILE;
   }
@@ -381,6 +383,7 @@ ambix_err_t _ambix_open_write(ambix_t*ambix, const char *path, const ambix_info_
     return AMBIX_ERR_INVALID_FILE;
   }
   
+  ambix->is_AMBIX=is_ambix;
   return AMBIX_ERR_SUCCESS;
 }
 ambix_err_t _ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t mode, const ambix_info_t*ambixinfo) {
@@ -456,6 +459,8 @@ int64_t _ambix_readf_float32   (ambix_t*ambix, float32_t*data, int64_t frames) {
 }
 
 int64_t coreaudio_writef(ambix_t*ambix, const void*data, int64_t frames, ambix_sampleformat_t sampleformat, UInt32 bytespersample) {
+ //printf("info:\n");_ambix_print_info(&ambix->info);
+ //printf("realinfo:\n");_ambix_print_info(&ambix->realinfo);
   if(AMBIX_SAMPLEFORMAT_NONE == coreaudio_setFormat(ambix, sampleformat)) return -1;
 
   UInt32 writeframes=(UInt32)frames;
@@ -468,10 +473,10 @@ int64_t coreaudio_writef(ambix_t*ambix, const void*data, int64_t frames, ambix_s
   fillBufList.mBuffers[0].mDataByteSize = frames * bytespersample * channels;
   fillBufList.mBuffers[0].mData = (void*)data;
 
-  MARK();
+  //printf("ambix_write: %d/%d channels\n", (int)ambix->info.ambichannels, (int)ambix->info.extrachannels);
+  //printf("writing %d frames of %d channels (%d) in %p\n", (int)frames, (int)channels, (int)(fillBufList.mBuffers[0].mDataByteSize), data);
   err=ExtAudioFileWrite (PRIVATE(ambix)->xfile, writeframes, &fillBufList);
   print_error(err);
-  MARK();
   if(noErr != err)return -1;
   return (int64_t)writeframes;
 }
@@ -482,6 +487,7 @@ int64_t _ambix_writef_int32   (ambix_t*ambix, const int32_t*data, int64_t frames
   return coreaudio_writef(ambix, data, frames, AMBIX_SAMPLEFORMAT_PCM32, 4);
 }
 int64_t _ambix_writef_float32   (ambix_t*ambix, const float32_t*data, int64_t frames) {
+//printf("_ambix_writef_float32(%p, %p, %ul)\n", ambix, data);
   return coreaudio_writef(ambix, data, frames, AMBIX_SAMPLEFORMAT_FLOAT32, 4);
 }
 ambix_err_t _ambix_write_uuidchunk_at(ambix_t*ax, UInt32 index, const void*data, int64_t datasize) {
