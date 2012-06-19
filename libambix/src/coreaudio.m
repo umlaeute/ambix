@@ -384,6 +384,9 @@ ambix_err_t _ambix_open_write(ambix_t*ambix, const char *path, const ambix_info_
   }
   
   ambix->is_AMBIX=is_ambix;
+  ambix->byteswap = !_coreaudio_isNativeEndian(PRIVATE(ambix)->xfile);
+  ambix->channels = format.mChannelsPerFrame;
+
   return AMBIX_ERR_SUCCESS;
 }
 ambix_err_t _ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t mode, const ambix_info_t*ambixinfo) {
