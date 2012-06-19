@@ -618,7 +618,3 @@ int64_t _ambix_seek (ambix_t* ambix, int64_t frames, int whence) {
   return _ambix_tell(ambix);
 }
 
-/* no sndfile when using CoreAudio */
-struct SNDFILE_tag*_ambix_get_sndfile	(ambix_t*ambix) {
-  return 0;
-}
