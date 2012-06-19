@@ -487,8 +487,73 @@ int64_t _ambix_writef_int32   (ambix_t*ambix, const int32_t*data, int64_t frames
 int64_t _ambix_writef_float32   (ambix_t*ambix, const float32_t*data, int64_t frames) {
   return coreaudio_writef(ambix, data, frames, AMBIX_SAMPLEFORMAT_FLOAT32, 4);
 }
+ambix_err_t _ambix_write_uuidchunk_at(ambix_t*ax, UInt32 index, const void*data, int64_t datasize) {
+ OSStatus  err = AudioFileSetUserData (
+     PRIVATE(ax)->file,
+     'uuid',
+     index,
+     datasize, data);
+  if(noErr!=err)
+	return AMBIX_ERR_UNKNOWN;
+
+  return AMBIX_ERR_SUCCESS;
+}
 ambix_err_t _ambix_write_uuidchunk(ambix_t*ax, const void*data, int64_t datasize) {
-  return  AMBIX_ERR_UNKNOWN;
+  /* find a free slot and write UUID */
+  UInt32 index=0;
+  OSStatus err = noErr;
+  char*readdata=NULL;
+
+  for(index=0; ; index++) {
+    UInt32 size=0;
+    UInt32 readdatasize=0;
+    uint32_t chunkver=0;
+
+    if(readdata) free(readdata);
+    readdata=NULL;
+
+    err = AudioFileGetUserDataSize (
+     PRIVATE(ax)->file,
+     'uuid',
+     index,
+     &size);
+    if(noErr!=err) {
+      if(readdata) free(readdata) ; readdata=NULL;
+      /* there is no uuid-chunk[index], so we use it: */
+      return _ambix_write_uuidchunk_at(ax, index, data, datasize);
+    }
+    if(0==size)
+        continue;
+
+    readdatasize=size;
+    data=calloc(readdatasize, sizeof(char));
+    if(!data)continue;
+    err = AudioFileGetUserData (
+     PRIVATE(ax)->file,
+     'uuid',
+     index,
+     &readdatasize, readdata);
+    if(noErr!=err)
+        break;
+
+    if(readdatasize<16)
+        continue;
+
+    chunkver=_ambix_checkUUID(readdata);
+    switch(chunkver) {
+      case(1):
+        /* there is a valid ambix uuid-chunk[index], so we overwrite it: */
+        if(readdata) free(readdata) ; readdata=NULL;
+        return _ambix_write_uuidchunk_at(ax, index, data, datasize);
+      default:
+        /* there is a uuid-chunk[index] but it's not ambix, so skip it */
+        break;
+    }
+  }
+
+  if(readdata) free(readdata);
+  data=NULL;
+  return AMBIX_ERR_UNKNOWN;
 }
 
 static int64_t _ambix_tell(ambix_t*ambix) {
