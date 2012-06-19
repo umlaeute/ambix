@@ -35,7 +35,8 @@
 typedef struct ambixcoreaudio_private_struct {
   NSAutoreleasePool * pool;
   AmbixData*data;
-}ambixcoreaudio_private_t;
+} ambixcoreaudio_private_t;
+
 static inline AmbixData*PRIVATE(ambix_t*ax) { 
  ambixcoreaudio_private_t*priv=(ambixcoreaudio_private_t*)(ax->private_data);
  return priv->data;
