@@ -201,25 +201,31 @@ static ambix_sampleformat_t coreaudio_setSampleformat(ambix_sampleformat_t sampl
 static ambix_sampleformat_t coreaudio_setFormat(ambix_t*axinfo, ambix_sampleformat_t sampleformat) {
   OSStatus err = noErr;
   AudioStreamBasicDescription format;
-  MARK();
+  UInt32 formatsize=sizeof(format);
+
   if(sampleformat == PRIVATE(axinfo)->sampleformat)
     return sampleformat;
-  MARK();
 
-  sampleformat = coreaudio_setSampleformat(sampleformat, &format);
-  MARK();
-  if(AMBIX_SAMPLEFORMAT_NONE == sampleformat)
-    return AMBIX_SAMPLEFORMAT_NONE;
-  MARK();
-
-  err =  ExtAudioFileSetProperty(PRIVATE(axinfo)->xfile, kExtAudioFileProperty_ClientDataFormat,
-                                 sizeof(format), &format);
-  MARK();
-  print_error(err);
+  err =  ExtAudioFileGetProperty(PRIVATE(axinfo)->xfile, kExtAudioFileProperty_FileDataFormat,
+                                 &formatsize, &format);
   if(noErr != err)
     return AMBIX_SAMPLEFORMAT_NONE;
 
-  MARK();
+  printf("file format:\n");
+  print_caformat(&format);
+
+  sampleformat = coreaudio_setSampleformat(sampleformat, &format);
+  if(AMBIX_SAMPLEFORMAT_NONE == sampleformat)
+    return AMBIX_SAMPLEFORMAT_NONE;
+
+  err =  ExtAudioFileSetProperty(PRIVATE(axinfo)->xfile, kExtAudioFileProperty_ClientDataFormat,
+                                 sizeof(format), &format);
+  printf("client format:\n");
+  print_caformat(&format);
+
+  if(noErr != err)
+    return AMBIX_SAMPLEFORMAT_NONE;
+
   PRIVATE(axinfo)->sampleformat = sampleformat;
 
   return sampleformat;
@@ -347,6 +353,7 @@ ambix_err_t _ambix_open_write(ambix_t*ambix, const char *path, const ambix_info_
 
   PRIVATE(ambix)->file=NULL;
   PRIVATE(ambix)->xfile=NULL;
+  PRIVATE(ambix)->sampleformat=ambixinfo->sampleformat;
 
   NSURL *inURL = [NSURL fileURLWithPath:[NSString stringWithUTF8String:path]];
 
@@ -449,12 +456,11 @@ int64_t _ambix_readf_float32   (ambix_t*ambix, float32_t*data, int64_t frames) {
 }
 
 int64_t coreaudio_writef(ambix_t*ambix, const void*data, int64_t frames, ambix_sampleformat_t sampleformat, UInt32 bytespersample) {
-  MARK();
   if(AMBIX_SAMPLEFORMAT_NONE == coreaudio_setFormat(ambix, sampleformat)) return -1;
-  MARK();
 
   UInt32 writeframes=(UInt32)frames;
   UInt32 channels = ambix->channels;
+  OSStatus err = noErr;
 
   AudioBufferList fillBufList;
   fillBufList.mNumberBuffers = 1;
@@ -462,23 +468,20 @@ int64_t coreaudio_writef(ambix_t*ambix, const void*data, int64_t frames, ambix_s
   fillBufList.mBuffers[0].mDataByteSize = frames * bytespersample * channels;
   fillBufList.mBuffers[0].mData = (void*)data;
 
-  OSStatus err =  ExtAudioFileWriteAsync (PRIVATE(ambix)->xfile, writeframes, &fillBufList);
   MARK();
+  err=ExtAudioFileWrite (PRIVATE(ambix)->xfile, writeframes, &fillBufList);
   print_error(err);
   MARK();
   if(noErr != err)return -1;
   return (int64_t)writeframes;
 }
 int64_t _ambix_writef_int16   (ambix_t*ambix, const int16_t*data, int64_t frames) {
-  MARK();
   return coreaudio_writef(ambix, data, frames, AMBIX_SAMPLEFORMAT_PCM16, 2);
 }
 int64_t _ambix_writef_int32   (ambix_t*ambix, const int32_t*data, int64_t frames) {
-  MARK();
   return coreaudio_writef(ambix, data, frames, AMBIX_SAMPLEFORMAT_PCM32, 4);
 }
 int64_t _ambix_writef_float32   (ambix_t*ambix, const float32_t*data, int64_t frames) {
-  MARK();
   return coreaudio_writef(ambix, data, frames, AMBIX_SAMPLEFORMAT_FLOAT32, 4);
 }
 ambix_err_t _ambix_write_uuidchunk_at(ambix_t*ax, UInt32 index, const void*data, int64_t datasize) {
