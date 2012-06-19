@@ -74,7 +74,6 @@ static int _coreaudio_isNativeEndian(const ExtAudioFileRef cainfo) {
   UInt32 datasize=sizeof(f);
   memset(&f, 0, sizeof(f));
   if(noErr == ExtAudioFileGetProperty(cainfo, kExtAudioFileProperty_FileDataFormat, &datasize, &f)) {
-    print_caformat(&f);
     return ((f.mFormatID == kAudioFormatLinearPCM) 
             && ((f.mFormatFlags & kLinearPCMFormatFlagIsBigEndian) == kAudioFormatFlagsNativeEndian));
   }
@@ -211,18 +210,12 @@ static ambix_sampleformat_t coreaudio_setFormat(ambix_t*axinfo, ambix_sampleform
   if(noErr != err)
     return AMBIX_SAMPLEFORMAT_NONE;
 
-  printf("file format:\n");
-  print_caformat(&format);
-
   sampleformat = coreaudio_setSampleformat(sampleformat, &format);
   if(AMBIX_SAMPLEFORMAT_NONE == sampleformat)
     return AMBIX_SAMPLEFORMAT_NONE;
 
   err =  ExtAudioFileSetProperty(PRIVATE(axinfo)->xfile, kExtAudioFileProperty_ClientDataFormat,
                                  sizeof(format), &format);
-  printf("client format:\n");
-  print_caformat(&format);
-
   if(noErr != err)
     return AMBIX_SAMPLEFORMAT_NONE;
 
@@ -240,8 +233,6 @@ ambix2coreaudio_info(const ambix_info_t*axinfo, AudioStreamBasicDescription*form
 
   format->mSampleRate=(Float64)axinfo->samplerate;
   format->mChannelsPerFrame=channels;
-
-  print_caformat(format);
 }
 
 static ambix_err_t
@@ -479,7 +470,6 @@ int64_t coreaudio_writef(ambix_t*ambix, const void*data, int64_t frames, ambix_s
   //printf("ambix_write: %d/%d channels\n", (int)ambix->info.ambichannels, (int)ambix->info.extrachannels);
   //printf("writing %d frames of %d channels (%d) in %p\n", (int)frames, (int)channels, (int)(fillBufList.mBuffers[0].mDataByteSize), data);
   err=ExtAudioFileWrite (PRIVATE(ambix)->xfile, writeframes, &fillBufList);
-  print_error(err);
   if(noErr != err)return -1;
   return (int64_t)writeframes;
 }
