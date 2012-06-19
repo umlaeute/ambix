@@ -462,14 +462,30 @@ int64_t _ambix_readf_float32   (ambix_t*ambix, float32_t*data, int64_t frames) {
   return coreaudio_readf(ambix, data, frames, AMBIX_SAMPLEFORMAT_FLOAT32, 4);
 }
 
+int64_t coreaudio_writef(ambix_t*ambix, const void*data, int64_t frames, ambix_sampleformat_t sampleformat, UInt32 bytespersample) {
+  if(AMBIX_SAMPLEFORMAT_NONE == coreaudio_setFormat(ambix, sampleformat)) return -1;
+
+  UInt32 writeframes=(UInt32)frames;
+  UInt32 channels = ambix->channels;
+
+  AudioBufferList fillBufList;
+  fillBufList.mNumberBuffers = 1;
+  fillBufList.mBuffers[0].mNumberChannels = channels;
+  fillBufList.mBuffers[0].mDataByteSize = frames * bytespersample * channels;
+  fillBufList.mBuffers[0].mData = (void*)data;
+
+  OSStatus err =  ExtAudioFileWriteAsync (PRIVATE(ambix)->xfile, writeframes, &fillBufList);
+  if(noErr != err)return -1;
+  return (int64_t)writeframes;
+}
 int64_t _ambix_writef_int16   (ambix_t*ambix, const int16_t*data, int64_t frames) {
-  return -1;
+  return coreaudio_writef(ambix, data, frames, AMBIX_SAMPLEFORMAT_PCM16, 2);
 }
 int64_t _ambix_writef_int32   (ambix_t*ambix, const int32_t*data, int64_t frames) {
-  return -1;
+  return coreaudio_writef(ambix, data, frames, AMBIX_SAMPLEFORMAT_PCM32, 4);
 }
 int64_t _ambix_writef_float32   (ambix_t*ambix, const float32_t*data, int64_t frames) {
-  return -1;
+  return coreaudio_writef(ambix, data, frames, AMBIX_SAMPLEFORMAT_FLOAT32, 4);
 }
 ambix_err_t _ambix_write_uuidchunk(ambix_t*ax, const void*data, int64_t datasize) {
   return  AMBIX_ERR_UNKNOWN;
