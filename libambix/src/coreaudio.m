@@ -53,7 +53,7 @@ static void print_error(OSStatus err) {
   } u;
   u.err=err;
   u.s[4]=0;
-  printf("ERR: '%s'\n", u.s);
+  printf("ERR: %x='%s'\n", err, u.s);
 }
 
 static void print_caformat(const AudioStreamBasicDescription*format) {
@@ -165,7 +165,7 @@ static ambix_sampleformat_t coreaudio_getSampleformat(AudioStreamBasicDescriptio
     default: break;
     }
   }
-  return AMBIX_ERR_INVALID_FORMAT;
+  return AMBIX_SAMPLEFORMAT_NONE;
 }
 static ambix_sampleformat_t coreaudio_setSampleformat(ambix_sampleformat_t sampleformat, AudioStreamBasicDescription*format) {
   UInt32 flags=kAudioFormatFlagIsBigEndian | kAudioFormatFlagIsPacked;
@@ -174,21 +174,25 @@ static ambix_sampleformat_t coreaudio_setSampleformat(ambix_sampleformat_t sampl
     format->mFormatFlags = kLinearPCMFormatFlagIsSignedInteger | flags;
     format->mBitsPerChannel = 16;
     format->mFormatID=kAudioFormatLinearPCM;
+    format->mFramesPerPacket=1;
     return sampleformat;
   case(AMBIX_SAMPLEFORMAT_PCM24):
     format->mFormatFlags = kLinearPCMFormatFlagIsSignedInteger | flags;
     format->mBitsPerChannel = 24;
     format->mFormatID=kAudioFormatLinearPCM;
+    format->mFramesPerPacket=1;
     return sampleformat;
   case(AMBIX_SAMPLEFORMAT_PCM32):
     format->mFormatFlags = kLinearPCMFormatFlagIsSignedInteger | flags;
     format->mBitsPerChannel = 32;
     format->mFormatID=kAudioFormatLinearPCM;
+    format->mFramesPerPacket=1;
     return sampleformat;
   case(AMBIX_SAMPLEFORMAT_FLOAT32):
     format->mFormatFlags = kLinearPCMFormatFlagIsFloat | flags;
     format->mBitsPerChannel = 32;
     format->mFormatID=kAudioFormatLinearPCM;
+    format->mFramesPerPacket=1;
     return sampleformat;
   }
   return AMBIX_SAMPLEFORMAT_NONE;
@@ -222,40 +226,14 @@ static ambix_sampleformat_t coreaudio_setFormat(ambix_t*axinfo, ambix_sampleform
 }
 static void
 ambix2coreaudio_info(const ambix_info_t*axinfo, AudioStreamBasicDescription*format) {
-  UInt32 flags=kAudioFormatFlagIsBigEndian | kAudioFormatFlagIsPacked;
-  UInt32 samplesize=3;
   UInt32 channels=(UInt32)(axinfo->ambichannels+axinfo->extrachannels);
 
   memset(format, 0, sizeof(*format));
+  coreaudio_setSampleformat(axinfo->sampleformat, format);
+  format->mBytesPerPacket=format->mBytesPerFrame=channels*(format->mBitsPerChannel / 8);
 
   format->mSampleRate=(Float64)axinfo->samplerate;
   format->mChannelsPerFrame=channels;
-  format->mFormatID=kAudioFormatLinearPCM;
-  format->mFramesPerPacket=1;
-
-  switch(axinfo->sampleformat) {
-  case AMBIX_SAMPLEFORMAT_PCM16:
-    samplesize=2;
-    flags|=kLinearPCMFormatFlagIsSignedInteger;
-    break;
-  default: case AMBIX_SAMPLEFORMAT_PCM24:
-    samplesize=3;
-    flags|=kLinearPCMFormatFlagIsSignedInteger;
-    break;
-  case AMBIX_SAMPLEFORMAT_PCM32:
-    samplesize=4;
-    flags|=kLinearPCMFormatFlagIsSignedInteger;
-    break;
-  case AMBIX_SAMPLEFORMAT_FLOAT32:
-    samplesize=4;
-    flags|=kLinearPCMFormatFlagIsFloat;
-    break;
-  }
-
-  format->mFormatFlags=flags;
-
-  format->mBytesPerPacket=format->mBytesPerFrame=channels*samplesize;
-  format->mBitsPerChannel=8*samplesize;
 
   print_caformat(format);
 }
@@ -274,18 +252,10 @@ coreaudio2ambix_info(const ExtAudioFileRef cainfo, ambix_info_t*axinfo) {
   datasize=sizeof(format);
   memset(&format, 0, sizeof(format));
   if(noErr == ExtAudioFileGetProperty(cainfo, kExtAudioFileProperty_FileDataFormat, &datasize, &format)) {
-    int samplesize=0;
-    int isFloat=(format.mFormatFlags & kLinearPCMFormatFlagIsFloat);
-    int isInt  =(format.mFormatFlags & kLinearPCMFormatFlagIsSignedInteger);
-
-    samplesize=format.mBitsPerChannel;
-
-    if(0) {}
-    else if(isFloat && 32==samplesize) {axinfo->sampleformat = AMBIX_SAMPLEFORMAT_FLOAT32;}
-    else if(isInt && 32==samplesize) {axinfo->sampleformat = AMBIX_SAMPLEFORMAT_PCM32;}
-    else if(isInt && 24==samplesize) {axinfo->sampleformat = AMBIX_SAMPLEFORMAT_PCM24;}
-    else if(isInt && 16==samplesize) {axinfo->sampleformat = AMBIX_SAMPLEFORMAT_PCM16;}
-    else return AMBIX_ERR_INVALID_FORMAT;
+    ambix_sampleformat_t sampleformat=coreaudio_getSampleformat(&format);
+    if(AMBIX_SAMPLEFORMAT_NONE==sampleformat)
+      return AMBIX_ERR_INVALID_FORMAT;
+    axinfo->sampleformat = sampleformat;
 
     axinfo->samplerate = (double)format.mSampleRate;
     axinfo->extrachannels = format.mChannelsPerFrame;
