@@ -98,11 +98,14 @@ read_uuidchunk(ambix_t*ax) {
 
     datasize=size;
     data=calloc(datasize, sizeof(char));
+    if(!data)continue;
     err = AudioFileGetUserData (
      PRIVATE(ax)->file,
      'uuid',
      index,
      &datasize, data);
+    if(noErr!=err)
+	break;
 
     if(datasize<16)
 	continue;
@@ -111,7 +114,7 @@ read_uuidchunk(ambix_t*ax) {
     switch(chunkver) {
       case(1):
         if(_ambix_uuid1_to_matrix(data+16, datasize-16, &ax->matrix, ax->byteswap)) {
-          if(data) free(data) ;
+          if(data) free(data) ; data=NULL;
           return AMBIX_ERR_SUCCESS;
         }
 	break;
@@ -214,14 +217,18 @@ ambix_err_t _ambix_open_read(ambix_t*ambix, const char *path, const ambix_info_t
   OSStatus err = noErr;
   ambixcoreaudio_private_t*priv=0;
   ambix->private_data=calloc(1, sizeof(ambixcoreaudio_private_t));
+  if(!ambix->private_data)return AMBIX_ERR_UNKNOWN;
   priv=(ambixcoreaudio_private_t*)ambix->private_data;
   priv->pool = [[NSAutoreleasePool alloc] init];
-
   priv->data = [[AmbixData alloc] init];
 
+  if(!(priv->pool) || !(priv->data) {
+    _ambix_close(ambix);
+    return AMBIX_ERR_UNKNOWN;
+  }
+ 
   PRIVATE(ambix)->file=NULL;
   PRIVATE(ambix)->xfile=NULL;
-
 
   NSURL *inURL = [NSURL fileURLWithPath:[NSString stringWithUTF8String:path]];
 
@@ -278,10 +285,15 @@ ambix_err_t _ambix_open_write(ambix_t*ambix, const char *path, const ambix_info_
   ambix2coreaudio_info(ambixinfo, &format);
 
   ambix->private_data=calloc(1, sizeof(ambixcoreaudio_private_t));
+  if(!ambix->private_data)return AMBIX_ERR_UNKNOWN;
+
   priv=(ambixcoreaudio_private_t*)ambix->private_data;
   priv->pool = [[NSAutoreleasePool alloc] init];
-
   priv->data = [[AmbixData alloc] init];
+  if(!(priv->pool) || !(priv->data) {
+    _ambix_close(ambix);
+    return AMBIX_ERR_UNKNOWN;
+  }
 
   PRIVATE(ambix)->file=NULL;
   PRIVATE(ambix)->xfile=NULL;
@@ -420,10 +432,8 @@ int64_t _ambix_seek (ambix_t* ambix, int64_t frames, int whence) {
   return _ambix_tell(ambix);
 }
 
-
 /* no sndfile when using CoreAudio */
 struct SNDFILE_tag*_ambix_get_sndfile	(ambix_t*ambix) {
   return 0;
 }
-
 
