@@ -29,9 +29,9 @@ TESTS += matrices
 check_PROGRAMS += matrices
 matrices_SOURCES = matrices.c common.c
 
-TESTS += ambix_none
-check_PROGRAMS += ambix_none
-ambix_none_SOURCES = ambix_none.c common.c
+TESTS += none_float32
+check_PROGRAMS += none_float32
+none_float32_SOURCES = none_float32.c ambix_none.c common.c
 
 TESTS += simple_float32
 check_PROGRAMS += simple_float32

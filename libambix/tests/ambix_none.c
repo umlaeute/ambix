@@ -1,4 +1,4 @@
-/* simple - test ambix simple
+/* none - test ambix none
 
    Copyright © 2012 IOhannes m zmölnig <zmoelnig@iem.at>.
          Institute of Electronic Music and Acoustics (IEM),
@@ -100,10 +100,3 @@ void check_create_none(const char*path, ambix_sampleformat_t format) {
 }
 
 
-
-int main(int argc, char**argv) {
-  check_create_none("test-simple.caf",  AMBIX_SAMPLEFORMAT_FLOAT32);
-
-  pass();
-  return 0;
-}
