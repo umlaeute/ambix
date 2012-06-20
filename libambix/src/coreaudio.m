@@ -208,8 +208,9 @@ static ambix_sampleformat_t coreaudio_getSampleformat(AudioStreamBasicDescriptio
   }
   return AMBIX_SAMPLEFORMAT_NONE;
 }
-static ambix_sampleformat_t coreaudio_setSampleformat(ambix_sampleformat_t sampleformat, AudioStreamBasicDescription*format) {
+static ambix_sampleformat_t coreaudio_setSampleformat(ambix_sampleformat_t sampleformat, AudioStreamBasicDescription*format, bool nativeEndian) {
   bool bigEndian=true;
+  if(nativeEndian) bigEndian=( kAudioFormatFlagIsBigEndian == kAudioFormatFlagsNativeEndian);
   switch(sampleformat) {
   case(AMBIX_SAMPLEFORMAT_PCM16):
     format->mBitsPerChannel = 16;
@@ -255,7 +256,7 @@ static ambix_sampleformat_t coreaudio_setFormat(ambix_t*axinfo, ambix_sampleform
   if(noErr != err)
     return AMBIX_SAMPLEFORMAT_NONE;
 
-  sampleformat = coreaudio_setSampleformat(sampleformat, &format);
+  sampleformat = coreaudio_setSampleformat(sampleformat, &format, true);
   if(AMBIX_SAMPLEFORMAT_NONE == sampleformat)
     return AMBIX_SAMPLEFORMAT_NONE;
 
@@ -269,15 +270,13 @@ static ambix_sampleformat_t coreaudio_setFormat(ambix_t*axinfo, ambix_sampleform
   return sampleformat;
 }
 static void
-ambix2coreaudio_info(const ambix_info_t*axinfo, AudioStreamBasicDescription*format) {
+ambix2coreaudio_info(const ambix_info_t*axinfo, AudioStreamBasicDescription*format, bool nativeEndian) {
   UInt32 channels=(UInt32)(axinfo->ambichannels+axinfo->extrachannels);
 
   memset(format, 0, sizeof(*format));
-  coreaudio_setSampleformat(axinfo->sampleformat, format);
-  format->mBytesPerPacket=format->mBytesPerFrame=channels*(format->mBitsPerChannel / 8);
-
-  format->mSampleRate=(Float64)axinfo->samplerate;
   format->mChannelsPerFrame=channels;
+  format->mSampleRate=(Float64)axinfo->samplerate;
+  coreaudio_setSampleformat(axinfo->sampleformat, format, nativeEndian);
 }
 
 static ambix_err_t
@@ -376,7 +375,7 @@ ambix_err_t _ambix_open_write(ambix_t*ambix, const char *path, const ambix_info_
   OSStatus err = noErr;
   ambixcoreaudio_private_t*priv=0;
   AudioStreamBasicDescription format;
-  ambix2coreaudio_info(ambixinfo, &format);
+  ambix2coreaudio_info(ambixinfo, &format, false);
   ambix->private_data=calloc(1, sizeof(ambixcoreaudio_private_t));
   if(!ambix->private_data)return AMBIX_ERR_UNKNOWN;
 
