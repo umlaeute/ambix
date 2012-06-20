@@ -68,8 +68,8 @@ void check_create_extended(const char*path, ambix_sampleformat_t format, uint32_
   orgambidata=data_sine(framesize, ambichannels, periods);
   orgotherdata=data_ramp(framesize, extrachannels);
   //data_print(orgdata, 100);
-  fail_if((NULL==orgambidata), __LINE__, "couldn't create ambidata %dx%d sine @ %f", framesize, ambichannels, periods);
-  fail_if((NULL==orgotherdata), __LINE__, "couldn't create otherdata %dx%d sine @ %f", framesize, extrachannels, periods);
+  fail_if((NULL==orgambidata), __LINE__, "couldn't create ambidata %dx%d sine @ %f", (int)framesize, (int)ambichannels, (float)periods);
+  fail_if((NULL==orgotherdata), __LINE__, "couldn't create otherdata %dx%d sine @ %f", (int)framesize, (int)extrachannels, (float)periods);
 
   memcpy(ambidata, orgambidata, framesize*ambichannels*sizeof(float32_t));
   memcpy(otherdata, orgotherdata, framesize*extrachannels*sizeof(float32_t));
@@ -85,17 +85,17 @@ void check_create_extended(const char*path, ambix_sampleformat_t format, uint32_
     printf("writing %d chunks of %d frames\n", (int)chunks, (int)chunksize);
     for(frame=0; frame<chunks; frame++) {
       err64=ambix_writef_float32(ambix, ambidata+ambichannels*frame*chunksize, otherdata+extrachannels*frame*chunksize, chunksize);
-      fail_if((err64!=chunksize), __LINE__, "wrote only %d chunksize of %d", err64, chunksize);
+      fail_if((err64!=chunksize), __LINE__, "wrote only %d chunksize of %d", (int)err64, (int)chunksize);
       framesleft-=chunksize;
     }
     subframe=framesleft;
     printf("writing rest of %d frames\n", (int)subframe);
     err64=ambix_writef_float32(ambix, ambidata+ambichannels*frame*chunksize, otherdata+extrachannels*frame*chunksize, subframe);
-    fail_if((err64!=subframe), __LINE__, "wrote only %d subframe of %d", err64, subframe);
+    fail_if((err64!=subframe), __LINE__, "wrote only %d subframe of %d", (int)err64, (int)subframe);
 
   } else {
     err64=ambix_writef_float32(ambix, ambidata, otherdata, framesize);
-    fail_if((err64!=framesize), __LINE__, "wrote only %d frames of %d", err64, framesize);
+    fail_if((err64!=framesize), __LINE__, "wrote only %d frames of %d", (int)err64, (int)framesize);
   }
 
   diff=data_diff(__LINE__, orgambidata, ambidata, framesize*ambichannels, eps);
@@ -112,11 +112,11 @@ void check_create_extended(const char*path, ambix_sampleformat_t format, uint32_
   ambix=ambix_open(path, AMBIX_READ, &rinfo);
   fail_if((NULL==ambix), __LINE__, "couldn't create ambix file '%s' for reading", path);
 
-  fail_if((info.fileformat!=rinfo.fileformat), __LINE__, "fileformat mismatch %d!=%d", info.fileformat, rinfo.fileformat);
-  fail_if((info.samplerate!=rinfo.samplerate), __LINE__, "samplerate mismatch %g!=%g", info.samplerate, rinfo.samplerate);
-  fail_if((info.sampleformat!=rinfo.sampleformat), __LINE__, "sampleformat mismatch %d!=%d", info.sampleformat, rinfo.sampleformat);
-  fail_if((info.ambichannels!=rinfo.ambichannels), __LINE__, "ambichannels mismatch %d!=%d", info.ambichannels, rinfo.ambichannels);
-  fail_if((info.extrachannels!=rinfo.extrachannels), __LINE__, "extrachannels mismatch %d!=%d", info.extrachannels, rinfo.extrachannels);
+  fail_if((info.fileformat!=rinfo.fileformat), __LINE__, "fileformat mismatch %d!=%d", (int)info.fileformat, (int)rinfo.fileformat);
+  fail_if((info.samplerate!=rinfo.samplerate), __LINE__, "samplerate mismatch %g!=%g", (float)info.samplerate, (float)rinfo.samplerate);
+  fail_if((info.sampleformat!=rinfo.sampleformat), __LINE__, "sampleformat mismatch %d!=%d", (int)info.sampleformat, (int)rinfo.sampleformat);
+  fail_if((info.ambichannels!=rinfo.ambichannels), __LINE__, "ambichannels mismatch %d!=%d", (int)info.ambichannels, (int)rinfo.ambichannels);
+  fail_if((info.extrachannels!=rinfo.extrachannels), __LINE__, "extrachannels mismatch %d!=%d", (int)info.extrachannels, (int)rinfo.extrachannels);
 
   eye2=ambix_get_adaptormatrix(ambix);
   fail_if((NULL==eye2), __LINE__, "failed reading adaptor matrix");

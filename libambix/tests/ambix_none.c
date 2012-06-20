@@ -58,10 +58,10 @@ void check_create_none(const char*path, ambix_sampleformat_t format) {
 
   memcpy(data, orgdata, frames*channels*sizeof(float32_t));
 
-  fail_if((NULL==data), __LINE__, "couldn't create data %dx%d sine @ %f", frames, channels, periods);
+  fail_if((NULL==data), __LINE__, "couldn't create data %dx%d sine @ %f", (int)frames, (int)channels, (float)periods);
 
   err64=ambix_writef_float32(ambix, NULL, data, frames);
-  fail_if((err64!=frames), __LINE__, "wrote only %d frames of %d", err64, frames);
+  fail_if((err64!=frames), __LINE__, "wrote only %d frames of %d", (int)err64, (int)frames);
 
   diff=data_diff(__LINE__, orgdata, data, frames*channels, eps);
   fail_if((diff>eps), __LINE__, "data diff %f > %f", diff, eps);
@@ -72,11 +72,11 @@ void check_create_none(const char*path, ambix_sampleformat_t format) {
   ambix=ambix_open(path, AMBIX_READ, &rinfo);
   fail_if((NULL==ambix), __LINE__, "couldn't create ambix file '%s' for reading", path);
 
-  fail_if((info.fileformat!=rinfo.fileformat), __LINE__, "fileformat mismatch %d!=%d", info.fileformat, rinfo.fileformat);
-  fail_if((info.samplerate!=rinfo.samplerate), __LINE__, "samplerate mismatch %g!=%g", info.samplerate, rinfo.samplerate);
-  fail_if((info.sampleformat!=rinfo.sampleformat), __LINE__, "sampleformat mismatch %d!=%d", info.sampleformat, rinfo.sampleformat);
-  fail_if((info.ambichannels!=rinfo.ambichannels), __LINE__, "ambichannels mismatch %d!=%d", info.ambichannels, rinfo.ambichannels);
-  fail_if((info.extrachannels!=rinfo.extrachannels), __LINE__, "extrachannels mismatch %d!=%d", info.extrachannels, rinfo.extrachannels);
+  fail_if((info.fileformat!=rinfo.fileformat), __LINE__, "fileformat mismatch %d!=%d", (int)info.fileformat, (int)rinfo.fileformat);
+  fail_if((info.samplerate!=rinfo.samplerate), __LINE__, "samplerate mismatch %g!=%g", (float)info.samplerate, (float)rinfo.samplerate);
+  fail_if((info.sampleformat!=rinfo.sampleformat), __LINE__, "sampleformat mismatch %d!=%d", (int)info.sampleformat, (int)rinfo.sampleformat);
+  fail_if((info.ambichannels!=rinfo.ambichannels), __LINE__, "ambichannels mismatch %d!=%d", (int)info.ambichannels, (int)rinfo.ambichannels);
+  fail_if((info.extrachannels!=rinfo.extrachannels), __LINE__, "extrachannels mismatch %d!=%d", (int)info.extrachannels, (int)rinfo.extrachannels);
 
   gotframes=0;
   do {
