@@ -83,12 +83,12 @@ static void print_caformat(const AudioStreamBasicDescription*format) {
   printf("	SampleRate=%f\n", (float)format->mSampleRate);
   printf("	FormatID="); print_caf_formatID(format->mFormatID);
   printf("	FormatFlags="); print_caf_flags(format->mFormatFlags);
-  printf("	BytesPerPacket=%ul\n", (unsigned long)format->mBytesPerPacket);
-  printf("	FramesPerPacket=%ul\n", (unsigned long)format->mFramesPerPacket);
-  printf("	BytesPerFrame=%ul\n", (unsigned long)format->mBytesPerFrame);
-  printf("	ChannelsPerFrame=%ul\n", (unsigned long)format->mChannelsPerFrame);
-  printf("	BitsPerChannel=%ul\n", (unsigned long)format->mBitsPerChannel);
-  printf("	Reserved=%ul\n", (unsigned long)format->mReserved);
+  printf("	BytesPerPacket=%lu\n", (unsigned long)format->mBytesPerPacket);
+  printf("	FramesPerPacket=%lu\n", (unsigned long)format->mFramesPerPacket);
+  printf("	BytesPerFrame=%lu\n", (unsigned long)format->mBytesPerFrame);
+  printf("	ChannelsPerFrame=%lu\n", (unsigned long)format->mChannelsPerFrame);
+  printf("	BitsPerChannel=%lu\n", (unsigned long)format->mBitsPerChannel);
+  printf("	Reserved=%lu\n", (unsigned long)format->mReserved);
 }
 
 UInt32 coreaudio_doGetFlags (
@@ -524,7 +524,7 @@ int64_t _ambix_writef_int32   (ambix_t*ambix, const int32_t*data, int64_t frames
   return coreaudio_writef(ambix, data, frames, AMBIX_SAMPLEFORMAT_PCM32, 4);
 }
 int64_t _ambix_writef_float32   (ambix_t*ambix, const float32_t*data, int64_t frames) {
-//printf("_ambix_writef_float32(%p, %p, %ul)\n", ambix, data);
+//printf("_ambix_writef_float32(%p, %p, %lu)\n", ambix, data);
   return coreaudio_writef(ambix, data, frames, AMBIX_SAMPLEFORMAT_FLOAT32, 4);
 }
 ambix_err_t _ambix_write_uuidchunk_at(ambix_t*ax, UInt32 index, const void*data, int64_t datasize) {
