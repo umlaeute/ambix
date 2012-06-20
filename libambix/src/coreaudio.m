@@ -91,6 +91,25 @@ static void print_caformat(const AudioStreamBasicDescription*format) {
   printf("	Reserved=%ul\n", (unsigned long)format->mReserved);
 }
 
+UInt32 coreaudio_doGetFlags (
+   UInt32 inValidBitsPerChannel,
+   UInt32 inTotalBitsPerChannel,
+   bool inIsFloat,
+   bool inIsBigEndian,
+   bool inIsNonInterleaved
+) {
+   return
+   (inIsFloat ? kAudioFormatFlagIsFloat : kAudioFormatFlagIsSignedInteger) |
+   (inIsBigEndian ? ((UInt32)kAudioFormatFlagIsBigEndian) : 0)             |
+   ((!inIsFloat && (inValidBitsPerChannel == inTotalBitsPerChannel)) ?
+   kAudioFormatFlagIsPacked : kAudioFormatFlagIsAlignedHigh)           |
+   (inIsNonInterleaved ? ((UInt32)kAudioFormatFlagIsNonInterleaved) : 0);
+}
+UInt32 coreaudio_getFlags (UInt32 samplebits, bool isFloat, bool isBigEndian) {
+  return coreaudio_doGetFlags(samplebits, samplebits, isFloat, isBigEndian, false);
+}
+
+
 
 static int _coreaudio_isNativeEndian(const ExtAudioFileRef cainfo) {
   AudioStreamBasicDescription f;
@@ -190,34 +209,35 @@ static ambix_sampleformat_t coreaudio_getSampleformat(AudioStreamBasicDescriptio
   return AMBIX_SAMPLEFORMAT_NONE;
 }
 static ambix_sampleformat_t coreaudio_setSampleformat(ambix_sampleformat_t sampleformat, AudioStreamBasicDescription*format) {
-  UInt32 flags=kAudioFormatFlagIsBigEndian | kAudioFormatFlagIsPacked;
+  bool bigEndian=true;
   switch(sampleformat) {
   case(AMBIX_SAMPLEFORMAT_PCM16):
-    format->mFormatFlags = kLinearPCMFormatFlagIsSignedInteger | flags;
     format->mBitsPerChannel = 16;
     format->mFormatID=kAudioFormatLinearPCM;
     format->mFramesPerPacket=1;
+    format->mBytesPerFrame=(format->mBitsPerChannel/8)*format->mChannelsPerFrame; format->mBytesPerPacket=format->mBytesPerFrame;
+    format->mFormatFlags = coreaudio_getFlags (format->mBitsPerChannel, false, bigEndian);
     return sampleformat;
   case(AMBIX_SAMPLEFORMAT_PCM24):
-    format->mFormatFlags = kLinearPCMFormatFlagIsSignedInteger | flags;
     format->mBitsPerChannel = 24;
     format->mFormatID=kAudioFormatLinearPCM;
     format->mFramesPerPacket=1;
     format->mBytesPerFrame=(format->mBitsPerChannel/8)*format->mChannelsPerFrame; format->mBytesPerPacket=format->mBytesPerFrame;
+    format->mFormatFlags = coreaudio_getFlags (format->mBitsPerChannel, false, bigEndian);
     return sampleformat;
   case(AMBIX_SAMPLEFORMAT_PCM32):
-    format->mFormatFlags = kLinearPCMFormatFlagIsSignedInteger | flags;
     format->mBitsPerChannel = 32;
     format->mFormatID=kAudioFormatLinearPCM;
     format->mFramesPerPacket=1;
     format->mBytesPerFrame=(format->mBitsPerChannel/8)*format->mChannelsPerFrame; format->mBytesPerPacket=format->mBytesPerFrame;
+    format->mFormatFlags = coreaudio_getFlags (format->mBitsPerChannel, false, bigEndian);
     return sampleformat;
   case(AMBIX_SAMPLEFORMAT_FLOAT32):
-    format->mFormatFlags = kLinearPCMFormatFlagIsFloat | flags;
     format->mBitsPerChannel = 32;
     format->mFormatID=kAudioFormatLinearPCM;
     format->mFramesPerPacket=1;
     format->mBytesPerFrame=(format->mBitsPerChannel/8)*format->mChannelsPerFrame; format->mBytesPerPacket=format->mBytesPerFrame;
+    format->mFormatFlags = coreaudio_getFlags (format->mBitsPerChannel, true, bigEndian);
     return sampleformat;
   }
   return AMBIX_SAMPLEFORMAT_NONE;
