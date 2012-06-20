@@ -244,7 +244,7 @@ static ambix_sampleformat_t coreaudio_setSampleformat(ambix_sampleformat_t sampl
   return AMBIX_SAMPLEFORMAT_NONE;
 }
 
-static ambix_sampleformat_t coreaudio_setFormat(ambix_t*axinfo, ambix_sampleformat_t sampleformat) {
+static ambix_sampleformat_t coreaudio_setClientFormat(ambix_t*axinfo, ambix_sampleformat_t sampleformat) {
   OSStatus err = noErr;
   AudioStreamBasicDescription format;
   UInt32 formatsize=sizeof(format);
@@ -425,6 +425,7 @@ ambix_err_t _ambix_open_write(ambix_t*ambix, const char *path, const ambix_info_
   return AMBIX_ERR_SUCCESS;
 }
 ambix_err_t _ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t mode, const ambix_info_t*ambixinfo) {
+//printf("AMBIX: CoreAudio support\n");
   if((mode & AMBIX_READ) & (mode & AMBIX_WRITE))
     return AMBIX_ERR_INVALID_FILE;
   else if (mode & AMBIX_WRITE)
@@ -471,7 +472,7 @@ ambix_err_t	_ambix_close	(ambix_t*ambix) {
 }
 
 int64_t coreaudio_readf(ambix_t*ambix, void*data, int64_t frames, ambix_sampleformat_t sampleformat, UInt32 bytespersample) {
-  if(AMBIX_SAMPLEFORMAT_NONE == coreaudio_setFormat(ambix, sampleformat)) return -1;
+  if(AMBIX_SAMPLEFORMAT_NONE == coreaudio_setClientFormat(ambix, sampleformat)) return -1;
 
   UInt32 readframes=(UInt32)frames;
   UInt32 channels = ambix->channels;
@@ -499,8 +500,7 @@ int64_t _ambix_readf_float32   (ambix_t*ambix, float32_t*data, int64_t frames) {
 int64_t coreaudio_writef(ambix_t*ambix, const void*data, int64_t frames, ambix_sampleformat_t sampleformat, UInt32 bytespersample) {
  //printf("info:\n");_ambix_print_info(&ambix->info);
  //printf("realinfo:\n");_ambix_print_info(&ambix->realinfo);
-  if(AMBIX_SAMPLEFORMAT_NONE == coreaudio_setFormat(ambix, sampleformat)) return -1;
-
+  if(AMBIX_SAMPLEFORMAT_NONE == coreaudio_setClientFormat(ambix, sampleformat)) return -1;
   UInt32 writeframes=(UInt32)frames;
   UInt32 channels = ambix->channels;
   OSStatus err = noErr;
