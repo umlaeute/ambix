@@ -101,12 +101,3 @@ void check_create_simple(const char*path, ambix_sampleformat_t format, float32_t
 }
 
 
-
-int main(int argc, char**argv) {
-  check_create_simple("test-float32.caf",  AMBIX_SAMPLEFORMAT_FLOAT32, 1e-7);
-  check_create_simple("test-pcm32.caf",  AMBIX_SAMPLEFORMAT_PCM32, 1e-5);
-  check_create_simple("test-pcm16.caf",  AMBIX_SAMPLEFORMAT_PCM16, 1./20000.);
-
-  pass();
-  return 0;
-}

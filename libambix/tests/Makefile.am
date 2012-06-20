@@ -33,9 +33,17 @@ TESTS += ambix_none
 check_PROGRAMS += ambix_none
 ambix_none_SOURCES = ambix_none.c common.c
 
-TESTS += ambix_simple
-check_PROGRAMS += ambix_simple
-ambix_simple_SOURCES = ambix_simple.c common.c
+TESTS += simple_float32
+check_PROGRAMS += simple_float32
+simple_float32_SOURCES = simple_float32.c ambix_simple.c common.c
+
+TESTS += simple_pcm32
+check_PROGRAMS += simple_pcm32
+simple_pcm32_SOURCES = simple_pcm32.c ambix_simple.c common.c
+
+TESTS += simple_pcm16
+check_PROGRAMS += simple_pcm16
+simple_pcm16_SOURCES = simple_pcm16.c ambix_simple.c common.c
 
 TESTS += ambix_extended
 check_PROGRAMS += ambix_extended
