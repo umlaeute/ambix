@@ -2,7 +2,7 @@
 #X msg 646 30 \; pd dsp 1;
 #X msg 74 161 open \$1;
 #X msg 74 49 bang;
-#X obj 74 69 openpanel;
+#X obj 74 69 savepanel;
 #X text 356 432 <buffersize> is given in samples per channels (unlike
 [readsf~] where you specify it in bytes per channel);
 #X text 43 475 see also:;
