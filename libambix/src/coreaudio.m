@@ -56,10 +56,33 @@ static void print_error(OSStatus err) {
   printf("ERR: %x='%s'\n", err, u.s);
 }
 
+static void print_caf_formatID(UInt32 format) {
+  union {
+    char s[4];
+    UInt32 format;
+  } u;
+  u.format=format;
+  printf("'%c%c%c%c'\n", u.s[0], u.s[1], u.s[2], u.s[3]);
+}
+#define str(x) #x
+#define xstr(x) str(x)
+#define PRINTFLAG(y) do {if (flags&y) {printf("" xstr(y)"|"); flags^=y;}}while(0)
+static void print_caf_flags(UInt32 flags) {
+   PRINTFLAG(kAudioFormatFlagIsBigEndian);
+   PRINTFLAG(kAudioFormatFlagIsPacked);
+   PRINTFLAG(kAudioFormatFlagIsAlignedHigh);
+   PRINTFLAG(kAudioFormatFlagIsNonInterleaved);
+   PRINTFLAG(kAudioFormatFlagIsNonMixable);
+   PRINTFLAG(kAudioFormatFlagsAreAllClear);
+
+   PRINTFLAG(kAudioFormatFlagIsFloat);
+   PRINTFLAG(kAudioFormatFlagIsSignedInteger);
+   printf("%d\n", flags);
+}
 static void print_caformat(const AudioStreamBasicDescription*format) {
   printf("	SampleRate=%f\n", (float)format->mSampleRate);
-  printf("	FormatID=%ul\n", (unsigned long)format->mFormatID);
-  printf("	FormatFlags=%ul\n", (unsigned long)format->mFormatFlags);
+  printf("	FormatID="); print_caf_formatID(format->mFormatID);
+  printf("	FormatFlags="); print_caf_flags(format->mFormatFlags);
   printf("	BytesPerPacket=%ul\n", (unsigned long)format->mBytesPerPacket);
   printf("	FramesPerPacket=%ul\n", (unsigned long)format->mFramesPerPacket);
   printf("	BytesPerFrame=%ul\n", (unsigned long)format->mBytesPerFrame);
@@ -201,7 +224,6 @@ static ambix_sampleformat_t coreaudio_setFormat(ambix_t*axinfo, ambix_sampleform
   OSStatus err = noErr;
   AudioStreamBasicDescription format;
   UInt32 formatsize=sizeof(format);
-
   if(sampleformat == PRIVATE(axinfo)->sampleformat)
     return sampleformat;
 
