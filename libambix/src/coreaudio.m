@@ -203,18 +203,21 @@ static ambix_sampleformat_t coreaudio_setSampleformat(ambix_sampleformat_t sampl
     format->mBitsPerChannel = 24;
     format->mFormatID=kAudioFormatLinearPCM;
     format->mFramesPerPacket=1;
+    format->mBytesPerFrame=(format->mBitsPerChannel/8)*format->mChannelsPerFrame; format->mBytesPerPacket=format->mBytesPerFrame;
     return sampleformat;
   case(AMBIX_SAMPLEFORMAT_PCM32):
     format->mFormatFlags = kLinearPCMFormatFlagIsSignedInteger | flags;
     format->mBitsPerChannel = 32;
     format->mFormatID=kAudioFormatLinearPCM;
     format->mFramesPerPacket=1;
+    format->mBytesPerFrame=(format->mBitsPerChannel/8)*format->mChannelsPerFrame; format->mBytesPerPacket=format->mBytesPerFrame;
     return sampleformat;
   case(AMBIX_SAMPLEFORMAT_FLOAT32):
     format->mFormatFlags = kLinearPCMFormatFlagIsFloat | flags;
     format->mBitsPerChannel = 32;
     format->mFormatID=kAudioFormatLinearPCM;
     format->mFramesPerPacket=1;
+    format->mBytesPerFrame=(format->mBitsPerChannel/8)*format->mChannelsPerFrame; format->mBytesPerPacket=format->mBytesPerFrame;
     return sampleformat;
   }
   return AMBIX_SAMPLEFORMAT_NONE;
