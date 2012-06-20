@@ -29,22 +29,24 @@ TESTS += matrices
 check_PROGRAMS += matrices
 matrices_SOURCES = matrices.c common.c
 
-TESTS += none_float32
+TESTS          += none_float32
 check_PROGRAMS += none_float32
 none_float32_SOURCES = none_float32.c ambix_none.c common.c
 
-TESTS += simple_float32
-check_PROGRAMS += simple_float32
+TESTS          += simple_float32 simple_pcm32 simple_pcm16
+check_PROGRAMS += simple_float32 simple_pcm32 simple_pcm16
 simple_float32_SOURCES = simple_float32.c ambix_simple.c common.c
-
-TESTS += simple_pcm32
-check_PROGRAMS += simple_pcm32
 simple_pcm32_SOURCES = simple_pcm32.c ambix_simple.c common.c
-
-TESTS += simple_pcm16
-check_PROGRAMS += simple_pcm16
 simple_pcm16_SOURCES = simple_pcm16.c ambix_simple.c common.c
 
-TESTS += ambix_extended
-check_PROGRAMS += ambix_extended
-ambix_extended_SOURCES = ambix_extended.c common.c
+TESTS          += extended_float32_0 extended_pcm32_0 extended_pcm16_0
+check_PROGRAMS += extended_float32_0 extended_pcm32_0 extended_pcm16_0
+extended_float32_0_SOURCES = extended_float32_0.c ambix_extended.c common.c
+extended_pcm32_0_SOURCES   = extended_pcm32_0.c ambix_extended.c common.c
+extended_pcm16_0_SOURCES   = extended_pcm16_0.c ambix_extended.c common.c
+
+TESTS          += extended_float32_1024 extended_pcm32_1024 extended_pcm16_1024
+check_PROGRAMS += extended_float32_1024 extended_pcm32_1024 extended_pcm16_1024
+extended_float32_1024_SOURCES = extended_float32_1024.c ambix_extended.c common.c
+extended_pcm32_1024_SOURCES   = extended_pcm32_1024.c ambix_extended.c common.c
+extended_pcm16_1024_SOURCES   = extended_pcm16_1024.c ambix_extended.c common.c

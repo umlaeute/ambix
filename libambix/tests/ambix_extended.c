@@ -157,22 +157,3 @@ void check_create_extended(const char*path, ambix_sampleformat_t format, uint32_
 
   unlink(path);
 }
-
-
-
-int main(int argc, char**argv) {
-#if 1
-  check_create_extended("test2-float32.caf",AMBIX_SAMPLEFORMAT_FLOAT32, 0, 1e-7);
-  check_create_extended("test2-pcm32.caf",  AMBIX_SAMPLEFORMAT_PCM32, 0, 1e-5);
-  check_create_extended("test2-pcm16.caf",  AMBIX_SAMPLEFORMAT_PCM16, 0, 1./20000.);
-#endif
-
-#if 1
-  check_create_extended("test2-float32.caf",AMBIX_SAMPLEFORMAT_FLOAT32, 1024, 1e-7);
-  check_create_extended("test2-pcm32.caf",  AMBIX_SAMPLEFORMAT_PCM32, 1024, 1e-5);
-  check_create_extended("test2-pcm16.caf",  AMBIX_SAMPLEFORMAT_PCM16, 1024, 1./20000.);
-#endif
-
-  pass();
-  return 0;
-}
