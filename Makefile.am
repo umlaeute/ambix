@@ -6,8 +6,6 @@ SUBDIRS=libambix \
 	utils \
 	doc
 
-if HAVE_PUREDATA
-SUBDIRS+=pd
-endif HAVE_PUREDATA
+SUBDIRS+=samples
 
 SUBDIRS+=build

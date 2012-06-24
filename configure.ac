@@ -17,7 +17,8 @@ AC_CONFIG_FILES([utils/Makefile utils/jcommon/Makefile])
 AC_CONFIG_FILES([doc/Makefile])
 AC_CONFIG_FILES([replacement/Makefile])
 
-AC_CONFIG_FILES([pd/Makefile pd/ambix-meta.pd])
+AC_CONFIG_FILES([samples/Makefile])
+AC_CONFIG_FILES([samples/pd/Makefile samples/pd/ambix-meta.pd])
 
 AC_CONFIG_FILES([build/Makefile build/w32-vs2008/Makefile])
 
