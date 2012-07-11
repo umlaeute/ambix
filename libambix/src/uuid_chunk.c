@@ -113,7 +113,7 @@ _ambix_uuid1_to_matrix(const void*vdata, uint64_t datasize, ambix_matrix_t*orgmt
 
   memcpy(&rows, cdata+index, sizeof(uint32_t));
   index += sizeof(uint32_t);
-			
+
   memcpy(&cols, cdata+index, sizeof(uint32_t));
   index += sizeof(uint32_t);
 

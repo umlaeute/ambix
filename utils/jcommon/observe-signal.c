@@ -26,7 +26,7 @@ static void signal_management_handler(int s)
 static void *signal_management_thread(void *PTR)
 {
   pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, 0);
-  sigset_t blocked;  
+  sigset_t blocked;
   sigprocmask(SIG_SETMASK, 0, &blocked);
   int s;
   sigwait(&blocked, &s);
@@ -59,7 +59,7 @@ int observe_signals(void)
 	return -1;
       }
     }
-  } 
+  }
   if(pthread_sigmask(SIG_SETMASK, &signals, 0)) {
     fprintf(stderr, "pthread_sigmask() failed: %s\n", strerror(errno));
     return -1;
@@ -75,9 +75,9 @@ int observe_signals(void)
 
 bool observe_end_of_process(void)
 {
-  return(signal_received & 1<<SIGHUP || 
-	 signal_received & 1<<SIGINT || 
-	 signal_received & 1<<SIGQUIT || 
-	 signal_received & 1<<SIGPIPE || 
+  return(signal_received & 1<<SIGHUP ||
+	 signal_received & 1<<SIGINT ||
+	 signal_received & 1<<SIGQUIT ||
+	 signal_received & 1<<SIGPIPE ||
 	 signal_received & 1<<SIGTERM);
 }

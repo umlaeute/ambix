@@ -99,7 +99,7 @@ void check_matrix(const char*name, ambix_matrixtype_t typ, uint32_t rows, uint32
 
   mtx=ambix_matrix_init(rows, cols, mtx);
   result=ambix_matrix_fill(mtx, typ);
-  
+
   fail_if((result==NULL), __LINE__, "matrix_fill returned NULL");
   fail_if((result!=mtx ), __LINE__, "matrix_fill did not return matrix %p (got %p)", mtx, result);
 
@@ -117,7 +117,7 @@ void check_matrix(const char*name, ambix_matrixtype_t typ, uint32_t rows, uint32
 
 
   ambix_matrix_destroy(mtx);
-  ambix_matrix_destroy(zeros); 
+  ambix_matrix_destroy(zeros);
 }
 
 int main(int argc, char**argv) {
@@ -177,7 +177,7 @@ int main(int argc, char**argv) {
     snprintf(name, 63, "sid[%d, %d]", chan, chan);
     check_inversion(name, AMBIX_MATRIX_SID,  1,  1);
   }
-    
+
 
   pass();
   return 0;

@@ -25,8 +25,8 @@
 */
 
 #ifdef __MINGW32__
-int _get_output_format( void ) { 
-	return 1; 
+int _get_output_format( void ) {
+	return 1;
 }
 #endif /* __MINGW32__ */
 

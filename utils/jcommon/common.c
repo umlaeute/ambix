@@ -12,7 +12,7 @@ void *xmalloc(size_t size)
 {
   void *p = malloc(size);
   if(p == NULL) {
-    fprintf(stderr, "malloc() failed: %ld\n", (long)size);  
+    fprintf(stderr, "malloc() failed: %ld\n", (long)size);
     FAILURE;
   }
   return p;
@@ -33,7 +33,7 @@ ssize_t xwrite(int filedes, const void *buffer, size_t size)
   ssize_t err = write(filedes, buffer, size);
   if(err == -1) {
     perror("write() failed");
-    FAILURE; 
+    FAILURE;
   }
   return err;
 }
@@ -43,7 +43,7 @@ ssize_t xread(int filedes, void *buffer, size_t size)
   ssize_t err = read(filedes, buffer, size);
   if(err == -1) {
     perror("read() failed");
-    FAILURE; 
+    FAILURE;
   }
   return err;
 }
@@ -64,7 +64,7 @@ int jack_transport_is_rolling(jack_client_t *client)
 {
   jack_transport_state_t s = jack_transport_query(client , NULL);
   return s & JackTransportRolling;
-} 
+}
 
 jack_client_t *jack_client_unique(char *name)
 {
@@ -79,7 +79,7 @@ jack_client_t *jack_client_unique(char *name)
   }
   return client;
 }
-jack_client_t *jack_client_unique_(const char *name) 
+jack_client_t *jack_client_unique_(const char *name)
 {
   char uniq[64];
   snprintf(uniq, 64, "%s", name);

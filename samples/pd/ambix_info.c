@@ -105,7 +105,7 @@ static void ambix_info_open(t_ambix_info *x, t_symbol*s) {
 
   t_symbol*filesym=get_filename(x->x_canvas, s);
   char*filename=(filesym!=NULL)?filesym->s_name:NULL;
-  
+
   memset(&ainfo, 0, sizeof(ainfo));
 
   ambix=ambix_open(filename, AMBIX_READ, &ainfo);
@@ -165,7 +165,7 @@ static void ambix_info_open(t_ambix_info *x, t_symbol*s) {
       t_atom*ap=(t_atom*)getbytes(sizeof(t_atom)*(size+2));
       SETFLOAT(ap+0, matrix->rows);
       SETFLOAT(ap+1, matrix->cols);
-      
+
       index=2;
       for(r=0; r<matrix->rows; r++) {
         for(c=0; c<matrix->cols; c++) {

@@ -122,9 +122,9 @@ void signal_interleave_to(float32_t *dst, const float32_t **src, uint32_t f, uin
   }
 }
 
-void interleave_split(float32_t*source, uint32_t sourcechannels, 
-                      uint32_t dst1channels, 
-                      float32_t*dst1, float32_t*dst2, 
+void interleave_split(float32_t*source, uint32_t sourcechannels,
+                      uint32_t dst1channels,
+                      float32_t*dst1, float32_t*dst2,
                       int64_t frames)
 {
   int64_t frame;
@@ -154,7 +154,7 @@ void *disk_thread_procedure(void *PTR)
     /* Wait for data at the ring buffer. */
 
     int nbytes = d->minimal_frames * sizeof(float) * d->channels;
-    nbytes = jack_ringbuffer_wait_for_read(d->ring_buffer, nbytes, 
+    nbytes = jack_ringbuffer_wait_for_read(d->ring_buffer, nbytes,
 					   d->pipe[0]);
 
     /* Drop excessive data to not overflow the local buffer. */
@@ -167,14 +167,14 @@ void *disk_thread_procedure(void *PTR)
     /* Read data from the ring buffer. */
 
     jack_ringbuffer_read(d->ring_buffer,
-			 (char *) d->d_buffer, 
+			 (char *) d->d_buffer,
 			 nbytes);
-    
+
     /* Do write operation.  The sample count *must* be an integral
        number of frames. */
 
     int nframes = (nbytes / sizeof(float))/ d->channels;
-    interleave_split(d->d_buffer, d->channels, 
+    interleave_split(d->d_buffer, d->channels,
                      d->a_channels,
                      d->a_buffer, d->e_buffer,
                      nframes);
@@ -225,23 +225,23 @@ int process(jack_nframes_t nframes, void *PTR)
     FAILURE;
     return 1;
   }
-    
+
   /* Interleave input to buffer and copy into ringbuffer. */
 
-  signal_interleave_to(d->j_buffer, 
-		       (const float **)d->in, 
-		       nframes, 
+  signal_interleave_to(d->j_buffer,
+		       (const float **)d->in,
+		       nframes,
 		       d->channels);
   int err = jack_ringbuffer_write(d->ring_buffer,
 				  (char *) d->j_buffer,
 				  (size_t) nbytes);
   if(err != nbytes) {
-    eprintf("ambix-jrecord: error writing to ringbuffer, %d != %d\n", 
+    eprintf("ambix-jrecord: error writing to ringbuffer, %d != %d\n",
 	    err, nbytes);
     FAILURE;
     return 1;
   }
-  
+
   /* Poke the disk thread to indicate data is on the ring buffer. */
 
   char b = 1;
@@ -408,7 +408,7 @@ int main(int argc, char *argv[])
   d.input_port = (jack_port_t**)xmalloc(d.channels * sizeof(jack_port_t *));
 
   /* Connect to JACK. */
-  
+
   jack_client_t *client = jack_client_unique_("ambix-jrecord");
   jack_set_error_function(jack_client_minimal_error_handler);
   jack_on_shutdown(client, jack_client_minimal_shutdown_handler, 0);
@@ -445,7 +445,7 @@ int main(int argc, char *argv[])
   }
 
   /* Allocate buffers. */
-  
+
   d.buffer_samples = d.buffer_frames * d.channels;
   d.buffer_bytes = d.buffer_samples * sizeof(float);
 
@@ -464,8 +464,8 @@ int main(int argc, char *argv[])
   /* Start disk thread. */
 
   pthread_create (&(d.disk_thread),
-		  NULL, 
-		  disk_thread_procedure, 
+		  NULL,
+		  disk_thread_procedure,
 		  &d);
 
   /* Create input ports and activate client. */

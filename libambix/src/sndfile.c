@@ -205,7 +205,7 @@ ambix_err_t _ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t
   caf=((SF_FORMAT_CAF == (SF_FORMAT_TYPEMASK & PRIVATE(ambix)->sf_info.format)) != 0);
   if(caf) {
     is_ambix=1;
-    
+
     if(read_uuidchunk(ambix) == AMBIX_ERR_SUCCESS) {
       ambix->format=AMBIX_EXTENDED;
     } else {
@@ -222,18 +222,18 @@ ambix_err_t _ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t
         fifth and sixth slots: W,X,Y,Z,U,V.
 
         If horizontal-only B-format  is to be represented, a three or five-channel file
-        will suffice, with signals interleaved as W,X,Y (First Order), or W,X,Y,U,V (Second-order). 
-        However, four and -six-channel files are also acceptable, with the Z channel empty. 
-        Higher-order configurations are possible in theory, but are not addressed here. 
+        will suffice, with signals interleaved as W,X,Y (First Order), or W,X,Y,U,V (Second-order).
+        However, four and -six-channel files are also acceptable, with the Z channel empty.
+        Higher-order configurations are possible in theory, but are not addressed here.
         A decoder program should either 'degrade gracefully', or reject formats it cannot handle.
-        
+
         For all B-format configurations, the dwChannelMask field should be set to zero.
 
         Though strictly speaking an optional chunk, it is recommended that the PEAK chunk be
         used for all B-Format files. Apart from its general utility, it has the special virtue
         for B-format in that applications can determine from the peak value for the Z channel
         whether the file is indeed full periphonic B-format (with height information), or
-        'Horizontal-only' (Z channel present but empty). 
+        'Horizontal-only' (Z channel present but empty).
       */
       switch(ambix->channels) {
       case  3: /* h   = 1st order 2-D */
@@ -311,7 +311,7 @@ int64_t _ambix_seek (ambix_t* ambix, int64_t frames, int bias) {
   whence |= (bias & SEEK_SET);
   whence |= (bias & SEEK_CUR);
   whence |= (bias & SEEK_END);
-  
+
   if(PRIVATE(ambix)->sf_file)
     return (int64_t)sf_seek(PRIVATE(ambix)->sf_file, (sf_count_t)frames, whence);
   return -1;

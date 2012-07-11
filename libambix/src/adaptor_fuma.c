@@ -112,7 +112,7 @@ ambix2fuma_weightorder(void) {
 
 
 static ambix_matrix_t*
-_matrix_multiply3(ambix_matrix_t*mtx1, 
+_matrix_multiply3(ambix_matrix_t*mtx1,
                   ambix_matrix_t*mtx2,
                   ambix_matrix_t*mtx3,
                   ambix_matrix_t*result) {

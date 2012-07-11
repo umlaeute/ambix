@@ -130,7 +130,7 @@ void check_create_extended(const char*path, ambix_sampleformat_t format, uint32_
     //err64=ambix_readf_float32(ambix, resultambidata, resultotherdata, framesize);
       err64=ambix_readf_float32(ambix,
 			resultambidata +(gotframes*ambichannels ),
-			resultotherdata+(gotframes*extrachannels), 
+			resultotherdata+(gotframes*extrachannels),
 			(framesize-gotframes));
     fail_if((err64<0), __LINE__, "reading frames failed after %d/%d frames", (int)gotframes, (int)framesize);
     gotframes+=err64;

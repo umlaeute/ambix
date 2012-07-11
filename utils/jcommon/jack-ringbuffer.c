@@ -18,11 +18,11 @@
 void jack_ringbuffer_print_debug(const jack_ringbuffer_t *r, const char *s)
 {
   eprintf("%s: read_ptr=%d,write_ptr=%d,size=%d,size_mask=%d\n",
-	  s, (int)r->read_ptr, (int)r->write_ptr, 
+	  s, (int)r->read_ptr, (int)r->write_ptr,
 	  (int)r->size, (int)r->size_mask);
 }
 
-int jack_ringbuffer_wait_for_read(const jack_ringbuffer_t *r, 
+int jack_ringbuffer_wait_for_read(const jack_ringbuffer_t *r,
 				  int nbytes, int fd)
 {
   int space = (int) jack_ringbuffer_read_space(r);
@@ -55,7 +55,7 @@ void jack_ringbuffer_read_exactly(jack_ringbuffer_t *r, char *buf, int n)
 {
   int err = jack_ringbuffer_read(r, buf, n);
   if(err != n) {
-    eprintf("%s: error reading ring buffer (%d != %d)\n", 
+    eprintf("%s: error reading ring buffer (%d != %d)\n",
 	    __func__, err, n);
     FAILURE;
   }
