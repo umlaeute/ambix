@@ -40,3 +40,12 @@ ambix_simple_SOURCES = ambix_simple.c common.c
 TESTS += ambix_extended
 check_PROGRAMS += ambix_extended
 ambix_extended_SOURCES = ambix_extended.c common.c
+
+TESTS += ambix_open
+check_PROGRAMS += ambix_open
+testing_SOURCES = ambix_open.c
+
+
+TESTS += ambix_close
+check_PROGRAMS += ambix_close
+testing_SOURCES = ambix_close.c
