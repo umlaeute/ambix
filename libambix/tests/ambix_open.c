@@ -17,7 +17,7 @@ int main()
   fail_if (info->fileformat != AMBIX_BASIC, __LINE__, "Fileformat is not correct");  
   fail_if (info->ambichannels != 9, __LINE__, "Ambichannels are not correct");    
   fail_if (info->extrachannels != 0, __LINE__, "Non-ambichannels are not correct");
-  
+  fail_if (NULL!=ambix_get_adaptormatrix(ambix), __LINE__, "Error, there is reconstruction matrix");
   
   ambix_close (ambix);
   return 0;
