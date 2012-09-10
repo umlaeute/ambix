@@ -32,5 +32,6 @@ int main()
   
   ambix_close(ambix);
   
+  free(info);
   return 0;
 }

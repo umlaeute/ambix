@@ -20,5 +20,6 @@ int main()
   fail_if (NULL!=ambix_get_adaptormatrix(ambix), __LINE__, "Error, there is reconstruction matrix");
   
   ambix_close (ambix);
+  free(info);
   return 0;
 }

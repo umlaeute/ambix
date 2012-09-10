@@ -10,5 +10,6 @@ int main()
   
   fail_if (ambix_close(ambix)!=NULL, __LINE__, "File was not closed properly");
     
+  free(info);
   return 0;
 }

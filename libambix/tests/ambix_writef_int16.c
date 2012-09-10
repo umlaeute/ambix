@@ -20,8 +20,10 @@ int main ()
   
   // UNCOMMENT WHEN FIXED
   /*result=ambix_writef_int16 (ambix,ambidata,otherdata,frames);
-  fail_if (frames!=result, __LINE__, "Files were not wrotten successfully");
+  fail_if (frames!=result, __LINE__, "Files were not written successfully");
   */
   
+  ambix_close(ambix);
+  free(info);
   return 0;
 }
