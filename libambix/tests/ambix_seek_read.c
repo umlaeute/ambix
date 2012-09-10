@@ -11,7 +11,7 @@ int main()
   int result=0;
   int cmp=0;
   
-   ambix=ambix_open("test.caf", AMBIX_READ, info);
+   ambix=ambix_open(AMBIXTEST_FILE1, AMBIX_READ, info);
   //ambix_readf_int32 (ambix_t *ambix, int32_t *ambidata, int32_t *otherdata, int64_t frames)
   //Read samples (as 32bit signed integer values) from the ambix file. 
   

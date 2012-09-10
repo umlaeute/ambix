@@ -5,7 +5,7 @@ int main()
   
   ambix_t *ambix = NULL;
   ambix_info_t *info= calloc(1, sizeof(ambix_info_t));
-  ambix=ambix_open("test.caf", AMBIX_READ, info);
+  ambix=ambix_open(AMBIXTEST_FILE1, AMBIX_READ, info);
   
   int result=0;
 

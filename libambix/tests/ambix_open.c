@@ -7,7 +7,7 @@ int main()
   
   ambix_info_t *info= calloc(1, sizeof(ambix_info_t));
   
-  ambix=ambix_open("test.caf", AMBIX_READ, info);
+  ambix=ambix_open(AMBIXTEST_FILE1, AMBIX_READ, info);
   
   fail_if(NULL==ambix, __LINE__, "File was not open");  
   

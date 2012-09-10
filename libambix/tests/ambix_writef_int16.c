@@ -9,7 +9,7 @@ int main ()
   int16_t frames= 10;
   
   
-  ambix=ambix_open("test.caf", AMBIX_READ, info);
+  ambix=ambix_open(AMBIXTEST_FILE1, AMBIX_READ, info);
   int16_t result=0;
   
   /* ambix_writef_int16 (ambix_t *ambix, const int16_t *ambidata, const int16_t *otherdata, int64_t frames)

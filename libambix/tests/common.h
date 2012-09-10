@@ -83,5 +83,8 @@ float32_t*data_ramp(uint64_t frames, uint32_t channels);
 #define STRINGIFY(x) #x
 #define STARTTEST(x)   printf("============ %s[%04d]:\t%s '%s'\n", __FILE__, __LINE__, __FUNCTION__, x)
 
+
+#define AMBIXTEST_FILE1 "test.caf"
+
 #endif /* TESTS_COMMON_H */
 
