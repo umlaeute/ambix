@@ -50,3 +50,29 @@ check_PROGRAMS += extended_float32_1024 extended_pcm32_1024 extended_pcm16_1024
 extended_float32_1024_SOURCES = extended_float32_1024.c ambix_extended.c common.c
 extended_pcm32_1024_SOURCES   = extended_pcm32_1024.c ambix_extended.c common.c
 extended_pcm16_1024_SOURCES   = extended_pcm16_1024.c ambix_extended.c common.c
+
+TESTS += ambix_open
+check_PROGRAMS += ambix_open
+ambix_open_SOURCES = ambix_open.c
+
+
+TESTS += ambix_close
+check_PROGRAMS += ambix_close
+ambix_close_SOURCES = ambix_close.c
+
+TESTS += ambix_seek
+check_PROGRAMS += ambix_seek
+ambix_seek_SOURCES = ambix_seek.c
+
+TESTS += ambix_seek_read
+check_PROGRAMS += ambix_seek_read
+ambix_seek_read_SOURCES = ambix_seek_read.c
+
+TESTS += ambix_readf_int16
+check_PROGRAMS += ambix_readf_int16
+ambix_readf_int16_SOURCES = ambix_readf_int16.c
+
+TESTS += ambix_writef_int16
+check_PROGRAMS += ambix_writef_int16
+ambix_writef_int16_SOURCES = ambix_writef_int16.c
+
