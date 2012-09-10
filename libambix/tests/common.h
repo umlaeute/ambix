@@ -33,6 +33,8 @@ static inline void skip(void) {exit(77); }
 
 #include <stdio.h>
 #include <stdarg.h>
+#define MARK() printf("%s:%d[%s]\n", __FILE__, __LINE__, __FUNCTION__)
+
 static inline void pass_if (int test, int line, const char *format, ...)
 {
   if (test) {
