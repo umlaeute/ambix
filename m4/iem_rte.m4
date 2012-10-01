@@ -11,6 +11,26 @@ AC_DEFUN([IEM_CHECK_RTE],
 [
 IEM_OPERATING_SYSTEM
 
+AC_ARG_WITH([rte], 
+	        AS_HELP_STRING([--with-rte=<rte>],[use the given RTE (e.g.  'pd') or none]))
+AC_ARG_WITH([pd], 
+	        AS_HELP_STRING([--with-pd=<path/to/pd>],[where to find pd-binary (./bin/pd.exe) and pd-sources]))
+### this should only be set if Pd has been found
+# the extension
+AC_ARG_WITH([extension], 
+		AS_HELP_STRING([--with-extension=<ext>],[enforce a certain file-extension (e.g. pd_linux)]))
+
+AC_ARG_WITH([rtedir], 
+	[AS_HELP_STRING([--rtedir=DIR],	[externals (plugin) dir for RTE (default ${exec_prefix}/lib/pd/extra)])],
+	[rtedir=$withval],
+	[rtedir=['${exec_prefix}/lib/pd/extra']])
+
+test "x${with_rte}" = "x" && with_rte="yes"
+
+## this really should run some autodetection
+test "x${with_rte}" = "xyes" && with_rte="pd"
+
+if test "x${with_rte}" = "xpd"; then
 tmp_rte_orgcppflags="$CPPFLAGS"
 tmp_rte_orgcflags="$CFLAGS"
 tmp_rte_orgcxxflags="$CXXFLAGS"
@@ -20,9 +40,6 @@ tmp_rte_orglibs="$LIBS"
 tmp_rte_cflags="-DPD"
 tmp_rte_libs=""
 RTE="Pure Data"
-
-AC_ARG_WITH([pd], 
-	        AS_HELP_STRING([--with-pd=<path/to/pd>],[where to find pd-binary (./bin/pd.exe) and pd-sources]))
 
 ## some default paths
 if test "x${with_pd}" = "x"; then
@@ -78,10 +95,6 @@ AC_CHECK_HEADERS([s_stuff.h], [], [],
 #endif
 ])
 
-### this should only be set if Pd has been found
-# the extension
-AC_ARG_WITH([extension], 
-		AS_HELP_STRING([--with-extension=<ext>],[enforce a certain file-extension (e.g. pd_linux)]))
 if test "x$with_extension" != "x"; then
  tmp_rte_extension=$with_extension
 else
@@ -109,10 +122,6 @@ AC_SUBST(RTE_EXTENSION)
 AC_SUBST(RTE_CFLAGS)
 AC_SUBST(RTE_LIBS)
 AC_SUBST(RTE)
-AC_ARG_WITH([rtedir], 
-	[AS_HELP_STRING([--rtedir=DIR],	[externals (plugin) dir for RTE (default ${exec_prefix}/lib/pd/extra)])],
-	[rtedir=$withval],
-	[rtedir=['${exec_prefix}/lib/pd/extra']])
 AC_SUBST([rtedir],	['${exec_prefix}/lib/pd/extra'])dnl
 
 CPPFLAGS="$tmp_rte_orgcppflags"
@@ -120,4 +129,5 @@ CFLAGS="$tmp_rte_orgcflags"
 CXXFLAGS="$tmp_rte_orgcxxflags"
 LDFLAGS="$tmp_rte_orgldflags"
 LIBS="$tmp_rte_orglibs"
+fi
 ]) # CHECK_RTE
