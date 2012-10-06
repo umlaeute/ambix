@@ -86,7 +86,11 @@ float32_t*data_ramp(uint64_t frames, uint32_t channels);
 #define STARTTEST(x)   printf("============ %s[%04d]:\t%s '%s'\n", __FILE__, __LINE__, __FUNCTION__, x)
 
 
-#define AMBIXTEST_FILE1 "test.caf"
+/* file1.caf
+ * AMBIX_BASIC, 3rd order (9 channels)
+ * 44100 samples, all zero
+ */
+#define AMBIXTEST_FILE1 "data/file1.caf"
 
 #endif /* TESTS_COMMON_H */
 
