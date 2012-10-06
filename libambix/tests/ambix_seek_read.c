@@ -5,7 +5,7 @@ int main()
   
   ambix_t *ambix = NULL;
   ambix_info_t *info= calloc(1, sizeof(ambix_info_t));
-  int32_t *ambidata= 100;
+  int32_t ambidata[100];
   int32_t *otherdata= 0;
  
   int result=0;
