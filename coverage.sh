@@ -7,7 +7,7 @@ MAKE=make
 ${MAKE} clean
 
 # Reconfigure with gcov support
-CXXFLAGS="-g -O0 --coverage" CFLAGS="-g -O0 --coverage" ./configure --disable-shared --without-rte || exit 1
+CXXFLAGS="-g -O0 --coverage" CFLAGS="-g -O0 --coverage" ./configure || exit 1
 
 # Generate gcov output
 ${MAKE} || exit 1
