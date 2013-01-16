@@ -62,14 +62,14 @@
  * @subsection readbasic_usage Reading BASIC ambix files
  *
  * You can read any ambix file as "BASIC" by setting the 'fileformat' member of
- * the ambix_info_t struct * to AMBIX_BASIC prior to opening the file.
+ * the ambix_info_t struct to @ref AMBIX_BASIC prior to opening the file.
  * This will automatically do any conversion needed, by pre-multiplying the raw
  * ambisonics data with an embedded adaptor matrix.
  *
  * Real "BASIC" files lack extra audio channels.
  * However, when opening a file that is not a "BASIC" ambix file (e.g. an
  * "EXTENDED" ambix file) as a "BASIC" one, by forcing the 'fileformat' member
- * to 'AMBIX_BASIC', extra channels might be readable.
+ * to '@ref AMBIX_BASIC', extra channels might be readable.
  *
  * @code
    ambix_t*ambix = NULL;
@@ -110,7 +110,7 @@
  * @subsection readextended_usage Reading EXTENDED ambix files
  *
  * You can read an ambix file as "EXTENDED" by setting the 'fileformat' member
- * of the ambix_info_t struct to AMBIX_EXTENDED prior to opening the file. You
+ * of the ambix_info_t struct to @ref AMBIX_EXTENDED prior to opening the file. You
  * will then have to retrieve the adaptor matrix from the file, in order to be
  * able to reconstruct the full ambisonics set. You can also analyze the matrix
  * to make educated guesses about the original channel layout.
@@ -191,7 +191,7 @@
  *
  * @section write_usage Writing ambix files
  *
- * To write data to an ambix file, you have to open it with the AMBIX_WRITE
+ * To write data to an ambix file, you have to open it with the @ref AMBIX_WRITE
  * flag. You also need to specify some global properties of the output data,
  * namely the samplerate and the sampleformat, as well as the number of
  * ambisonics channels and the number of extra channels that are physically
@@ -200,7 +200,7 @@
  * @subsection writebasic_usage Writing BASIC ambix files
  *
  * You can write "BASIC" ambix files by setting the 'fileformat' member of the
- * ambix_info_t struct to AMBIX_BASIC prior to opening the file.
+ * ambix_info_t struct to @ref AMBIX_BASIC prior to opening the file.
  *
  * You will need to provide a full set of ambisonics channels when writing data
  * to the file, and must not set an adaptor matrix. A full set of ambisonics
@@ -242,7 +242,7 @@
  * @subsection writeextended_usage Writing EXTENDED ambix files
  *
  * You can write "EXTENDED" ambix files by setting the 'fileformat' member of
- * the ambix_info_t struct to AMBIX_EXTENDED prior to opening the file.
+ * the ambix_info_t struct to @ref AMBIX_EXTENDED prior to opening the file.
  *
  * You MUST set an adaptormatrix (to convert the reduced set to a full
  * ambisonics set) using ambix_set_adaptormatrix(). It gets written to disk
@@ -299,16 +299,30 @@
 /**
  * @page format The ambix format
  *
- * @section todo_format TODO
+ * The ambisonics channel layout for ambix-files is @link format_norm SN3D@endlink/@link format_acn ACN @endlink (3D, seminormalized, <em>Ambisonic Channel Numbers</em>),
+ * henceforth called "standard layout".
  *
- * document the ambix format
+ * Files in @ref AMBIX_BASIC format always store the data in the standard layout.
+ * Files in @ref AMBIX_EXTENDED format can store the data in any layout they prefer,
+ * but have to provide an adapator matrix @f$M@f$ that can be used to convert the
+ * channels layout stored within the file to the standard layout, according to
+ * the formula @f$\vec{b}_{standardlayout}=M_{adaptor}*\vec{b}_{filelayout}@f$.
+ *
+ * E.g. if the channels are stored in the traditional @em B-format (3D),
+ * the following adaptor matrix has to be used:
+ *
+ * @f$M_{B\rightarrow ambix}=\begin{pmatrix}\sqrt{2}&0&0&0\\0&0&0&-1\\0&1&0&0\\0&0&-1&0\end{pmatrix}@f$
  *
  * @section format_bugfix Bug-fixes for the format-specification
+ *
+ * The original @link http://ambisonics.iem.at/xchange/format/2011_NachbarZotterSontacchiDeleflie_ambix.pdf format proposal@endlink
+ * had a number of flaws and bugs that have been discovered during the implenentation of @em libambix.
+ * Consequently, these flaws and bugs have been fixed.
  *
  * @subsection format_bugfix_UUID UUID-chunk
  *
  * The original format proposal defined a UUID @b 49454d2e-4154-2f41-4d42-49582f584d4c,
- * which is equivalent to the literal "IEM.AT/AMBIX/XML".
+ * which is equivalent to the literal "IEM.AT/AMBIX/XML" (the UUID is an ASCII-representation of this string).
  * Unfortunately this does not take into account, that while UUIDs can be @e random,
  * certain bits are reserved (e.g. indicating the UUID variant).
  * The originally suggested UUID is - according to it's reserved bits - a v2 variant (DCE Security),
@@ -347,5 +361,18 @@
  * If a file holds (C+X) audio channels (with both C and X being positive integers),
  * the first C channels are converted into a full ambisonics set by multiplying it with the [L*C] adaptor matrix.
  * The remaining X channels are provided "as-is", and can be used to store extra data (like click-tracks,...)
+ *
+ * @section format_glossary Format Glossary
+ * @subsection format_norm Normalisation
+ *
+ * There are a number of different ways how to @em normalize the Ambisonics channels
+ * (that is: how they are weighted relative to each other).
+ * The default layout assumes <em>Schmidt semi-normalized</em> spherical harmonics.
+ *
+ * @subsection format_acn Ambisonics Channel Number
+ * The channel ordering is standardized using the following formula
+ * (with @f$l@f$ being the @em degree and @f$m@f$ being the @em order of the spherical harmonic).
+ *
+ * @f$ACN = l * ( l + 1 ) + m@f$
  *
  */
