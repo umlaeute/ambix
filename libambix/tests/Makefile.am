@@ -76,3 +76,6 @@ TESTS += ambix_writef_int16
 check_PROGRAMS += ambix_writef_int16
 ambix_writef_int16_SOURCES = ambix_writef_int16.c
 
+
+.PHONY: buildtests
+buildtests: $(check_PROGRAMS)

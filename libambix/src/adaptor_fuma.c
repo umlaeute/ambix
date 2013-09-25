@@ -21,14 +21,16 @@
 */
 
 /*
+  http://members.tripod.com/martin_leese/Ambisonic/B-Format_file_format.html
+
 #chan|fuma|   type     | xy | z | channels         | done
   3 	h 	  horizontal 	  1 	0 	WXY                 X
   4 	f 	  full-sphere 	1 	1 	WXYZ                X
-  5 	hh 	  horizontal   	2 	0 	WXYRS
-  6 	fh 	  mixed-order 	2 	1 	WXYZRS
+  5 	hh 	  horizontal   	2 	0 	WXYUV
+  6 	fh 	  mixed-order 	2 	1 	WXYZUV
   9 	ff 	  full-sphere 	2 	2 	WXYZRSTUV           X
-  7 	hhh 	horizontal 	  3 	0 	WXYRSPQ
-  8 	fhh 	mixed-order 	3 	1 	WXYZRSPQ
+  7 	hhh 	horizontal 	  3 	0 	WXYUVPQ
+  8 	fhh 	mixed-order 	3 	1 	WXYZUVPQ
   11 	ffh 	mixed-order 	3 	2 	WXYZRSTUVPQ
   16 	fff 	full-sphere 	3 	3 	WXYZRSTUVKLMNOPQ    X
 */
@@ -134,10 +136,10 @@ _matrix_ambix2fuma(uint32_t cols) {
     {0}, /* NULL */
     {0, 1, 2}, // WXY
     {0, 1, 2, 3}, // WXYZ
-    {0, 1, 2, 4, 5}, // WXYRS
-    {0, 1, 2, 3, 4, 5}, // WXYZRS
-    {0, 1, 2, 4, 5, 14, 15}, // WXYRSPQ
-    {0, 1, 2, 3, 4, 5, 14, 15}, // WXYZRSPQ
+    {0, 1, 2, 7, 8}, // WXYUV
+    {0, 1, 2, 3, 7, 8}, // WXYZUV
+    {0, 1, 2, 7, 8, 14, 15}, // WXYUVPQ
+    {0, 1, 2, 3, 7, 8, 14, 15}, // WXYZUVPQ
     {0, 1, 2, 3, 4, 5, 6, 7, 8}, // WXYZRSTUV
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, /* NULL */
     {0, 1, 2, 3, 4, 5, 6, 7, 8, 14, 15}, // WXYZRSTUVPQ
@@ -154,10 +156,10 @@ _matrix_ambix2fuma(uint32_t cols) {
     NULL,
     (float32_t[]) {0, 1, 2}, // WXY
     (float32_t[]) {0, 1, 2, 3}, // WXYZ
-    (float32_t[]) {0, 1, 2, 4, 5}, // WXYRS
-    (float32_t[]) {0, 1, 2, 3, 4, 5}, // WXYZRS
-    (float32_t[]) {0, 1, 2, 4, 5, 14, 15}, // WXYRSPQ
-    (float32_t[]) {0, 1, 2, 3, 4, 5, 14, 15}, // WXYZRSPQ
+    (float32_t[]) {0, 1, 2, 7, 8}, // WXYUV
+    (float32_t[]) {0, 1, 2, 3, 7, 8}, // WXYZUV
+    (float32_t[]) {0, 1, 2, 7, 8, 14, 15}, // WXYUVPQ
+    (float32_t[]) {0, 1, 2, 3, 7, 8, 14, 15}, // WXYZUVPQ
     (float32_t[]) {0, 1, 2, 3, 4, 5, 6, 7, 8}, // WXYZRSTUV
     NULL,
     (float32_t[]) {0, 1, 2, 3, 4, 5, 6, 7, 8, 14, 15}, // WXYZRSTUVPQ
@@ -174,10 +176,10 @@ _matrix_ambix2fuma(uint32_t cols) {
     0,
     4, // WXY
     4, // WXYZ
-    9, // WXYRS
-    9, // WXYZRS
-    16,// WXYRSPQ
-    16,// WXYZRSPQ
+    9, // WXYUV
+    9, // WXYZUV
+    16,// WXYUVPQ
+    16,// WXYZUVPQ
     9, // WXYZRSTUV
     0,
     16,// WXYZRSTUVPQ
@@ -230,10 +232,10 @@ _matrix_fuma2ambix(uint32_t rows) {
     {0}, /* NULL */
     {0, 1, 2}, // WXY
     {0, 1, 2, 3}, // WXYZ
-    {0, 1, 2, 4, 5}, // WXYRS
-    {0, 1, 2, 3, 4, 5}, // WXYZRS
-    {0, 1, 2, 4, 5, 14, 15}, // WXYRSPQ
-    {0, 1, 2, 3, 4, 5, 14, 15}, // WXYZRSPQ
+    {0, 1, 2, 7, 8}, // WXYUV
+    {0, 1, 2, 3, 7, 8}, // WXYZUV
+    {0, 1, 2, 7, 8, 14, 15}, // WXYUVPQ
+    {0, 1, 2, 3, 7, 8, 14, 15}, // WXYZUVPQ
     {0, 1, 2, 3, 4, 5, 6, 7, 8}, // WXYZRSTUV
     {0}, /* NULL */
     {0, 1, 2, 3, 4, 5, 6, 7, 8, 14, 15}, // WXYZRSTUVPQ
@@ -250,10 +252,10 @@ _matrix_fuma2ambix(uint32_t rows) {
     NULL,
     (float32_t[]) {0, 1, 2}, // WXY
     (float32_t[]) {0, 1, 2, 3}, // WXYZ
-    (float32_t[]) {0, 1, 2, 4, 5}, // WXYRS
-    (float32_t[]) {0, 1, 2, 3, 4, 5}, // WXYZRS
-    (float32_t[]) {0, 1, 2, 4, 5, 14, 15}, // WXYRSPQ
-    (float32_t[]) {0, 1, 2, 3, 4, 5, 14, 15}, // WXYZRSPQ
+    (float32_t[]) {0, 1, 2, 7, 8}, // WXYUV
+    (float32_t[]) {0, 1, 2, 3, 7, 8}, // WXYZUV
+    (float32_t[]) {0, 1, 2, 7, 8, 14, 15}, // WXYUVPQ
+    (float32_t[]) {0, 1, 2, 3, 7, 8, 14, 15}, // WXYZUVPQ
     (float32_t[]) {0, 1, 2, 3, 4, 5, 6, 7, 8}, // WXYZRSTUV
     NULL,
     (float32_t[]) {0, 1, 2, 3, 4, 5, 6, 7, 8, 14, 15}, // WXYZRSTUVPQ
@@ -271,10 +273,10 @@ _matrix_fuma2ambix(uint32_t rows) {
     0,
     4, // WXY
     4, // WXYZ
-    9, // WXYRS
-    9, // WXYZRS
-    16,// WXYRSPQ
-    16,// WXYZRSPQ
+    9, // WXYUV
+    9, // WXYZUV
+    16,// WXYUVPQ
+    16,// WXYZUVPQ
     9, // WXYZRSTUV
     0,
     16,// WXYZRSTUVPQ

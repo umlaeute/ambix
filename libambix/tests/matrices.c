@@ -47,8 +47,17 @@ ambix_matrix_t*inverse_matrices(ambix_matrixtype_t typ, uint32_t rows, uint32_t 
   ambix_matrix_t*mtx=ambix_matrix_init(rows, cols, NULL);
   ambix_matrix_t*xtm=ambix_matrix_init(cols, rows, NULL);
 
-  ambix_matrix_t*a2f=ambix_matrix_fill(mtx, typ);
-  ambix_matrix_t*f2a=ambix_matrix_fill(xtm,  pyt);
+  ambix_matrix_t*a2f=NULL;
+  ambix_matrix_t*f2a=NULL;
+
+  skip_if(NULL==mtx, __LINE__, "couldn't create mtx-matrix");
+  skip_if(NULL==xtm, __LINE__, "couldn't create xtm-matrix");
+
+  a2f=ambix_matrix_fill(mtx, typ);
+  f2a=ambix_matrix_fill(xtm,  pyt);
+
+  skip_if(NULL==a2f, __LINE__, "couldn't create a2f-matrix");
+  skip_if(NULL==f2a, __LINE__, "couldn't create f2a-matrix");
 
   //  ambix_matrix_t*result=ambix_matrix_multiply(a2f, f2a, NULL);
   ambix_matrix_t*result=ambix_matrix_multiply(f2a, a2f, NULL);
@@ -74,7 +83,9 @@ void check_inversion(const char*name, ambix_matrixtype_t typ, uint32_t rows, uin
 
   result=inverse_matrices(typ, rows, cols);
   eye=ambix_matrix_init(result->rows, result->cols, eye);
+  skip_if(NULL==eye, __LINE__, "couldn't create eye-matrix");
   eye=ambix_matrix_fill(eye, AMBIX_MATRIX_IDENTITY);
+  skip_if(NULL==eye, __LINE__, "couldn't fill eye-matrix");
 
   errf=matrix_check_diff(name, result, eye);
 
@@ -98,14 +109,17 @@ void check_matrix(const char*name, ambix_matrixtype_t typ, uint32_t rows, uint32
   STARTTEST(name);
 
   mtx=ambix_matrix_init(rows, cols, mtx);
+  skip_if(NULL==mtx, __LINE__, "couldn't create mtx-matrix");
   result=ambix_matrix_fill(mtx, typ);
+//  skip_if(NULL==result, __LINE__, "couldn't fill result-matrix");
 
   fail_if((result==NULL), __LINE__, "matrix_fill returned NULL");
   fail_if((result!=mtx ), __LINE__, "matrix_fill did not return matrix %p (got %p)", mtx, result);
 
   zeros=ambix_matrix_init(result->rows, result->cols, zeros);
+  skip_if(NULL==zeros, __LINE__, "couldn't create zeros-matrix");
   zeros=ambix_matrix_fill(zeros, AMBIX_MATRIX_ZERO);
-
+  skip_if(NULL==zeros, __LINE__, "couldn't fill zeros-matrix");
 
   errf=matrix_check_diff(name, result, zeros);
 
