@@ -253,6 +253,9 @@ static ai_t*ai_open_output(ai_t*ai) {
   if(!ai->outhandles) {
     return ai_close(ai);
   }
+  if(!ai->outinfo) {
+    return ai_close(ai);
+  }
   switch(ai->info.sampleformat) {
   case(AMBIX_SAMPLEFORMAT_PCM16)  : format |= SF_FORMAT_PCM_16; break;
   case(AMBIX_SAMPLEFORMAT_PCM24)  : format |= SF_FORMAT_PCM_24; break;
