@@ -233,7 +233,8 @@ static void *ambix_read_child_main(void *zz) {
       pthread_cond_wait(&x->x_requestcondition, &x->x_mutex);
     } else if (x->x_requestcode == REQUEST_OPEN) {
       ambix_info_t ainfo;
-      int sysrtn, wantframes;
+      int64_t sysrtn;
+      int wantframes;
       const ambix_matrix_t*matrix=NULL;
 
       /* copy file stuff out of the data structure so we can
@@ -358,10 +359,12 @@ static void *ambix_read_child_main(void *zz) {
           xtrabuf = (float32_t*)calloc(localfifosize*xtrachannels, sizeof(float32_t));
         }
         sysrtn = ambix_readf_float32(ambix, ambibuf, xtrabuf, wantframes);
-        merge_samples(ambibuf, ambichannels, want_ambichannels,
-                      xtrabuf, xtrachannels, want_xtrachannels,
-                      buf, bufframes,
-                      fifohead, sysrtn);
+        if(sysrtn>0) {
+          merge_samples(ambibuf, ambichannels, want_ambichannels,
+                        xtrabuf, xtrachannels, want_xtrachannels,
+                        buf, bufframes,
+                        fifohead, sysrtn);
+        }
         pthread_mutex_lock(&x->x_mutex);
         if (x->x_requestcode != REQUEST_BUSY)
           break;
