@@ -77,7 +77,7 @@ static ai_t*ai_cmdline(const char*name, int argc, char**argv) {
   ai_t*ai=(ai_t*)calloc(1, sizeof(ai_t));
   uint32_t blocksize=0;
   int dumpRaw=0, dumpCooked=0, dumpXtra=0;
-  ambix_fileformat_t format=AMBIX_EXTENDED;
+  ambix_fileformat_t format=0;
 
   while(argc) {
     if(!strcmp(argv[0], "-h") || !strcmp(argv[0], "--help")) {
@@ -142,7 +142,7 @@ static ai_t*ai_cmdline(const char*name, int argc, char**argv) {
     dumpCooked=1;
   }
 
-  if(format)
+  if(format>0)
     ai->format = format;
   else
     ai->format = AMBIX_EXTENDED;
