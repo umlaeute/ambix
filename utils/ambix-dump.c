@@ -308,7 +308,7 @@ static ai_t*ai_dodump(ai_t*ai) {
   while(frames>blocksize) {
     blocks++;
     if(!ai_dump_block(ai, rawdata, cookeddata, extradata, dumpbuf, blocksize)) {
-      return ai_close(ai);
+      return NULL;
     }
     frames-=blocksize;
   }
