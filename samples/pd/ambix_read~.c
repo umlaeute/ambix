@@ -520,7 +520,7 @@ static void *ambix_read_new(t_symbol*s, int argc, t_atom*argv) {
   x->x_bufsize = bufsize;
   x->x_bufframes = bufframes;
   x->x_fifosize = x->x_fifohead = x->x_fifotail = x->x_requestcode = 0;
-  pthread_mutex_lock(&x->x_mutex);
+  pthread_mutex_unlock(&x->x_mutex);
 
   pthread_create(&x->x_childthread, 0, ambix_read_child_main, x);
   return (x);
