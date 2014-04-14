@@ -207,11 +207,9 @@ _matrix_ambix2fuma(uint32_t cols) {
       weightorder_m=ambix2fuma_weightorder();
 
     reduce_m=ambix_matrix_init(cols, 16, reduce_m);
-    if(!_matrix_permutate(reduce_m, reducer_v[cols], 0)) {
-      return NULL;
+    if(_matrix_permutate(reduce_m, reducer_v[cols], 0)) {
+      final_m=_matrix_multiply3(reduce_m, weightorder_m, expand_m, final_m);
     }
-
-    final_m=_matrix_multiply3(reduce_m, weightorder_m, expand_m, final_m);
 
     ambix_matrix_destroy(expand_m); expand_m=NULL;
     ambix_matrix_destroy(reduce_m); reduce_m=NULL;
