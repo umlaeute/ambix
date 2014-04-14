@@ -527,10 +527,14 @@ static t_int *ambix_write_perform(t_int *w) {
 static void ambix_write_start(t_ambix_write *x) {
   /* start making output.  If we're in the "startup" state change
      to the "running" state. */
-  if (x->x_state == STATE_STARTUP)
+  pthread_mutex_lock(&x->x_mutex);
+  if (x->x_state == STATE_STARTUP) {
     x->x_state = STATE_STREAM;
-  else
+    pthread_mutex_unlock(&x->x_mutex);
+  } else {
+    pthread_mutex_unlock(&x->x_mutex);
     pd_error(x, "ambix_write: start requested with no prior 'open'");
+  }
 }
 
 static void ambix_write_stop(t_ambix_write *x) {
