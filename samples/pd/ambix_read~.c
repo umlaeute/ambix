@@ -674,7 +674,7 @@ static void ambix_read_start(t_ambix_read *x) {
      to the "running" state. */
   if (x->x_state == STATE_STARTUP)
     x->x_state = STATE_STREAM;
-  else pd_error(x, "ambix_read: start requested with no prior 'open'");
+  else pd_error(x, "ambix_read~: start requested with no prior 'open'");
 }
 
 static void ambix_read_stop(t_ambix_read *x) {
