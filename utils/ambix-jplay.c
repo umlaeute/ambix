@@ -563,6 +563,7 @@ int main(int argc, char *argv[])
 #endif /* HAVE_SAMPLERATE */
     case 't':
       o.transport_aware = 1;
+      break;
     case 'u':
       o.unique_name = 0;
       break;
