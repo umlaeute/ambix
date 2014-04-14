@@ -432,6 +432,10 @@ static ai_t*ai_copy(ai_t*ai) {
   }
   deinterleavebuf=(float32_t*)malloc(sizeof(float32_t)*size);
   if(NULL==deinterleavebuf) {
+    free(rawdata);
+    free(cookeddata);
+    free(extradata);
+
     return ai_close(ai);
   }
 
