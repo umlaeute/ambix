@@ -18,10 +18,10 @@
 #X msg 74 49 bang;
 #X obj 74 69 openpanel;
 #X obj 145 549 readsf~;
-#X text 217 81 You must "open" the ambix file in advance \, to allow
+#X text 215 81 You must "open" the ambix file in advance \, to allow
 the buffer to be filled up \, and the send "1" to start playback.;
-#X text 219 107 Sending "0" stops playback.;
-#X text 219 129 Some information on the file is sent to the last outlet
+#X text 215 107 Sending "0" stops playback.;
+#X text 215 129 Some information on the file is sent to the last outlet
 of the object \, e.g. the number of frames (samples per channel) \,
 the number of ambisonics- and nonambisonics- channels found in the
 file and the samplerate;
@@ -32,16 +32,16 @@ file and the samplerate;
 #X text 286 296 <buffersize> is given in samples per channels (unlike
 [readsf~] where you specify it in bytes per channel);
 #X text 43 525 see also:;
-#X text 222 280 arguments: <#ambioutlet~s:4> <#extraoutlet~s:0> <buffersize>
+#X text 220 280 arguments: <#ambioutlet~s:4> <#extraoutlet~s:0> <buffersize>
 ;
-#X text 207 18 [ambix_readX~] read an AMBIsonics eXchange file (EXTENDED
+#X text 200 18 [ambix_readX~] read an AMBIsonics eXchange file (EXTENDED
 ;
-#X text 216 47 The [ambix_readX~] reads an ambix soundfile into it's
+#X text 215 47 The [ambix_readX~] reads an ambix soundfile into it's
 signal outputs \, much like [readsf~] for normal soundfiles.;
 #X obj 74 277 ambix_readX~ 4 2;
 #X obj 45 468 print matrix;
 #X obj 45 313 t a a;
-#X text 223 186 The ambisonics channels will be presented AS-IS. In
+#X text 220 186 The ambisonics channels will be presented AS-IS. In
 order to obtain a full standard set of ambisonics channels (SN3D \,
 ACN) \, you will need to multiply the channels with the adaptor matrix
 you will get through the 1st outlet (e.g. using iemmatrix' [mtx_*~]
