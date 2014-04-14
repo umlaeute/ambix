@@ -308,16 +308,13 @@ static ai_t*ai_dodump(ai_t*ai) {
   while(frames>blocksize) {
     blocks++;
     if(!ai_dump_block(ai, rawdata, cookeddata, extradata, dumpbuf, blocksize)) {
-      return NULL;
+      ai=NULL;
+      break;
     }
     frames-=blocksize;
   }
-  if(!ai_dump_block(ai, rawdata, cookeddata, extradata, dumpbuf, frames)) {
-    free(rawdata);
-    free(cookeddata);
-    free(extradata);
-    free(dumpbuf);
-    return NULL; // ai has been freed by failed ai_dump_block()
+  if(ai && !ai_dump_block(ai, rawdata, cookeddata, extradata, dumpbuf, frames)) {
+    ai=NULL;
   }
 
   free(rawdata);
