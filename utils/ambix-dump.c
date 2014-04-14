@@ -317,7 +317,7 @@ static ai_t*ai_dodump(ai_t*ai) {
     free(cookeddata);
     free(extradata);
     free(dumpbuf);
-    return ai_close(ai);
+    return NULL; // ai has been freed by failed ai_dump_block()
   }
 
   free(rawdata);
