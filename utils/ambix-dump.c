@@ -313,6 +313,10 @@ static ai_t*ai_dodump(ai_t*ai) {
     frames-=blocksize;
   }
   if(!ai_dump_block(ai, rawdata, cookeddata, extradata, dumpbuf, frames)) {
+    free(rawdata);
+    free(cookeddata);
+    free(extradata);
+    free(dumpbuf);
     return ai_close(ai);
   }
 
