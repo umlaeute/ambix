@@ -474,21 +474,24 @@ static void *ambix_write_new(t_symbol*s, int argc, t_atom*argv) {
   x->x_extrachannels = nchannels;
 
   x->x_matrix=NULL;
+  x->x_canvas = canvas_getcurrent();
 
   pthread_mutex_init(&x->x_mutex, 0);
   pthread_cond_init(&x->x_requestcondition, 0);
   pthread_cond_init(&x->x_answercondition, 0);
+
+  pthread_mutex_lock(&x->x_mutex);
   x->x_vecsize = DEFAULTVECSIZE;
   x->x_insamplerate = x->x_samplerate = 0;
   x->x_state = STATE_IDLE;
-
-  x->x_canvas = canvas_getcurrent();
 
   x->x_buf = buf;
   x->x_bufsize = bufsize;
   x->x_bufframes = bufframes;
 
   x->x_fifosize = x->x_fifohead = x->x_fifotail = x->x_requestcode = 0;
+  pthread_mutex_unlock(&x->x_mutex);
+
   pthread_create(&x->x_childthread, 0, ambix_write_child_main, x);
   return (x);
 }
