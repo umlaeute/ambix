@@ -143,6 +143,10 @@ struct SNDFILE_tag*_ambix_get_sndfile	(ambix_t*ambix);
  * @return number of sample frames successfully read
  */
 int64_t _ambix_readf_float32   (ambix_t*ambix, float32_t*data, int64_t frames);
+/** @see _ambix_readf_float64
+ * @remark this operates on 64bit float data (double)
+ */
+int64_t _ambix_readf_float64   (ambix_t*ambix, float64_t*data, int64_t frames);
 /** @see _ambix_readf_float32
  * @remark this operates on 32bit integer data
  */
@@ -269,6 +273,10 @@ ambix_err_t _ambix_adaptorbuffer_destroy(ambix_t*ambix);
  * @return error code indicating success
  */
 ambix_err_t _ambix_splitAdaptor_float32(const float32_t*source, uint32_t sourcechannels, uint32_t ambichannels, float32_t*dest_ambi, float32_t*dest_other, int64_t frames);
+/** @brief extract ambisonics and non-ambisonics channels from interleaved (64bit float) data
+ * @see _ambix_splitAdaptor_float64
+ */
+ambix_err_t _ambix_splitAdaptor_float64(const float64_t*source, uint32_t sourcechannels, uint32_t ambichannels, float64_t*dest_ambi, float64_t*dest_other, int64_t frames);
 /** @brief extract ambisonics and non-ambisonics channels from interleaved (32bit signed integer) data
  * @see _ambix_splitAdapator_float32
  */
@@ -292,6 +300,8 @@ ambix_err_t _ambix_splitAdaptor_int16(const int16_t*source, uint32_t sourcechann
  * @return error code indicating success
  */
 ambix_err_t _ambix_splitAdaptormatrix_float32(const float32_t*source, uint32_t sourcechannels, const ambix_matrix_t*matrix, float32_t*dest_ambi, float32_t*dest_other, int64_t frames);
+/* @see _ambix_splitAdaptormatrix_float32 */
+ambix_err_t _ambix_splitAdaptormatrix_float64(const float64_t*source, uint32_t sourcechannels, const ambix_matrix_t*matrix, float64_t*dest_ambi, float64_t*dest_other, int64_t frames);
 /* @see _ambix_splitAdaptormatrix_float32 */
 ambix_err_t _ambix_splitAdaptormatrix_int32(const int32_t*source, uint32_t sourcechannels, const ambix_matrix_t*matrix, int32_t*dest_ambi, int32_t*dest_other, int64_t frames);
 /* @see _ambix_splitAdaptormatrix_float32 */

@@ -64,6 +64,11 @@ sndfile2ambix_sampleformat(int sformat) {
   case(SF_FORMAT_PCM_24): return AMBIX_SAMPLEFORMAT_PCM24  ;
   case(SF_FORMAT_PCM_32): return AMBIX_SAMPLEFORMAT_PCM32  ;
   case(SF_FORMAT_FLOAT ): return AMBIX_SAMPLEFORMAT_FLOAT32;
+/*
+  case(SF_FORMAT_ALAC_16): return AMBIX_SAMPLEFORMAT_ALAC16;
+  case(SF_FORMAT_ALAC_24): return AMBIX_SAMPLEFORMAT_ALAC24;
+  case(SF_FORMAT_ALAC_32): return AMBIX_SAMPLEFORMAT_ALAC32;
+*/
   }
   return AMBIX_SAMPLEFORMAT_NONE;
 }
@@ -75,6 +80,11 @@ ambix2sndfile_sampleformat(ambix_sampleformat_t asformat) {
   case(AMBIX_SAMPLEFORMAT_PCM24):   return SF_FORMAT_PCM_24;
   case(AMBIX_SAMPLEFORMAT_PCM32):   return SF_FORMAT_PCM_32;
   case(AMBIX_SAMPLEFORMAT_FLOAT32): return SF_FORMAT_FLOAT;
+/*
+  case(AMBIX_SAMPLEFORMAT_ALAC16):  return SF_FORMAT_ALAC_16;
+  case(AMBIX_SAMPLEFORMAT_ALAC24):  return SF_FORMAT_ALAC_24;
+  case(AMBIX_SAMPLEFORMAT_ALAC32):  return SF_FORMAT_ALAC_32;
+*/
   default:break;
   }
   return SF_FORMAT_PCM_24;
@@ -328,6 +338,9 @@ int64_t _ambix_readf_int32   (ambix_t*ambix, int32_t*data, int64_t frames) {
 }
 int64_t _ambix_readf_float32   (ambix_t*ambix, float32_t*data, int64_t frames) {
   return (int64_t)sf_readf_float(PRIVATE(ambix)->sf_file, (float*)data, frames) ;
+}
+int64_t _ambix_readf_float64   (ambix_t*ambix, float64_t*data, int64_t frames) {
+    return (int64_t)sf_readf_double(PRIVATE(ambix)->sf_file, (double*)data, frames) ;
 }
 
 int64_t _ambix_writef_int16   (ambix_t*ambix, const int16_t*data, int64_t frames) {

@@ -96,6 +96,11 @@ static int ambixwrite_argparse(void *obj, int *p_argc, t_atom **p_argv,
         case 2: sampleformat=AMBIX_SAMPLEFORMAT_PCM16;   break;
         case 3: sampleformat=AMBIX_SAMPLEFORMAT_PCM24;   break;
         case 4: sampleformat=AMBIX_SAMPLEFORMAT_FLOAT32; break;
+/*
+        case 5: sampleformat=AMBIX_SAMPLEFORMAT_ALAC16; break;
+        case 6: sampleformat=AMBIX_SAMPLEFORMAT_ALAC24; break;
+        case 7: sampleformat=AMBIX_SAMPLEFORMAT_ALAC32; break;
+*/
         default:
           goto usage;
         }
@@ -190,6 +195,7 @@ typedef struct _ambix_write
   /* parameters to communicate with subthread */
   char *x_filename;       /* file to open (string is permanently allocated) */
   ambix_fileformat_t x_fileformat; /* extended or basic */
+  ambix_sampleformat_t x_sampleformat; /* 16, 24 or 32 bit */
   uint32_t x_ambichannels; /* number of ambisonics channels in soundfile */
   uint32_t x_extrachannels; /* number of extra channels in soundfile */
   ambix_matrix_t*x_matrix;
@@ -244,6 +250,8 @@ static void *ambix_write_child_main(void *zz) {
 
       ambix_fileformat_t fileformat = x->x_fileformat;
 
+	  ambix_sampleformat_t sampleformat = x->x_sampleformat;
+
       uint32_t ambichannels  = x->x_ambichannels;
       uint32_t xtrachannels  = x->x_extrachannels;
       int localfifosize = x->x_fifosize;
@@ -277,6 +285,7 @@ static void *ambix_write_child_main(void *zz) {
       ainfo.extrachannels=xtrachannels;
 
       ainfo.samplerate=samplerate;
+	    ainfo.sampleformat=sampleformat;
 
       /* if there's already a file open, close it.  This
          should never happen since ambix_write_open() calls stop if
@@ -470,8 +479,8 @@ static void *ambix_write_new(t_symbol*s, int argc, t_atom*argv) {
 
   x->x_f = 0;
 
-  x->x_ambichannels = 0;
-  x->x_extrachannels = nchannels;
+  x->x_ambichannels = achannels;
+  x->x_extrachannels = xchannels;
 
   x->x_matrix=NULL;
 
@@ -573,6 +582,7 @@ static void ambix_write_open(t_ambix_write *x, t_symbol *s, int argc, t_atom *ar
   x->x_filename = filesym->s_name;
   x->x_fileformat = fileformat;
   x->x_requestcode = REQUEST_OPEN;
+  x->x_sampleformat = sampleformat;
 
   x->x_fifotail = 0;
   x->x_fifohead = 0;
