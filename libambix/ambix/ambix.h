@@ -133,15 +133,6 @@ typedef enum {
   AMBIX_SAMPLEFORMAT_FLOAT32,
   /** 64 bit floating point */
   AMBIX_SAMPLEFORMAT_FLOAT64,
-  
-  // ALAC not well tested, neglect it for now
-  /* Apple Lossless Audio Codec (16 bit). */
-//  AMBIX_SAMPLEFORMAT_ALAC16,
-  /* Apple Lossless Audio Codec (24 bit). */
-//  AMBIX_SAMPLEFORMAT_ALAC24,
-  /* Apple Lossless Audio Codec (32 bit). */
-//  AMBIX_SAMPLEFORMAT_ALAC32,
-    
 } ambix_sampleformat_t;
 
 /** ambix matrix types */
