@@ -352,6 +352,9 @@ int64_t _ambix_writef_int32   (ambix_t*ambix, const int32_t*data, int64_t frames
 int64_t _ambix_writef_float32   (ambix_t*ambix, const float32_t*data, int64_t frames) {
   return (int64_t)sf_writef_float(PRIVATE(ambix)->sf_file, (float*)data, frames) ;
 }
+int64_t _ambix_writef_float64   (ambix_t*ambix, const float64_t*data, int64_t frames) {
+    return (int64_t)sf_writef_double(PRIVATE(ambix)->sf_file, (double*)data, frames) ;
+}
 ambix_err_t _ambix_write_uuidchunk(ambix_t*ax, const void*data, int64_t datasize) {
 #if defined HAVE_SF_SET_CHUNK && defined (HAVE_SF_CHUNK_INFO)
 	int				err ;

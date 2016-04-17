@@ -164,6 +164,10 @@ int64_t _ambix_readf_int16   (ambix_t*ambix, int16_t*data, int64_t frames);
  */
 int64_t _ambix_writef_float32   (ambix_t*ambix, const float32_t*data, int64_t frames);
 /** @see _ambix_writef_float32
+ * @remark this operates on 64bit float data
+ */
+int64_t _ambix_writef_float64   (ambix_t*ambix, const float64_t*data, int64_t frames);
+/** @see _ambix_writef_float32
  * @remark this operates on 32bit integer data
  */
 int64_t _ambix_writef_int32   (ambix_t*ambix, const int32_t*data, int64_t frames);
@@ -321,6 +325,10 @@ ambix_err_t _ambix_splitAdaptormatrix_int16(const int16_t*source, uint32_t sourc
  * @return error code indicating success
  */
 ambix_err_t _ambix_mergeAdaptor_float32(const float32_t*source1, uint32_t source1channels, const float32_t*source2, uint32_t source2channels, float32_t*destination, int64_t frames);
+/** @brief merge two separate interleaved (64bit float) audio data blocks into one
+ * @see _ambix_mergeAdapator_float32
+ */
+ambix_err_t _ambix_mergeAdaptor_float64(const float64_t*source1, uint32_t source1channels, const float64_t*source2, uint32_t source2channels, float64_t*destination, int64_t frames);
 /** @brief merge two separate interleaved (32bit signed integer) audio data blocks into one
  * @see _ambix_mergeAdapator_float32
  */

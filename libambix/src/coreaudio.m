@@ -496,6 +496,9 @@ int64_t _ambix_readf_int32   (ambix_t*ambix, int32_t*data, int64_t frames) {
 int64_t _ambix_readf_float32   (ambix_t*ambix, float32_t*data, int64_t frames) {
   return coreaudio_readf(ambix, data, frames, AMBIX_SAMPLEFORMAT_FLOAT32, 4);
 }
+int64_t _ambix_readf_float64   (ambix_t*ambix, float32_t*data, int64_t frames) {
+  return coreaudio_readf(ambix, data, frames, AMBIX_SAMPLEFORMAT_FLOAT64, 8);
+}
 
 int64_t coreaudio_writef(ambix_t*ambix, const void*data, int64_t frames, ambix_sampleformat_t sampleformat, UInt32 bytespersample) {
  //printf("info:\n");_ambix_print_info(&ambix->info);
@@ -526,6 +529,9 @@ int64_t _ambix_writef_int32   (ambix_t*ambix, const int32_t*data, int64_t frames
 int64_t _ambix_writef_float32   (ambix_t*ambix, const float32_t*data, int64_t frames) {
 //printf("_ambix_writef_float32(%p, %p, %lu)\n", ambix, data);
   return coreaudio_writef(ambix, data, frames, AMBIX_SAMPLEFORMAT_FLOAT32, 4);
+}
+int64_t _ambix_writef_float64   (ambix_t*ambix, const float64_t*data, int64_t frames) {
+  return coreaudio_writef(ambix, data, frames, AMBIX_SAMPLEFORMAT_FLOAT64, 8);
 }
 ambix_err_t _ambix_write_uuidchunk_at(ambix_t*ax, UInt32 index, const void*data, int64_t datasize) {
   OSStatus  err = AudioFileSetUserData (
