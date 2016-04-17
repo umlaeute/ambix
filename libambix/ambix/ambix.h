@@ -131,6 +131,8 @@ typedef enum {
   AMBIX_SAMPLEFORMAT_PCM32,
   /** 32 bit floating point */
   AMBIX_SAMPLEFORMAT_FLOAT32,
+  /** 64 bit floating point */
+  AMBIX_SAMPLEFORMAT_FLOAT64,
   
   // ALAC not well tested, neglect it for now
   /* Apple Lossless Audio Codec (16 bit). */
@@ -368,7 +370,11 @@ int64_t ambix_writef_int32 (ambix_t *ambix, const int32_t *ambidata, const int32
  */
 AMBIX_API
 int64_t ambix_writef_float32 (ambix_t *ambix, const float32_t *ambidata, const float32_t *otherdata, int64_t frames) ;
-
+/** @brief Write (64bit floating point) samples to the ambix file
+ * @ingroup ambix_writef
+ */
+AMBIX_API
+int64_t ambix_writef_float64 (ambix_t *ambix, const float64_t *ambidata, const float64_t *otherdata, int64_t frames) ;
 /**
  * typedef from libsndfile
  * @private

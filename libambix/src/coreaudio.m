@@ -496,7 +496,7 @@ int64_t _ambix_readf_int32   (ambix_t*ambix, int32_t*data, int64_t frames) {
 int64_t _ambix_readf_float32   (ambix_t*ambix, float32_t*data, int64_t frames) {
   return coreaudio_readf(ambix, data, frames, AMBIX_SAMPLEFORMAT_FLOAT32, 4);
 }
-int64_t _ambix_readf_float64   (ambix_t*ambix, float32_t*data, int64_t frames) {
+int64_t _ambix_readf_float64   (ambix_t*ambix, float64_t*data, int64_t frames) {
   return coreaudio_readf(ambix, data, frames, AMBIX_SAMPLEFORMAT_FLOAT64, 8);
 }
 
