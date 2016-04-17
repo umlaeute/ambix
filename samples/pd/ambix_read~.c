@@ -233,7 +233,8 @@ static void *ambix_read_child_main(void *zz) {
       pthread_cond_wait(&x->x_requestcondition, &x->x_mutex);
     } else if (x->x_requestcode == REQUEST_OPEN) {
       ambix_info_t ainfo;
-      int sysrtn, wantframes;
+      int64_t sysrtn;
+      int wantframes;
       const ambix_matrix_t*matrix=NULL;
 
       /* copy file stuff out of the data structure so we can
@@ -358,10 +359,12 @@ static void *ambix_read_child_main(void *zz) {
           xtrabuf = (float32_t*)calloc(localfifosize*xtrachannels, sizeof(float32_t));
         }
         sysrtn = ambix_readf_float32(ambix, ambibuf, xtrabuf, wantframes);
-        merge_samples(ambibuf, ambichannels, want_ambichannels,
-                      xtrabuf, xtrachannels, want_xtrachannels,
-                      buf, bufframes,
-                      fifohead, sysrtn);
+        if(sysrtn>0) {
+          merge_samples(ambibuf, ambichannels, want_ambichannels,
+                        xtrabuf, xtrachannels, want_xtrachannels,
+                        buf, bufframes,
+                        fifohead, sysrtn);
+        }
         pthread_mutex_lock(&x->x_mutex);
         if (x->x_requestcode != REQUEST_BUSY)
           break;
@@ -503,17 +506,22 @@ static void *ambix_read_new(t_symbol*s, int argc, t_atom*argv) {
   x->x_ambichannels = achannels;
   x->x_xtrachannels = xchannels;
 
+  x->x_canvas = canvas_getcurrent();
+
   pthread_mutex_init(&x->x_mutex, 0);
   pthread_cond_init(&x->x_requestcondition, 0);
   pthread_cond_init(&x->x_answercondition, 0);
+
+  pthread_mutex_lock(&x->x_mutex);
   x->x_vecsize = DEFAULTVECSIZE;
   x->x_state = STATE_IDLE;
   x->x_clock = clock_new(x, (t_method)ambix_read_tick);
-  x->x_canvas = canvas_getcurrent();
   x->x_buf = buf;
   x->x_bufsize = bufsize;
   x->x_bufframes = bufframes;
   x->x_fifosize = x->x_fifohead = x->x_fifotail = x->x_requestcode = 0;
+  pthread_mutex_unlock(&x->x_mutex);
+
   pthread_create(&x->x_childthread, 0, ambix_read_child_main, x);
   return (x);
 }
@@ -664,9 +672,14 @@ static t_int *ambix_read_perform(t_int *w) {
 static void ambix_read_start(t_ambix_read *x) {
   /* start making output.  If we're in the "startup" state change
      to the "running" state. */
-  if (x->x_state == STATE_STARTUP)
+  pthread_mutex_lock(&x->x_mutex);
+  if (x->x_state == STATE_STARTUP) {
     x->x_state = STATE_STREAM;
-  else pd_error(x, "ambix_read: start requested with no prior 'open'");
+    pthread_mutex_unlock(&x->x_mutex);
+  } else {
+    pthread_mutex_unlock(&x->x_mutex);
+    pd_error(x, "ambix_read~: start requested with no prior 'open'");
+  }
 }
 
 static void ambix_read_stop(t_ambix_read *x) {

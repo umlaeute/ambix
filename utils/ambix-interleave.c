@@ -345,7 +345,6 @@ static ai_t*ai_open_output(ai_t*ai) {
   memcpy(&info, &ai->info, sizeof(info));
   ai->outhandle=ambix_open(ai->outfilename, AMBIX_WRITE, &info);
 
-  if(!ai) return ai_close(ai);
   if(AMBIX_EXTENDED==ai->info.fileformat) {
     ambix_err_t err=ambix_set_adaptormatrix(ai->outhandle, ai->matrix);
     if(err!=AMBIX_ERR_SUCCESS) {

@@ -549,7 +549,8 @@ int main(int argc, char *argv[])
       o.minimal_frames = (int)strtoll(optarg, NULL, 0);
       break;
     case 'n':
-      strncpy(o.client_name, optarg, 64);
+      strncpy(o.client_name, optarg, 63);
+      o.client_name[63]=0;
       eprintf("jack client name: %s\n", o.client_name);
       break;
     case 'q':
@@ -562,6 +563,7 @@ int main(int argc, char *argv[])
 #endif /* HAVE_SAMPLERATE */
     case 't':
       o.transport_aware = 1;
+      break;
     case 'u':
       o.unique_name = 0;
       break;

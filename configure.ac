@@ -1,6 +1,6 @@
 AC_INIT([ambix],[0.0.1],[zmoelnig@iem.at],
                 [libambix],[http://ambisonics.iem.at/xchange/format])
-AM_INIT_AUTOMAKE($PACKAGE_NAME,$PACKAGE_VERSION)
+AM_INIT_AUTOMAKE
 
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 

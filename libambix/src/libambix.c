@@ -230,7 +230,11 @@ ambix_err_t ambix_set_adaptormatrix	(ambix_t*ambix, const ambix_matrix_t*matrix)
         return AMBIX_ERR_INVALID_DIMENSION;
       }
       mtx=ambix_matrix_copy(matrix, &ambix->matrix2);
-      ambix->use_matrix=2;
+      if(mtx) {
+        ambix->use_matrix=2;
+      } else {
+        return AMBIX_ERR_UNKNOWN;
+      }
     }
   } else if((ambix->filemode & AMBIX_WRITE) && (AMBIX_EXTENDED == ambix->info.fileformat)) {
     /* too late, writing started already */

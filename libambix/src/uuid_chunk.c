@@ -122,7 +122,7 @@ _ambix_uuid1_to_matrix(const void*vdata, uint64_t datasize, ambix_matrix_t*orgmt
     cols=swap4(cols);
   }
 
-  size=rows*cols;
+  size=(uint64_t)rows*cols;
 
   if(rows<1 || cols<1 || size < 1)
     goto cleanup;

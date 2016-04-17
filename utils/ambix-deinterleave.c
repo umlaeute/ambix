@@ -250,6 +250,12 @@ static ai_t*ai_open_output(ai_t*ai) {
     ai->outhandles=(SNDFILE**)calloc(ai->numOuts, sizeof(SNDFILE*));
     ai->outinfo   =(SF_INFO*)calloc(ai->numOuts, sizeof(SF_INFO));
   }
+  if(!ai->outhandles) {
+    return ai_close(ai);
+  }
+  if(!ai->outinfo) {
+    return ai_close(ai);
+  }
   switch(ai->info.sampleformat) {
   case(AMBIX_SAMPLEFORMAT_PCM16)  : format |= SF_FORMAT_PCM_16; break;
   case(AMBIX_SAMPLEFORMAT_PCM24)  : format |= SF_FORMAT_PCM_24; break;
@@ -299,7 +305,7 @@ static ai_t*ai_open_output(ai_t*ai) {
 
     ai->outhandles[channel]=sf_open(filename, SFM_WRITE, &ai->outinfo[channel]);
 
-    if(!ai->outhandles) {
+    if(!ai->outhandles[channel]) {
       return ai_close(ai);
     }
 
@@ -432,6 +438,10 @@ static ai_t*ai_copy(ai_t*ai) {
   }
   deinterleavebuf=(float32_t*)malloc(sizeof(float32_t)*size);
   if(NULL==deinterleavebuf) {
+    free(rawdata);
+    free(cookeddata);
+    free(extradata);
+
     return ai_close(ai);
   }
 

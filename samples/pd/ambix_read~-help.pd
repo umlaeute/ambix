@@ -26,14 +26,14 @@
 #X msg 74 49 bang;
 #X obj 74 69 openpanel;
 #X obj 145 499 readsf~;
-#X text 207 18 [ambix_read~] read an AMBIsonics eXchange file (SIMPLE
+#X text 200 18 [ambix_read~] read an AMBIsonics eXchange file (SIMPLE
 mode);
-#X text 216 47 The [ambix_read~] reads an ambix soundfile into it's
+#X text 215 47 The [ambix_read~] reads an ambix soundfile into it's
 signal outputs \, much like [readsf~] for normal soundfiles.;
-#X text 217 81 You must "open" the ambix file in advance \, to allow
+#X text 215 81 You must "open" the ambix file in advance \, to allow
 the buffer to be filled up \, and the send "1" to start playback.;
-#X text 219 107 Sending "0" stops playback.;
-#X text 219 129 Some information on the file is sent to the last outlet
+#X text 215 107 Sending "0" stops playback.;
+#X text 215 129 Some information on the file is sent to the last outlet
 of the object \, e.g. the number of frames (samples per channel) \,
 the number of ambisonics- and nonambisonics- channels found in the
 file and the samplerate;
@@ -45,11 +45,11 @@ file and the samplerate;
 [readsf~] where you specify it in bytes per channel);
 #X text 43 475 see also:;
 #X obj 145 477 ambix_readX~;
-#X text 223 186 The ambisonics channels will always be periphonic (3D)
+#X text 215 186 The ambisonics channels will always be periphonic (3D)
 semi-normalized (SN3D) and ordered after their ACN.;
 #X text 225 213 If you work with a Furse-Malham decoder \, you will
 need to transform the output data.;
-#X text 219 243 arguments: <#ambioutlet~s:4> <#extraoutlet~s:0> <buffersize>
+#X text 215 243 arguments: <#ambioutlet~s:4> <#extraoutlet~s:0> <buffersize>
 ;
 #X obj 242 477 ambix_info;
 #X connect 0 0 1 0;

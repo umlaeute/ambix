@@ -483,21 +483,24 @@ static void *ambix_write_new(t_symbol*s, int argc, t_atom*argv) {
   x->x_extrachannels = xchannels;
 
   x->x_matrix=NULL;
+  x->x_canvas = canvas_getcurrent();
 
   pthread_mutex_init(&x->x_mutex, 0);
   pthread_cond_init(&x->x_requestcondition, 0);
   pthread_cond_init(&x->x_answercondition, 0);
+
+  pthread_mutex_lock(&x->x_mutex);
   x->x_vecsize = DEFAULTVECSIZE;
   x->x_insamplerate = x->x_samplerate = 0;
   x->x_state = STATE_IDLE;
-
-  x->x_canvas = canvas_getcurrent();
 
   x->x_buf = buf;
   x->x_bufsize = bufsize;
   x->x_bufframes = bufframes;
 
   x->x_fifosize = x->x_fifohead = x->x_fifotail = x->x_requestcode = 0;
+  pthread_mutex_unlock(&x->x_mutex);
+
   pthread_create(&x->x_childthread, 0, ambix_write_child_main, x);
   return (x);
 }
@@ -533,10 +536,14 @@ static t_int *ambix_write_perform(t_int *w) {
 static void ambix_write_start(t_ambix_write *x) {
   /* start making output.  If we're in the "startup" state change
      to the "running" state. */
-  if (x->x_state == STATE_STARTUP)
+  pthread_mutex_lock(&x->x_mutex);
+  if (x->x_state == STATE_STARTUP) {
     x->x_state = STATE_STREAM;
-  else
+    pthread_mutex_unlock(&x->x_mutex);
+  } else {
+    pthread_mutex_unlock(&x->x_mutex);
     pd_error(x, "ambix_write: start requested with no prior 'open'");
+  }
 }
 
 static void ambix_write_stop(t_ambix_write *x) {

@@ -195,7 +195,7 @@ ambix_err_t _ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t
   ambix->private_data=calloc(1, sizeof(ambixsndfile_private_t));
   ambix2sndfile_info(ambixinfo, &PRIVATE(ambix)->sf_info);
 
-  if((mode & AMBIX_READ) & (mode & AMBIX_WRITE))
+  if((mode & AMBIX_READ) && (mode & AMBIX_WRITE))
     sfmode=	SFM_RDWR;
   else if (mode & AMBIX_WRITE)
     sfmode=	SFM_WRITE;
