@@ -335,30 +335,33 @@ ambix_matrix_fill(ambix_matrix_t*matrix, ambix_matrixtype_t typ) {
   return matrix;
 }
 
-ambix_err_t ambix_matrix_multiply_float32(float32_t*dest, const ambix_matrix_t*matrix, const float32_t*source, int64_t frames) {
-  float32_t**mtx=matrix->data;
-  const uint32_t outchannels=matrix->rows;
-  const uint32_t inchannels=matrix->cols;
-  int64_t frame;
-  float32_t*dst=dest;
-  const float32_t*src=source;
-  for(frame=0; frame<frames; frame++) {
-    uint32_t outchan;
-    for(outchan=0; outchan<outchannels; outchan++) {
-      double sum=0.;
-      uint32_t inchan;
-      //      printf("..output:%d @ %d\n", (int)outchan, (int)frame);
-      for(inchan=0; inchan<inchannels; inchan++) {
-        double scale=mtx[outchan][inchan];
-        double in=src[frame*inchannels+inchan];
-        //        printf("....%f[%d|%d]*%f\n", (float)scale, (int)outchan, (int)inchan, (float)in);
-        sum+=scale*in;
-      }
-      dst[frame*outchannels+outchan]=(float32_t)sum;
-    }
-  }
-  return AMBIX_ERR_SUCCESS;
-}
+#define MTXMULTIPLY_DATA_FLOAT(typ) \
+  ambix_err_t ambix_matrix_multiply_##typ(typ##_t*dest, const ambix_matrix_t*matrix, const typ##_t*source, int64_t frames) { \
+    float32_t**mtx=matrix->data; \
+    const uint32_t outchannels=matrix->rows; \
+    const uint32_t inchannels=matrix->cols; \
+    int64_t frame; \
+    typ##_t*dst=dest; \
+    const typ##_t*src=source; \
+    for(frame=0; frame<frames; frame++) { \
+      uint32_t outchan; \
+      for(outchan=0; outchan<outchannels; outchan++) { \
+        double sum=0.; \
+        uint32_t inchan; \
+        for(inchan=0; inchan<inchannels; inchan++) { \
+          double scale=mtx[outchan][inchan]; \
+          double in=src[frame*inchannels+inchan]; \
+          sum+=scale*in; \
+        } \
+        dst[frame*outchannels+outchan]=(typ##_t)sum; \
+      } \
+    } \
+    return AMBIX_ERR_SUCCESS; \
+  } \
+
+MTXMULTIPLY_DATA_FLOAT(float32);
+MTXMULTIPLY_DATA_FLOAT(float64);
+
 #define MTXMULTIPLY_DATA_INT(typ)                                       \
   ambix_err_t ambix_matrix_multiply_##typ(typ##_t*dest, const ambix_matrix_t*matrix, const typ##_t*source, int64_t frames) { \
     float32_t**mtx=matrix->data;                                        \
