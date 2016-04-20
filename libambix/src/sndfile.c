@@ -64,6 +64,7 @@ sndfile2ambix_sampleformat(int sformat) {
   case(SF_FORMAT_PCM_24): return AMBIX_SAMPLEFORMAT_PCM24  ;
   case(SF_FORMAT_PCM_32): return AMBIX_SAMPLEFORMAT_PCM32  ;
   case(SF_FORMAT_FLOAT ): return AMBIX_SAMPLEFORMAT_FLOAT32;
+  case(SF_FORMAT_DOUBLE): return AMBIX_SAMPLEFORMAT_FLOAT64;
   }
   return AMBIX_SAMPLEFORMAT_NONE;
 }
@@ -75,6 +76,7 @@ ambix2sndfile_sampleformat(ambix_sampleformat_t asformat) {
   case(AMBIX_SAMPLEFORMAT_PCM24):   return SF_FORMAT_PCM_24;
   case(AMBIX_SAMPLEFORMAT_PCM32):   return SF_FORMAT_PCM_32;
   case(AMBIX_SAMPLEFORMAT_FLOAT32): return SF_FORMAT_FLOAT;
+  case(AMBIX_SAMPLEFORMAT_FLOAT64): return SF_FORMAT_DOUBLE;
   default:break;
   }
   return SF_FORMAT_PCM_24;
