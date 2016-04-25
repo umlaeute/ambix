@@ -92,7 +92,7 @@ static ai_t*ai_matrix(ai_t*ai, const char*path) {
   file=sf_open(path, SFM_READ, &info);
 
   if(!file) {
-    fprintf(stderr, "ambix_interleave: matrix open failed '%s'\n", path);
+    fprintf(stderr, "ambix_interleave: tried to open matrix file '%s': ...failed\n", path);
     return NULL;
   }
   rows=info.channels;
@@ -580,8 +580,9 @@ void print_usage(const char*name) {
          "\nIf you specify the 'order', then all extranous channels will be stored as 'extra' channels."
          "\n"
          "\nYou can also write extended ambix files, by specifying an adaptor matrix"
-         "\n(a soundfile where the channels are read as rows and the frames as columns),"
-         "\nin which case the columns of the matrix define the number of (reduced) ambisonics channels read from the input"
+         "\n(either a soundfile, where the channels are read as rows and the frames as columns,"
+	 "\nor by specifying one of the standard matrices), in which case the columns of the"
+	 "\nmatrix define the number of (reduced) ambisonics channels read from the input"
          "\nand the rows of the matrix must form a full 3d ambisonics set."
          "\nInput channels exceeding the number of matrix columns are stored as 'extra' channels."
          "\n"
