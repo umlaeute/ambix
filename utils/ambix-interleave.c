@@ -74,6 +74,7 @@ typedef struct ai_t {
 static void print_usage(const char*path);
 static void print_version(const char*path);
 static ai_t*ai_close(ai_t*ai);
+static int ai_exit = 0;
 
 static ai_t*ai_matrix(ai_t*ai, const char*path) {
   SF_INFO info;
@@ -129,11 +130,13 @@ static ai_t*ai_cmdline(const char*name, int argc, char**argv) {
   while(argc) {
     if(!strcmp(argv[0], "-h") || !strcmp(argv[0], "--help")) {
       print_usage(name);
-      exit(0);
+      ai_exit=0;
+      return ai_close(ai);
     }
     if(!strcmp(argv[0], "-V") || !strcmp(argv[0], "--version")) {
       print_version(name);
-      exit(0);
+      ai_exit=0;
+      return ai_close(ai);
     }
     if(!strcmp(argv[0], "-o") || !strcmp(argv[0], "--output")) {
       if(argc>1) {
@@ -143,6 +146,7 @@ static ai_t*ai_cmdline(const char*name, int argc, char**argv) {
         continue;
       }
       fprintf(stderr, "no output file specified\n");
+      ai_exit=64;
       return ai_close(ai);
     }
     if(!strcmp(argv[0], "-O") || !strcmp(argv[0], "--order")) {
@@ -154,6 +158,7 @@ static ai_t*ai_cmdline(const char*name, int argc, char**argv) {
         continue;
       }
       fprintf(stderr, "no ambisonics order specified\n");
+      ai_exit=64;
       return ai_close(ai);
     }
     if(!strcmp(argv[0], "-b") || !strcmp(argv[0], "--blocksize")) {
@@ -164,12 +169,14 @@ static ai_t*ai_cmdline(const char*name, int argc, char**argv) {
         continue;
       }
       fprintf(stderr, "no blocksize specified\n");
+      ai_exit=64;
       return ai_close(ai);
     }
     if(!strcmp(argv[0], "-X") || !strcmp(argv[0], "--matrix")) {
       if(argc>1) {
         if(!ai_matrix(ai, argv[1])) {
           fprintf(stderr, "Couldn't read matrix '%s'\n", argv[1]);
+	  ai_exit=66;
           return ai_close(ai);
         }
         argv+=2;
@@ -177,6 +184,7 @@ static ai_t*ai_cmdline(const char*name, int argc, char**argv) {
         continue;
       }
       fprintf(stderr, "no matrix file specified\n");
+      ai_exit=64;
       return ai_close(ai);
     }
     ai->infilenames=argv;
@@ -186,11 +194,13 @@ static ai_t*ai_cmdline(const char*name, int argc, char**argv) {
 
   if(!ai->infilenames) {
     fprintf(stderr, "no input files specified\n");
+    ai_exit=66;
     return ai_close(ai);
   }
 
   if(!ai->outfilename) {
     fprintf(stderr, "no output filename specified\n");
+    ai_exit=73;
     return ai_close(ai);
   }
 
@@ -205,10 +215,11 @@ static ai_t*ai_cmdline(const char*name, int argc, char**argv) {
   if((channels > 0) && ai->matrix) {
     if(channels != ai->matrix->rows) {
       fprintf(stderr, "ambix_interleave: order%02d needs %d channels, not %d\n", order, channels, ai->matrix->rows);
+      ai_exit=65;
       return ai_close(ai);
     }
   }
-
+  ai_exit=0;
   return ai;
 }
 
@@ -459,7 +470,7 @@ int main(int argc, char**argv) {
   ai_t*ai=ai_cmdline(argv[0], argc-1, argv+1);
   if(!ai) {
     print_usage(argv[0]);//"ambix_interleave");
-    return 1;
+    return ai_exit;
   }
 
   return ambix_interleave(ai);
