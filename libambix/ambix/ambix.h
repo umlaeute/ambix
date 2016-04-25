@@ -143,7 +143,7 @@ typedef enum {
 
   /** matrices with the 0x8000 bit set convert between ambix and other ambisonics formats:
    * if the 0x4000 bit is set to 0, the matrix converts to ambix,
-   * if the 0x4000 but is set to 1, the matrix converts from ambix.
+   * if the 0x4000 bit is set to 1, the matrix converts from ambix.
    * @remark some of the following matrixes might not be implemented yet
    * @remark AMBIX_MATRIX_AMBIX converts from ambix to ambix (and is quite useless by itself)
    */
@@ -160,7 +160,7 @@ typedef enum {
 
   /** conversion matrix SN3D -> N3D */
   AMBIX_MATRIX_TO_N3D  = AMBIX_MATRIX_TO_AMBIX | AMBIX_MATRIX_N3D,
-  /** conversion matrix SID -> ACN */
+  /** conversion matrix ACN -> SID */
   AMBIX_MATRIX_TO_SID  = AMBIX_MATRIX_TO_AMBIX | AMBIX_MATRIX_SID,
   /** conversion matrix ambix -> Furse-Malham */
   AMBIX_MATRIX_TO_FUMA = AMBIX_MATRIX_TO_AMBIX | AMBIX_MATRIX_FUMA,
