@@ -232,6 +232,13 @@ static ai_t*ai_cmdline(const char*name, int argc, char**argv) {
     break;
   }
 
+  if(ai->matrix && (ai->matrix_norm || ai->matrix_rout)) {
+    /* both a matrix-file and matrix-specs were given; bail out! */
+    print_usage(argv[0]);
+    ai_exit=64;
+    return ai_close(ai);
+  }
+
   if(!ai->infilenames) {
     fprintf(stderr, "no input files specified\n");
     ai_exit=66;
