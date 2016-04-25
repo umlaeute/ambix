@@ -66,6 +66,8 @@ typedef struct ai_t {
   ambix_t*outhandle;
 
   ambix_matrix_t*matrix;
+  ambix_matrixtype_t matrix_norm; /* normalisation matrix */
+  ambix_matrixtype_t matrix_rout; /* routing matrix */
   uint32_t channels;
 
   uint32_t blocksize;
@@ -297,6 +299,32 @@ static ai_t*ai_open_input(ai_t*ai) {
     ai->inhandles[i]=inhandle;
   }
 
+  if (ai->matrix_rout || ai->matrix_norm) {
+    /* predefined matrix, but we need to calc the size based on the channels */
+
+    if(ai->matrix)ambix_matrix_destroy(ai->matrix);  ai->matrix=NULL;
+    if(ai->matrix_rout == ai->matrix_norm == AMBIX_MATRIX_FUMA) {
+      ai->matrix=ai_calc_matrix(channels, AMBIX_MATRIX_FUMA);
+      if(!ai->matrix) {
+	fprintf(stderr, "Unable to set Furse-Malham matrix with %d channels\n", channels);
+	ai_exit=65;
+	return ai_close(ai);
+      }
+    } else {
+      ambix_matrix_t*route=ai_calc_matrix(channels, ai->matrix_rout);
+      ambix_matrix_t*norm =ai_calc_matrix(channels, ai->matrix_norm);
+      if(route && norm) {
+	ai->matrix = ambix_matrix_multiply(route, norm, NULL);
+      }
+      if(route)ambix_matrix_destroy(route); route=NULL;
+      if(norm )ambix_matrix_destroy(norm ); norm =NULL;
+      if(!ai->matrix) {
+	fprintf(stderr, "Unable to set normalisation/routing matrix with %d channels\n", channels);
+	ai_exit=65;
+	return ai_close(ai);
+      }
+    }
+  }
    /* check whether input channels form a valid full set */
   if(ai->matrix) {
     if(channels<ai->matrix->cols) {
