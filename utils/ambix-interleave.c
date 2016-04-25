@@ -46,6 +46,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 #ifdef _MSC_VER
 # define strdup _strdup
@@ -122,6 +123,43 @@ static ai_t*ai_matrix(ai_t*ai, const char*path) {
   sf_close(file);
   free(data);
   return result;
+}
+
+static ai_t*ai_matrix_predefined(ai_t*ai, const char*format) {
+  /* just parse the format string, and set the output matrix type */
+#define MAX_MATRIX_NAME 10
+  size_t len=strnlen(format, MAX_MATRIX_NAME);
+  char*fmt=calloc(len+1, 1);
+  size_t i;
+  /* make everything lower-case */
+  for(i=0; i<len; i++)
+    fmt[i]=tolower(format[i]);
+  fmt[len]=0;
+  /* FuMa */
+  if(!strncmp(fmt, "fuma", len)) {
+    ai->matrix_norm=AMBIX_MATRIX_FUMA;
+    ai->matrix_rout=AMBIX_MATRIX_FUMA;
+    return ai;
+  }
+  /* N3D/SID */
+  if(!strncmp(fmt, "n3d|sid", len) || !strncmp(fmt, "sid|n3d", len)) {
+    ai->matrix_norm=AMBIX_MATRIX_N3D;
+    ai->matrix_rout=AMBIX_MATRIX_SID;
+    return ai;
+  }
+  /* SID */
+  if(!strncmp(fmt, "sid", len) || !strncmp(fmt, "sn3d|sid", len) || !strncmp(fmt, "sid|sn3d", len)) {
+    ai->matrix_norm=AMBIX_MATRIX_IDENTITY;
+    ai->matrix_rout=AMBIX_MATRIX_SID;
+    return ai;
+  }
+  /* N3D */
+  if(!strncmp(fmt, "n3d", len) || !strncmp(fmt, "sn3d|acn", len) || !strncmp(fmt, "acn|sn3d", len)) {
+    ai->matrix_norm=AMBIX_MATRIX_N3D;
+    ai->matrix_rout=AMBIX_MATRIX_IDENTITY;
+    return ai;
+  }
+  return 0;
 }
 
 static ai_t*ai_cmdline(const char*name, int argc, char**argv) {
@@ -262,6 +300,13 @@ static ai_t*ai_close(ai_t*ai) {
   ai=NULL;
   return NULL;
 }
+static ambix_matrix_t*ai_calc_matrix(unsigned int rowcols, ambix_matrixtype_t typ) {
+  ambix_matrix_t*mtx=ambix_matrix_init(rowcols, rowcols, NULL);
+  ambix_matrix_t*mtx2=ambix_matrix_fill(mtx, typ);
+  if(mtx2!=mtx)ambix_matrix_destroy(mtx);  mtx=NULL;
+  return mtx2;
+}
+
 
 static ai_t*ai_open_input(ai_t*ai) {
   uint32_t i;
