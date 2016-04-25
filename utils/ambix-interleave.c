@@ -214,7 +214,7 @@ static ai_t*ai_cmdline(const char*name, int argc, char**argv) {
     }
     if(!strcmp(argv[0], "-X") || !strcmp(argv[0], "--matrix")) {
       if(argc>1) {
-        if(!ai_matrix(ai, argv[1])) {
+        if(!ai_matrix(ai, argv[1]) && !ai_matrix_predefined(ai, argv[1])) {
           fprintf(stderr, "Couldn't read matrix '%s'\n", argv[1]);
 	  ai_exit=66;
           return ai_close(ai);
@@ -566,7 +566,8 @@ void print_usage(const char*name) {
   printf("  -h, --help                       print this help\n");
   printf("  -o, --output                     output filename\n");
   printf("  -O, --order                      force ambisonics order (default: autodetect)\n");
-  printf("  -X, --matrix                     specify adaptor matrix file\n");
+  printf("  -X, --matrix                     specify adaptor matrix file or a predefined matrix\n");
+  printf("                                          ('FuMa', 'n3d|sid', 'n3d' or 'sid')\n");
   printf("  -b, --blocksize                  blocksize for copying (default: %d)\n", DEFAULT_BLOCKSIZE);
   printf("\n");
 
