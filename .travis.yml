@@ -24,10 +24,10 @@ before_install:
 install:
   ## build libsndfile
   - mkdir -p libsndfile/build && curl "$LIBSNDFILE_URL" | tar --strip-components=1 -C libsndfile -xvzf -
-  - cd libsndfile/build && ../configure && sudo make install
-  - cd "$TRAVIS_BUILD_DIR"
+  - cd libsndfile/build && ../configure && make V=1 && sudo make install
 
 before_script:
+  - cd "$TRAVIS_BUILD_DIR"
   - ./autogen.sh
   - ./configure
   # implement Coverity Scan with before_script instead of addons.coverity_scan
