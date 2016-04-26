@@ -27,6 +27,8 @@ install:
   - cd libsndfile/build && ../configure --disable-silent-rules && make && sudo make install
   ## remove libtool libs
   - find /usr/local/lib -type f -name "*.la" -exec sudo rm -f {} \+
+  ## JMZ-debug: check whether /usr/local is in ld.so.conf
+  - find /etc/ld.so.conf* -type f -exec grep . {} \+
 
 before_script:
   - cd "$TRAVIS_BUILD_DIR"
