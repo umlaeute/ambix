@@ -38,4 +38,4 @@ before_script:
 script:
 - make
 - ldd libambix/src/.libs/libambix.so
-- make check
+- LD_LIBRARY_PATH=/usr/local/lib make check
