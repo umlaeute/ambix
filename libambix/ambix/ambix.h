@@ -552,7 +552,21 @@ ambix_matrix_t *ambix_matrix_copy (const ambix_matrix_t *src, ambix_matrix_t *de
  */
 AMBIX_API
 ambix_matrix_t *ambix_matrix_multiply (const ambix_matrix_t *A, const ambix_matrix_t *B, ambix_matrix_t *result) ;
-
+  /** @brief Get the Moore–Penrose pseudoinverse of a matrix.
+ *
+ * Get the Moore–Penrose pseudoinverse of the matrix input and write the result
+ * to pinv
+ *
+ * @param matrix input matrix
+ *
+ * @param pinv pointer to the matrix object that will hold the result or NULL
+ *
+ * @return pointer to the result matrix, or NULL in case the matrix
+ * inversion did not succeed.
+ *
+ */
+AMBIX_API
+ambix_matrix_t* ambix_matrix_pinv(const ambix_matrix_t*matrix, ambix_matrix_t*pinv) ;
 /** @brief Multiply a matrix with data
  * @defgroup ambix_matrix_multiply_data ambix_matrix_multiply_data()
  *
@@ -580,6 +594,12 @@ ambix_matrix_t *ambix_matrix_multiply (const ambix_matrix_t *A, const ambix_matr
  */
 AMBIX_API
 ambix_err_t ambix_matrix_multiply_float32(float32_t *dest, const ambix_matrix_t *mtx, const float32_t *source, int64_t frames) ;
+/** @brief Multiply a matrix with (64bit float) data
+ *
+ * @ingroup ambix_matrix_multiply_data
+ */
+AMBIX_API
+ambix_err_t ambix_matrix_multiply_float64(float64_t *dest, const ambix_matrix_t *mtx, const float64_t *source, int64_t frames) ;
 /** @brief Multiply a matrix with (32bit signed integer) data
  *
  * @ingroup ambix_matrix_multiply_data
