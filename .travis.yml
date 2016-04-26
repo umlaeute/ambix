@@ -1,0 +1,36 @@
+language: c
+sudo: required
+dist: trusty
+
+env:
+  global:
+        - secure: "nAc3WvwtJBm+hLIYxp4srwgM7qDWRovkEpsza+UITEE8TUqeZND2543xMZlWz1w5qn8V/F/1yX1oYl7Ot0ymmu9Uh41b1NBr3cvo2U8RLDSM9SBoqtyS1pSCnJ2qiSk+hg5GxObWug/ph3TkEgZaDmYCDAgHiv1I9WXVRxeR144="
+        - COVERITY_SCAN_BRANCH_PATTERN="(master|coverity-.*)"
+        - COVERITY_SCAN_NOTIFICATION_EMAIL="dev@umlaeute.mur.at"
+        - COVERITY_SCAN_BUILD_COMMAND="make"
+        - LIBSNDFILE_URL="http://www.mega-nerd.com/libsndfile/files/libsndfile-1.0.26.tar.gz"
+
+
+matrix:
+  include:
+    - compiler: clang
+    - compiler: gcc
+      env:
+        - COVERITY_SCAN_PROJECT_NAME="$TRAVIS_REPO_SLUG"
+
+install:
+#- sudo apt-get update -qq
+#- sudo apt-get install -qq puredata-dev
+## build libsndfile
+- mkdir -p libsndfile/build && curl "$LIBSNDFILE_URL" | tar --strip-components=1 -C libsndfile -xvzf -
+- cd libsndfile/build && ../configure && sudo make install
+
+before_script:
+  - ./autogen.sh
+  - ./configure
+  # implement Coverity Scan with before_script instead of addons.coverity_scan
+  # to work around too-early quota check by the coverity_scan addon
+  - if [[ -n $COVERITY_SCAN_PROJECT_NAME ]] ; then curl -s 'https://scan.coverity.com/scripts/travisci_build_coverity_scan.sh' | bash || true ; fi
+
+script:
+- make
