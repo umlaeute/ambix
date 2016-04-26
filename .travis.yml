@@ -22,9 +22,10 @@ before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -qq libvorbis-dev libflac-dev libasound2-dev
 install:
-## build libsndfile
-- mkdir -p libsndfile/build && curl "$LIBSNDFILE_URL" | tar --strip-components=1 -C libsndfile -xvzf -
-- cd libsndfile/build && ../configure && sudo make install
+  ## build libsndfile
+  - mkdir -p libsndfile/build && curl "$LIBSNDFILE_URL" | tar --strip-components=1 -C libsndfile -xvzf -
+  - cd libsndfile/build && ../configure && sudo make install
+  - cd "$TRAVIS_BUILD_DIR"
 
 before_script:
   - ./autogen.sh
