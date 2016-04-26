@@ -130,6 +130,7 @@ static ai_t*ai_matrix_predefined(ai_t*ai, const char*format) {
 #define MAX_MATRIX_NAME 10
   size_t len=strnlen(format, MAX_MATRIX_NAME);
   char*fmt=calloc(len+1, 1);
+  ai_t*result=ai;
   size_t i;
   /* make everything lower-case */
   for(i=0; i<len; i++)
@@ -139,27 +140,30 @@ static ai_t*ai_matrix_predefined(ai_t*ai, const char*format) {
   if(!strncmp(fmt, "fuma", len)) {
     ai->matrix_norm=AMBIX_MATRIX_FUMA;
     ai->matrix_rout=AMBIX_MATRIX_FUMA;
-    return ai;
+    goto cleanup;
   }
   /* N3D/SID */
   if(!strncmp(fmt, "n3d|sid", len) || !strncmp(fmt, "sid|n3d", len)) {
     ai->matrix_norm=AMBIX_MATRIX_N3D;
     ai->matrix_rout=AMBIX_MATRIX_SID;
-    return ai;
+    goto cleanup;
   }
   /* SID */
   if(!strncmp(fmt, "sid", len) || !strncmp(fmt, "sn3d|sid", len) || !strncmp(fmt, "sid|sn3d", len)) {
     ai->matrix_norm=AMBIX_MATRIX_IDENTITY;
     ai->matrix_rout=AMBIX_MATRIX_SID;
-    return ai;
+    goto cleanup;
   }
   /* N3D */
   if(!strncmp(fmt, "n3d", len) || !strncmp(fmt, "sn3d|acn", len) || !strncmp(fmt, "acn|sn3d", len)) {
     ai->matrix_norm=AMBIX_MATRIX_N3D;
     ai->matrix_rout=AMBIX_MATRIX_IDENTITY;
-    return ai;
+    goto cleanup;
   }
-  return 0;
+  result=0;
+ cleanup:
+  free(fmt);
+  return result;
 }
 
 static ai_t*ai_cmdline(const char*name, int argc, char**argv) {
