@@ -355,7 +355,7 @@ static ai_t*ai_open_input(ai_t*ai) {
     /* predefined matrix, but we need to calc the size based on the channels */
 
     if(ai->matrix)ambix_matrix_destroy(ai->matrix);  ai->matrix=NULL;
-    if(ai->matrix_rout == ai->matrix_norm == AMBIX_MATRIX_FUMA) {
+    if((ai->matrix_rout == ai->matrix_norm) && (ai->matrix_norm == AMBIX_MATRIX_FUMA)) {
       ai->matrix=ai_calc_matrix(channels, AMBIX_MATRIX_FUMA);
       if(!ai->matrix) {
 	fprintf(stderr, "Unable to set Furse-Malham matrix with %d channels\n", channels);
