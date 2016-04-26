@@ -518,6 +518,9 @@ static ai_t*ai_copy(ai_t*ai) {
     blocks++;
     ai=ai_copy_block(ai, ambidata, extradata, interleavebuffer, blocksize);
     if(!ai) {
+      free(ambidata);
+      free(extradata);
+      free(interleavebuffer);
       return ai_close(ai);
     }
     frames-=blocksize;
