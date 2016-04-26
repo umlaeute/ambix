@@ -146,8 +146,7 @@ read_uuidchunk(ambix_t*ax) {
     chunkver=_ambix_checkUUID((const char*)chunk_info.data);
     if(1==chunkver) {
       if(_ambix_uuid1_to_matrix(((const char*)chunk_info.data+16), chunk_info.datalen-16, &ax->matrix, ax->byteswap)) {
-        if(chunk_info.data)
-          free(chunk_info.data) ;
+	free(chunk_info.data);
         return AMBIX_ERR_SUCCESS;
       }
     } else
