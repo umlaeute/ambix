@@ -64,6 +64,7 @@ sndfile2ambix_sampleformat(int sformat) {
   case(SF_FORMAT_PCM_24): return AMBIX_SAMPLEFORMAT_PCM24  ;
   case(SF_FORMAT_PCM_32): return AMBIX_SAMPLEFORMAT_PCM32  ;
   case(SF_FORMAT_FLOAT ): return AMBIX_SAMPLEFORMAT_FLOAT32;
+  case(SF_FORMAT_DOUBLE): return AMBIX_SAMPLEFORMAT_FLOAT64;
   }
   return AMBIX_SAMPLEFORMAT_NONE;
 }
@@ -75,6 +76,7 @@ ambix2sndfile_sampleformat(ambix_sampleformat_t asformat) {
   case(AMBIX_SAMPLEFORMAT_PCM24):   return SF_FORMAT_PCM_24;
   case(AMBIX_SAMPLEFORMAT_PCM32):   return SF_FORMAT_PCM_32;
   case(AMBIX_SAMPLEFORMAT_FLOAT32): return SF_FORMAT_FLOAT;
+  case(AMBIX_SAMPLEFORMAT_FLOAT64): return SF_FORMAT_DOUBLE;
   default:break;
   }
   return SF_FORMAT_PCM_24;
@@ -329,6 +331,9 @@ int64_t _ambix_readf_int32   (ambix_t*ambix, int32_t*data, int64_t frames) {
 int64_t _ambix_readf_float32   (ambix_t*ambix, float32_t*data, int64_t frames) {
   return (int64_t)sf_readf_float(PRIVATE(ambix)->sf_file, (float*)data, frames) ;
 }
+int64_t _ambix_readf_float64   (ambix_t*ambix, float64_t*data, int64_t frames) {
+    return (int64_t)sf_readf_double(PRIVATE(ambix)->sf_file, (double*)data, frames) ;
+}
 
 int64_t _ambix_writef_int16   (ambix_t*ambix, const int16_t*data, int64_t frames) {
   return (int64_t)sf_writef_short(PRIVATE(ambix)->sf_file, (short*)data, frames) ;
@@ -338,6 +343,9 @@ int64_t _ambix_writef_int32   (ambix_t*ambix, const int32_t*data, int64_t frames
 }
 int64_t _ambix_writef_float32   (ambix_t*ambix, const float32_t*data, int64_t frames) {
   return (int64_t)sf_writef_float(PRIVATE(ambix)->sf_file, (float*)data, frames) ;
+}
+int64_t _ambix_writef_float64   (ambix_t*ambix, const float64_t*data, int64_t frames) {
+    return (int64_t)sf_writef_double(PRIVATE(ambix)->sf_file, (double*)data, frames) ;
 }
 ambix_err_t _ambix_write_uuidchunk(ambix_t*ax, const void*data, int64_t datasize) {
 #if defined HAVE_SF_SET_CHUNK && defined (HAVE_SF_CHUNK_INFO)

@@ -614,8 +614,8 @@ static t_int *ambix_read_perform(t_int *w) {
 
     /* check for EOF (and buffer is about to drain) */
     if (x->x_eof &&
-        x->x_fifohead > x->x_fifotail &&
-        x->x_fifohead <=  x->x_fifotail + wantframes-1
+        x->x_fifohead >= x->x_fifotail &&
+        x->x_fifohead < x->x_fifotail + wantframes-1
         ) {
       int xfersize;
       if (x->x_fileerror) {

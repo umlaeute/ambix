@@ -271,7 +271,7 @@ static ai_t*ai_open_input(ai_t*ai) {
       ai->info.samplerate=info->samplerate;
     if(ai->info.sampleformat==AMBIX_SAMPLEFORMAT_NONE) {
       int format=info->format;
-      if((format & SF_FORMAT_FLOAT)  || (format & SF_FORMAT_DOUBLE))
+      if((format & SF_FORMAT_FLOAT))
         ai->info.sampleformat=AMBIX_SAMPLEFORMAT_FLOAT32;
       else if((format & SF_FORMAT_PCM_S8)  || (format & SF_FORMAT_PCM_16))
         ai->info.sampleformat=AMBIX_SAMPLEFORMAT_PCM16;
@@ -279,6 +279,8 @@ static ai_t*ai_open_input(ai_t*ai) {
         ai->info.sampleformat=AMBIX_SAMPLEFORMAT_PCM24;
       else if((format & SF_FORMAT_PCM_32))
         ai->info.sampleformat=AMBIX_SAMPLEFORMAT_PCM32;
+      else if((format & SF_FORMAT_DOUBLE))
+        ai->info.sampleformat=AMBIX_SAMPLEFORMAT_FLOAT64;
       else
         ai->info.sampleformat=AMBIX_SAMPLEFORMAT_PCM24;
     }

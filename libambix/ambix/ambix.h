@@ -39,6 +39,9 @@ extern "C" {
 
 /** 32bit floating point number */
 typedef float float32_t;
+    
+/** 64bit floating point number */
+typedef double float64_t;
 
 #ifdef _MSC_VER
 /** 16bit signed integer */
@@ -128,6 +131,8 @@ typedef enum {
   AMBIX_SAMPLEFORMAT_PCM32,
   /** 32 bit floating point */
   AMBIX_SAMPLEFORMAT_FLOAT32,
+  /** 64 bit floating point */
+  AMBIX_SAMPLEFORMAT_FLOAT64,
 } ambix_sampleformat_t;
 
 /** ambix matrix types */
@@ -302,12 +307,19 @@ int64_t ambix_readf_int32 (ambix_t *ambix, int32_t *ambidata, int32_t *otherdata
  *
  * @return the number of sample frames successfully read
  */
-/** @brief Read samples (as single prevision floating point values) from the
+/** @brief Read samples (as single precision floating point values) from the
  * ambix file
  * @ingroup ambix_readf
  */
 AMBIX_API
 int64_t ambix_readf_float32 (ambix_t *ambix, float32_t *ambidata, float32_t *otherdata, int64_t frames) ;
+
+/** @brief Read samples (as double precision floating point values) from the
+* ambix file
+* @ingroup ambix_readf
+*/
+AMBIX_API
+int64_t ambix_readf_float64 (ambix_t *ambix, float64_t *ambidata, float64_t *otherdata, int64_t frames) ;
 
 /** @brief Write (16bit signed integer) samples to the ambix file
  * @ingroup ambix_writef
@@ -349,7 +361,11 @@ int64_t ambix_writef_int32 (ambix_t *ambix, const int32_t *ambidata, const int32
  */
 AMBIX_API
 int64_t ambix_writef_float32 (ambix_t *ambix, const float32_t *ambidata, const float32_t *otherdata, int64_t frames) ;
-
+/** @brief Write (64bit floating point) samples to the ambix file
+ * @ingroup ambix_writef
+ */
+AMBIX_API
+int64_t ambix_writef_float64 (ambix_t *ambix, const float64_t *ambidata, const float64_t *otherdata, int64_t frames) ;
 /**
  * typedef from libsndfile
  * @private
@@ -536,7 +552,21 @@ ambix_matrix_t *ambix_matrix_copy (const ambix_matrix_t *src, ambix_matrix_t *de
  */
 AMBIX_API
 ambix_matrix_t *ambix_matrix_multiply (const ambix_matrix_t *A, const ambix_matrix_t *B, ambix_matrix_t *result) ;
-
+  /** @brief Get the Moore–Penrose pseudoinverse of a matrix.
+ *
+ * Get the Moore–Penrose pseudoinverse of the matrix input and write the result
+ * to pinv
+ *
+ * @param matrix input matrix
+ *
+ * @param pinv pointer to the matrix object that will hold the result or NULL
+ *
+ * @return pointer to the result matrix, or NULL in case the matrix
+ * inversion did not succeed.
+ *
+ */
+AMBIX_API
+ambix_matrix_t* ambix_matrix_pinv(const ambix_matrix_t*matrix, ambix_matrix_t*pinv) ;
 /** @brief Multiply a matrix with data
  * @defgroup ambix_matrix_multiply_data ambix_matrix_multiply_data()
  *
@@ -564,6 +594,12 @@ ambix_matrix_t *ambix_matrix_multiply (const ambix_matrix_t *A, const ambix_matr
  */
 AMBIX_API
 ambix_err_t ambix_matrix_multiply_float32(float32_t *dest, const ambix_matrix_t *mtx, const float32_t *source, int64_t frames) ;
+/** @brief Multiply a matrix with (64bit float) data
+ *
+ * @ingroup ambix_matrix_multiply_data
+ */
+AMBIX_API
+ambix_err_t ambix_matrix_multiply_float64(float64_t *dest, const ambix_matrix_t *mtx, const float64_t *source, int64_t frames) ;
 /** @brief Multiply a matrix with (32bit signed integer) data
  *
  * @ingroup ambix_matrix_multiply_data
