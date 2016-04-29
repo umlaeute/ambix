@@ -1,6 +1,5 @@
-#N canvas 518 132 758 533 10;
+#N canvas 84 104 758 533 10;
 #X msg 646 30 \; pd dsp 1;
-#X msg 74 161 open \$1;
 #X msg 74 49 bang;
 #X obj 74 69 savepanel;
 #X text 356 432 <buffersize> is given in samples per channels (unlike
@@ -43,15 +42,16 @@ extra channels are requested) \, the ambisonics channels will always
 be periphonic (3D) semi-normalized (SN3D) and ordered after their ACN.
 ;
 #X obj 330 477 ambix_info;
-#X connect 1 0 22 0;
-#X connect 2 0 3 0;
-#X connect 3 0 1 0;
-#X connect 8 0 22 0;
-#X connect 9 0 22 0;
-#X connect 10 0 22 0;
-#X connect 16 0 22 2;
-#X connect 19 0 22 1;
-#X connect 20 0 22 3;
-#X connect 21 0 22 4;
-#X connect 27 0 22 0;
-#X connect 28 0 22 0;
+#X msg 74 161 open -bytes 3 \$1;
+#X connect 1 0 2 0;
+#X connect 2 0 33 0;
+#X connect 7 0 21 0;
+#X connect 8 0 21 0;
+#X connect 9 0 21 0;
+#X connect 15 0 21 2;
+#X connect 18 0 21 1;
+#X connect 19 0 21 3;
+#X connect 20 0 21 4;
+#X connect 26 0 21 0;
+#X connect 27 0 21 0;
+#X connect 33 0 21 0;
