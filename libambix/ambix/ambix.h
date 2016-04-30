@@ -39,6 +39,9 @@ extern "C" {
 
 /** 32bit floating point number */
 typedef float float32_t;
+    
+/** 64bit floating point number */
+typedef double float64_t;
 
 #ifdef _MSC_VER
 /** 16bit signed integer */
@@ -128,6 +131,8 @@ typedef enum {
   AMBIX_SAMPLEFORMAT_PCM32,
   /** 32 bit floating point */
   AMBIX_SAMPLEFORMAT_FLOAT32,
+  /** 64 bit floating point */
+  AMBIX_SAMPLEFORMAT_FLOAT64,
 } ambix_sampleformat_t;
 
 /** ambix matrix types */
@@ -302,12 +307,19 @@ int64_t ambix_readf_int32 (ambix_t *ambix, int32_t *ambidata, int32_t *otherdata
  *
  * @return the number of sample frames successfully read
  */
-/** @brief Read samples (as single prevision floating point values) from the
+/** @brief Read samples (as single precision floating point values) from the
  * ambix file
  * @ingroup ambix_readf
  */
 AMBIX_API
 int64_t ambix_readf_float32 (ambix_t *ambix, float32_t *ambidata, float32_t *otherdata, int64_t frames) ;
+
+/** @brief Read samples (as double precision floating point values) from the
+* ambix file
+* @ingroup ambix_readf
+*/
+AMBIX_API
+int64_t ambix_readf_float64 (ambix_t *ambix, float64_t *ambidata, float64_t *otherdata, int64_t frames) ;
 
 /** @brief Write (16bit signed integer) samples to the ambix file
  * @ingroup ambix_writef
@@ -349,7 +361,11 @@ int64_t ambix_writef_int32 (ambix_t *ambix, const int32_t *ambidata, const int32
  */
 AMBIX_API
 int64_t ambix_writef_float32 (ambix_t *ambix, const float32_t *ambidata, const float32_t *otherdata, int64_t frames) ;
-
+/** @brief Write (64bit floating point) samples to the ambix file
+ * @ingroup ambix_writef
+ */
+AMBIX_API
+int64_t ambix_writef_float64 (ambix_t *ambix, const float64_t *ambidata, const float64_t *otherdata, int64_t frames) ;
 /**
  * typedef from libsndfile
  * @private

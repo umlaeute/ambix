@@ -78,6 +78,7 @@ ambix_err_t _ambix_adaptorbuffer_destroy(ambix_t*ambix) {
   }
 
 _AMBIX_SPLITADAPTOR(float32);
+_AMBIX_SPLITADAPTOR(float64);
 _AMBIX_SPLITADAPTOR(int32);
 _AMBIX_SPLITADAPTOR(int16);
 
@@ -109,6 +110,7 @@ _AMBIX_SPLITADAPTOR(int16);
   }
 
 _AMBIX_SPLITADAPTOR_MATRIX(float32);
+_AMBIX_SPLITADAPTOR_MATRIX(float64);
 /* both _int16 and _int32 are highly unoptimized!
  * LATER: add some fixed point magic to speed things up
  */
@@ -131,6 +133,8 @@ _AMBIX_SPLITADAPTOR_MATRIX(int16);
   }
 
 _AMBIX_MERGEADAPTOR(float32);
+
+_AMBIX_MERGEADAPTOR(float64);
 
 _AMBIX_MERGEADAPTOR(int32);
 
