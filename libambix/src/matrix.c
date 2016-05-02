@@ -335,30 +335,171 @@ ambix_matrix_fill(ambix_matrix_t*matrix, ambix_matrixtype_t typ) {
   return matrix;
 }
 
-ambix_err_t ambix_matrix_multiply_float32(float32_t*dest, const ambix_matrix_t*matrix, const float32_t*source, int64_t frames) {
-  float32_t**mtx=matrix->data;
-  const uint32_t outchannels=matrix->rows;
-  const uint32_t inchannels=matrix->cols;
-  int64_t frame;
-  float32_t*dst=dest;
-  const float32_t*src=source;
-  for(frame=0; frame<frames; frame++) {
-    uint32_t outchan;
-    for(outchan=0; outchan<outchannels; outchan++) {
-      double sum=0.;
-      uint32_t inchan;
-      //      printf("..output:%d @ %d\n", (int)outchan, (int)frame);
-      for(inchan=0; inchan<inchannels; inchan++) {
-        double scale=mtx[outchan][inchan];
-        double in=src[frame*inchannels+inchan];
-        //        printf("....%f[%d|%d]*%f\n", (float)scale, (int)outchan, (int)inchan, (float)in);
-        sum+=scale*in;
+ambix_matrix_t*
+ambix_matrix_invert(const ambix_matrix_t*input, ambix_matrix_t*inverse)
+{
+  int i, k;
+  float32_t *a1, *b1, *a2, *b2;
+  
+  int ok=0; /* error counter */
+  
+  if(input==0)
+  { // no input matrix
+    return NULL;
+  }
+  
+  if (input->cols != input->rows)
+  {// matrix is not squared
+    return NULL;
+  }
+  
+  
+  int col=input->cols, row=input->rows;
+  
+  /* 1a reserve space for the inverted matrix */
+  if(!inverse)
+  {
+    inverse=ambix_matrix_init(row, col, NULL);
+  }
+  
+  float32_t **original=input->data;
+  float32_t **inverted=inverse->data;
+  
+  
+  /* 1b make an eye-shaped float-buf for B */
+  ambix_matrix_fill(inverse, AMBIX_MATRIX_IDENTITY);
+  
+  /* 2. do the Gauss-Jordan */
+  for (k=0; k<row; k++) {
+    /* adjust current row */
+    float32_t diagel = original[k][k];
+    float32_t i_diagel = diagel?1./diagel:0;
+    if (!diagel) {
+      ok++;
+    }
+    
+    /* normalize current row (set the diagonal-element to 1 */
+    for (i=0; i < row; i++)
+    {
+      original[k][i] *= i_diagel;
+      inverted[k][i] *= i_diagel;
+    }
+    
+    /* eliminate the k-th element in each row by adding the weighted normalized row */
+    for (i=0; i < row; i++)
+    {
+      if (i-k)
+      {
+        float32_t f =-original[i][k];
+        
+        for (int j=row-1; j >= 0; j--) {
+          
+          original[i][j] += f * original[k][j];
+          inverted[i][j] += f * inverted[k][j];
+          
+        }
+        
       }
-      dst[frame*outchannels+outchan]=(float32_t)sum;
     }
   }
-  return AMBIX_ERR_SUCCESS;
+  
+  if (ok > 0)
+    return NULL;
+  
+  return inverse;
 }
+
+ambix_matrix_t*
+ambix_matrix_pinv(const ambix_matrix_t*A, ambix_matrix_t*P) {
+  
+  if (A->rows==A->cols) {
+    P = ambix_matrix_invert(A, P); // do normal inverse if square matrix
+    
+    return P;
+  }
+  else
+  {
+    if(!P)
+      P=ambix_matrix_init(P->cols, P->rows, NULL);
+    
+    ambix_matrix_t *At = NULL;
+    ambix_matrix_t *temp = NULL;
+    ambix_matrix_t *temp2 = NULL;
+    
+    At = ambix_matrix_transpose(A, At);
+    
+    /* we'll have to do the pseudo-inverse:
+     * P=A'*inv(A*A') if row<col
+     * P=inv(A'*A)*A' if col<row
+     */
+    
+    if (A->rows > A->cols) {
+      
+      temp = ambix_matrix_multiply(At, A, NULL);
+      if (!temp)
+        return NULL;
+      
+      temp2 = ambix_matrix_invert(temp, temp2);
+      
+      if (!temp2)
+        return NULL;
+      
+      P = ambix_matrix_multiply(temp2, At, NULL);
+      if (!P)
+        return NULL;
+      
+      
+    } else {
+      temp = ambix_matrix_multiply(A, At, NULL);
+      if (!temp)
+        return NULL;
+      
+      temp2 = ambix_matrix_invert(temp, temp2);
+      if (!temp2)
+        return NULL;
+      
+      
+      P = ambix_matrix_multiply(At, temp2, NULL);
+      if (!P)
+        return NULL;
+      
+    }
+    
+    ambix_matrix_destroy(At);
+    ambix_matrix_destroy(temp);
+    ambix_matrix_destroy(temp2);
+  }
+  
+  return P;
+}
+
+#define MTXMULTIPLY_DATA_FLOAT(typ) \
+  ambix_err_t ambix_matrix_multiply_##typ(typ##_t*dest, const ambix_matrix_t*matrix, const typ##_t*source, int64_t frames) { \
+    float32_t**mtx=matrix->data; \
+    const uint32_t outchannels=matrix->rows; \
+    const uint32_t inchannels=matrix->cols; \
+    int64_t frame; \
+    typ##_t*dst=dest; \
+    const typ##_t*src=source; \
+    for(frame=0; frame<frames; frame++) { \
+      uint32_t outchan; \
+      for(outchan=0; outchan<outchannels; outchan++) { \
+        double sum=0.; \
+        uint32_t inchan; \
+        for(inchan=0; inchan<inchannels; inchan++) { \
+          double scale=mtx[outchan][inchan]; \
+          double in=src[frame*inchannels+inchan]; \
+          sum+=scale*in; \
+        } \
+        dst[frame*outchannels+outchan]=(typ##_t)sum; \
+      } \
+    } \
+    return AMBIX_ERR_SUCCESS; \
+  } \
+
+MTXMULTIPLY_DATA_FLOAT(float32);
+MTXMULTIPLY_DATA_FLOAT(float64);
+
 #define MTXMULTIPLY_DATA_INT(typ)                                       \
   ambix_err_t ambix_matrix_multiply_##typ(typ##_t*dest, const ambix_matrix_t*matrix, const typ##_t*source, int64_t frames) { \
     float32_t**mtx=matrix->data;                                        \

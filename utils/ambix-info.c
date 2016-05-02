@@ -59,6 +59,7 @@ void printinfo(const char*path) {
   case(AMBIX_SAMPLEFORMAT_PCM24): printf("PCM24"); break;
   case(AMBIX_SAMPLEFORMAT_PCM32): printf("PCM32"); break;
   case(AMBIX_SAMPLEFORMAT_FLOAT32): printf("FLOAT32"); break;
+  case(AMBIX_SAMPLEFORMAT_FLOAT64): printf("FLOAT64"); break;
   default: printf("**unknown**");
   }
   printf(")\n");

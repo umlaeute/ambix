@@ -190,6 +190,7 @@ typedef struct _ambix_write
   /* parameters to communicate with subthread */
   char *x_filename;       /* file to open (string is permanently allocated) */
   ambix_fileformat_t x_fileformat; /* extended or basic */
+  ambix_sampleformat_t x_sampleformat; /* 16, 24 or 32 bit */
   uint32_t x_ambichannels; /* number of ambisonics channels in soundfile */
   uint32_t x_extrachannels; /* number of extra channels in soundfile */
   ambix_matrix_t*x_matrix;
@@ -243,6 +244,8 @@ static void *ambix_write_child_main(void *zz) {
       int64_t onsetframes = x->x_onsetframes;
 
       ambix_fileformat_t fileformat = x->x_fileformat;
+	  
+	  ambix_sampleformat_t sampleformat = x->x_sampleformat;
 
       uint32_t ambichannels  = x->x_ambichannels;
       uint32_t xtrachannels  = x->x_extrachannels;
@@ -277,7 +280,7 @@ static void *ambix_write_child_main(void *zz) {
       ainfo.extrachannels=xtrachannels;
 
       ainfo.samplerate=samplerate;
-
+      ainfo.sampleformat=sampleformat;
       /* if there's already a file open, close it.  This
          should never happen since ambix_write_open() calls stop if
          needed and then waits until we're idle. */
@@ -470,8 +473,8 @@ static void *ambix_write_new(t_symbol*s, int argc, t_atom*argv) {
 
   x->x_f = 0;
 
-  x->x_ambichannels = 0;
-  x->x_extrachannels = nchannels;
+  x->x_ambichannels = achannels;
+  x->x_extrachannels = xchannels;
 
   x->x_matrix=NULL;
   x->x_canvas = canvas_getcurrent();
@@ -580,6 +583,7 @@ static void ambix_write_open(t_ambix_write *x, t_symbol *s, int argc, t_atom *ar
   x->x_filename = filesym->s_name;
   x->x_fileformat = fileformat;
   x->x_requestcode = REQUEST_OPEN;
+  x->x_sampleformat = sampleformat;
 
   x->x_fifotail = 0;
   x->x_fifohead = 0;
