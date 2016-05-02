@@ -38,4 +38,4 @@ before_script:
 script:
 - make
 - LD_LIBRARY_PATH=/usr/local/lib make check
-- make distcheck
+- LD_LIBRARY_PATH=/usr/local/lib make distcheck
