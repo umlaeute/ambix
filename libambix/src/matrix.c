@@ -391,8 +391,8 @@ ambix_matrix_invert(const ambix_matrix_t*input, ambix_matrix_t*inverse)
       if (i-k)
       {
         float32_t f =-original[i][k];
-        
-        for (int j=row-1; j >= 0; j--) {
+        int j;
+        for (j=row-1; j >= 0; j--) {
           
           original[i][j] += f * original[k][j];
           inverted[i][j] += f * inverted[k][j];
