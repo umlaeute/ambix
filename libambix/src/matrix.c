@@ -338,6 +338,7 @@ ambix_matrix_fill(ambix_matrix_t*matrix, ambix_matrixtype_t typ) {
 ambix_matrix_t*
 ambix_matrix_invert(const ambix_matrix_t*input, ambix_matrix_t*inverse)
 {
+  ambix_matrix_t*inverse_org = inverse;
   int i, k;
   float32_t *a1, *b1, *a2, *b2;
 
@@ -403,8 +404,12 @@ ambix_matrix_invert(const ambix_matrix_t*input, ambix_matrix_t*inverse)
     }
   }
 
-  if (ok > 0)
-    return NULL;
+  if (ok > 0) {
+    if(inverse != inverse_org)
+      /* if the 'inverse' was locally allocated, free it */
+      ambix_matrix_destroy(inverse);
+    inverse=NULL;
+  }
 
   return inverse;
 }
