@@ -30,8 +30,18 @@ static float32_t leftdata_4_3[]= {
    0.25, 0.90, 0.77,
    0.83, 0.51, 0.58,
 };
-
-
+static float32_t leftdata_3_4[]= {
+  /* just the transposition of leftdata[4,3] */
+  0.19, 0.05, 0.25, 0.83,
+  0.06, 0.08, 0.90, 0.51,
+  0.14, 0.44, 0.77, 0.58,
+};
+static float32_t leftdata_4_4[]= {
+  0.7131185686247925, 0.1054799265939327, 0.1882023608287114, 0.1496964665104298,
+  0.9035382689904633, 0.0958506183093942, 0.1490156537909140, 0.6730762573692578,
+  0.7110257215280688, 0.4278857180785819, 0.5050723092090162, 0.2342525090113509,
+  0.1917073427152419, 0.3837280931544647, 0.0397484032568303, 0.5895499716980565,
+};
 static float32_t rightdata_3_2[]= {
    0.22, 0.46,
    0.36, 0.53,
@@ -44,7 +54,93 @@ static float32_t resultdata_4_2[]= {
    0.9719, 1.2465,
    0.8128, 1.1451,
 };
+static float32_t resultpinv_4_3[] = {
+  /* (leftdata[4,3])^-1 */
+ 0.320059925923633, -0.616572833442599, -0.758203952544301,  1.397070173352668,
+-0.475395139478048, -2.112396458091558,  1.443108803981482, -0.198593134445739,
+ 0.349719602203337,  2.683861685335670, -0.150602340058839, -0.196372558639406,
+};
+static float32_t resultpinv_3_4[] = {
+  /* (leftdata[3,4])^-1 */
+   0.320059925923633, -0.475395139478048,  0.349719602203337,
+  -0.616572833442600, -2.112396458091559,  2.683861685335671,
+  -0.758203952544302,  1.443108803981483, -0.150602340058840,
+   1.397070173352670, -0.198593134445740, -0.196372558639407,
+};
+static float32_t resultpinv_4_4[] = {
+  /* (leftdata[4,4])^-1 */
+  3.260687761423661,-0.750604578051301,-1.027983295100203, 0.437466478433052,
+  4.478583197847279,-3.527343133136301,-0.883177052786819, 3.240826676373624,
+ -6.751824651655014, 2.959470009112655, 3.874801812795508,-3.203980734335171,
+ -3.520111656963465, 2.340434097800232, 0.647874863173282,-0.339426118611342,
+};
+static void mtxinverse_test(ambix_matrix_t *mtx, ambix_matrix_t *result, float32_t eps) {
+  ambix_matrix_t *pinv = 0;
+  ambix_matrix_t *mul=0;
+  ambix_matrix_t *eye=0;
+  float32_t errf;
+  int min_rowcol=(mtx->cols<mtx->rows)?mtx->cols:mtx->rows;
 
+  fail_if((NULL==mtx), __LINE__, "cannot invert NULL-matrix");
+  fail_if((NULL==result), __LINE__, "cannot invert to NULL-matrix");
+  eye=ambix_matrix_init(min_rowcol, min_rowcol, eye);
+  eye=ambix_matrix_fill(eye, AMBIX_MATRIX_IDENTITY);
+  fail_if((NULL==eye), __LINE__, "cannot create eye-matrix for pinv-verification");
+
+  pinv=ambix_matrix_pinv(mtx, pinv);
+  fail_if((NULL==pinv), __LINE__, "could not invert matrix");
+
+  if(mtx->cols < mtx->rows)
+    mul=ambix_matrix_multiply(pinv, mtx, 0);
+  else
+    mul=ambix_matrix_multiply(mtx, pinv, 0);
+
+#if 0
+  matrix_print(mtx);
+  matrix_print(pinv);
+  matrix_print(mul);
+  //matrix_print(result);
+  printf("------------\n");
+#endif
+
+  errf=matrix_diff(__LINE__, pinv, result, eps);
+  fail_if((errf>eps), __LINE__, "diffing (pseudo)inverse returned %g (>%g)", errf, eps);
+
+  errf=matrix_diff(__LINE__, mul, eye, eps);
+  fail_if((errf>eps), __LINE__, "diffing mtx*pinv(mtx) returned %g (>%g)", errf, eps);
+
+  ambix_matrix_destroy(pinv);
+  ambix_matrix_destroy(mul);
+}
+void mtxinverse_tests(float32_t eps) {
+  float32_t errf;
+  ambix_matrix_t *mtx, *testresult;
+  STARTTEST("");
+
+  /* fill in some test data 4x4 */
+  mtx=ambix_matrix_init(4, 4, mtx);
+  ambix_matrix_fill_data(mtx, leftdata_4_4);
+  testresult=ambix_matrix_init(4, 4, testresult);
+  ambix_matrix_fill_data(testresult, resultpinv_4_4);
+  mtxinverse_test(mtx, testresult, eps);
+
+  /* fill in some test data 4x3 */
+  mtx=ambix_matrix_init(4, 3, mtx);
+  ambix_matrix_fill_data(mtx, leftdata_4_3);
+  testresult=ambix_matrix_init(3, 4, testresult);
+  ambix_matrix_fill_data(testresult, resultpinv_4_3);
+  mtxinverse_test(mtx, testresult, eps);
+
+  /* fill in some test data 3x4 */
+  mtx=ambix_matrix_init(3, 4, mtx);
+  ambix_matrix_fill_data(mtx, leftdata_3_4);
+  testresult=ambix_matrix_init(4, 3, testresult);
+  ambix_matrix_fill_data(testresult, resultpinv_3_4);
+  mtxinverse_test(mtx, testresult, eps);
+
+  ambix_matrix_destroy(mtx);
+  ambix_matrix_destroy(testresult);
+}
 void mtxmul_tests(float32_t eps) {
   float32_t errf;
   ambix_matrix_t *left, *right, *result, *testresult;
@@ -316,6 +412,7 @@ int main(int argc, char**argv) {
   datamul_eye_tests(1e-7);
 #endif
   datamul_4_2_tests(1024, 1e-7);
+  mtxinverse_tests(1e-5);
 
   pass();
   return 0;
