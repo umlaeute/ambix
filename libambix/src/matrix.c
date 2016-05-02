@@ -411,16 +411,11 @@ ambix_matrix_invert(const ambix_matrix_t*input, ambix_matrix_t*inverse)
 
 ambix_matrix_t*
 ambix_matrix_pinv(const ambix_matrix_t*A, ambix_matrix_t*P) {
+  ambix_matrix_t *result = NULL;
 
   if (A->rows==A->cols) {
-    P = ambix_matrix_invert(A, P); // do normal inverse if square matrix
-
-    return P;
-  }
-  else
-  {
-    if(!P)
-      P=ambix_matrix_init(P->cols, P->rows, NULL);
+    reult = ambix_matrix_invert(A, P); // do normal inverse if square matrix
+  } else {
     /* we'll have to do the pseudo-inverse:
      * P=A'*inv(A*A') if row<col
      * P=inv(A'*A)*A' if col<row
@@ -428,47 +423,31 @@ ambix_matrix_pinv(const ambix_matrix_t*A, ambix_matrix_t*P) {
     ambix_matrix_t *At = NULL;
     ambix_matrix_t *temp = NULL;
     ambix_matrix_t *temp2 = NULL;
+    do {
+      At = ambix_matrix_transpose(A, At);
 
-    At = ambix_matrix_transpose(A, At);
+      if (A->rows > A->cols) {
+	temp = ambix_matrix_multiply(At, A, NULL);
+	if (!temp)break;
+	temp2 = ambix_matrix_invert(temp, temp2);
+	if (!temp2)break;
 
-    if (A->rows > A->cols) {
+	result = ambix_matrix_multiply(temp2, At, P);
+      } else {
+	temp = ambix_matrix_multiply(A, At, NULL);
+	if (!temp)break;
+	temp2 = ambix_matrix_invert(temp, temp2);
+	if (!temp2)break;
 
-      temp = ambix_matrix_multiply(At, A, NULL);
-      if (!temp)
-        return NULL;
-
-      temp2 = ambix_matrix_invert(temp, temp2);
-
-      if (!temp2)
-        return NULL;
-
-      P = ambix_matrix_multiply(temp2, At, NULL);
-      if (!P)
-        return NULL;
-
-
-    } else {
-      temp = ambix_matrix_multiply(A, At, NULL);
-      if (!temp)
-        return NULL;
-
-      temp2 = ambix_matrix_invert(temp, temp2);
-      if (!temp2)
-        return NULL;
-
-
-      P = ambix_matrix_multiply(At, temp2, NULL);
-      if (!P)
-        return NULL;
-
-    }
-
-    ambix_matrix_destroy(At);
-    ambix_matrix_destroy(temp);
-    ambix_matrix_destroy(temp2);
+	result = ambix_matrix_multiply(At, temp2, P);
+      }
+    } while (0);
+    if(At)   ambix_matrix_destroy(At);
+    if(temp) ambix_matrix_destroy(temp);
+    if(temp2)ambix_matrix_destroy(temp2);
   }
 
-  return P;
+  return result;
 }
 
 #define MTXMULTIPLY_DATA_FLOAT(typ) \
