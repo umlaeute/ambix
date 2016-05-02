@@ -1,4 +1,5 @@
 AUTOMAKE_OPTIONS = foreign serial-tests
+SUBDIRS=data
 
 #TESTS_ENVIRONMENT = RUNTESTS_NOLOG=yes TESTDIR=$(srcdir)
 AM_TESTS_ENVIRONMENT = TESTDIR=$(srcdir) ./runtest.sh
@@ -16,7 +17,6 @@ check_PROGRAMS= \
 
 SOURCES=common.c common.h data.h
 noinst_HEADERS = common.h data.h
-EXTRA_DIST = data/file1.caf
 
 pass_SOURCES=pass.c
 skip_SOURCES=skip.c

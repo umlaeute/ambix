@@ -11,7 +11,7 @@ AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_HEADERS([config.h])
 
 AC_CONFIG_FILES([Makefile])
-AC_CONFIG_FILES([libambix/Makefile libambix/src/Makefile libambix/tests/Makefile])
+AC_CONFIG_FILES([libambix/Makefile libambix/src/Makefile libambix/tests/Makefile libambix/tests/data/Makefile])
 AC_CONFIG_FILES([libambix/libambix.pc])
 AC_CONFIG_FILES([utils/Makefile utils/jcommon/Makefile])
 AC_CONFIG_FILES([doc/Makefile])
