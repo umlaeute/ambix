@@ -1,10 +1,17 @@
 libambix - The AMBIsonics eXchange library
 ==========================================
 
-This is libambix 0.0.1
+This is libambix `0.0.1`
 
 libambix is a library of C routines for reading and writing
 files following the "ambix" (AMBIsonics eXchange) conventions.
+
+# Status
+
+| *Check*                | *Health*                                                            |
+| :--------------------- | :------------------------------------------------------------------ |
+| Continuous Integration | ![Travis-CI](https://api.travis-ci.org/umlaeute/pd-iemnet.svg)      |
+| Static Code Analysis   | ![Coverity Scan](https://scan.coverity.com/projects/1736/badge.svg) |
 
 
 # INTRODUCTION
