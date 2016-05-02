@@ -419,7 +419,7 @@ ambix_matrix_pinv(const ambix_matrix_t*A, ambix_matrix_t*P) {
   ambix_matrix_t *result = NULL;
 
   if (A->rows==A->cols) {
-    reult = ambix_matrix_invert(A, P); // do normal inverse if square matrix
+    result = ambix_matrix_invert(A, P); // do normal inverse if square matrix
   } else {
     /* we'll have to do the pseudo-inverse:
      * P=A'*inv(A*A') if row<col
