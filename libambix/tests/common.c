@@ -62,7 +62,7 @@ float32_t matrix_diff(uint32_t line, const ambix_matrix_t*A, const ambix_matrix_
       if(vabs>eps) {
         overcount++;
         if(overcount<MAX_OVER)
-          printf("%f - %f=%f @ [%02d|%02d]\n", a[r][c], b[r][c], v, r, c);
+          printf("%+f - %+f = %+g @ [%02d|%02d]\n", a[r][c], b[r][c], v, r, c);
       }
     }
 
