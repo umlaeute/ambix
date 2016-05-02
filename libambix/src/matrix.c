@@ -336,7 +336,7 @@ ambix_matrix_fill(ambix_matrix_t*matrix, ambix_matrixtype_t typ) {
 }
 
 ambix_matrix_t*
-ambix_matrix_invert(const ambix_matrix_t*input, ambix_matrix_t*inverse)
+ambix_matrix_invert(ambix_matrix_t*input, ambix_matrix_t*inverse)
 {
   ambix_matrix_t*inverse_org = inverse;
   int i, k;
@@ -419,7 +419,8 @@ ambix_matrix_pinv(const ambix_matrix_t*A, ambix_matrix_t*P) {
   ambix_matrix_t *result = NULL;
 
   if (A->rows==A->cols) {
-    result = ambix_matrix_invert(A, P); // do normal inverse if square matrix
+    ambix_matrix_t*Ax = ambix_matrix_copy(A, NULL);
+    result = ambix_matrix_invert(Ax, P); // do normal inverse if square matrix
   } else {
     /* we'll have to do the pseudo-inverse:
      * P=A'*inv(A*A') if row<col
