@@ -14,8 +14,8 @@ XFAIL_TESTS = fail
 check_PROGRAMS= \
 	pass skip fail
 
-SOURCES=common.c common.h
-noinst_HEADERS = common.h 
+SOURCES=common.c common.h data.h
+noinst_HEADERS = common.h data.h
 
 pass_SOURCES=pass.c
 skip_SOURCES=skip.c
