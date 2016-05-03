@@ -250,6 +250,36 @@ ambix_err_t ambix_set_adaptormatrix	(ambix_t*ambix, const ambix_matrix_t*matrix)
     /* ready to write it to file */
     ambix->pendingHeaders=1;
     return AMBIX_ERR_SUCCESS;
+  } else if((ambix->filemode & AMBIX_WRITE) && (AMBIX_BASIC == ambix->info.fileformat)) {
+    ambix_matrix_t*pinv=0;
+    /* user requested AMBIX_BASIC, but now sets a matrix...
+     * so we write an ambix-extended format, and create the ambix-channels by
+     * multiplying the full-set with pinv(matrix)
+     */
+    if(ambix->startedWriting)    /* too late, writing started already */
+      return AMBIX_ERR_UNKNOWN;
+
+    /* check whether the matrix will expand to a full set */
+    if(!ambix_is_fullset(matrix->rows))
+      return AMBIX_ERR_INVALID_DIMENSION;
+
+    pinv=ambix_matrix_pinv(matrix, pinv);
+    if(!pinv)
+      return AMBIX_ERR_UNKNOWN;
+
+    if(!ambix_matrix_copy(matrix, &ambix->matrix))
+      return AMBIX_ERR_UNKNOWN;
+    if(!ambix_matrix_copy(pinv, &ambix->matrix2))
+      return AMBIX_ERR_UNKNOWN;
+
+    ambix->realinfo.fileformat=AMBIX_EXTENDED;
+    ambix->realinfo.ambichannels=matrix->cols;
+
+    ambix->use_matrix=2;
+
+    /* ready to write it to file */
+    ambix->pendingHeaders=1;
+    return AMBIX_ERR_SUCCESS;
   }
 
   return AMBIX_ERR_UNKNOWN;
