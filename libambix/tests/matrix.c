@@ -115,7 +115,7 @@ static void mtxinverse_test(ambix_matrix_t *mtx, ambix_matrix_t *result, float32
 }
 void mtxinverse_tests(float32_t eps) {
   float32_t errf;
-  ambix_matrix_t *mtx, *testresult;
+  ambix_matrix_t *mtx=0, *testresult=0;
   STARTTEST("");
 
   /* fill in some test data 4x4 */
