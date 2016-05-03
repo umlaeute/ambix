@@ -111,6 +111,7 @@ static void mtxinverse_test(ambix_matrix_t *mtx, ambix_matrix_t *result, float32
 
   ambix_matrix_destroy(pinv);
   ambix_matrix_destroy(mul);
+  ambix_matrix_destroy(eye);
 }
 void mtxinverse_tests(float32_t eps) {
   float32_t errf;
