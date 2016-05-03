@@ -213,6 +213,10 @@ typedef struct ambix_info_t {
 /*
  * @section api_main Main Interface
  */
+/** @defgroup ambix ambix
+ *
+ * @brief handling AmbiX files
+ */
 
 /** @brief Open an ambix file
  *
@@ -239,6 +243,8 @@ typedef struct ambix_info_t {
  * @ref AMBIX_BASIC, then ambixinfo.ambichannels must be @f$(order_{ambi}+1)^2@f$
  *
  * @return A handle to the opened file (or NULL on failure)
+ *
+ * @ingroup ambix
  */
 AMBIX_API
 ambix_t *ambix_open (const char *path, const ambix_filemode_t mode, ambix_info_t *ambixinfo) ;
@@ -251,6 +257,8 @@ ambix_t *ambix_open (const char *path, const ambix_filemode_t mode, ambix_info_t
  * @param ambix The handle to an ambix file
  *
  * @return an error code indicating success
+ *
+ * @ingroup ambix
  */
 AMBIX_API
 ambix_err_t ambix_close (ambix_t *ambix) ;
@@ -269,20 +277,12 @@ ambix_err_t ambix_close (ambix_t *ambix) ;
  *
  * @return the offset in (multichannel) frames from the start of the audio data
  * or -1 if an error occurred.
+ *
+ * @ingroup ambix
  */
 AMBIX_API
 int64_t ambix_seek (ambix_t *ambix, int64_t frames, int whence) ;
 
-/** @brief Read samples (as 16bit signed integer values) from the ambix file
- * @ingroup ambix_readf
- */
-AMBIX_API
-int64_t ambix_readf_int16 (ambix_t *ambix, int16_t *ambidata, int16_t *otherdata, int64_t frames) ;
-/** @brief Read samples (as 32bit signed integer values) from the ambix file
- * @ingroup ambix_readf
- */
-AMBIX_API
-int64_t ambix_readf_int32 (ambix_t *ambix, int32_t *ambidata, int32_t *otherdata, int64_t frames) ;
 /** @brief Read samples from the ambix file
  * @defgroup ambix_readf ambix_readf()
  *
@@ -306,7 +306,19 @@ int64_t ambix_readf_int32 (ambix_t *ambix, int32_t *ambidata, int32_t *otherdata
  * @param frames number of sample frames you want to read
  *
  * @return the number of sample frames successfully read
+ *
+ * @ingroup ambix
  */
+/** @brief Read samples (as 16bit signed integer values) from the ambix file
+ * @ingroup ambix_readf
+ */
+AMBIX_API
+int64_t ambix_readf_int16 (ambix_t *ambix, int16_t *ambidata, int16_t *otherdata, int64_t frames) ;
+/** @brief Read samples (as 32bit signed integer values) from the ambix file
+ * @ingroup ambix_readf
+ */
+AMBIX_API
+int64_t ambix_readf_int32 (ambix_t *ambix, int32_t *ambidata, int32_t *otherdata, int64_t frames) ;
 /** @brief Read samples (as single precision floating point values) from the
  * ambix file
  * @ingroup ambix_readf
@@ -321,17 +333,7 @@ int64_t ambix_readf_float32 (ambix_t *ambix, float32_t *ambidata, float32_t *oth
 AMBIX_API
 int64_t ambix_readf_float64 (ambix_t *ambix, float64_t *ambidata, float64_t *otherdata, int64_t frames) ;
 
-/** @brief Write (16bit signed integer) samples to the ambix file
- * @ingroup ambix_writef
- */
-AMBIX_API
-int64_t ambix_writef_int16 (ambix_t *ambix, const int16_t *ambidata, const int16_t *otherdata, int64_t frames) ;
-/** @brief Write (32bit signed integer) samples to the ambix file
- * @ingroup ambix_writef
- */
-AMBIX_API
-int64_t ambix_writef_int32 (ambix_t *ambix, const int32_t *ambidata, const int32_t *otherdata, int64_t frames) ;
-/** @brief Write samples to the ambix file
+/** @brief Write samples to the ambix file.
  * @defgroup ambix_writef ambix_writef()
  *
  * Writes samples (as single precision floating point values) to an ambix file,
@@ -355,7 +357,19 @@ int64_t ambix_writef_int32 (ambix_t *ambix, const int32_t *ambidata, const int32
  * @param frames number of sample frames you want to write
  *
  * @return the number of sample frames successfully written
+ *
+ * @ingroup ambix
  */
+/** @brief Write (16bit signed integer) samples to the ambix file
+ * @ingroup ambix_writef
+ */
+AMBIX_API
+int64_t ambix_writef_int16 (ambix_t *ambix, const int16_t *ambidata, const int16_t *otherdata, int64_t frames) ;
+/** @brief Write (32bit signed integer) samples to the ambix file
+ * @ingroup ambix_writef
+ */
+AMBIX_API
+int64_t ambix_writef_int32 (ambix_t *ambix, const int32_t *ambidata, const int32_t *otherdata, int64_t frames) ;
 /** @brief Write (32bit floating point) samples to the ambix file
  * @ingroup ambix_writef
  */
@@ -381,10 +395,15 @@ struct SNDFILE_tag;
  * @param ambix The handle to an ambix file
  *
  * @return A libsndfile handle or NULL
+ *
+ * @ingroup ambix
  */
 AMBIX_API
 struct SNDFILE_tag *ambix_get_sndfile (ambix_t *ambix) ;
 
+/** @brief Various utilities to handle matrices
+ * @defgroup ambix_matrix ambix_matrix
+ */
 /** @brief Get the adaptor matrix
  *
  * The ambix extended fileformat comes with a adaptor matrix, that can be used
@@ -405,6 +424,8 @@ struct SNDFILE_tag *ambix_get_sndfile (ambix_t *ambix) ;
  * @return the adaptor matrix to restore the full ambisonics set from the
  * reduced set, or NULL if there is no such matrix; the memory is owned by the
  * library and must neither be freed nor used after calling ambix_close().
+ *
+ * @ingroup ambix
  */
 AMBIX_API
 const ambix_matrix_t *ambix_get_adaptormatrix (ambix_t *ambix) ;
@@ -432,6 +453,8 @@ const ambix_matrix_t *ambix_get_adaptormatrix (ambix_t *ambix) ;
  * @remark using this on ambix handles other than @ref AMBIX_READ/@ref
  * AMBIX_BASIC or @ref AMBIX_WRITE/@ref AMBIX_EXTENDED
  * is an error.
+ *
+ * @ingroup ambix
  */
 AMBIX_API
 ambix_err_t ambix_set_adaptormatrix (ambix_t *ambix, const ambix_matrix_t *matrix) ;
@@ -446,6 +469,8 @@ ambix_err_t ambix_set_adaptormatrix (ambix_t *ambix, const ambix_matrix_t *matri
  * It's equivalent to calling ambix_matrix_init(0, 0, NULL) ;
  *
  * @return a new matrix object or NULL
+ *
+ * @ingroup ambix_matrix
  */
 AMBIX_API
 ambix_matrix_t *ambix_matrix_create (void) ;
@@ -456,6 +481,8 @@ ambix_matrix_t *ambix_matrix_create (void) ;
  * It's a shortcut for ambix_matrix_deinit(mtx), free(mtx)
  *
  * @param mtx matrix object to destroy
+ *
+ * @ingroup ambix_matrix
  */
 AMBIX_API
 void ambix_matrix_destroy (ambix_matrix_t *mtx) ;
@@ -473,6 +500,8 @@ void ambix_matrix_destroy (ambix_matrix_t *mtx) ;
  *
  * @return pointer to a newly initialized (and/or allocated) matrix, or NULL on
  * error.
+ *
+ * @ingroup ambix_matrix
  */
 AMBIX_API
 ambix_matrix_t *ambix_matrix_init (uint32_t rows, uint32_t cols, ambix_matrix_t *mtx) ;
@@ -482,6 +511,8 @@ ambix_matrix_t *ambix_matrix_init (uint32_t rows, uint32_t cols, ambix_matrix_t 
  * Frees associated resources and sets rows/columns to 0
  *
  * @param mtx matrix object to deinitialize
+ *
+ * @ingroup ambix_matrix
  */
 AMBIX_API
 void ambix_matrix_deinit (ambix_matrix_t *mtx) ;
@@ -502,6 +533,8 @@ void ambix_matrix_deinit (ambix_matrix_t *mtx) ;
  *
  * @return pointer to the matrix object, or NULL if the type was not valid (for the
  * input matrix)
+ *
+ * @ingroup ambix_matrix
  */
 AMBIX_API
 ambix_matrix_t *ambix_matrix_fill (ambix_matrix_t *matrix, ambix_matrixtype_t type) ;
@@ -517,6 +550,8 @@ ambix_matrix_t *ambix_matrix_fill (ambix_matrix_t *matrix, ambix_matrixtype_t ty
  * A[rows-1, cols-1])
  *
  * @return an error code indicating success
+ *
+ * @ingroup ambix_matrix
  */
 AMBIX_API
 ambix_err_t ambix_matrix_fill_data (ambix_matrix_t *mtx, const float32_t *data) ;
@@ -530,6 +565,8 @@ ambix_err_t ambix_matrix_fill_data (ambix_matrix_t *mtx, const float32_t *data) 
  * @param dest the destination matrix (if NULL a new matrix will be created)
  *
  * @return pointer to the destination matrix
+ *
+ * @ingroup ambix_matrix
  */
 AMBIX_API
 ambix_matrix_t *ambix_matrix_copy (const ambix_matrix_t *src, ambix_matrix_t *dest) ;
@@ -549,6 +586,8 @@ ambix_matrix_t *ambix_matrix_copy (const ambix_matrix_t *src, ambix_matrix_t *de
  *
  * @remark If this returns a newly allocated matrix object (result!=return
  * value), the host has to take care of calling ambix_matrix_destroy().
+ *
+ * @ingroup ambix_matrix
  */
 AMBIX_API
 ambix_matrix_t *ambix_matrix_multiply (const ambix_matrix_t *A, const ambix_matrix_t *B, ambix_matrix_t *result) ;
@@ -564,11 +603,13 @@ ambix_matrix_t *ambix_matrix_multiply (const ambix_matrix_t *A, const ambix_matr
  * @return pointer to the result matrix, or NULL in case the matrix
  * inversion did not succeed.
  *
+ * @ingroup ambix_matrix
  */
 AMBIX_API
 ambix_matrix_t* ambix_matrix_pinv(const ambix_matrix_t*matrix, ambix_matrix_t*pinv) ;
 /** @brief Multiply a matrix with data
  * @defgroup ambix_matrix_multiply_data ambix_matrix_multiply_data()
+ * @ingroup ambix_matrix
  *
  * Multiply a [rows*cols] matrix with an array of [cols*frames] source data to
  * get [rows*frames] dest data.
@@ -613,15 +654,20 @@ ambix_err_t ambix_matrix_multiply_int32(int32_t *dest, const ambix_matrix_t *mtx
 AMBIX_API
 ambix_err_t ambix_matrix_multiply_int16(int16_t *dest, const ambix_matrix_t *mtx, const int16_t *source, int64_t frames) ;
 
-/*
+/**
  * @section api_utils utility functions
  */
-
+/** @defgroup ambix_utilities ambix_utilities
+ *
+ * @brief utility functions
+ */
 /** @brief Calculate the number of channels for a full 3d ambisonics set of a
  * given order.
  *
  * @param order the order of the full set
  * @return the number of channels of the full set
+ *
+ * @ingroup ambix_utilities
  */
 AMBIX_API
 uint32_t ambix_order2channels(uint32_t order) ;
@@ -632,6 +678,8 @@ uint32_t ambix_order2channels(uint32_t order) ;
  * @param channels the number of channels of the full set
  * @return the order of the full set, or -1 if the channels don't form a full
  * set.
+ *
+ * @ingroup ambix_utilities
  */
 AMBIX_API
 int32_t ambix_channels2order(uint32_t channels) ;
@@ -641,6 +689,8 @@ int32_t ambix_channels2order(uint32_t channels) ;
  * @param channels the number of channels supposed to form a full set.
  *
  * @return TRUE if the channels can form full set, FALSE otherwise.
+ *
+ * @ingroup ambix_utilities
  */
 AMBIX_API
 int ambix_is_fullset(uint32_t channels) ;
