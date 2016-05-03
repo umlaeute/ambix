@@ -297,6 +297,7 @@ static ambix_err_t _ambix_check_write(ambix_t*ambix, const void*ambidata, const 
   if((ambix->realinfo.fileformat==AMBIX_EXTENDED) && !ambix_is_fullset(ambix->matrix.rows))
     return AMBIX_ERR_INVALID_DIMENSION;
 
+  /* write out any headers if we haven't done so yet */
   if(ambix->pendingHeaders) {
     ambix_err_t res=_ambix_write_header(ambix);
     if(AMBIX_ERR_SUCCESS!=res)
@@ -308,7 +309,7 @@ static ambix_err_t _ambix_check_write(ambix_t*ambix, const void*ambidata, const 
 }
 
 static ambix_err_t _ambix_check_read(ambix_t*ambix, const void*ambidata, const void*otherdata, int64_t frames) {
-  /* TODO: add some checks whether writing is feasible
+  /* TODO: add some checks whether reading is feasible
    * e.g. format=extended but no (or wrong) matrix present */
   ambix->startedReading=1;
   return AMBIX_ERR_SUCCESS;
