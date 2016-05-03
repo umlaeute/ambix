@@ -25,7 +25,8 @@
 #include <math.h>
 
 void matrix_print(const ambix_matrix_t*mtx) {
-  printf("matrix [%dx%d]\n", mtx->rows, mtx->cols);
+  printf("matrix[%p] ", mtx);
+  printf(" [%dx%d]@%p\n", mtx->rows, mtx->cols, mtx->data);
   if(mtx->data) {
     uint32_t c, r;
     for(r=0; r<mtx->rows; r++) {
