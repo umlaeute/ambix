@@ -272,3 +272,14 @@ int main(int argc, char**argv) {
   pass();
   return 0;
 }
+
+#if 0
+/* FIXXME other constness tests */
+ambix_t *ambix_open (const char *path, const ambix_filemode_t mode, ambix_info_t *ambixinfo) ;
+int64_t ambix_writef_int16 (ambix_t *ambix, const int16_t *ambidata, const int16_t *otherdata, int64_t frames) ;
+int64_t ambix_writef_int32 (ambix_t *ambix, const int32_t *ambidata, const int32_t *otherdata, int64_t frames) ;
+int64_t ambix_writef_float32 (ambix_t *ambix, const float32_t *ambidata, const float32_t *otherdata, int64_t frames) ;
+int64_t ambix_writef_float64 (ambix_t *ambix, const float64_t *ambidata, const float64_t *otherdata, int64_t frames) ;
+ambix_err_t ambix_set_adaptormatrix (ambix_t *ambix, const ambix_matrix_t *matrix) ;
+/* need to test for LATER side-effects: e.g. ambix_set_adaptormatrix() might not do anything NOW, but sometimes later... */
+#endif
