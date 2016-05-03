@@ -30,6 +30,10 @@ TESTS += matrices
 check_PROGRAMS += matrices
 matrices_SOURCES = matrices.c common.c
 
+TESTS += const_matrix
+check_PROGRAMS += const_matrix
+const_matrix_SOURCES = const_matrix.c common.c
+
 TESTS          += none_float32
 check_PROGRAMS += none_float32
 none_float32_SOURCES = none_float32.c ambix_none.c common.c
