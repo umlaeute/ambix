@@ -136,3 +136,43 @@ _AMBIX_MERGEADAPTOR(float32);
 _AMBIX_MERGEADAPTOR(float64);
 _AMBIX_MERGEADAPTOR(int32);
 _AMBIX_MERGEADAPTOR(int16);
+
+
+//#define _AMBIX_MERGEADAPTOR_MATRIX(type)      \
+
+#define TYPE float32_t
+ambix_err_t _ambix_mergeAdaptormatrix_float32(const TYPE*ambi_data, const ambix_matrix_t*matrix,
+                                              const TYPE*otherdata, uint32_t source2channels,
+                                              TYPE*destination, int64_t frames) {
+  float32_t**mtx=matrix->data;
+  const uint32_t fullambichannels=matrix->rows;
+  const uint32_t ambixchannels=matrix->cols;
+  int64_t f;
+  for(f=0; f<frames; f++) {
+    uint32_t chan;
+    /* encode ambisonics->ambix and store in destination */
+    uint32_t outchan, inchan;
+    const TYPE*src = ambi_data+fullambichannels*f;
+    for(outchan=0; outchan<ambixchannels; outchan++) {
+      float32_t sum=0.;
+      for(inchan=0; inchan<fullambichannels; inchan++) {
+        sum+=mtx[outchan][inchan] * src[inchan];
+      }
+      *destination++=(TYPE)sum;
+    }
+    /* store the otherchannels */
+    for(inchan=0; inchan<source2channels; inchan++)
+      *destination++=*otherdata++;
+  }
+  return AMBIX_ERR_SUCCESS;
+}
+
+#define _AMBIX_MERGEADAPTOR_MATRIX(type)                                \
+  ambix_err_t _ambix_mergeAdaptormatrix_##type(const type##_t*ambi_data, const ambix_matrix_t*matrix, \
+                                               const type##_t*otherdata, uint32_t source2channels, \
+                                               type##_t*destination, int64_t frames) { \
+    return AMBIX_ERR_INVALID_MATRIX;                                    \
+  }
+_AMBIX_MERGEADAPTOR_MATRIX(float64);
+_AMBIX_MERGEADAPTOR_MATRIX(int32);
+_AMBIX_MERGEADAPTOR_MATRIX(int16);
