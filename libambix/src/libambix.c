@@ -265,7 +265,7 @@ ambix_err_t ambix_set_adaptormatrix	(ambix_t*ambix, const ambix_matrix_t*matrix)
 
     pinv=ambix_matrix_pinv(matrix, pinv);
     if(!pinv)
-      return AMBIX_ERR_UNKNOWN;
+      return AMBIX_ERR_INVALID_MATRIX;
 
     if(!ambix_matrix_copy(matrix, &ambix->matrix))
       return AMBIX_ERR_UNKNOWN;
