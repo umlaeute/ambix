@@ -288,7 +288,7 @@ ambix_err_t ambix_set_adaptormatrix	(ambix_t*ambix, const ambix_matrix_t*matrix)
 ambix_err_t	_ambix_write_header	(ambix_t*ambix) {
   void*data=NULL;
   if(ambix->filemode & AMBIX_WRITE) {
-    if((AMBIX_EXTENDED == ambix->info.fileformat)) {
+    if((AMBIX_EXTENDED == ambix->realinfo.fileformat)) {
       ambix_err_t res;
       /* generate UUID-chunk */
       uint64_t datalen=_ambix_matrix_to_uuid1(&ambix->matrix, NULL, ambix->byteswap);
