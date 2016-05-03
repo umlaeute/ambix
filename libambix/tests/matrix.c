@@ -135,6 +135,36 @@ void mtxinverse_tests(float32_t eps) {
   ambix_matrix_fill_data(testresult, transposedata);
   mtxinverse_test(mtx, testresult, eps);
 
+  /* fill in some test data 4x4 */
+  STARTTEST("[identity:4x4]");
+  mtx=ambix_matrix_init(4, 4, mtx);
+  ambix_matrix_fill(mtx, AMBIX_MATRIX_IDENTITY);
+  testresult=ambix_matrix_init(4, 4, testresult);
+  ambix_matrix_fill(testresult, AMBIX_MATRIX_IDENTITY);
+  mtxinverse_test(mtx, testresult, eps);
+
+  STARTTEST("[SID:4x4]");
+  mtx=ambix_matrix_init(4, 4, mtx);
+  ambix_matrix_fill(mtx, AMBIX_MATRIX_SID);
+  testresult=ambix_matrix_init(4, 4, testresult);
+  ambix_matrix_fill(testresult, AMBIX_MATRIX_TO_SID);
+  mtxinverse_test(mtx, testresult, eps);
+
+  STARTTEST("[N3D:4x4]");
+  mtx=ambix_matrix_init(4, 4, mtx);
+  ambix_matrix_fill(mtx, AMBIX_MATRIX_N3D);
+  testresult=ambix_matrix_init(4, 4, testresult);
+  ambix_matrix_fill(testresult, AMBIX_MATRIX_TO_N3D);
+  mtxinverse_test(mtx, testresult, eps);
+
+  STARTTEST("[FUMA:4x4]");
+  mtx=ambix_matrix_init(4, 4, mtx);
+  ambix_matrix_fill(mtx, AMBIX_MATRIX_FUMA);
+  testresult=ambix_matrix_init(4, 4, testresult);
+  ambix_matrix_fill(testresult, AMBIX_MATRIX_TO_FUMA);
+  mtxinverse_test(mtx, testresult, eps);
+
+
   ambix_matrix_destroy(mtx);
   ambix_matrix_destroy(testresult);
   free(transposedata);
