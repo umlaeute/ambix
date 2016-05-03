@@ -74,7 +74,7 @@ static float32_t resultpinv_4_4[] = {
  -6.751824651655014, 2.959470009112655, 3.874801812795508,-3.203980734335171,
  -3.520111656963465, 2.340434097800232, 0.647874863173282,-0.339426118611342,
 };
-static void mtxinverse_test(ambix_matrix_t *mtx, ambix_matrix_t *result, float32_t eps) {
+static void mtxinverse_test(const ambix_matrix_t *mtx, const ambix_matrix_t *result, float32_t eps) {
   ambix_matrix_t *pinv = 0;
   ambix_matrix_t *mul=0;
   ambix_matrix_t *eye=0;
