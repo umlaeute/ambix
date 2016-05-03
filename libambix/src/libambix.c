@@ -347,10 +347,18 @@ static ambix_err_t _ambix_check_read(ambix_t*ambix, const void*ambidata, const v
     err=_ambix_adaptorbuffer_resize(ambix, frames, sizeof(type##_t));   \
     if(AMBIX_ERR_SUCCESS != err) { return (err>0)?-err:err;}            \
     adaptorbuffer=(type##_t*)ambix->adaptorbuffer;                      \
+    switch(ambix->use_matrix) {                                         \
+    case 1:                                                             \
+    _ambix_mergeAdaptormatrix_##type(ambidata, &ambix->matrix1, otherdata, ambix->info.extrachannels, adaptorbuffer, frames); \
+    break;                                                              \
+    case 2:                                                             \
+    _ambix_mergeAdaptormatrix_##type(ambidata, &ambix->matrix2, otherdata, ambix->info.extrachannels, adaptorbuffer, frames); \
+    break;                                                              \
+    default:                                                            \
     _ambix_mergeAdaptor_##type(ambidata, ambix->info.ambichannels, otherdata, ambix->info.extrachannels, adaptorbuffer, frames); \
+    };                                                                  \
     return _ambix_writef_##type(ambix, adaptorbuffer, frames);          \
   }
-
 
 AMBIX_READF(int16);
 AMBIX_READF(int32);
