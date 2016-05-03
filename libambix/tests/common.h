@@ -83,7 +83,8 @@ float32_t*data_sine(uint64_t frames, uint32_t channels, float32_t periods);
 float32_t*data_ramp(uint64_t frames, uint32_t channels);
 
 #define STRINGIFY(x) #x
-#define STARTTEST(x)   printf("============ %s[%04d]:\t%s '%s'\n", __FILE__, __LINE__, __FUNCTION__, x)
+#define STARTTEST(x)   printf("<<< running TEST %s[%04d]:\t%s '%s'\n", __FILE__, __LINE__, __FUNCTION__, x)
+#define STOPTEST(x)    printf(">>> test SUCCESS %s[%04d]:\t%s '%s'\n", __FILE__, __LINE__, __FUNCTION__, x)
 
 
 #endif /* TESTS_COMMON_H */
