@@ -35,7 +35,7 @@ static inline void skip(void) {exit(77); }
 #include <stdarg.h>
 #define MARK() printf("%s:%d[%s]\n", __FILE__, __LINE__, __FUNCTION__)
 
-static inline void pass_if (int test, int line, const char *format, ...)
+static inline int pass_if (int test, int line, const char *format, ...)
 {
   if (test) {
     va_list argptr ;
@@ -46,8 +46,9 @@ static inline void pass_if (int test, int line, const char *format, ...)
     printf("\n");
     pass();
   } ;
+  return test;
 } /* pass_if */
-static inline void skip_if (int test, int line, const char *format, ...)
+static inline int skip_if (int test, int line, const char *format, ...)
 {
   if (test) {
     va_list argptr ;
@@ -58,8 +59,9 @@ static inline void skip_if (int test, int line, const char *format, ...)
     printf("\n");
     skip();
   } ;
+  return test;
 } /* skip_if */
-static inline void fail_if (int test, int line, const char *format, ...)
+static inline int fail_if (int test, int line, const char *format, ...)
 {
   if (test) {
     va_list argptr ;
@@ -70,6 +72,7 @@ static inline void fail_if (int test, int line, const char *format, ...)
     printf("\n");
     fail();
   } ;
+  return test;
 } /* fail_if */
 
 void matrix_print(const ambix_matrix_t*mtx);
