@@ -376,3 +376,23 @@
  * @f$ACN = l * ( l + 1 ) + m@f$
  *
  */
+
+
+/**
+ * @page utilities ambix commandline utilities
+ *
+ * libambix comes with a number of commandline utilities
+ *
+ * @section informational informational
+ * @subsection ambix-info ambix-info
+ * @subsection ambix-dump ambix-dump
+ * @section ambix-refile file creation
+ * @subsection ambix-interleave ambix-interleave
+ * @subsection ambix-deinterleave ambix-deinterleave
+ * @section recording and playback
+ * @subsection ambix-jplay ambix-jplay
+ * @subsection ambix-jrecord ambix-jrecord
+ * @section tests
+ * @subsection ambix-test ambix-test
+ * @subsection ambix-matrix ambix-matrix
+ */
