@@ -119,6 +119,7 @@ void mtxinverse_tests(float32_t eps) {
   STARTTEST("");
 
   /* fill in some test data 4x4 */
+  STARTTEST("[4x4]");
   mtx=ambix_matrix_init(4, 4, mtx);
   ambix_matrix_fill_data(mtx, leftdata_4_4);
   testresult=ambix_matrix_init(4, 4, testresult);
@@ -126,6 +127,7 @@ void mtxinverse_tests(float32_t eps) {
   mtxinverse_test(mtx, testresult, eps);
 
   /* fill in some test data 4x3 */
+  STARTTEST("[4x3]");
   mtx=ambix_matrix_init(4, 3, mtx);
   ambix_matrix_fill_data(mtx, leftdata_4_3);
   testresult=ambix_matrix_init(3, 4, testresult);
@@ -133,6 +135,7 @@ void mtxinverse_tests(float32_t eps) {
   mtxinverse_test(mtx, testresult, eps);
 
   /* fill in some test data 3x4 */
+  STARTTEST("[3x4]");
   mtx=ambix_matrix_init(3, 4, mtx);
   ambix_matrix_fill_data(mtx, leftdata_3_4);
   testresult=ambix_matrix_init(4, 3, testresult);
@@ -141,6 +144,7 @@ void mtxinverse_tests(float32_t eps) {
 
   ambix_matrix_destroy(mtx);
   ambix_matrix_destroy(testresult);
+  STOPTEST("");
 }
 void mtxmul_tests(float32_t eps) {
   float32_t errf;
@@ -177,6 +181,7 @@ void mtxmul_tests(float32_t eps) {
   ambix_matrix_destroy(right);
   ambix_matrix_destroy(result);
   ambix_matrix_destroy(testresult);
+  STOPTEST("");
 }
 void mtxmul_eye_tests(float32_t eps) {
   float32_t errf;
@@ -205,6 +210,7 @@ void mtxmul_eye_tests(float32_t eps) {
   ambix_matrix_destroy(left);
   ambix_matrix_destroy(result);
   ambix_matrix_destroy(eye);
+  STOPTEST("");
 }
 void datamul_tests(float32_t eps) {
   float32_t errf;
@@ -257,6 +263,7 @@ void datamul_tests(float32_t eps) {
   free(resultdata);
   free(resultdataT);
   free(inputdata);
+  STOPTEST("");
 }
 
 void datamul_eye_tests(float32_t eps) {
@@ -268,7 +275,6 @@ void datamul_eye_tests(float32_t eps) {
   float32_t freq=500;
   ambix_matrix_t eye = {0, 0, NULL};
   STARTTEST("");
-
 
   inputdata =data_sine(frames, channels, freq);
   outputdata=(float32_t*)malloc(sizeof(float32_t)*frames*channels);
@@ -292,6 +298,7 @@ void datamul_eye_tests(float32_t eps) {
   free(inputdata);
   free(outputdata);
   ambix_matrix_deinit(&eye);
+  STOPTEST("");
 }
 
 void datamul_4_2_tests(uint32_t chunksize, float32_t eps) {
@@ -309,8 +316,6 @@ void datamul_4_2_tests(uint32_t chunksize, float32_t eps) {
 
   ambix_matrix_t eye = {0, 0, NULL};
   STARTTEST("");
-
-
 
   inputdata =data_sine(frames, rawchannels, freq);
   targetdata=data_sine(frames, cokchannels, freq);
@@ -361,12 +366,8 @@ void datamul_4_2_tests(uint32_t chunksize, float32_t eps) {
   free(inputdata);
   free(outputdata);
   free(targetdata);
+  STOPTEST("");
 }
-
-
-
-
-
 
 
 void create_tests(float32_t eps) {
@@ -400,6 +401,7 @@ void create_tests(float32_t eps) {
 
   ambix_matrix_destroy(left);
   ambix_matrix_destroy(right);
+  STOPTEST("");
 }
 
 
