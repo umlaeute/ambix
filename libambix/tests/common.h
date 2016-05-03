@@ -74,6 +74,19 @@ static inline int fail_if (int test, int line, const char *format, ...)
   } ;
   return test;
 } /* fail_if */
+static inline int print_if (int test, int line, const char *format, ...)
+{
+  if (test) {
+    va_list argptr ;
+    printf("@%d: ", line);
+    va_start (argptr, format) ;
+    vprintf (format, argptr) ;
+    va_end (argptr) ;
+    printf("\n");
+  }
+  return test;
+} /* print_if */
+
 
 void matrix_print(const ambix_matrix_t*mtx);
 float32_t matrix_diff(uint32_t line, const ambix_matrix_t*A, const ambix_matrix_t*B, float32_t eps);
