@@ -30,12 +30,6 @@ static float32_t leftdata_4_3[]= {
    0.25, 0.90, 0.77,
    0.83, 0.51, 0.58,
 };
-static float32_t leftdata_3_4[]= {
-  /* just the transposition of leftdata[4,3] */
-  0.19, 0.05, 0.25, 0.83,
-  0.06, 0.08, 0.90, 0.51,
-  0.14, 0.44, 0.77, 0.58,
-};
 static float32_t leftdata_4_4[]= {
   0.7131185686247925, 0.1054799265939327, 0.1882023608287114, 0.1496964665104298,
   0.9035382689904633, 0.0958506183093942, 0.1490156537909140, 0.6730762573692578,
@@ -59,13 +53,6 @@ static float32_t resultpinv_4_3[] = {
  0.320059925923633, -0.616572833442599, -0.758203952544301,  1.397070173352668,
 -0.475395139478048, -2.112396458091558,  1.443108803981482, -0.198593134445739,
  0.349719602203337,  2.683861685335670, -0.150602340058839, -0.196372558639406,
-};
-static float32_t resultpinv_3_4[] = {
-  /* (leftdata[3,4])^-1 */
-   0.320059925923633, -0.475395139478048,  0.349719602203337,
-  -0.616572833442600, -2.112396458091559,  2.683861685335671,
-  -0.758203952544302,  1.443108803981483, -0.150602340058840,
-   1.397070173352670, -0.198593134445740, -0.196372558639407,
 };
 static float32_t resultpinv_4_4[] = {
   /* (leftdata[4,4])^-1 */
@@ -116,6 +103,8 @@ static void mtxinverse_test(const ambix_matrix_t *mtx, const ambix_matrix_t *res
 void mtxinverse_tests(float32_t eps) {
   float32_t errf;
   ambix_matrix_t *mtx=0, *testresult=0;
+  float32_t*transposedata = (float32_t*)calloc(3*4, sizeof(float32_t));
+
   STARTTEST("");
 
   /* fill in some test data 4x4 */
@@ -136,14 +125,18 @@ void mtxinverse_tests(float32_t eps) {
 
   /* fill in some test data 3x4 */
   STARTTEST("[3x4]");
+  data_transpose(transposedata, leftdata_4_3, 4, 3);
   mtx=ambix_matrix_init(3, 4, mtx);
-  ambix_matrix_fill_data(mtx, leftdata_3_4);
+  ambix_matrix_fill_data(mtx, transposedata);
+
+  data_transpose(transposedata, resultpinv_4_3, 3, 4);
   testresult=ambix_matrix_init(4, 3, testresult);
-  ambix_matrix_fill_data(testresult, resultpinv_3_4);
+  ambix_matrix_fill_data(testresult, transposedata);
   mtxinverse_test(mtx, testresult, eps);
 
   ambix_matrix_destroy(mtx);
   ambix_matrix_destroy(testresult);
+  free(transposedata);
   STOPTEST("");
 }
 void mtxmul_tests(float32_t eps) {
