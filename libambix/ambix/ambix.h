@@ -591,9 +591,9 @@ ambix_matrix_t *ambix_matrix_copy (const ambix_matrix_t *src, ambix_matrix_t *de
  */
 AMBIX_API
 ambix_matrix_t *ambix_matrix_multiply (const ambix_matrix_t *A, const ambix_matrix_t *B, ambix_matrix_t *result) ;
-/** @brief Get the Moore–Penrose pseudoinverse of a matrix.
+/** @brief Get the Moore-Penrose pseudoinverse of a matrix.
  *
- * Get the Moore–Penrose pseudoinverse of the matrix input and write the result
+ * Get the Moore-Penrose pseudoinverse of the matrix input and write the result
  * to pinv
  *
  * @param matrix input matrix
