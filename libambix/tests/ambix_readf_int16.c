@@ -2,6 +2,7 @@
 
 int main ()
 {
-  pass();
+  /* FIXXME: no test yet */
+  skip();
   return 0;
 }

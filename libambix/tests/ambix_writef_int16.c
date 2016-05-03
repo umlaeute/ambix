@@ -26,5 +26,9 @@ int main ()
   
   ambix_close(ambix);
   free(info);
+
+  /* FIXXME: no test yet */
+  skip();
+
   return 0;
 }

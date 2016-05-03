@@ -16,8 +16,6 @@ int main()
   //ambix_readf_int32 (ambix_t *ambix, int32_t *ambidata, int32_t *otherdata, int64_t frames)
   //Read samples (as 32bit signed integer values) from the ambix file. 
   
-  pass();
-  
   
   //UNCOMMENT WHEN FIXED
   /*cmp= ambix_readf_int32(ambix, *ambidata, otherdata, 100);
@@ -32,7 +30,10 @@ int main()
   fail_if (result!=100, __LINE__, "File failed to seek correct data");*/
   
   ambix_close(ambix);
-  
   free(info);
+
+  /* FIXXXME: this test is not working yet */
+  skip();
+
   return 0;
 }
