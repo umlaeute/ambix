@@ -352,17 +352,11 @@ static ambix_err_t _ambix_check_read(ambix_t*ambix, const void*ambidata, const v
 
 
 AMBIX_READF(int16);
-
 AMBIX_READF(int32);
-
 AMBIX_READF(float32);
-
 AMBIX_READF(float64);
 
 AMBIX_WRITEF(int16);
-
 AMBIX_WRITEF(int32);
-
 AMBIX_WRITEF(float32);
-
 AMBIX_WRITEF(float64);

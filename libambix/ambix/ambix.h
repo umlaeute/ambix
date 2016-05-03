@@ -400,7 +400,6 @@ struct SNDFILE_tag;
  */
 AMBIX_API
 struct SNDFILE_tag *ambix_get_sndfile (ambix_t *ambix) ;
-
 /** @brief Various utilities to handle matrices
  * @defgroup ambix_matrix ambix_matrix
  */
