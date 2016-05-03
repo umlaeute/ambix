@@ -263,12 +263,12 @@ int main(int argc, char**argv) {
   test_ambix_matrix_copy(1e-7);
   test_ambix_matrix_multiply(1e-7);
   test_ambix_matrix_pinv(1e-7);
-#if 0
-  test_ambix_matrix_multiply_float32(1e-7);
-  test_ambix_matrix_multiply_float64(1e-7);
-  test_ambix_matrix_multiply_int32(1e-7);
-  test_ambix_matrix_multiply_int16(1e-7);
-#endif
+
+#warning  test_ambix_matrix_multiply_float32(1e-7);
+#warning  test_ambix_matrix_multiply_float64(1e-7);
+#warning  test_ambix_matrix_multiply_int32(1e-7);
+#warning  test_ambix_matrix_multiply_int16(1e-7);
+
   pass();
   return 0;
 }
