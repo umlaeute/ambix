@@ -339,6 +339,29 @@ ambix_err_t _ambix_mergeAdaptor_int32(const int32_t*source1, uint32_t source1cha
 ambix_err_t _ambix_mergeAdaptor_int16(const int16_t*source1, uint32_t source1channels, const int16_t*source2, uint32_t source2channels, int16_t*destination, int64_t frames);
 
 
+/** @brief merge interleaved ambisonics and interleaved non-ambisonics channels into a single interleaved audio data block using matrix operations
+ *
+ * multiply matrix.rows ambisonics channels with the matrix to get a (reduced) set of
+ * matrix.cols ambix-extended channels.
+ * append ambix-extended and non-ambisonics channels into one big interleaved chunk
+ *
+ * @param source1 the first interleaved samplebuffer (full ambisonics set) to read from
+ * @param matrix the encoder-matrix
+ * @param source2 the second interleaved samplebuffer to read from
+ * @param source2channels the number of channels in source2
+ * @param destination the samplebuffer to merge the data info; must be big enough to hold frames*(matrix.cols+source2channels) samples
+ * @param frames number of frames to extract
+ * @return error code indicating success
+ */
+ambix_err_t _ambix_mergeAdaptormatrix_float32(const float32_t*source1, const ambix_matrix_t*matrix, const float32_t*source2, uint32_t source2channels, float32_t*destination, int64_t frames);
+/* @see _ambix_mergeAdaptormatrix_float32 */
+ambix_err_t _ambix_mergeAdaptormatrix_float64(const float64_t*source1, const ambix_matrix_t*matrix, const float64_t*source2, uint32_t source2channels, float64_t*destination, int64_t frames);
+/* @see _ambix_mergeAdaptormatrix_float32 */
+ambix_err_t _ambix_mergeAdaptormatrix_int32(const int32_t*source1, const ambix_matrix_t*matrix, const int32_t*source2, uint32_t source2channels, int32_t*destination, int64_t frames);
+/* @see _ambix_mergeAdaptormatrix_float32 */
+ambix_err_t _ambix_mergeAdaptormatrix_int16(const int16_t*source1, const ambix_matrix_t*matrix, const int16_t*source2, uint32_t source2channels, int16_t*destination, int64_t frames);
+
+
 /** @brief debugging printout for ambix_info_t
  * @param info an ambixinfo struct
  */
