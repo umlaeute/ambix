@@ -379,7 +379,7 @@ static ambix_err_t _ambix_check_read(ambix_t*ambix, const void*ambidata, const v
     adaptorbuffer=(type##_t*)ambix->adaptorbuffer;                      \
     switch(ambix->use_matrix) {                                         \
     case 1:                                                             \
-    _ambix_mergeAdaptormatrix_##type(ambidata, &ambix->matrix1, otherdata, ambix->info.extrachannels, adaptorbuffer, frames); \
+    _ambix_mergeAdaptormatrix_##type(ambidata, &ambix->matrix , otherdata, ambix->info.extrachannels, adaptorbuffer, frames); \
     break;                                                              \
     case 2:                                                             \
     _ambix_mergeAdaptormatrix_##type(ambidata, &ambix->matrix2, otherdata, ambix->info.extrachannels, adaptorbuffer, frames); \
