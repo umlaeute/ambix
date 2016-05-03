@@ -75,6 +75,7 @@ static void mtxinverse_test(const ambix_matrix_t *mtx, const ambix_matrix_t *res
   fail_if((NULL==eye), __LINE__, "cannot create eye-matrix for pinv-verification");
 
   pinv=ambix_matrix_pinv(mtx, pinv);
+  if(NULL==pinv)matrix_print(mtx);
   fail_if((NULL==pinv), __LINE__, "could not invert matrix");
 
   if(mtx->cols < mtx->rows)
