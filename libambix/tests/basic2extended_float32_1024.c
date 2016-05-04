@@ -34,41 +34,42 @@ float32_t data_4_9[]={
 int check_create_b2e(const char*path, ambix_sampleformat_t format,
 		     ambix_matrix_t*matrix, uint32_t extrachannels,
 		     uint32_t chunksize, float32_t eps);
-int main(int argc, char**argv) {
+int test_defaultmatrix(const char*name, uint32_t rows, uint32_t cols, ambix_matrixtype_t mtyp,
+		       uint32_t xtrachannels, uint32_t chunksize, float32_t eps) {
+  int result=0;
   ambix_matrix_t*mtx=0;
+  STARTTEST("%s\n", name);
+  mtx=ambix_matrix_init(rows,cols,mtx);
+  if(!mtx)return 1;
+  ambix_matrix_fill(mtx, mtyp);
+  result=check_create_b2e("test2-b2e-float32.caf", AMBIX_SAMPLEFORMAT_FLOAT32,
+			  mtx,xtrachannels,
+			  chunksize, eps);
+  ambix_matrix_destroy(mtx);
+  return result;
+}
+int test_datamatrix(const char*name, uint32_t rows, uint32_t cols, float32_t*data,
+		    uint32_t xtrachannels, uint32_t chunksize, float32_t eps) {
+  int result=0;
+  ambix_matrix_t*mtx=0;
+  STARTTEST("%s\n", name);
+  mtx=ambix_matrix_init(rows,cols,mtx);
+  if(!mtx)return 1;
+  ambix_matrix_fill_data(mtx, data);
+  result=check_create_b2e("test2-b2e-float32.caf", AMBIX_SAMPLEFORMAT_FLOAT32,
+			  mtx,xtrachannels,
+			  chunksize, eps);
+  ambix_matrix_destroy(mtx);
+  return result;
+}
 
-  STARTTEST("IDENTITY\n");
-  mtx=ambix_matrix_init(4,4,mtx);
-  ambix_matrix_fill(mtx, AMBIX_MATRIX_IDENTITY);
-  check_create_b2e("test2-b2e-float32.caf", AMBIX_SAMPLEFORMAT_FLOAT32,
-		   mtx,0,
-		   1024, 1e-7);
-  STARTTEST("N3D\n");
-  mtx=ambix_matrix_init(4,4,mtx);
-  ambix_matrix_fill(mtx, AMBIX_MATRIX_N3D);
-  check_create_b2e("test2-b2e-float32.caf", AMBIX_SAMPLEFORMAT_FLOAT32,
-		   mtx,0,
-		   1024, 1e-7);
-  STARTTEST("SID\n");
-  mtx=ambix_matrix_init(4,4,mtx);
-  ambix_matrix_fill(mtx, AMBIX_MATRIX_SID);
-  check_create_b2e("test2-b2e-float32.caf", AMBIX_SAMPLEFORMAT_FLOAT32,
-		   mtx,0,
-		   1024, 1e-7);
-  STARTTEST("FuMa[f]\n");
-  mtx=ambix_matrix_init(4,4,mtx);
-  ambix_matrix_fill(mtx, AMBIX_MATRIX_FUMA);
-  check_create_b2e("test2-b2e-float32.caf", AMBIX_SAMPLEFORMAT_FLOAT32,
-		   mtx,0,
-		   1024, 1e-7);
-  STARTTEST("'random'[4x9]\n");
-  mtx=ambix_matrix_init(4,9,mtx);
-  ambix_matrix_fill_data(mtx, data_4_9);
-  check_create_b2e("test2-b2e-float32.caf", AMBIX_SAMPLEFORMAT_FLOAT32,
-		   mtx,0,
-		   1024, 5e-7);
-  STOPTEST("\n");
-  if(mtx)ambix_matrix_destroy(mtx);
+int main(int argc, char**argv) {
+  int err=0;
+  err+=test_defaultmatrix("IDENTITY", 4, 4, AMBIX_MATRIX_IDENTITY, 0, 1024, 1e-7);
+  err+=test_defaultmatrix("N3D"     , 4, 4, AMBIX_MATRIX_N3D     , 0, 1024, 1e-7);
+  err+=test_defaultmatrix("SID"     , 4, 4, AMBIX_MATRIX_SID     , 0, 1024, 1e-7);
+  err+=test_defaultmatrix("FuMa[f]" , 4, 4, AMBIX_MATRIX_FUMA    , 0, 1024, 1e-7);
+  err+=test_datamatrix   ("'rand'[4x9]", 4, 9, data_4_9          , 0, 1024, 5e-7);
   pass();
   return 0;
 }
