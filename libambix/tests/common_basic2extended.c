@@ -38,7 +38,8 @@ int check_create_b2e(const char*path, ambix_sampleformat_t format,
   int64_t err64, gotframes;
   float32_t diff=0.;
   ambix_err_t err=0;
-  STARTTEST("");
+  STARTTEST("ambi=%d[%dx%d],extra=%d, format=%d\n",
+	    ambichannels, matrix?matrix->rows:-1, matrix?matrix->cols:-1, extrachannels, format);
 
   printf("test using '%s' [%d] with chunks of %d and eps=%f\n", path, (int)format, (int)chunksize, eps);
 

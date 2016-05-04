@@ -60,6 +60,7 @@ static void test__amfd(unsigned int rows, unsigned int cols,
   ambix_matrix_t*mtx=ambix_matrix_init(rows, cols, NULL);
   float32_t*data=calloc(frames, sizeof(*orgdata));
   float32_t errf=0;
+  STARTTEST("[%dx%d]\n", rows, cols);
   /* make a copy of the org data, and verify it */
   memcpy(data, orgdata, frames*sizeof(*orgdata));
   errf = data_diff(line, orgdata, data, frames, eps);
@@ -79,17 +80,12 @@ static void test_ambix_matrix_fill_data (float32_t eps) {
   /*
     ambix_err_t ambix_matrix_fill_data (ambix_matrix_t *mtx, const float32_t *data) ;
    */
-  STARTTEST("[3x2]");
   test__amfd(3, 2, data_3_2, sizeof(data_3_2)/sizeof(*data_3_2), __LINE__, eps);
-  STARTTEST("[3x4]");
   test__amfd(3, 4, data_3_4, sizeof(data_3_4)/sizeof(*data_3_4), __LINE__, eps);
-  STARTTEST("[4x2]");
   test__amfd(4, 2, data_4_2, sizeof(data_4_2)/sizeof(*data_4_2), __LINE__, eps);
-  STARTTEST("[4x3]");
   test__amfd(4, 3, data_4_3, sizeof(data_4_3)/sizeof(*data_4_3), __LINE__, eps);
-  STARTTEST("[4x4]");
   test__amfd(4, 4, data_4_4, sizeof(data_4_4)/sizeof(*data_4_4), __LINE__, eps);
-  STOPTEST("ALL");
+  STOPTEST("ALL\n");
 }
 
 static void test__amc(unsigned int rows, unsigned int cols,
@@ -103,6 +99,7 @@ static void test__amc(unsigned int rows, unsigned int cols,
   ambix_matrix_fill_data(mtx, orgdata);
   uint32_t r;
 
+  STARTTEST("[%dx%d]\n", rows, cols);
   /* backup the matrix */
   memcpy(&org_mtx, mtx, sizeof(org_mtx));
   memcpy(org_vectors, mtx->data, rows*sizeof(*org_data));
@@ -147,17 +144,12 @@ static void test_ambix_matrix_copy (float32_t eps) {
   /*
     ambix_matrix_t *ambix_matrix_copy (const ambix_matrix_t *src, ambix_matrix_t *dest) ;
    */
-  STARTTEST("[3x2]");
   test__amc(3, 2, data_3_2, sizeof(data_3_2)/sizeof(*data_3_2), __LINE__, eps);
-  STARTTEST("[3x4]");
   test__amc(3, 4, data_3_4, sizeof(data_3_4)/sizeof(*data_3_4), __LINE__, eps);
-  STARTTEST("[4x2]");
   test__amc(4, 2, data_4_2, sizeof(data_4_2)/sizeof(*data_4_2), __LINE__, eps);
-  STARTTEST("[4x3]");
   test__amc(4, 3, data_4_3, sizeof(data_4_3)/sizeof(*data_4_3), __LINE__, eps);
-  STARTTEST("[4x4]");
   test__amc(4, 4, data_4_4, sizeof(data_4_4)/sizeof(*data_4_4), __LINE__, eps);
-  STOPTEST("ALL");
+  STOPTEST("ALL\n");
 }
 static void test__amm (unsigned int rows1, unsigned int cols1, const float32_t*data1,
                        unsigned int rows2, unsigned int cols2, const float32_t*data2,
@@ -165,6 +157,7 @@ static void test__amm (unsigned int rows1, unsigned int cols1, const float32_t*d
   ambix_matrix_t*A=0, *B=0, *result=0;
   ambix_matrix_t*A0=0, *B0=0;
   float32_t errf=0;
+  STARTTEST("[%dx%d]*[%dx%d]\n", rows1, cols1, rows2, cols2);
 
   A=ambix_matrix_init(rows1, cols1, A); ambix_matrix_fill_data(A, data1);
   B=ambix_matrix_init(rows2, cols2, B); ambix_matrix_fill_data(B, data2);
@@ -187,22 +180,19 @@ static void test_ambix_matrix_multiply (float32_t eps) {
   /*
     ambix_matrix_t *ambix_matrix_multiply (const ambix_matrix_t *A, const ambix_matrix_t *B, ambix_matrix_t *result) ;
    */
-  STARTTEST("[3x4]*[4x4]");
   test__amm(3,4,data_3_4, 4,4,data_4_4, __LINE__, eps);
-  STARTTEST("[3x4]*[4x3]");
   test__amm(3,4,data_3_4, 4,3,data_4_3, __LINE__, eps);
-  STARTTEST("[3x4]*[4x2]");
   test__amm(3,4,data_3_4, 4,2,data_4_2, __LINE__, eps);
-  STARTTEST("[3x4]*[3x2]");
   test__amm(3,4,data_3_4, 3,2,data_3_4, __LINE__, eps);
 
-  STOPTEST("ALL");
+  STOPTEST("ALL\n");
 }
 static void test__amp(unsigned int rows, unsigned int cols,
                       const float32_t*data,
                       uint32_t line, float32_t eps) {
   ambix_matrix_t*A=0, *A0=0, *result=0;
   float32_t errf=0;
+  STARTTEST("[%dx%d]\n", rows, cols);
 
   A=ambix_matrix_init(rows, cols, A); ambix_matrix_fill_data(A, data);
   A0=ambix_matrix_copy(A, A0);
@@ -216,44 +206,39 @@ static void test_ambix_matrix_pinv(float32_t eps) {
   /*
     ambix_matrix_t* ambix_matrix_pinv(const ambix_matrix_t*matrix, ambix_matrix_t*pinv) ;
    */
-  STARTTEST("[3x2]");
   test__amp(3, 2, data_3_2, __LINE__, eps);
-  STARTTEST("[3x4]");
   test__amp(3, 4, data_3_4, __LINE__, eps);
-  STARTTEST("[4x2]");
   test__amp(4, 2, data_4_2, __LINE__, eps);
-  STARTTEST("[4x3]");
   test__amp(4, 3, data_4_3, __LINE__, eps);
-  STARTTEST("[4x4]");
   test__amp(4, 4, data_4_4, __LINE__, eps);
 }
 static void test_ambix_matrix_multiply_float32(float32_t eps) {
   /*
     ambix_err_t ambix_matrix_multiply_float32(float32_t *dest, const ambix_matrix_t *mtx, const float32_t *source, int64_t frames) ;
    */
-  STARTTEST("");
-  STOPTEST("");
+  STARTTEST("\n");
+  STOPTEST("\n");
 }
 static void test_ambix_matrix_multiply_float64(float32_t eps) {
   /*
     ambix_err_t ambix_matrix_multiply_float64(float64_t *dest, const ambix_matrix_t *mtx, const float64_t *source, int64_t frames) ;
    */
-  STARTTEST("");
-  STOPTEST("");
+  STARTTEST("\n");
+  STOPTEST("\n");
 }
 static void test_ambix_matrix_multiply_int32(float32_t eps) {
   /*
     ambix_err_t ambix_matrix_multiply_int32(int32_t *dest, const ambix_matrix_t *mtx, const int32_t *source, int64_t frames) ;
    */
-  STARTTEST("");
-  STOPTEST("");
+  STARTTEST("\n");
+  STOPTEST("\n");
 }
 static void test_ambix_matrix_multiply_int16(float32_t eps) {
   /*
     ambix_err_t ambix_matrix_multiply_int16(int16_t *dest, const ambix_matrix_t *mtx, const int16_t *source, int64_t frames) ;
    */
-  STARTTEST("");
-  STOPTEST("");
+  STARTTEST("\n");
+  STOPTEST("\n");
 }
 
 

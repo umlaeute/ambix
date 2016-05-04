@@ -79,7 +79,7 @@ void check_inversion(const char*name, ambix_matrixtype_t typ, uint32_t rows, uin
   float32_t errf;
   float32_t eps=1e-6;
 
-  STARTTEST(name);
+  STARTTEST("%s\n", name);
 
   result=inverse_matrices(typ, rows, cols);
   eye=ambix_matrix_init(result->rows, result->cols, eye);
@@ -106,7 +106,7 @@ void check_matrix(const char*name, ambix_matrixtype_t typ, uint32_t rows, uint32
   float32_t errf=0.f;
   float32_t eps=1e-20;
 
-  STARTTEST(name);
+  STARTTEST("%s\n", name);
 
   mtx=ambix_matrix_init(rows, cols, mtx);
   skip_if(NULL==mtx, __LINE__, "couldn't create mtx-matrix");
@@ -159,6 +159,7 @@ int main(int argc, char**argv) {
   check_matrix("FuMa[16, 8]", AMBIX_MATRIX_FUMA, 16,  8);
   check_matrix("FuMa[16,11]", AMBIX_MATRIX_FUMA, 16, 11);
   check_matrix("FuMa[16,16]", AMBIX_MATRIX_FUMA, 16, 16);
+  STOPTEST("matrices\n");
 
 
 
@@ -172,6 +173,7 @@ int main(int argc, char**argv) {
   check_inversion("FuMa[16, 8]", AMBIX_MATRIX_FUMA, 16,  8);
   check_inversion("FuMa[16,11]", AMBIX_MATRIX_FUMA, 16, 11);
   check_inversion("FuMa[16,16]", AMBIX_MATRIX_FUMA, 16, 16);
+  STOPTEST("matrix inversion\n");
 
   for(o=1; o<6; o++) {
     uint32_t chan=ambix_order2channels(o);
@@ -191,7 +193,7 @@ int main(int argc, char**argv) {
     snprintf(name, 63, "sid[%d, %d]", chan, chan);
     check_inversion(name, AMBIX_MATRIX_SID,  1,  1);
   }
-
+  STOPTEST("\n");
 
   pass();
   return 0;
