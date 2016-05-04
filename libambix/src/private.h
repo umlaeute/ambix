@@ -241,6 +241,33 @@ ambix_matrix_t*
 _ambix_matrix_transpose(const ambix_matrix_t*matrix, ambix_matrix_t*xirtam);
 
 /** @brief Invert a matrix using Gauss-Jordan
+ *
+ * Invert a square matrix using the Gauss-Jordan algorithm
+ *
+ * @param matrix the matrix to invert
+ * @param result the result matrix (if NULL one will be allocated for you)
+ * @param eps threshold to detect singularities
+ * @return a pointer to the result matrix (or NULL on failure)
+ *
+ * @note the input matrix will be modified!
+ */
+ambix_matrix_t*
+_ambix_matrix_invert_gaussjordan(ambix_matrix_t*matrix, ambix_matrix_t*result, float32_t eps);
+
+/** @brief Invert a matrix using Cholesky
+ *
+ * Invert a rectangle(!) matrix using the Cholesky decomposition
+ *
+ * @param matrix the matrix to invert
+ * @param result the result matrix (if NULL one will be allocated for you)
+ * @param tolerance threshold for pivoting (scaled by the largest matrix values)
+ * @return a pointer to the result matrix (or NULL on failure)
+ *
+ */
+ambix_matrix_t*
+_ambix_matrix_pinvert_cholesky(const ambix_matrix_t*matrix, ambix_matrix_t*result, float32_t tolerance);
+
+
 
 /** @brief byte-swap 32bit data
  * @param n a 32bit chunk in the wrong byte order
