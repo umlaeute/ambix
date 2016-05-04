@@ -66,8 +66,18 @@ ambix_readf_int16_SOURCES = ambix_readf_int16.c
 TESTS += ambix_writef_int16
 ambix_writef_int16_SOURCES = ambix_writef_int16.c
 
-TESTS          += basic2extended_float32_1024
-basic2extended_float32_1024_SOURCES = basic2extended_float32_1024.c common_basic2extended.c common.c
+TESTS          += \
+	basic2extended_identity4x4_float32 \
+	basic2extended_N3D4x4_float32 \
+	basic2extended_SID4x4_float32 \
+	basic2extended_FUMA4x4_float32 \
+	basic2extended_rand4x9_float32
+basic2extended_identity4x4_float32_SOURCES = basic2extended_identity4x4_float32.c common_basic2extended.c common.c
+basic2extended_N3D4x4_float32_SOURCES = basic2extended_N3D4x4_float32.c common_basic2extended.c common.c
+basic2extended_SID4x4_float32_SOURCES = basic2extended_SID4x4_float32.c common_basic2extended.c common.c
+basic2extended_FUMA4x4_float32_SOURCES = basic2extended_FUMA4x4_float32.c common_basic2extended.c common.c
+basic2extended_rand4x9_float32_SOURCES = basic2extended_rand4x9_float32.c common_basic2extended.c common.c
+
 
 # ##################################################
 check_PROGRAMS += $(TESTS)
