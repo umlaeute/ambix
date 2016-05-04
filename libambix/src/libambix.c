@@ -299,6 +299,8 @@ ambix_err_t ambix_set_adaptormatrix	(ambix_t*ambix, const ambix_matrix_t*matrix)
     if(!ambix_matrix_copy(pinv, &ambix->matrix2))
       return AMBIX_ERR_UNKNOWN;
 
+    ambix_matrix_destroy(pinv);
+
     ambix->realinfo.fileformat=AMBIX_EXTENDED;
     //ambix->realinfo.ambichannels=matrix->cols;
     ambix->info.ambichannels=matrix->rows;
