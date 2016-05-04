@@ -24,6 +24,12 @@
 #include <unistd.h>
 #include <string.h>
 
+float32_t data_4_9[]={
+  0.519497, 0.101224, 0.775246, 0.219242, 0.795973, 0.649863, 0.190978, 0.837028, 0.763130,
+  0.165074, 0.276581, 0.220167, 0.383229, 0.937749, 0.381838, 0.025107, 0.846256, 0.773257,
+  0.546205, 0.501742, 0.476078, 0.539815, 0.671716, 0.069030, 0.748010, 0.369414, 0.667491,
+  0.192167, 0.936164, 0.792496, 0.447073, 0.689901, 0.618242, 0.769460, 0.815128, 0.466140,
+};
 
 int check_create_b2e(const char*path, ambix_sampleformat_t format,
 		     ambix_matrix_t*matrix, uint32_t extrachannels,
@@ -55,6 +61,12 @@ int main(int argc, char**argv) {
   check_create_b2e("test2-b2e-float32.caf", AMBIX_SAMPLEFORMAT_FLOAT32,
 		   mtx,0,
 		   1024, 1e-7);
+  STARTTEST("'random'[4x9]\n");
+  mtx=ambix_matrix_init(4,9,mtx);
+  ambix_matrix_fill_data(mtx, data_4_9);
+  check_create_b2e("test2-b2e-float32.caf", AMBIX_SAMPLEFORMAT_FLOAT32,
+		   mtx,0,
+		   1024, 5e-7);
   STOPTEST("\n");
   if(mtx)ambix_matrix_destroy(mtx);
   pass();
