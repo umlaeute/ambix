@@ -256,7 +256,8 @@ _ambix_matrix_invert_gaussjordan(ambix_matrix_t*matrix, ambix_matrix_t*result, f
 
 /** @brief Invert a matrix using Cholesky
  *
- * Invert a rectangle(!) matrix using the Cholesky decomposition
+ * Invert a matrix using the Cholesky decomposition.
+ * If the matrix is non-square, this computes the pseuo-inverse.
  *
  * @param matrix the matrix to invert
  * @param result the result matrix (if NULL one will be allocated for you)
@@ -266,8 +267,6 @@ _ambix_matrix_invert_gaussjordan(ambix_matrix_t*matrix, ambix_matrix_t*result, f
  */
 ambix_matrix_t*
 _ambix_matrix_pinvert_cholesky(const ambix_matrix_t*matrix, ambix_matrix_t*result, float32_t tolerance);
-
-
 
 /** @brief byte-swap 32bit data
  * @param n a 32bit chunk in the wrong byte order
