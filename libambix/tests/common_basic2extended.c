@@ -118,7 +118,7 @@ int check_create_b2e(const char*path, ambix_sampleformat_t format,
   if(fail_if((AMBIX_ERR_SUCCESS!=ambix_close(ambix)), __LINE__, "closing ambix file %p", ambix))return 1;
   ambix=NULL;
 
-
+  goto cleanup;
 
   /* read data back via BASIC */
   STARTTEST("readback BASIC\n");
@@ -194,7 +194,7 @@ int check_create_b2e(const char*path, ambix_sampleformat_t format,
   if(fail_if((AMBIX_ERR_SUCCESS!=ambix_close(ambix)), __LINE__, "closing ambix file %p", ambix))return 1;
   ambix=NULL;
 
-
+ cleanup:
 
   free(resultambidata);
   free(ambidata);
