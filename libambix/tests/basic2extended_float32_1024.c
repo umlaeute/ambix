@@ -26,10 +26,8 @@
 
 
 int check_create_b2e(const char*path, ambix_sampleformat_t format,
-                      uint32_t ambichannels, uint32_t extrachannels,
-                      ambix_matrix_t*matrix,
-                      uint32_t chunksize, float32_t eps);
-
+		     ambix_matrix_t*matrix, uint32_t extrachannels,
+		     uint32_t chunksize, float32_t eps);
 int main(int argc, char**argv) {
   ambix_matrix_t*mtx=0;
 
@@ -37,25 +35,25 @@ int main(int argc, char**argv) {
   mtx=ambix_matrix_init(4,4,mtx);
   ambix_matrix_fill(mtx, AMBIX_MATRIX_IDENTITY);
   check_create_b2e("test2-b2e-float32.caf", AMBIX_SAMPLEFORMAT_FLOAT32,
-		   4,0,mtx,
+		   mtx,0,
 		   1024, 1e-7);
   STARTTEST("N3D\n");
   mtx=ambix_matrix_init(4,4,mtx);
   ambix_matrix_fill(mtx, AMBIX_MATRIX_N3D);
   check_create_b2e("test2-b2e-float32.caf", AMBIX_SAMPLEFORMAT_FLOAT32,
-		   4,0,mtx,
+		   mtx,0,
 		   1024, 1e-7);
   STARTTEST("SID\n");
   mtx=ambix_matrix_init(4,4,mtx);
   ambix_matrix_fill(mtx, AMBIX_MATRIX_SID);
   check_create_b2e("test2-b2e-float32.caf", AMBIX_SAMPLEFORMAT_FLOAT32,
-		   4,0,mtx,
+		   mtx,0,
 		   1024, 1e-7);
   STARTTEST("FuMa\n");
   mtx=ambix_matrix_init(4,4,mtx);
   ambix_matrix_fill(mtx, AMBIX_MATRIX_FUMA);
   check_create_b2e("test2-b2e-float32.caf", AMBIX_SAMPLEFORMAT_FLOAT32,
-		   4,0,mtx,
+		   mtx,0,
 		   1024, 1e-7);
   STOPTEST("\n");
   pass();
