@@ -52,7 +52,7 @@ int check_create_b2e(const char*path, ambix_sampleformat_t format,
 
   memset(&info, 0, sizeof(info));
   info.fileformat=AMBIX_EXTENDED;
-  info.ambichannels=fullambichannels; // FIXXME ??
+  info.ambichannels=ambixchannels;
   info.extrachannels=extrachannels;
   info.samplerate=44100;
   info.sampleformat=format;
