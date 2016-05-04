@@ -81,6 +81,7 @@ ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambix_info_
   ambix_t*ambix=NULL;
   ambix_err_t err = AMBIX_ERR_UNKNOWN;
   int32_t ambichannels=0, otherchannels=0;
+  int basic2extended = 0; /* writing extended file as basic */
 
   if((AMBIX_WRITE & mode) && (AMBIX_READ & mode)) {
     /* RDRW not yet implemented */
@@ -89,8 +90,21 @@ ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambix_info_
 
   if(AMBIX_WRITE & mode) {
     err=_check_write_ambixinfo(ambixinfo);
-    if(err!=AMBIX_ERR_SUCCESS)
-      return NULL;
+    if(err!=AMBIX_ERR_SUCCESS) {
+      if (AMBIX_BASIC == ambixinfo->fileformat) {
+	/* the user might actually try to write an EXTENDED file as BASIC:
+	 * - ambichannels do not form a full set
+	 * - otherchannels>0
+	 * LATER add better checks whether this is really the case
+	 */
+	ambixinfo->fileformat = AMBIX_EXTENDED;
+	err=_check_write_ambixinfo(ambixinfo);
+	if(err!=AMBIX_ERR_SUCCESS)
+	  return NULL;
+	basic2extended = 1;
+      } else
+	return NULL;
+    }
     ambichannels=ambixinfo->ambichannels;
     otherchannels=ambixinfo->extrachannels;
   }
@@ -112,7 +126,7 @@ ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambix_info_
           break;
         case(AMBIX_EXTENDED):
           /* the number of full channels is not clear yet!
-           * the user has to call setAdaptorMatrix() first */
+           * the user MUST call set_adaptormatrix() first */
           _ambix_info_set(ambix, AMBIX_EXTENDED, otherchannels, ambichannels, 0);
           break;
         }
@@ -153,6 +167,15 @@ ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambix_info_
 
     ambix->filemode=mode;
     memcpy(&ambix->info, &ambix->realinfo, sizeof(ambix->info));
+
+    if(basic2extended) {
+      /* write EXTENDED files as BASIC */
+#if 0
+      ambix_matrix_init(ambix->info.ambichannels, ambix->realinfo.ambichannels, &ambix->matrix);
+      ambix_matrix_fill(&ambix->matrix, AMBIX_MATRIX_IDENTITY);
+      ambix_matrix_pinv(&ambix->matrix, &ambix->matrix2);
+#endif
+    }
 
     if(0) {
     } else if(AMBIX_BASIC==wantformat && AMBIX_EXTENDED==haveformat) {
