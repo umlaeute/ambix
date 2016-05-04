@@ -24,6 +24,8 @@
 #include <unistd.h>
 #include <string.h>
 
+uint32_t max_u32(uint32_t a, uint32_t b) { return (a>b)?a:b;}
+
 int check_create_b2e(const char*path, ambix_sampleformat_t format,
 		      ambix_matrix_t*matrix, uint32_t extrachannels,
 		      uint32_t chunksize, float32_t eps) {
@@ -44,7 +46,7 @@ int check_create_b2e(const char*path, ambix_sampleformat_t format,
 
   //printf("test using '%s' [%d] with chunks of %d and eps=%f\n", path, (int)format, (int)chunksize, eps);
 
-  resultambidata=(float32_t*)calloc(fullambichannels*framesize, sizeof(float32_t));
+  resultambidata=(float32_t*)calloc(max_u32(fullambichannels, ambixchannels)*framesize, sizeof(float32_t));
   ambidata=(float32_t*)calloc(fullambichannels*framesize, sizeof(float32_t));
 
   resultotherdata=(float32_t*)calloc(extrachannels*framesize, sizeof(float32_t));
