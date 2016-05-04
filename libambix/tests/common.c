@@ -92,7 +92,7 @@ float32_t data_diff(uint32_t line, const float32_t*A, const float32_t*B, uint64_
     if(vabs>eps) {
       overcount++;
       if(overcount<MAX_OVER)
-        printf("%f - %f=%f @ %d\n", A[i], B[i], v, (int)i);
+        printf("%f - %f=%g @ %d\n", A[i], B[i], v, (int)i);
     }
 
   }
