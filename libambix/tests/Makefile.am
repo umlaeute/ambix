@@ -1,4 +1,5 @@
-AUTOMAKE_OPTIONS = foreign serial-tests
+#AUTOMAKE_OPTIONS = foreign serial-tests
+AUTOMAKE_OPTIONS = foreign
 SUBDIRS=data
 
 #TESTS_ENVIRONMENT = RUNTESTS_NOLOG=yes TESTDIR=$(srcdir)
