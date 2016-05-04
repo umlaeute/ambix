@@ -31,7 +31,7 @@ void check_create_simple(const char*path, ambix_sampleformat_t format, float32_t
   float32_t*orgdata,*data,*resultdata;
   uint32_t frames=441000;
   uint32_t channels=4;
-  float32_t periods=20000;
+  float32_t periods=4724;
   int64_t err64;
   float32_t diff=0.;
   uint32_t gotframes;
