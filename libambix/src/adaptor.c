@@ -150,8 +150,8 @@ ambix_err_t _ambix_mergeAdaptormatrix_float32(const TYPE*ambi_data, const ambix_
                                               const TYPE*otherdata, uint32_t source2channels,
                                               TYPE*destination, int64_t frames) {
   float32_t**mtx=matrix->data;
-  const uint32_t fullambichannels=matrix->rows;
-  const uint32_t ambixchannels=matrix->cols;
+  const uint32_t fullambichannels=matrix->cols;
+  const uint32_t ambixchannels=matrix->rows;
   int64_t f;
   for(f=0; f<frames; f++) {
     uint32_t chan;
