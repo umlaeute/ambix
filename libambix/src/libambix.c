@@ -30,7 +30,6 @@
 # include <string.h>
 #endif /* HAVE_STRING_H */
 
-
 /* forward declarations */
 ambix_err_t	_ambix_write_header	(ambix_t*ambix);
 
@@ -176,7 +175,6 @@ ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambix_info_
       ambix_matrix_pinv(&ambix->matrix, &ambix->matrix2);
 #endif
     }
-
     if(0) {
     } else if(AMBIX_BASIC==wantformat && AMBIX_EXTENDED==haveformat) {
       ambix->info.fileformat=AMBIX_BASIC;

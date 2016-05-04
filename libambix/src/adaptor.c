@@ -30,13 +30,11 @@
 static inline uint64_t max_u64(uint64_t a, uint64_t b) {
   return((a>b)?a:b);
 }
-
 ambix_err_t _ambix_adaptorbuffer_resize(ambix_t*ambix, uint64_t frames, uint16_t itemsize) {
   uint32_t ambichannels=max_u64(ambix->info.ambichannels,ambix->realinfo.ambichannels);
   uint32_t extrachannels=max_u64(ambix->info.extrachannels,ambix->realinfo.extrachannels);
   uint32_t channels=ambichannels + extrachannels;
   uint64_t size=channels*frames*itemsize;
-
   if(frames<1 || channels<1)
     return AMBIX_ERR_SUCCESS;
   if(size<1)
@@ -106,7 +104,7 @@ _AMBIX_SPLITADAPTOR(int16);
         for(inchan=0; inchan<rawambichannels; inchan++) {               \
           sum+=mtx[outchan][inchan] * src[inchan];                      \
         }                                                               \
-		*dest_ambi++=(type##_t)sum;  /* FIXXXME: integer saturation */   \
+        *dest_ambi++=(type##_t)sum;  /* FIXXXME: integer saturation */  \
       }                                                                 \
       for(inchan=rawambichannels; inchan<sourcechannels; inchan++)      \
         *dest_other++=src[inchan];                                      \

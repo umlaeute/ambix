@@ -153,7 +153,6 @@ int check_create_b2e(const char*path, ambix_sampleformat_t format,
   if(fail_if((AMBIX_ERR_SUCCESS!=ambix_close(ambix)), __LINE__, "closing ambix file %p", ambix))return 1;
   ambix=NULL;
 
-
   /* read data back via EXTENDED */
   STARTTEST("readback EXTENDED\n");
   memset(&rinfo, 0, sizeof(rinfo));
