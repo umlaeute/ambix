@@ -128,7 +128,7 @@ int check_create_b2e(const char*path, ambix_sampleformat_t format,
   if(fail_if((AMBIX_BASIC!=rinfo.fileformat), __LINE__, "fileformat mismatch %d!=%d", (int)AMBIX_BASIC, (int)rinfo.fileformat))return 1;
   if(fail_if((info.samplerate!=rinfo.samplerate), __LINE__, "samplerate mismatch %g!=%g", (float)info.samplerate, (float)rinfo.samplerate))return 1;
   if(fail_if((info.sampleformat!=rinfo.sampleformat), __LINE__, "sampleformat mismatch %d!=%d", (int)info.sampleformat, (int)rinfo.sampleformat))return 1;
-  if(fail_if((info.ambichannels!=rinfo.ambichannels), __LINE__, "ambichannels mismatch %d!=%d", (int)info.ambichannels, (int)rinfo.ambichannels))return 1;
+  if(fail_if((fullambichannels!=rinfo.ambichannels), __LINE__, "ambichannels mismatch %d!=%d", (int)fullambichannels, (int)rinfo.ambichannels))return 1;
   if(fail_if((info.extrachannels!=rinfo.extrachannels), __LINE__, "extrachannels mismatch %d!=%d", (int)info.extrachannels, (int)rinfo.extrachannels))return 1;
 
   gotframes=0;
