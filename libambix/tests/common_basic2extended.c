@@ -34,7 +34,7 @@ int check_create_b2e(const char*path, ambix_sampleformat_t format,
   float32_t*orgambidata,*ambidata,*resultambidata;
   float32_t*orgotherdata,*otherdata,*resultotherdata;
   uint32_t framesize=441000;
-  float32_t periods=20000;
+  float32_t periods=8192;
   const ambix_matrix_t*mtx2=NULL;
   int64_t err64, gotframes;
   float32_t diff=0.;
