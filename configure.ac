@@ -162,7 +162,6 @@ AX_PTHREAD
 
 # run unitttests in valgrind
 AC_SUBST(VALGRIND_CHECK_RULES)
-m4_ifdef([AX_VALGRIND_DFLT], [AX_VALGRIND_DFLT([memcheck], [on])])
 m4_ifdef([AX_VALGRIND_CHECK], [AX_VALGRIND_CHECK])
 
 AC_OUTPUT
