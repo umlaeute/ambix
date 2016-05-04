@@ -229,6 +229,18 @@ ambix_err_t _ambix_write_uuidchunk(ambix_t*ax, const void*data, int64_t datasize
 ambix_err_t
 _ambix_matrix_fill_data_byteswapped(ambix_matrix_t*mtx, const number32_t*data);
 
+/** @brief Transpose a matrix
+ *
+ * swap rows/columns: a[i][j] -> a[j][i]
+ *
+ * @param matrix the matrix to transpose
+ * @param xirtam the result matrix (if NULL one will be allocated for you)
+ * @return a pointer to the result matrix (or NULL on failure)
+ */
+ambix_matrix_t*
+_ambix_matrix_transpose(const ambix_matrix_t*matrix, ambix_matrix_t*xirtam);
+
+/** @brief Invert a matrix using Gauss-Jordan
 
 /** @brief byte-swap 32bit data
  * @param n a 32bit chunk in the wrong byte order
