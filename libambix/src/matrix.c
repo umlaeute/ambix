@@ -80,7 +80,7 @@ ambix_matrix_init(uint32_t rows, uint32_t cols, ambix_matrix_t*orgmtx) {
 }
 
 ambix_matrix_t*
-ambix_matrix_transpose(const ambix_matrix_t*matrix, ambix_matrix_t*xirtam) {
+_ambix_matrix_transpose(const ambix_matrix_t*matrix, ambix_matrix_t*xirtam) {
   uint32_t rows, cols, r, c;
   float32_t**mtx, **xtm;
   if(!xirtam)
@@ -146,7 +146,7 @@ ambix_matrix_fill_data_transposed(ambix_matrix_t*mtx, const float32_t*data, int 
     err=ambix_matrix_fill_data(xtm, data);
 
   if(AMBIX_ERR_SUCCESS==err) {
-    ambix_matrix_t*resu=ambix_matrix_transpose(mtx, xtm);
+    ambix_matrix_t*resu=_ambix_matrix_transpose(mtx, xtm);
     if(!resu)
       err=AMBIX_ERR_UNKNOWN;
   }
@@ -335,8 +335,9 @@ ambix_matrix_fill(ambix_matrix_t*matrix, ambix_matrixtype_t typ) {
   return matrix;
 }
 
+/* this modifies the input matrix! */
 ambix_matrix_t*
-ambix_matrix_invert(ambix_matrix_t*input, ambix_matrix_t*inverse)
+_ambix_matrix_invert(ambix_matrix_t*input, ambix_matrix_t*inverse)
 {
   ambix_matrix_t*inverse_org = inverse;
   int i, k;
@@ -420,7 +421,7 @@ ambix_matrix_pinv(const ambix_matrix_t*A, ambix_matrix_t*P) {
 
   if (A->rows==A->cols) {
     ambix_matrix_t*Ax = ambix_matrix_copy(A, NULL);
-    result = ambix_matrix_invert(Ax, P); // do normal inverse if square matrix
+    result = _ambix_matrix_invert(Ax, P); // do normal inverse if square matrix
     if(Ax)   ambix_matrix_destroy(Ax);
   } else {
     /* we'll have to do the pseudo-inverse:
@@ -431,19 +432,19 @@ ambix_matrix_pinv(const ambix_matrix_t*A, ambix_matrix_t*P) {
     ambix_matrix_t *temp = NULL;
     ambix_matrix_t *temp2 = NULL;
     do {
-      At = ambix_matrix_transpose(A, At);
+      At = _ambix_matrix_transpose(A, At);
 
       if (A->rows > A->cols) {
 	temp = ambix_matrix_multiply(At, A, NULL);
 	if (!temp)break;
-	temp2 = ambix_matrix_invert(temp, temp2);
+	temp2 = _ambix_matrix_invert(temp, temp2);
 	if (!temp2)break;
 
 	result = ambix_matrix_multiply(temp2, At, P);
       } else {
 	temp = ambix_matrix_multiply(A, At, NULL);
 	if (!temp)break;
-	temp2 = ambix_matrix_invert(temp, temp2);
+	temp2 = _ambix_matrix_invert(temp, temp2);
 	if (!temp2)break;
 
 	result = ambix_matrix_multiply(At, temp2, P);
