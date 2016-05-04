@@ -201,6 +201,10 @@ static void test__amp(unsigned int rows, unsigned int cols,
 
   errf=matrix_diff(line, A, A0, eps);
   fail_if(!(errf<eps), line, "pseudo-inverted matrix has changed by %f (>%f)", errf, eps);
+
+  if(A     )ambix_matrix_destroy(A);
+  if(A0    )ambix_matrix_destroy(A0);
+  if(result)ambix_matrix_destroy(result);
 }
 static void test_ambix_matrix_pinv(float32_t eps) {
   /*
