@@ -81,6 +81,11 @@ TESTS += ambix_writef_int16
 check_PROGRAMS += ambix_writef_int16
 ambix_writef_int16_SOURCES = ambix_writef_int16.c
 
+#basic2extended_float32_1024.c    common_basic2extended.c
+TESTS          += basic2extended_float32_1024
+check_PROGRAMS += basic2extended_float32_1024
+basic2extended_float32_1024_SOURCES = basic2extended_float32_1024.c common_basic2extended.c common.c
+
 
 .PHONY: buildtests
 buildtests: $(check_PROGRAMS)
