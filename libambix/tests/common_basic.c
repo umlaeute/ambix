@@ -99,5 +99,3 @@ void check_create_simple(const char*path, ambix_sampleformat_t format, float32_t
 
   unlink(path);
 }
-
-
