@@ -126,7 +126,7 @@ void data_transpose(float32_t*outdata, const float32_t*indata, uint32_t inrows, 
 
 
 float32_t*data_sine(uint64_t frames, uint32_t channels, float32_t freq) {
-  float32_t periods=44100./freq;
+  float32_t periods=freq/44100.;
   float32_t*data=(float32_t*)calloc(frames*channels, sizeof(float32_t));
   float32_t*datap=data;
   int64_t frame;
