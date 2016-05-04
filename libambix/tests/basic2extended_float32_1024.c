@@ -56,6 +56,7 @@ int main(int argc, char**argv) {
 		   mtx,0,
 		   1024, 1e-7);
   STOPTEST("\n");
+  if(mtx)ambix_matrix_destroy(mtx);
   pass();
   return 0;
 }
