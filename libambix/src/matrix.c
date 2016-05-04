@@ -417,11 +417,12 @@ _ambix_matrix_invert(ambix_matrix_t*input, ambix_matrix_t*inverse)
 
 ambix_matrix_t*
 ambix_matrix_pinv(const ambix_matrix_t*A, ambix_matrix_t*P) {
+  const float32_t eps=1e-7;
   ambix_matrix_t *result = NULL;
 
   if (A->rows==A->cols) {
     ambix_matrix_t*Ax = ambix_matrix_copy(A, NULL);
-    result = _ambix_matrix_invert(Ax, P); // do normal inverse if square matrix
+    result = _ambix_matrix_invert_gaussjordan(Ax, P, eps); // do normal inverse if square matrix
     if(Ax)   ambix_matrix_destroy(Ax);
   } else {
     /* we'll have to do the pseudo-inverse:
@@ -437,14 +438,14 @@ ambix_matrix_pinv(const ambix_matrix_t*A, ambix_matrix_t*P) {
       if (A->rows > A->cols) {
 	temp = ambix_matrix_multiply(At, A, NULL);
 	if (!temp)break;
-	temp2 = _ambix_matrix_invert(temp, temp2);
+	temp2 = _ambix_matrix_invert_gaussjordan(temp, temp2, eps);
 	if (!temp2)break;
 
 	result = ambix_matrix_multiply(temp2, At, P);
       } else {
 	temp = ambix_matrix_multiply(A, At, NULL);
 	if (!temp)break;
-	temp2 = _ambix_matrix_invert(temp, temp2);
+	temp2 = _ambix_matrix_invert_gaussjordan(temp, temp2, eps);
 	if (!temp2)break;
 
 	result = ambix_matrix_multiply(At, temp2, P);
