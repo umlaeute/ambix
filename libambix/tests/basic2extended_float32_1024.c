@@ -49,7 +49,7 @@ int main(int argc, char**argv) {
   check_create_b2e("test2-b2e-float32.caf", AMBIX_SAMPLEFORMAT_FLOAT32,
 		   mtx,0,
 		   1024, 1e-7);
-  STARTTEST("FuMa\n");
+  STARTTEST("FuMa[f]\n");
   mtx=ambix_matrix_init(4,4,mtx);
   ambix_matrix_fill(mtx, AMBIX_MATRIX_FUMA);
   check_create_b2e("test2-b2e-float32.caf", AMBIX_SAMPLEFORMAT_FLOAT32,
