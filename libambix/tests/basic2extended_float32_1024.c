@@ -35,8 +35,7 @@ int main(int argc, char**argv) {
 
   STARTTEST("ambi=identity[4x4], other=0, FLOAT32\n");
   mtx=ambix_matrix_init(4,4,mtx);
-  ambix_matrix_fill(mtx, AMBIX_MATRIX_N3D);
-  matrix_print(mtx);
+  ambix_matrix_fill(mtx, AMBIX_MATRIX_IDENTITY);
   check_create_b2e("test2-b2e-float32.caf", AMBIX_SAMPLEFORMAT_FLOAT32,
 		   4,0,mtx,
 		   1024, 1e-7);
