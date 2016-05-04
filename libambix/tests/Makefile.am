@@ -2,7 +2,9 @@ AUTOMAKE_OPTIONS = foreign serial-tests
 SUBDIRS=data
 
 #TESTS_ENVIRONMENT = RUNTESTS_NOLOG=yes TESTDIR=$(srcdir)
-AM_TESTS_ENVIRONMENT = TESTDIR=$(srcdir) ./runtest.sh
+#AM_TESTS_ENVIRONMENT = TESTDIR=$(srcdir) ./runtest.sh
+
+@VALGRIND_CHECK_RULES@
 
 AM_CPPFLAGS = -I$(top_srcdir)/libambix
 LDADD = $(top_builddir)/libambix/src/libambix.la
