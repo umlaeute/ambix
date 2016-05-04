@@ -340,6 +340,12 @@ ambix_matrix_pinv(const ambix_matrix_t*A, ambix_matrix_t*P) {
   const float32_t eps=1e-7;
   ambix_matrix_t *result = NULL;
 
+  /* try cholesky inversion */
+  result=_ambix_matrix_pinvert_cholesky(A, P, eps);
+  if(result)
+    return result;
+
+  /* if that fails (should never happen), gall back to gauss-jordan */
   if (A->rows==A->cols) {
     ambix_matrix_t*Ax = ambix_matrix_copy(A, NULL);
     result = _ambix_matrix_invert_gaussjordan(Ax, P, eps); // do normal inverse if square matrix
