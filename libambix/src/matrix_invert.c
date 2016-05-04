@@ -196,9 +196,9 @@ static void _am_cholesky2_inverse(ambix_matrix_t*mtx)
   }
 
   // ugly fix to return only inverse
-  for (int col = 1; col < columns; col++)
-    for (int row = 0; row < col; row++)
-      matrix[col][row] = matrix[row][col];
+  for (i = 1; i < columns; i++)
+    for (j = 0; j < i; j++)
+      matrix[i][j] = matrix[j][i];
 }
 
 
