@@ -41,7 +41,7 @@ int check_create_b2e(const char*path, ambix_sampleformat_t format,
   STARTTEST("ambi=%d[%dx%d],extra=%d, format=%d\n",
 	    ambichannels, matrix?matrix->rows:-1, matrix?matrix->cols:-1, extrachannels, format);
 
-  printf("test using '%s' [%d] with chunks of %d and eps=%f\n", path, (int)format, (int)chunksize, eps);
+  //printf("test using '%s' [%d] with chunks of %d and eps=%f\n", path, (int)format, (int)chunksize, eps);
 
   resultambidata=(float32_t*)calloc(ambichannels*framesize, sizeof(float32_t));
   ambidata=(float32_t*)calloc(ambichannels*framesize, sizeof(float32_t));
@@ -75,14 +75,14 @@ int check_create_b2e(const char*path, ambix_sampleformat_t format,
   err=ambix_set_adaptormatrix(ambix, matrix);
   if(1 || AMBIX_ERR_SUCCESS!=err) {
     ambix_matrix_t*pinv=0;
-    printf("adaptor matrix:\n");
-    matrix_print(matrix);
+    //printf("adaptor matrix:\n"); matrix_print(matrix);
     pinv=ambix_matrix_pinv(matrix, pinv);
     if(pinv) {
-      printf("pseudo-inverse:\n");
-      matrix_print(pinv);
-    } else
-      printf("no pseudo-inverse!\n");
+      //printf("pseudo-inverse:\n"); matrix_print(pinv);
+    } else {
+      //printf("no pseudo-inverse!\n");
+      ;
+    }
   }
   if(fail_if((AMBIX_ERR_SUCCESS!=err),
 	     __LINE__, "failed setting adaptor matrix [%d]", err))return 1;
@@ -92,14 +92,14 @@ int check_create_b2e(const char*path, ambix_sampleformat_t format,
     uint32_t chunks = framesize/chunksize;
     uint32_t framesleft=framesize;
     uint32_t frame;
-    printf("writing %d chunks of %d frames\n", (int)chunks, (int)chunksize);
+    //printf("writing %d chunks of %d frames\n", (int)chunks, (int)chunksize);
     for(frame=0; frame<chunks; frame++) {
       err64=ambix_writef_float32(ambix, ambidata+ambichannels*frame*chunksize, otherdata+extrachannels*frame*chunksize, chunksize);
       if(fail_if((err64!=chunksize), __LINE__, "wrote only %d chunksize of %d", (int)err64, (int)chunksize))return 1;
       framesleft-=chunksize;
     }
     subframe=framesleft;
-    printf("writing rest of %d frames\n", (int)subframe);
+    //printf("writing rest of %d frames\n", (int)subframe);
     err64=ambix_writef_float32(ambix, ambidata+ambichannels*frame*chunksize, otherdata+extrachannels*frame*chunksize, subframe);
     if(fail_if((err64!=subframe), __LINE__, "wrote only %d subframe of %d", (int)err64, (int)subframe))return 1;
 
