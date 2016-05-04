@@ -27,9 +27,14 @@
 # include <stdlib.h>
 #endif /* HAVE_STDLIB_H */
 
-ambix_err_t _ambix_adaptorbuffer_resize(ambix_t*ambix, uint64_t frames, uint16_t itemsize) {
-  uint32_t channels=ambix->info.ambichannels + ambix->info.extrachannels;
+static inline uint64_t max_u64(uint64_t a, uint64_t b) {
+  return((a>b)?a:b);
+}
 
+ambix_err_t _ambix_adaptorbuffer_resize(ambix_t*ambix, uint64_t frames, uint16_t itemsize) {
+  uint32_t ambichannels=max_u64(ambix->info.ambichannels,ambix->realinfo.ambichannels);
+  uint32_t extrachannels=max_u64(ambix->info.extrachannels,ambix->realinfo.extrachannels);
+  uint32_t channels=ambichannels + extrachannels;
   uint64_t size=channels*frames*itemsize;
 
   if(frames<1 || channels<1)
