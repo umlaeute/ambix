@@ -36,7 +36,7 @@ const_matrix_SOURCES = const_matrix.c common.c
 
 TESTS          += none_float32
 check_PROGRAMS += none_float32
-none_float32_SOURCES = none_float32.c ambix_none.c common.c
+none_float32_SOURCES = none_float32.c common_none.c common.c
 
 TESTS          += basic_float32 basic_pcm32 basic_pcm16
 check_PROGRAMS += basic_float32 basic_pcm32 basic_pcm16

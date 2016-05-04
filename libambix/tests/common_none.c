@@ -98,5 +98,3 @@ void check_create_none(const char*path, ambix_sampleformat_t format) {
 
   unlink(path);
 }
-
-
