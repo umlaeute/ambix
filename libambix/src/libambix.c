@@ -111,13 +111,13 @@ ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambix_info_
 
   ambix=(ambix_t*)calloc(1, sizeof(ambix_t));
   if(AMBIX_ERR_SUCCESS == _ambix_open(ambix, path, mode, ambixinfo)) {
-    const ambix_fileformat_t wantformat=ambixinfo->fileformat;
+    const ambix_fileformat_t wantformat=basic2extended?AMBIX_BASIC:ambixinfo->fileformat;
     ambix_fileformat_t haveformat;
     uint32_t channels = ambix->channels;
     /* successfully opened, initialize common stuff... */
     if(ambix->is_AMBIX) {
       if(AMBIX_WRITE & mode) {
-        switch(wantformat) {
+        switch(ambixinfo->fileformat) {
         case(AMBIX_NONE):
           _ambix_info_set(ambix, AMBIX_NONE, channels, 0, 0);
           break;
@@ -282,6 +282,10 @@ ambix_err_t ambix_set_adaptormatrix	(ambix_t*ambix, const ambix_matrix_t*matrix)
     if(ambix->startedWriting)    /* too late, writing started already */
       return AMBIX_ERR_UNKNOWN;
 
+    /* check whether the reduced set has the same number of channels as we created our file for */
+    if(ambix->realinfo.ambichannels != matrix->cols)
+      return AMBIX_ERR_INVALID_DIMENSION;
+
     /* check whether the matrix will expand to a full set */
     if(!ambix_is_fullset(matrix->rows))
       return AMBIX_ERR_INVALID_DIMENSION;
@@ -296,7 +300,8 @@ ambix_err_t ambix_set_adaptormatrix	(ambix_t*ambix, const ambix_matrix_t*matrix)
       return AMBIX_ERR_UNKNOWN;
 
     ambix->realinfo.fileformat=AMBIX_EXTENDED;
-    ambix->realinfo.ambichannels=matrix->cols;
+    //ambix->realinfo.ambichannels=matrix->cols;
+    ambix->info.ambichannels=matrix->rows;
 
     ambix->use_matrix=2;
 
