@@ -192,7 +192,20 @@ typedef struct ambix_info_t {
   double samplerate;
   /** sample type of the ambix file */
   ambix_sampleformat_t sampleformat;
-  /** layout type of the ambix file */
+
+  /** layout type of the ambix file
+   *
+   * When opening a file, this format specifies the format from the
+   * user-perspective. This is not necessarily the same as the actual
+   * format of the file on disk.
+   * E.g. when setting this to @ref AMBIX_BASIC to read an @ref AMBIX_EXTENDED
+   * file, the library will automatically convert the reduced channel set
+   * to the full set (using the embedded adaptor matrix).
+   * Similarily, when setting this to @ref AMBIX_BASIC for writing a file,
+   * and then setting an adaptor matrix (using @ref ambix_set_adaptormatrix())
+   * the actual file will be @ref AMBIX_EXTENDED, but the user has to provide
+   * the full set (and the library will store the reduced set).
+   */
   ambix_fileformat_t fileformat;
 
   /** number of non-ambisonics channels in the file
@@ -202,10 +215,14 @@ typedef struct ambix_info_t {
 
   /** number of (raw) ambisonics channels present in the file.
    *
-   * If the file contains a full set of ambisonics channels (always true if
-   * ambixformat==AMBIX_BASIC), then \f$ambichannel=(order_{ambi}+1)^2\f$; if
-   * the file contains an adaptor matrix, it has to be used to reconstruct the
-   * full set by multiplying the adaptor matrix with the channels present.
+   * If the file contains a full set of ambisonics channels (format==@ref AMBIX_BASIC),
+   * then \f$ambichannel=(order_{ambi}+1)^2\f$; if the file contains an adaptor
+   * matrix, it has to be used to reconstruct the full set by multiplying the
+   * adaptor matrix with the channels present.
+   *
+   * @remark when opening for WRITING an @ref AMBIX_EXTENDED file as
+   * @ref AMBIX_BASIC (by specifying an adaptor matrix via @ref ambix_set_adaptormatrix()),
+   * this value must contain the reduced numer of channels (as stored on disk).
    */
   uint32_t ambichannels;
 } ambix_info_t;

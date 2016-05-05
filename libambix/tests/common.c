@@ -68,7 +68,7 @@ float32_t matrix_diff(uint32_t line, const ambix_matrix_t*A, const ambix_matrix_
     }
 
   if(overcount>MAX_OVER)
-    printf("accumulated error %f over %d/%d frames\n", sum, (int)overcount, (int)(A->cols*B->rows));
+    printf("accumulated error %f over %d/%d frames (eps=%g)\n", sum, (int)overcount, (int)(A->cols*B->rows), eps);
   return maxdiff;
 }
 
@@ -92,13 +92,13 @@ float32_t data_diff(uint32_t line, const float32_t*A, const float32_t*B, uint64_
     if(vabs>eps) {
       overcount++;
       if(overcount<MAX_OVER)
-        printf("%f - %f=%f @ %d\n", A[i], B[i], v, (int)i);
+        printf("%+f - %+f=%g @ %d\n", A[i], B[i], v, (int)i);
     }
 
   }
 
   if(overcount>MAX_OVER)
-    printf("accumulated error %f over %d/%d frames\n", sum, (int)overcount, (int)frames);
+    printf("accumulated error %f over %d/%d frames (eps=%g)\n", sum, (int)overcount, (int)frames, eps);
 
   return maxdiff;
 }
@@ -126,7 +126,7 @@ void data_transpose(float32_t*outdata, const float32_t*indata, uint32_t inrows, 
 
 
 float32_t*data_sine(uint64_t frames, uint32_t channels, float32_t freq) {
-  float32_t periods=44100./freq;
+  float32_t periods=freq/44100.;
   float32_t*data=(float32_t*)calloc(frames*channels, sizeof(float32_t));
   float32_t*datap=data;
   int64_t frame;

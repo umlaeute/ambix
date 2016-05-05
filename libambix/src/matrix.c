@@ -80,7 +80,7 @@ ambix_matrix_init(uint32_t rows, uint32_t cols, ambix_matrix_t*orgmtx) {
 }
 
 ambix_matrix_t*
-ambix_matrix_transpose(const ambix_matrix_t*matrix, ambix_matrix_t*xirtam) {
+_ambix_matrix_transpose(const ambix_matrix_t*matrix, ambix_matrix_t*xirtam) {
   uint32_t rows, cols, r, c;
   float32_t**mtx, **xtm;
   if(!xirtam)
@@ -146,7 +146,7 @@ ambix_matrix_fill_data_transposed(ambix_matrix_t*mtx, const float32_t*data, int 
     err=ambix_matrix_fill_data(xtm, data);
 
   if(AMBIX_ERR_SUCCESS==err) {
-    ambix_matrix_t*resu=ambix_matrix_transpose(mtx, xtm);
+    ambix_matrix_t*resu=_ambix_matrix_transpose(mtx, xtm);
     if(!resu)
       err=AMBIX_ERR_UNKNOWN;
   }
@@ -336,91 +336,19 @@ ambix_matrix_fill(ambix_matrix_t*matrix, ambix_matrixtype_t typ) {
 }
 
 ambix_matrix_t*
-ambix_matrix_invert(ambix_matrix_t*input, ambix_matrix_t*inverse)
-{
-  ambix_matrix_t*inverse_org = inverse;
-  int i, k;
-  float32_t *a1, *b1, *a2, *b2;
-
-  int ok=0; /* error counter */
-
-  if(input==0)
-  { // no input matrix
-    return NULL;
-  }
-
-  if (input->cols != input->rows)
-  {// matrix is not squared
-    return NULL;
-  }
-
-
-  int col=input->cols, row=input->rows;
-
-  /* 1a reserve space for the inverted matrix */
-  if(!inverse)
-  {
-    inverse=ambix_matrix_init(row, col, NULL);
-  }
-
-  float32_t **original=input->data;
-  float32_t **inverted=inverse->data;
-
-
-  /* 1b make an eye-shaped float-buf for B */
-  ambix_matrix_fill(inverse, AMBIX_MATRIX_IDENTITY);
-
-  /* 2. do the Gauss-Jordan */
-  for (k=0; k<row; k++) {
-    /* adjust current row */
-    float32_t diagel = original[k][k];
-    float32_t i_diagel = diagel?1./diagel:0;
-    if (!diagel) {
-      ok++;
-    }
-
-    /* normalize current row (set the diagonal-element to 1 */
-    for (i=0; i < row; i++)
-    {
-      original[k][i] *= i_diagel;
-      inverted[k][i] *= i_diagel;
-    }
-
-    /* eliminate the k-th element in each row by adding the weighted normalized row */
-    for (i=0; i < row; i++)
-    {
-      if (i-k)
-      {
-        float32_t f =-original[i][k];
-        int j;
-        for (j=row-1; j >= 0; j--) {
-
-          original[i][j] += f * original[k][j];
-          inverted[i][j] += f * inverted[k][j];
-
-        }
-
-      }
-    }
-  }
-
-  if (ok > 0) {
-    if(inverse != inverse_org)
-      /* if the 'inverse' was locally allocated, free it */
-      ambix_matrix_destroy(inverse);
-    inverse=NULL;
-  }
-
-  return inverse;
-}
-
-ambix_matrix_t*
 ambix_matrix_pinv(const ambix_matrix_t*A, ambix_matrix_t*P) {
+  const float32_t eps=1e-7;
   ambix_matrix_t *result = NULL;
 
+  /* try cholesky inversion */
+  result=_ambix_matrix_pinvert_cholesky(A, P, eps);
+  if(result)
+    return result;
+
+  /* if that fails (should never happen), gall back to gauss-jordan */
   if (A->rows==A->cols) {
     ambix_matrix_t*Ax = ambix_matrix_copy(A, NULL);
-    result = ambix_matrix_invert(Ax, P); // do normal inverse if square matrix
+    result = _ambix_matrix_invert_gaussjordan(Ax, P, eps); // do normal inverse if square matrix
     if(Ax)   ambix_matrix_destroy(Ax);
   } else {
     /* we'll have to do the pseudo-inverse:
@@ -431,19 +359,19 @@ ambix_matrix_pinv(const ambix_matrix_t*A, ambix_matrix_t*P) {
     ambix_matrix_t *temp = NULL;
     ambix_matrix_t *temp2 = NULL;
     do {
-      At = ambix_matrix_transpose(A, At);
+      At = _ambix_matrix_transpose(A, At);
 
       if (A->rows > A->cols) {
 	temp = ambix_matrix_multiply(At, A, NULL);
 	if (!temp)break;
-	temp2 = ambix_matrix_invert(temp, temp2);
+	temp2 = _ambix_matrix_invert_gaussjordan(temp, temp2, eps);
 	if (!temp2)break;
 
 	result = ambix_matrix_multiply(temp2, At, P);
       } else {
 	temp = ambix_matrix_multiply(A, At, NULL);
 	if (!temp)break;
-	temp2 = ambix_matrix_invert(temp, temp2);
+	temp2 = _ambix_matrix_invert_gaussjordan(temp, temp2, eps);
 	if (!temp2)break;
 
 	result = ambix_matrix_multiply(At, temp2, P);

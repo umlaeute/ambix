@@ -160,5 +160,8 @@ AC_CHECK_FUNCS([strndup])
 
 AX_PTHREAD
 
+# run unitttests in valgrind
+AC_SUBST(VALGRIND_CHECK_RULES)
+m4_ifdef([AX_VALGRIND_CHECK], [AX_VALGRIND_CHECK])
 
 AC_OUTPUT

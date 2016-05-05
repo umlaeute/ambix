@@ -30,7 +30,6 @@
 # include <string.h>
 #endif /* HAVE_STRING_H */
 
-
 /* forward declarations */
 ambix_err_t	_ambix_write_header	(ambix_t*ambix);
 
@@ -81,6 +80,7 @@ ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambix_info_
   ambix_t*ambix=NULL;
   ambix_err_t err = AMBIX_ERR_UNKNOWN;
   int32_t ambichannels=0, otherchannels=0;
+  int basic2extended = 0; /* writing extended file as basic */
 
   if((AMBIX_WRITE & mode) && (AMBIX_READ & mode)) {
     /* RDRW not yet implemented */
@@ -89,21 +89,34 @@ ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambix_info_
 
   if(AMBIX_WRITE & mode) {
     err=_check_write_ambixinfo(ambixinfo);
-    if(err!=AMBIX_ERR_SUCCESS)
-      return NULL;
+    if(err!=AMBIX_ERR_SUCCESS) {
+      if (AMBIX_BASIC == ambixinfo->fileformat) {
+	/* the user might actually try to write an EXTENDED file as BASIC:
+	 * - ambichannels do not form a full set
+	 * - otherchannels>0
+	 * LATER add better checks whether this is really the case
+	 */
+	ambixinfo->fileformat = AMBIX_EXTENDED;
+	err=_check_write_ambixinfo(ambixinfo);
+	if(err!=AMBIX_ERR_SUCCESS)
+	  return NULL;
+	basic2extended = 1;
+      } else
+	return NULL;
+    }
     ambichannels=ambixinfo->ambichannels;
     otherchannels=ambixinfo->extrachannels;
   }
 
   ambix=(ambix_t*)calloc(1, sizeof(ambix_t));
   if(AMBIX_ERR_SUCCESS == _ambix_open(ambix, path, mode, ambixinfo)) {
-    const ambix_fileformat_t wantformat=ambixinfo->fileformat;
+    const ambix_fileformat_t wantformat=basic2extended?AMBIX_BASIC:ambixinfo->fileformat;
     ambix_fileformat_t haveformat;
     uint32_t channels = ambix->channels;
     /* successfully opened, initialize common stuff... */
     if(ambix->is_AMBIX) {
       if(AMBIX_WRITE & mode) {
-        switch(wantformat) {
+        switch(ambixinfo->fileformat) {
         case(AMBIX_NONE):
           _ambix_info_set(ambix, AMBIX_NONE, channels, 0, 0);
           break;
@@ -112,7 +125,7 @@ ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambix_info_
           break;
         case(AMBIX_EXTENDED):
           /* the number of full channels is not clear yet!
-           * the user has to call setAdaptorMatrix() first */
+           * the user MUST call set_adaptormatrix() first */
           _ambix_info_set(ambix, AMBIX_EXTENDED, otherchannels, ambichannels, 0);
           break;
         }
@@ -154,6 +167,14 @@ ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambix_info_
     ambix->filemode=mode;
     memcpy(&ambix->info, &ambix->realinfo, sizeof(ambix->info));
 
+    if(basic2extended) {
+      /* write EXTENDED files as BASIC */
+#if 0
+      ambix_matrix_init(ambix->info.ambichannels, ambix->realinfo.ambichannels, &ambix->matrix);
+      ambix_matrix_fill(&ambix->matrix, AMBIX_MATRIX_IDENTITY);
+      ambix_matrix_pinv(&ambix->matrix, &ambix->matrix2);
+#endif
+    }
     if(0) {
     } else if(AMBIX_BASIC==wantformat && AMBIX_EXTENDED==haveformat) {
       ambix->info.fileformat=AMBIX_BASIC;
@@ -250,6 +271,43 @@ ambix_err_t ambix_set_adaptormatrix	(ambix_t*ambix, const ambix_matrix_t*matrix)
     /* ready to write it to file */
     ambix->pendingHeaders=1;
     return AMBIX_ERR_SUCCESS;
+  } else if((ambix->filemode & AMBIX_WRITE) && (AMBIX_BASIC == ambix->info.fileformat)) {
+    ambix_matrix_t*pinv=0;
+    /* user requested AMBIX_BASIC, but now sets a matrix...
+     * so we write an ambix-extended format, and create the ambix-channels by
+     * multiplying the full-set with pinv(matrix)
+     */
+    if(ambix->startedWriting)    /* too late, writing started already */
+      return AMBIX_ERR_UNKNOWN;
+
+    /* check whether the reduced set has the same number of channels as we created our file for */
+    if(ambix->realinfo.ambichannels != matrix->cols)
+      return AMBIX_ERR_INVALID_DIMENSION;
+
+    /* check whether the matrix will expand to a full set */
+    if(!ambix_is_fullset(matrix->rows))
+      return AMBIX_ERR_INVALID_DIMENSION;
+
+    pinv=ambix_matrix_pinv(matrix, pinv);
+    if(!pinv)
+      return AMBIX_ERR_INVALID_MATRIX;
+
+    if(!ambix_matrix_copy(matrix, &ambix->matrix))
+      return AMBIX_ERR_UNKNOWN;
+    if(!ambix_matrix_copy(pinv, &ambix->matrix2))
+      return AMBIX_ERR_UNKNOWN;
+
+    ambix_matrix_destroy(pinv);
+
+    ambix->realinfo.fileformat=AMBIX_EXTENDED;
+    //ambix->realinfo.ambichannels=matrix->cols;
+    ambix->info.ambichannels=matrix->rows;
+
+    ambix->use_matrix=2;
+
+    /* ready to write it to file */
+    ambix->pendingHeaders=1;
+    return AMBIX_ERR_SUCCESS;
   }
 
   return AMBIX_ERR_UNKNOWN;
@@ -258,7 +316,7 @@ ambix_err_t ambix_set_adaptormatrix	(ambix_t*ambix, const ambix_matrix_t*matrix)
 ambix_err_t	_ambix_write_header	(ambix_t*ambix) {
   void*data=NULL;
   if(ambix->filemode & AMBIX_WRITE) {
-    if((AMBIX_EXTENDED == ambix->info.fileformat)) {
+    if((AMBIX_EXTENDED == ambix->realinfo.fileformat)) {
       ambix_err_t res;
       /* generate UUID-chunk */
       uint64_t datalen=_ambix_matrix_to_uuid1(&ambix->matrix, NULL, ambix->byteswap);
@@ -347,10 +405,18 @@ static ambix_err_t _ambix_check_read(ambix_t*ambix, const void*ambidata, const v
     err=_ambix_adaptorbuffer_resize(ambix, frames, sizeof(type##_t));   \
     if(AMBIX_ERR_SUCCESS != err) { return (err>0)?-err:err;}            \
     adaptorbuffer=(type##_t*)ambix->adaptorbuffer;                      \
+    switch(ambix->use_matrix) {                                         \
+    case 1:                                                             \
+    _ambix_mergeAdaptormatrix_##type(ambidata, &ambix->matrix , otherdata, ambix->info.extrachannels, adaptorbuffer, frames); \
+    break;                                                              \
+    case 2:                                                             \
+    _ambix_mergeAdaptormatrix_##type(ambidata, &ambix->matrix2, otherdata, ambix->info.extrachannels, adaptorbuffer, frames); \
+    break;                                                              \
+    default:                                                            \
     _ambix_mergeAdaptor_##type(ambidata, ambix->info.ambichannels, otherdata, ambix->info.extrachannels, adaptorbuffer, frames); \
+    };                                                                  \
     return _ambix_writef_##type(ambix, adaptorbuffer, frames);          \
   }
-
 
 AMBIX_READF(int16);
 AMBIX_READF(int32);

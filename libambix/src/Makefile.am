@@ -47,7 +47,7 @@ libambix_la_SOURCES = libambix.c \
 	adaptor.c \
 	adaptor_acn.c \
 	adaptor_fuma.c \
-	matrix.c \
+	matrix.c matrix_invert.c \
 	utils.c \
 	uuid_chunk.c \
 	private.h

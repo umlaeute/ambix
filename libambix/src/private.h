@@ -229,6 +229,44 @@ ambix_err_t _ambix_write_uuidchunk(ambix_t*ax, const void*data, int64_t datasize
 ambix_err_t
 _ambix_matrix_fill_data_byteswapped(ambix_matrix_t*mtx, const number32_t*data);
 
+/** @brief Transpose a matrix
+ *
+ * swap rows/columns: a[i][j] -> a[j][i]
+ *
+ * @param matrix the matrix to transpose
+ * @param xirtam the result matrix (if NULL one will be allocated for you)
+ * @return a pointer to the result matrix (or NULL on failure)
+ */
+ambix_matrix_t*
+_ambix_matrix_transpose(const ambix_matrix_t*matrix, ambix_matrix_t*xirtam);
+
+/** @brief Invert a matrix using Gauss-Jordan
+ *
+ * Invert a square matrix using the Gauss-Jordan algorithm
+ *
+ * @param matrix the matrix to invert
+ * @param result the result matrix (if NULL one will be allocated for you)
+ * @param eps threshold to detect singularities
+ * @return a pointer to the result matrix (or NULL on failure)
+ *
+ * @note the input matrix will be modified!
+ */
+ambix_matrix_t*
+_ambix_matrix_invert_gaussjordan(ambix_matrix_t*matrix, ambix_matrix_t*result, float32_t eps);
+
+/** @brief Invert a matrix using Cholesky
+ *
+ * Invert a matrix using the Cholesky decomposition.
+ * If the matrix is non-square, this computes the pseuo-inverse.
+ *
+ * @param matrix the matrix to invert
+ * @param result the result matrix (if NULL one will be allocated for you)
+ * @param tolerance threshold for pivoting (scaled by the largest matrix values)
+ * @return a pointer to the result matrix (or NULL on failure)
+ *
+ */
+ambix_matrix_t*
+_ambix_matrix_pinvert_cholesky(const ambix_matrix_t*matrix, ambix_matrix_t*result, float32_t tolerance);
 
 /** @brief byte-swap 32bit data
  * @param n a 32bit chunk in the wrong byte order
@@ -337,6 +375,29 @@ ambix_err_t _ambix_mergeAdaptor_int32(const int32_t*source1, uint32_t source1cha
  * @see _ambix_mergeAdapator_float32
  */
 ambix_err_t _ambix_mergeAdaptor_int16(const int16_t*source1, uint32_t source1channels, const int16_t*source2, uint32_t source2channels, int16_t*destination, int64_t frames);
+
+
+/** @brief merge interleaved ambisonics and interleaved non-ambisonics channels into a single interleaved audio data block using matrix operations
+ *
+ * multiply matrix.rows ambisonics channels with the matrix to get a (reduced) set of
+ * matrix.cols ambix-extended channels.
+ * append ambix-extended and non-ambisonics channels into one big interleaved chunk
+ *
+ * @param source1 the first interleaved samplebuffer (full ambisonics set) to read from
+ * @param matrix the encoder-matrix
+ * @param source2 the second interleaved samplebuffer to read from
+ * @param source2channels the number of channels in source2
+ * @param destination the samplebuffer to merge the data info; must be big enough to hold frames*(matrix.cols+source2channels) samples
+ * @param frames number of frames to extract
+ * @return error code indicating success
+ */
+ambix_err_t _ambix_mergeAdaptormatrix_float32(const float32_t*source1, const ambix_matrix_t*matrix, const float32_t*source2, uint32_t source2channels, float32_t*destination, int64_t frames);
+/* @see _ambix_mergeAdaptormatrix_float32 */
+ambix_err_t _ambix_mergeAdaptormatrix_float64(const float64_t*source1, const ambix_matrix_t*matrix, const float64_t*source2, uint32_t source2channels, float64_t*destination, int64_t frames);
+/* @see _ambix_mergeAdaptormatrix_float32 */
+ambix_err_t _ambix_mergeAdaptormatrix_int32(const int32_t*source1, const ambix_matrix_t*matrix, const int32_t*source2, uint32_t source2channels, int32_t*destination, int64_t frames);
+/* @see _ambix_mergeAdaptormatrix_float32 */
+ambix_err_t _ambix_mergeAdaptormatrix_int16(const int16_t*source1, const ambix_matrix_t*matrix, const int16_t*source2, uint32_t source2channels, int16_t*destination, int64_t frames);
 
 
 /** @brief debugging printout for ambix_info_t

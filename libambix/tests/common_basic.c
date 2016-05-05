@@ -1,4 +1,4 @@
-/* none - test ambix none
+/* simple - test ambix simple
 
    Copyright © 2012 IOhannes m zmölnig <zmoelnig@iem.at>.
          Institute of Electronic Music and Acoustics (IEM),
@@ -18,7 +18,6 @@
 
    You should have received a copy of the GNU Lesser General Public
    License along with this program; if not, see <http://www.gnu.org/licenses/>.
-
 */
 
 #include "common.h"
@@ -26,15 +25,18 @@
 #include <string.h>
 
 
-void check_create_none(const char*path, ambix_sampleformat_t format) {
+void check_create_simple(const char*path, ambix_sampleformat_t format, float32_t eps) {
   ambix_info_t info, rinfo, winfo;
   ambix_t*ambix=NULL;
   float32_t*orgdata,*data,*resultdata;
-  uint32_t frames=44100;
-  uint32_t channels=6;
-  float32_t periods=10;
-  int64_t err64, gotframes;
-  float32_t diff=0., eps=1e-30;
+  uint32_t frames=441000;
+  uint32_t channels=4;
+  float32_t periods=4724;
+  int64_t err64;
+  float32_t diff=0.;
+  uint32_t gotframes;
+
+  printf("test using '%s' [%d]\n", path, (int)format);
 
   resultdata=(float32_t*)calloc(channels*frames, sizeof(float32_t));
   data=(float32_t*)calloc(channels*frames, sizeof(float32_t));
@@ -42,9 +44,9 @@ void check_create_none(const char*path, ambix_sampleformat_t format) {
   memset(&winfo, 0, sizeof(winfo));
   memset(&info, 0, sizeof(info));
 
-  info.fileformat=AMBIX_NONE;
-  info.ambichannels=0;
-  info.extrachannels=channels;
+  info.fileformat=AMBIX_BASIC;
+  info.ambichannels=channels;
+  info.extrachannels=0;
   info.samplerate=44100;
   info.sampleformat=format;
 
@@ -60,7 +62,7 @@ void check_create_none(const char*path, ambix_sampleformat_t format) {
 
   fail_if((NULL==data), __LINE__, "couldn't create data %dx%d sine @ %f", (int)frames, (int)channels, (float)periods);
 
-  err64=ambix_writef_float32(ambix, NULL, data, frames);
+  err64=ambix_writef_float32(ambix, data, NULL, frames);
   fail_if((err64!=frames), __LINE__, "wrote only %d frames of %d", (int)err64, (int)frames);
 
   diff=data_diff(__LINE__, orgdata, data, frames*channels, eps);
@@ -80,7 +82,7 @@ void check_create_none(const char*path, ambix_sampleformat_t format) {
 
   gotframes=0;
   do {
-    err64=ambix_readf_float32(ambix, NULL, resultdata+(gotframes*channels), (frames-gotframes));
+    err64=ambix_readf_float32(ambix, resultdata+(gotframes*channels), NULL, (frames-gotframes));
     fail_if((err64<0), __LINE__, "reading frames failed after %d/%d frames", (int)gotframes, (int)frames);
     gotframes+=err64;
   } while(err64>0 && gotframes<frames);
@@ -91,12 +93,9 @@ void check_create_none(const char*path, ambix_sampleformat_t format) {
   fail_if((AMBIX_ERR_SUCCESS!=ambix_close(ambix)), __LINE__, "closing ambix file %p", ambix);
   ambix=NULL;
 
-
-  free(resultdata);
   free(data);
+  free(resultdata);
   free(orgdata);
 
   unlink(path);
 }
-
-

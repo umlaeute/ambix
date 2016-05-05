@@ -75,6 +75,7 @@ static void mtxinverse_test(const ambix_matrix_t *mtx, const ambix_matrix_t *res
   fail_if((NULL==eye), __LINE__, "cannot create eye-matrix for pinv-verification");
 
   pinv=ambix_matrix_pinv(mtx, pinv);
+  if(NULL==pinv)matrix_print(mtx);
   fail_if((NULL==pinv), __LINE__, "could not invert matrix");
 
   if(mtx->cols < mtx->rows)
@@ -105,10 +106,10 @@ void mtxinverse_tests(float32_t eps) {
   ambix_matrix_t *mtx=0, *testresult=0;
   float32_t*transposedata = (float32_t*)calloc(3*4, sizeof(float32_t));
 
-  STARTTEST("");
+  STARTTEST("\n");
 
   /* fill in some test data 4x4 */
-  STARTTEST("[4x4]");
+  STARTTEST("[4x4]\n");
   mtx=ambix_matrix_init(4, 4, mtx);
   ambix_matrix_fill_data(mtx, leftdata_4_4);
   testresult=ambix_matrix_init(4, 4, testresult);
@@ -116,7 +117,7 @@ void mtxinverse_tests(float32_t eps) {
   mtxinverse_test(mtx, testresult, eps);
 
   /* fill in some test data 4x3 */
-  STARTTEST("[4x3]");
+  STARTTEST("[4x3]\n");
   mtx=ambix_matrix_init(4, 3, mtx);
   ambix_matrix_fill_data(mtx, leftdata_4_3);
   testresult=ambix_matrix_init(3, 4, testresult);
@@ -124,7 +125,7 @@ void mtxinverse_tests(float32_t eps) {
   mtxinverse_test(mtx, testresult, eps);
 
   /* fill in some test data 3x4 */
-  STARTTEST("[3x4]");
+  STARTTEST("[3x4]\n");
   data_transpose(transposedata, leftdata_4_3, 4, 3);
   mtx=ambix_matrix_init(3, 4, mtx);
   ambix_matrix_fill_data(mtx, transposedata);
@@ -134,15 +135,45 @@ void mtxinverse_tests(float32_t eps) {
   ambix_matrix_fill_data(testresult, transposedata);
   mtxinverse_test(mtx, testresult, eps);
 
+  /* fill in some test data 4x4 */
+  STARTTEST("[identity:4x4]\n");
+  mtx=ambix_matrix_init(4, 4, mtx);
+  ambix_matrix_fill(mtx, AMBIX_MATRIX_IDENTITY);
+  testresult=ambix_matrix_init(4, 4, testresult);
+  ambix_matrix_fill(testresult, AMBIX_MATRIX_IDENTITY);
+  mtxinverse_test(mtx, testresult, eps);
+
+  STARTTEST("[SID:4x4]\n");
+  mtx=ambix_matrix_init(4, 4, mtx);
+  ambix_matrix_fill(mtx, AMBIX_MATRIX_SID);
+  testresult=ambix_matrix_init(4, 4, testresult);
+  ambix_matrix_fill(testresult, AMBIX_MATRIX_TO_SID);
+  mtxinverse_test(mtx, testresult, eps);
+
+  STARTTEST("[N3D:4x4]\n");
+  mtx=ambix_matrix_init(4, 4, mtx);
+  ambix_matrix_fill(mtx, AMBIX_MATRIX_N3D);
+  testresult=ambix_matrix_init(4, 4, testresult);
+  ambix_matrix_fill(testresult, AMBIX_MATRIX_TO_N3D);
+  mtxinverse_test(mtx, testresult, eps);
+
+  STARTTEST("[FUMA:4x4]\n");
+  mtx=ambix_matrix_init(4, 4, mtx);
+  ambix_matrix_fill(mtx, AMBIX_MATRIX_FUMA);
+  testresult=ambix_matrix_init(4, 4, testresult);
+  ambix_matrix_fill(testresult, AMBIX_MATRIX_TO_FUMA);
+  mtxinverse_test(mtx, testresult, eps);
+
+
   ambix_matrix_destroy(mtx);
   ambix_matrix_destroy(testresult);
   free(transposedata);
-  STOPTEST("");
+  STOPTEST("\n");
 }
 void mtxmul_tests(float32_t eps) {
   float32_t errf;
   ambix_matrix_t *left, *right, *result, *testresult;
-  STARTTEST("");
+  STARTTEST("\n");
 
  /* fill in some test data */
   left=ambix_matrix_init(4, 3, NULL);
@@ -174,12 +205,12 @@ void mtxmul_tests(float32_t eps) {
   ambix_matrix_destroy(right);
   ambix_matrix_destroy(result);
   ambix_matrix_destroy(testresult);
-  STOPTEST("");
+  STOPTEST("\n");
 }
 void mtxmul_eye_tests(float32_t eps) {
   float32_t errf;
   ambix_matrix_t *left, *result, *eye;
-  STARTTEST("");
+  STARTTEST("\n");
   eye=ambix_matrix_init(4, 4, NULL);
   fail_if((eye!=ambix_matrix_fill(eye, AMBIX_MATRIX_IDENTITY)), __LINE__, "filling unity matrix %p did not return original matrix %p", eye);
 
@@ -203,7 +234,7 @@ void mtxmul_eye_tests(float32_t eps) {
   ambix_matrix_destroy(left);
   ambix_matrix_destroy(result);
   ambix_matrix_destroy(eye);
-  STOPTEST("");
+  STOPTEST("\n");
 }
 void datamul_tests(float32_t eps) {
   float32_t errf;
@@ -216,7 +247,7 @@ void datamul_tests(float32_t eps) {
   fail_if((NULL==inputdata), __LINE__, "couldn't callocate inputdata");
 
   ambix_matrix_t*mtx=NULL;
-  STARTTEST("");
+  STARTTEST("\n");
 
   mtx=ambix_matrix_init(4, 3, NULL);
   ambix_matrix_fill_data(mtx, leftdata_4_3);
@@ -256,7 +287,7 @@ void datamul_tests(float32_t eps) {
   free(resultdata);
   free(resultdataT);
   free(inputdata);
-  STOPTEST("");
+  STOPTEST("\n");
 }
 
 void datamul_eye_tests(float32_t eps) {
@@ -267,7 +298,7 @@ void datamul_eye_tests(float32_t eps) {
   float32_t*outputdata;
   float32_t freq=500;
   ambix_matrix_t eye = {0, 0, NULL};
-  STARTTEST("");
+  STARTTEST("\n");
 
   inputdata =data_sine(frames, channels, freq);
   outputdata=(float32_t*)malloc(sizeof(float32_t)*frames*channels);
@@ -291,7 +322,7 @@ void datamul_eye_tests(float32_t eps) {
   free(inputdata);
   free(outputdata);
   ambix_matrix_deinit(&eye);
-  STOPTEST("");
+  STOPTEST("\n");
 }
 
 void datamul_4_2_tests(uint32_t chunksize, float32_t eps) {
@@ -308,7 +339,7 @@ void datamul_4_2_tests(uint32_t chunksize, float32_t eps) {
   float32_t freq=500;
 
   ambix_matrix_t eye = {0, 0, NULL};
-  STARTTEST("");
+  STARTTEST("\n");
 
   inputdata =data_sine(frames, rawchannels, freq);
   targetdata=data_sine(frames, cokchannels, freq);
@@ -359,7 +390,7 @@ void datamul_4_2_tests(uint32_t chunksize, float32_t eps) {
   free(inputdata);
   free(outputdata);
   free(targetdata);
-  STOPTEST("");
+  STOPTEST("\n");
 }
 
 
@@ -368,7 +399,7 @@ void create_tests(float32_t eps) {
   int cols=3;
   int cols2=2;
   ambix_matrix_t matrix, *left, *right;
-  STARTTEST("");
+  STARTTEST("\n");
 
   memset(&matrix, 0, sizeof(matrix));
 
@@ -394,7 +425,7 @@ void create_tests(float32_t eps) {
 
   ambix_matrix_destroy(left);
   ambix_matrix_destroy(right);
-  STOPTEST("");
+  STOPTEST("\n");
 }
 
 
