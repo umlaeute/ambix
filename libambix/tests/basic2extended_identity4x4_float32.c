@@ -42,7 +42,7 @@ int test_defaultmatrix(const char*name, uint32_t rows, uint32_t cols, ambix_matr
 
 int main(int argc, char**argv) {
   int err=0;
-  err+=test_defaultmatrix("IDENTITY", 4, 4, AMBIX_MATRIX_IDENTITY, 0, 1024, 1e-7);
+  err+=test_defaultmatrix("IDENTITY", 4, 4, AMBIX_MATRIX_IDENTITY, 0, 1024, 0);
   pass();
   return 0;
 }
