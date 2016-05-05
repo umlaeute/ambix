@@ -74,12 +74,14 @@ TESTS          += \
 	basic2extended_N3D4x4_float32 \
 	basic2extended_SID4x4_float32 \
 	basic2extended_FUMA4x4_float32 \
-	basic2extended_rand4x9_float32
+	basic2extended_rand4x9_float32 \
+	basic2extended_rand4x7_float32
 basic2extended_identity4x4_float32_SOURCES = basic2extended_identity4x4_float32.c common_basic2extended.c common.c
 basic2extended_N3D4x4_float32_SOURCES = basic2extended_N3D4x4_float32.c common_basic2extended.c common.c
 basic2extended_SID4x4_float32_SOURCES = basic2extended_SID4x4_float32.c common_basic2extended.c common.c
 basic2extended_FUMA4x4_float32_SOURCES = basic2extended_FUMA4x4_float32.c common_basic2extended.c common.c
 basic2extended_rand4x9_float32_SOURCES = basic2extended_rand4x9_float32.c common_basic2extended.c common.c
+basic2extended_rand4x7_float32_SOURCES = basic2extended_rand4x7_float32.c common_basic2extended.c common.c
 
 
 # ##################################################
