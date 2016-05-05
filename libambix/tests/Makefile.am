@@ -69,19 +69,32 @@ ambix_readf_int16_SOURCES = ambix_readf_int16.c
 TESTS += ambix_writef_int16
 ambix_writef_int16_SOURCES = ambix_writef_int16.c
 
+common_b2x=common_basic2extended.c common.c
 TESTS          += \
 	basic2extended_identity4x4_float32 \
 	basic2extended_N3D4x4_float32 \
 	basic2extended_SID4x4_float32 \
 	basic2extended_FUMA4x4_float32 \
 	basic2extended_rand4x9_float32 \
-	basic2extended_rand4x7_float32
-basic2extended_identity4x4_float32_SOURCES = basic2extended_identity4x4_float32.c common_basic2extended.c common.c
-basic2extended_N3D4x4_float32_SOURCES = basic2extended_N3D4x4_float32.c common_basic2extended.c common.c
-basic2extended_SID4x4_float32_SOURCES = basic2extended_SID4x4_float32.c common_basic2extended.c common.c
-basic2extended_FUMA4x4_float32_SOURCES = basic2extended_FUMA4x4_float32.c common_basic2extended.c common.c
-basic2extended_rand4x9_float32_SOURCES = basic2extended_rand4x9_float32.c common_basic2extended.c common.c
-basic2extended_rand4x7_float32_SOURCES = basic2extended_rand4x7_float32.c common_basic2extended.c common.c
+	basic2extended_rand4x7_float32 \
+	basic2extended_identity4x4_3extra_float32 \
+	basic2extended_N3D4x4_3extra_float32 \
+	basic2extended_SID4x4_3extra_float32 \
+	basic2extended_FUMA4x4_3extra_float32 \
+	basic2extended_rand4x9_3extra_float32 \
+	basic2extended_rand4x7_3extra_float32
+basic2extended_identity4x4_float32_SOURCES = basic2extended_identity4x4_float32.c $(common_b2x)
+basic2extended_N3D4x4_float32_SOURCES = basic2extended_N3D4x4_float32.c $(common_b2x)
+basic2extended_SID4x4_float32_SOURCES = basic2extended_SID4x4_float32.c $(common_b2x)
+basic2extended_FUMA4x4_float32_SOURCES = basic2extended_FUMA4x4_float32.c $(common_b2x)
+basic2extended_rand4x9_float32_SOURCES = basic2extended_rand4x9_float32.c $(common_b2x)
+basic2extended_rand4x7_float32_SOURCES = basic2extended_rand4x7_float32.c $(common_b2x)
+basic2extended_identity4x4_3extra_float32_SOURCES = basic2extended_identity4x4_3extra_float32.c $(common_b2x)
+basic2extended_N3D4x4_3extra_float32_SOURCES = basic2extended_N3D4x4_3extra_float32.c $(common_b2x)
+basic2extended_SID4x4_3extra_float32_SOURCES = basic2extended_SID4x4_3extra_float32.c $(common_b2x)
+basic2extended_FUMA4x4_3extra_float32_SOURCES = basic2extended_FUMA4x4_3extra_float32.c $(common_b2x)
+basic2extended_rand4x9_3extra_float32_SOURCES = basic2extended_rand4x9_3extra_float32.c $(common_b2x)
+basic2extended_rand4x7_3extra_float32_SOURCES = basic2extended_rand4x7_3extra_float32.c $(common_b2x)
 
 
 # ##################################################
