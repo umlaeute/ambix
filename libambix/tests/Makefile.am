@@ -75,6 +75,7 @@ TESTS += ambix_writef_int16
 ambix_writef_int16_SOURCES = ambix_writef_int16.c
 
 common_b2x=common_basic2extended.c common.c
+## float32
 TESTS          += \
 	basic2extended_identity4x4_float32 \
 	basic2extended_N3D4x4_float32 \
@@ -101,6 +102,7 @@ basic2extended_FUMA4x4_3extra_float32_SOURCES = basic2extended_FUMA4x4_3extra_fl
 basic2extended_rand4x9_3extra_float32_SOURCES = basic2extended_rand4x9_3extra_float32.c $(common_b2x)
 basic2extended_rand4x7_3extra_float32_SOURCES = basic2extended_rand4x7_3extra_float32.c $(common_b2x)
 
+## float64
 TESTS          += \
 	basic2extended_identity4x4_float64 \
 	basic2extended_N3D4x4_float64 \
@@ -127,6 +129,59 @@ basic2extended_FUMA4x4_3extra_float64_SOURCES = basic2extended_FUMA4x4_3extra_fl
 basic2extended_rand4x9_3extra_float64_SOURCES = basic2extended_rand4x9_3extra_float64.c $(common_b2x)
 basic2extended_rand4x7_3extra_float64_SOURCES = basic2extended_rand4x7_3extra_float64.c $(common_b2x)
 
+## pcm32
+TESTS          += \
+	basic2extended_identity4x4_pcm32 \
+	basic2extended_N3D4x4_pcm32 \
+	basic2extended_SID4x4_pcm32 \
+	basic2extended_FUMA4x4_pcm32 \
+	basic2extended_rand4x9_pcm32 \
+	basic2extended_rand4x7_pcm32 \
+	basic2extended_identity4x4_3extra_pcm32 \
+	basic2extended_N3D4x4_3extra_pcm32 \
+	basic2extended_SID4x4_3extra_pcm32 \
+	basic2extended_FUMA4x4_3extra_pcm32 \
+	basic2extended_rand4x9_3extra_pcm32 \
+	basic2extended_rand4x7_3extra_pcm32
+basic2extended_identity4x4_pcm32_SOURCES = basic2extended_identity4x4_pcm32.c $(common_b2x)
+basic2extended_N3D4x4_pcm32_SOURCES = basic2extended_N3D4x4_pcm32.c $(common_b2x)
+basic2extended_SID4x4_pcm32_SOURCES = basic2extended_SID4x4_pcm32.c $(common_b2x)
+basic2extended_FUMA4x4_pcm32_SOURCES = basic2extended_FUMA4x4_pcm32.c $(common_b2x)
+basic2extended_rand4x9_pcm32_SOURCES = basic2extended_rand4x9_pcm32.c $(common_b2x)
+basic2extended_rand4x7_pcm32_SOURCES = basic2extended_rand4x7_pcm32.c $(common_b2x)
+basic2extended_identity4x4_3extra_pcm32_SOURCES = basic2extended_identity4x4_3extra_pcm32.c $(common_b2x)
+basic2extended_N3D4x4_3extra_pcm32_SOURCES = basic2extended_N3D4x4_3extra_pcm32.c $(common_b2x)
+basic2extended_SID4x4_3extra_pcm32_SOURCES = basic2extended_SID4x4_3extra_pcm32.c $(common_b2x)
+basic2extended_FUMA4x4_3extra_pcm32_SOURCES = basic2extended_FUMA4x4_3extra_pcm32.c $(common_b2x)
+basic2extended_rand4x9_3extra_pcm32_SOURCES = basic2extended_rand4x9_3extra_pcm32.c $(common_b2x)
+basic2extended_rand4x7_3extra_pcm32_SOURCES = basic2extended_rand4x7_3extra_pcm32.c $(common_b2x)
+
+## pcm16
+TESTS          += \
+	basic2extended_identity4x4_pcm16 \
+	basic2extended_N3D4x4_pcm16 \
+	basic2extended_SID4x4_pcm16 \
+	basic2extended_FUMA4x4_pcm16 \
+	basic2extended_rand4x9_pcm16 \
+	basic2extended_rand4x7_pcm16 \
+	basic2extended_identity4x4_3extra_pcm16 \
+	basic2extended_N3D4x4_3extra_pcm16 \
+	basic2extended_SID4x4_3extra_pcm16 \
+	basic2extended_FUMA4x4_3extra_pcm16 \
+	basic2extended_rand4x9_3extra_pcm16 \
+	basic2extended_rand4x7_3extra_pcm16
+basic2extended_identity4x4_pcm16_SOURCES = basic2extended_identity4x4_pcm16.c $(common_b2x)
+basic2extended_N3D4x4_pcm16_SOURCES = basic2extended_N3D4x4_pcm16.c $(common_b2x)
+basic2extended_SID4x4_pcm16_SOURCES = basic2extended_SID4x4_pcm16.c $(common_b2x)
+basic2extended_FUMA4x4_pcm16_SOURCES = basic2extended_FUMA4x4_pcm16.c $(common_b2x)
+basic2extended_rand4x9_pcm16_SOURCES = basic2extended_rand4x9_pcm16.c $(common_b2x)
+basic2extended_rand4x7_pcm16_SOURCES = basic2extended_rand4x7_pcm16.c $(common_b2x)
+basic2extended_identity4x4_3extra_pcm16_SOURCES = basic2extended_identity4x4_3extra_pcm16.c $(common_b2x)
+basic2extended_N3D4x4_3extra_pcm16_SOURCES = basic2extended_N3D4x4_3extra_pcm16.c $(common_b2x)
+basic2extended_SID4x4_3extra_pcm16_SOURCES = basic2extended_SID4x4_3extra_pcm16.c $(common_b2x)
+basic2extended_FUMA4x4_3extra_pcm16_SOURCES = basic2extended_FUMA4x4_3extra_pcm16.c $(common_b2x)
+basic2extended_rand4x9_3extra_pcm16_SOURCES = basic2extended_rand4x9_3extra_pcm16.c $(common_b2x)
+basic2extended_rand4x7_3extra_pcm16_SOURCES = basic2extended_rand4x7_3extra_pcm16.c $(common_b2x)
 
 
 # ##################################################
