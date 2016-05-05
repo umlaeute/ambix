@@ -21,8 +21,6 @@
 */
 
 #include "common.h"
-#include <unistd.h>
-#include <string.h>
 
 float32_t data_4_7[]={
 0.588219, 0.758465, 0.240167, 0.827193, 0.899134, 0.121186, 0.974490,

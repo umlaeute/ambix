@@ -21,8 +21,6 @@
 */
 
 #include "common.h"
-#include <unistd.h>
-#include <string.h>
 
 int check_create_b2e(const char*path, ambix_sampleformat_t format,
 		     ambix_matrix_t*matrix, uint32_t extrachannels,
