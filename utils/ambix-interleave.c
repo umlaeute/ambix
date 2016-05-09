@@ -313,7 +313,7 @@ static ai_t*ai_close(ai_t*ai) {
 }
 static ambix_matrix_t*ai_calc_matrix(unsigned int rowcols, ambix_matrixtype_t typ) {
   ambix_matrix_t*mtx=ambix_matrix_init(rowcols, rowcols, NULL);
-  ambix_matrix_t*mtx2=ambix_matrix_fill(mtx, typ);
+  ambix_matrix_t*mtx2=mtx?ambix_matrix_fill(mtx, typ):NULL;
   if(mtx2!=mtx)ambix_matrix_destroy(mtx);  mtx=NULL;
   return mtx2;
 }
@@ -355,6 +355,20 @@ static ai_t*ai_open_input(ai_t*ai) {
     }
     channels+=info->channels;
     ai->inhandles[i]=inhandle;
+    /* check if the input is a single .AMB file, */
+    if(1 == ai->numIns
+       && inhandle
+       && (sf_command(inhandle, SFC_WAVEX_GET_AMBISONIC, NULL, 0) == SF_AMBISONIC_B_FORMAT)) {
+      /* it is, so we decode it as ambisonics */
+
+      if(ai->matrix || ai->matrix_rout || ai->matrix_norm) {
+	/* but not if the user already set an adaptor matrix */
+	fprintf(stderr, "Cannot set adaptor-matrix when interleaving from AMB file.\n");
+	ai_exit=65;
+	return ai_close(ai);
+      }
+      ai->matrix = ai_calc_matrix(info->channels, AMBIX_MATRIX_FUMA);
+    }
   }
 
   if (ai->matrix_rout || ai->matrix_norm) {
