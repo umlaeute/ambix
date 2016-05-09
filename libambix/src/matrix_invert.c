@@ -227,6 +227,7 @@ static void _am_cholesky2_inverse(ambix_matrix_t*mtx)
 
 /*
  * calculate the inverse of any (rectangular) real-valued matrix using cholesky decomposition
+ */
 ambix_matrix_t*
 _ambix_matrix_pinvert_cholesky(const ambix_matrix_t*input, ambix_matrix_t*inverse, float32_t tolerance) {
   /* (rows>cols)?(inv(x'*x)*x'):(x'*inv(x*x')) */
