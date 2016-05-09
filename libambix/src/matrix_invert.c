@@ -29,6 +29,9 @@
 
 #include <math.h>
 
+/**
+ * simple matrix inversion of square matrices, using Gauss-Jordan
+ */
 /* this modifies the input matrix! */
 ambix_matrix_t*
 _ambix_matrix_invert_gaussjordan(ambix_matrix_t*input, ambix_matrix_t*inverse, float32_t eps)
@@ -90,12 +93,9 @@ _ambix_matrix_invert_gaussjordan(ambix_matrix_t*input, ambix_matrix_t*inverse, f
         float32_t f =-original[i][k];
         int j;
         for (j=row-1; j >= 0; j--) {
-
           original[i][j] += f * original[k][j];
           inverted[i][j] += f * inverted[k][j];
-
         }
-
       }
     }
   }
@@ -110,6 +110,24 @@ _ambix_matrix_invert_gaussjordan(ambix_matrix_t*input, ambix_matrix_t*inverse, f
   return inverse;
 }
 
+/**
+ * matrix inversion using the Cholesky algorithm
+ *
+ * the functions _am_cholesky2_decomp and _am_cholesky_2_inverse
+ * have been extracted from the "Survival" package for R.
+ *   https://cran.r-project.org/web/packages/survival/index.html
+ *
+ * They are distributed under the Lesser Gnu General Public License 2 (or greater)
+ * and are
+ * © 2009 Thomas Lumley
+ * © 2009-2016 Terry M Therneau
+ */
+/** cholesky2 decomposition
+ * \author © -2009 Thomas Lumley
+ * \author © 2009-2016 Terry M Therneau <therneau.terry@mayo.edu>
+ * \copyright LGPL >= 2
+ * \note origin survival 2.39-3 https://cran.r-project.org/web/packages/survival/index.html
+ */
 static int _am_cholesky2_decomp(ambix_matrix_t*mtx, float32_t toler)
 {
   const uint32_t columns = mtx->cols;
@@ -151,6 +169,12 @@ static int _am_cholesky2_decomp(ambix_matrix_t*mtx, float32_t toler)
   return (rank * nonneg);
 }
 /* inplace inverse */
+/** inplace inversion of a cholesky2 decomposed matrix
+ * \author © -2009 Thomas Lumley
+ * \author © 2009-2016 Terry M Therneau <therneau.terry@mayo.edu>
+ * \copyright LGPL >= 2
+ * \note origin survival 2.39-3 https://cran.r-project.org/web/packages/survival/index.html
+ */
 static void _am_cholesky2_inverse(ambix_matrix_t*mtx)
 {
   const int columns = mtx->cols;;
@@ -201,7 +225,8 @@ static void _am_cholesky2_inverse(ambix_matrix_t*mtx)
       matrix[i][j] = matrix[j][i];
 }
 
-
+/*
+ * calculate the inverse of any (rectangular) real-valued matrix using cholesky decomposition
 ambix_matrix_t*
 _ambix_matrix_pinvert_cholesky(const ambix_matrix_t*input, ambix_matrix_t*inverse, float32_t tolerance) {
   /* (rows>cols)?(inv(x'*x)*x'):(x'*inv(x*x')) */
