@@ -19,6 +19,8 @@ env:
 matrix:
   include:
     - compiler: clang
+      env:
+       - DEPLOY_DOXYGEN="yes"
     - compiler: gcc
       env:
         - COVERITY_SCAN_PROJECT_NAME="$TRAVIS_REPO_SLUG"
@@ -43,3 +45,7 @@ before_script:
 script:
 - make
 - LD_LIBRARY_PATH=/usr/local/lib make distcheck
+
+after_success:
+  - if [[ -n $DEPLOY_DOXYGEN ]] ; then ./.deploy-doxygen.sh ; fi
+P
