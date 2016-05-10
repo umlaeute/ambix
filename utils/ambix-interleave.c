@@ -318,7 +318,6 @@ static ambix_matrix_t*ai_calc_matrix(unsigned int rowcols, ambix_matrixtype_t ty
   return mtx2;
 }
 
-
 static ai_t*ai_open_input(ai_t*ai) {
   uint32_t i;
   uint32_t channels=0;
@@ -327,7 +326,6 @@ static ai_t*ai_open_input(ai_t*ai) {
     ai->inhandles=(SNDFILE**)calloc(ai->numIns, sizeof(SNDFILE*));
     ai->ininfo   =(SF_INFO*)calloc(ai->numIns, sizeof(SF_INFO));
   }
-
   for(i=0; i<ai->numIns; i++) {
     SNDFILE*inhandle=ai->inhandles[i];
     SF_INFO*info=&ai->ininfo[i];
@@ -370,7 +368,6 @@ static ai_t*ai_open_input(ai_t*ai) {
       ai->matrix = ai_calc_matrix(info->channels, AMBIX_MATRIX_FUMA);
     }
   }
-
   if (ai->matrix_rout || ai->matrix_norm) {
     /* predefined matrix, but we need to calc the size based on the channels */
 
@@ -480,8 +477,6 @@ static void deinterleaver(float*dest, const float*source, uint64_t frames, uint3
 /* interleave a *non-interleaved* source of <frames>*<channels> data in dest */
 static void interleaver(float*dest, const float*source, uint64_t frames, uint32_t channels) {
   uint64_t frame;
-
-
   for(frame=0; frame<frames; frame++) {
     uint64_t channel;
     for(channel=0; channel<channels; channel++) {
