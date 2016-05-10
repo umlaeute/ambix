@@ -44,6 +44,11 @@ The source code is also mirrored to
 and (less often) to
  [SourceForge](https://sourceforge.net/p/iem/ambix/)
 
+# API Documentation
+
+An uptodate API Documentation can be found at
+  http://iem-projects.github.io/ambix/apiref/
+
 # Directory layout
 - `libambix/` - all components of the libambix library
 - `libambix/src` - the source code for library itself.
