@@ -3,7 +3,7 @@
 WD=$(pwd)
 INPUTDIR="${WD}/doc/apiref"
 OUTPUTDIR="${WD}/gh-pages"
-REMOTE=$(git remote get-url origin)
+REMOTE=https://github.com/iem-projects/ambix
 
 if [ -e "${INPUTDIR}/index.html" ]; then
  :
