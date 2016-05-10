@@ -48,4 +48,3 @@ script:
 
 after_success:
   - if [[ -n $DEPLOY_DOXYGEN ]] ; then ./.deploy-doxygen.sh ; fi
-P
