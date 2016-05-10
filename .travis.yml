@@ -47,4 +47,4 @@ script:
 - LD_LIBRARY_PATH=/usr/local/lib make distcheck
 
 after_success:
-  - if [[ -n $DEPLOY_DOXYGEN ]] ; then ./.deploy-doxygen.sh ; fi
+  - if [[ "${DEPLOY_DOXYGEN}.${TRAVIS_BRANCH}.${TRAVIS_PULLREQUEST}" = "yes.master.false" ]]; then ./.deploy-doxygen.sh ; fi
