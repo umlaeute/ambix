@@ -483,7 +483,7 @@ static void interleaver(float*dest, const float*source, uint64_t frames, uint32_
 static ai_t*ai_copy_block(ai_t*ai,
                           float*ambidata,
                           float*extradata,
-                          float*interleavedata,
+                          float*deinterleavedata,
                           uint64_t frames) {
   uint32_t i;
   uint64_t channels=0;
@@ -494,7 +494,7 @@ static ai_t*ai_copy_block(ai_t*ai,
     SNDFILE*in=ai->inhandles[i];
     if(in) {
       //printf("reading %d frames from[%d] at %p+%d\n", (int)frames, (int)i, interleavedata, (int)offset);
-      if(frames!=sf_readf_float(in, interleavedata+offset, frames)) {
+      if(frames!=sf_readf_float(in, deinterleavedata+offset, frames)) {
         return ai_close(ai);
       }
       channels+=ai->ininfo[i].channels;
@@ -502,10 +502,10 @@ static ai_t*ai_copy_block(ai_t*ai,
   }
 
   if(ambidata)
-    interleaver(ambidata, interleavedata, frames, ai->info.ambichannels);
+    interleaver(ambidata, deinterleavedata, frames, ai->info.ambichannels);
 
   if(extradata)
-    interleaver(extradata, interleavedata+frames*ai->info.ambichannels, frames, ai->info.extrachannels);
+    interleaver(extradata, deinterleavedata+frames*ai->info.ambichannels, frames, ai->info.extrachannels);
 
   //printf("writing %d frames to  %p & %p\n", (int)frames,  ambidata, extradata);
 
