@@ -508,7 +508,14 @@ static ai_t*ai_copy_block(ai_t*ai,
     if(in) {
       uint64_t readframes=0;
       //printf("reading %d frames from[%d] at %p+%d\n", (int)frames, (int)i, interleavedata, (int)offset);
-      readframes=sf_readf_float(in, deinterleavedata+offset, frames);
+      if(sourcedata && inchannels>1) {
+	readframes=sf_readf_float(in, sourcedata, frames);
+	if(readframes)
+	  deinterleaver(deinterleavedata+offset, sourcedata, frames, inchannels);
+      } else {
+	readframes=sf_readf_float(in, deinterleavedata+offset, frames);
+      }
+
       if(frames!=readframes) {
         return ai_close(ai);
       }
