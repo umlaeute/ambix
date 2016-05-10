@@ -2,6 +2,11 @@ language: c
 sudo: required
 dist: trusty
 
+# Blacklist gh-pages branch
+branches:
+  except:
+    - gh-pages
+
 env:
   global:
         - secure: "nAc3WvwtJBm+hLIYxp4srwgM7qDWRovkEpsza+UITEE8TUqeZND2543xMZlWz1w5qn8V/F/1yX1oYl7Ot0ymmu9Uh41b1NBr3cvo2U8RLDSM9SBoqtyS1pSCnJ2qiSk+hg5GxObWug/ph3TkEgZaDmYCDAgHiv1I9WXVRxeR144="
