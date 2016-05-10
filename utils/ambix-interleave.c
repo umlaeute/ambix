@@ -506,8 +506,10 @@ static ai_t*ai_copy_block(ai_t*ai,
     SNDFILE*in=ai->inhandles[i];
     uint32_t inchannels=ai->ininfo[i].channels;
     if(in) {
+      uint64_t readframes=0;
       //printf("reading %d frames from[%d] at %p+%d\n", (int)frames, (int)i, interleavedata, (int)offset);
-      if(frames!=sf_readf_float(in, deinterleavedata+offset, frames)) {
+      readframes=sf_readf_float(in, deinterleavedata+offset, frames);
+      if(frames!=readframes) {
         return ai_close(ai);
       }
       channels+=inchannels;
