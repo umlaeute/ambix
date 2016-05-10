@@ -466,7 +466,18 @@ static ai_t*ai_open_output(ai_t*ai) {
   return ai;
 }
 
+/* deinterleave an *interleaved* source of <frames>*<channels> data in dest */
+static void deinterleaver(float*dest, const float*source, uint64_t frames, uint32_t channels) {
+  uint32_t channel;
+  for(channel=0; channel<channels; channel++) {
+    uint64_t frame;
+    for(frame=0; frame<frames; frame++) {
+      *dest++ = source[frame*channels+channel];
+    }
+  }
+}
 
+/* interleave a *non-interleaved* source of <frames>*<channels> data in dest */
 static void interleaver(float*dest, const float*source, uint64_t frames, uint32_t channels) {
   uint64_t frame;
 
