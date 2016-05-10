@@ -19,8 +19,6 @@ env:
 matrix:
   include:
     - compiler: clang
-      env:
-       - DEPLOY_DOXYGEN="yes"
     - compiler: gcc
       env:
         - COVERITY_SCAN_PROJECT_NAME="$TRAVIS_REPO_SLUG"
@@ -48,5 +46,4 @@ script:
 - LD_LIBRARY_PATH=/usr/local/lib make distcheck
 
 after_success:
-  - echo "${DEPLOY_DOXYGEN}.${TRAVIS_BRANCH}.${TRAVIS_PULLREQUEST}"
-  - if [[ "${DEPLOY_DOXYGEN}.${TRAVIS_BRANCH}.${TRAVIS_PULLREQUEST}" = "yes.master." ]]; then ./.deploy-doxygen.sh ; fi
+  - if [[ "yes.${TRAVIS_BRANCH}.${TRAVIS_PULLREQUEST}" = "yes.master." ]]; then ./.deploy-doxygen.sh ; fi
