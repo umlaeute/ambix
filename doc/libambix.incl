@@ -119,7 +119,9 @@
    ambix_t*ambix = NULL;
    ambix_info_t*info  = calloc(1, sizeof(ambix_info_t));
 
-   // setting the fileformat to AMBIX_EXTENDED forces the ambi data to be delivered as stored in the file
+   /* setting the fileformat to AMBIX_EXTENDED forces the ambi data
+    * be delivered as stored in the file
+    */
    ambix->fileformat = AMBIX_EXTENDED;
 
    ambix = ambix_open("ambixfile.caf", AMBIX_READ, info);
@@ -162,7 +164,7 @@
  *
  * @code
    ambix_t*ambix = NULL;
-   ambix_info_t*info  = calloc(1, sizeof(ambix_info_t)); // initialize the format field (among others) to 0
+   ambix_info_t*info  = calloc(1, sizeof(ambix_info_t)); /* initialize the format field (among others) to 0 */
 
    ambix = ambix_open("ambixfile.caf", AMBIX_READ, info);
 
@@ -213,11 +215,11 @@
    ambix_t*ambix = NULL;
    ambix_info_t*info  = calloc(1, sizeof(ambix_info_t));
 
-   // need to specify samplerate and sampleformat
+   /* need to specify samplerate and sampleformat */
    ambix->samplerate = 44100;
-   ambix->sampleformat = AMBIX_SAMPLEFORMAT_PCM16;
+   ambix->sampleformat = AMBIX_SAMPLEFORMAT_PCM24;
    ambix->fileformat = AMBIX_BASIC;
-   ambix->ambichannels = 16; // 16 channels means 3rd order ambisonics, according to L=(2N+1)^2
+   ambix->ambichannels = 16; /* 16 channels means 3rd order ambisonics, according to L=(2N+1)^2 */
 
    ambix = ambix_open("ambixfile.caf", AMBIX_WRITE, info);
    if(ambix) {
@@ -254,12 +256,12 @@
    ambix_t*ambix = NULL;
    ambix_info_t*info  = calloc(1, sizeof(ambix_info_t));
 
-   // need to specify samplerate and sampleformat
+   /* need to specify samplerate and sampleformat */
    ambix->samplerate = 44100;
-   ambix->sampleformat = AMBIX_SAMPLEFORMAT_PCM16;
+   ambix->sampleformat = AMBIX_SAMPLEFORMAT_PCM24;
    ambix->fileformat = AMBIX_EXTENDED;
-   ambix->ambichannels = 8;  // a reduced ambisonics set
-   ambix->extrachannels = 1; // an extrachannel, e.g. click-track
+   ambix->ambichannels = 8;  /* a reduced ambisonics set */
+   ambix->extrachannels = 1; /* an extrachannel, e.g. click-track */
 
    ambix = ambix_open("ambixfile.caf", AMBIX_WRITE, info);
    if(ambix) {
@@ -270,7 +272,7 @@
      float32_t*ambidata  = calloc(info->ambichannels  * blocksize, sizeof(float32_t));
      float32_t*extradata  = calloc(info->extrachannels  * blocksize, sizeof(float32_t));
 
-     // create an adaptormatrix:
+     /* create an adaptormatrix: */
      ambix_matrix_t adaptormatrix = {0, 0, NULL};
      ambix_matrix_init(16, 8, &adaptormatrix);
      // fill the adaptormatrix, that expands our 8 channels to a full 3D 3rd-order set (16 channels)
@@ -318,11 +320,11 @@
    ambix_t*ambix = NULL;
    ambix_info_t*info  = calloc(1, sizeof(ambix_info_t));
 
-   // need to specify samplerate and sampleformat
+   /* need to specify samplerate and sampleformat */
    info->samplerate   = 44100;
    info->sampleformat = AMBIX_SAMPLEFORMAT_PCM24;
    info->fileformat   = AMBIX_BASIC;
-   info->ambichannels = 7; // 3rd-order horizontal only
+   info->ambichannels = 7; /* 3rd-order horizontal-only(!) */
 
    ambix = ambix_open("ambixfile.caf", AMBIX_WRITE, info);
    if(ambix) {
@@ -333,19 +335,21 @@
 
      float32_t*ambidata  = calloc(fullambichannels  * blocksize, sizeof(float32_t));
 
-     // on disk, the data is stored as 3rd-order horizontal-only Furse-Malham set
-     // we need to provide an adaptor that converts *from* the 7 FuMa-channels
-     // to the 16 AMBIX channels
+     /* on disk, the data is stored as 3rd-order horizontal-only Furse-Malham
+      * set (7 channels); we need to provide an adaptor matrix that converts
+      * from the 7 FuMa-channels to the 16 AMBIX channels
+      */
      ambix_matrix_t*mtx = NULL;
      mtx = ambix_matrix_init(fullambichannels, info->ambichannels, mtx);
-     mtx = ambix_matrix_fill(mtx, ABIX_MATRIX_FUMA); // fuma->ambix matrix [16x7]
+     mtx = ambix_matrix_fill(mtx, ABIX_MATRIX_FUMA); /* fuma->ambix matrix [16x7] */
      ambix_set_adaptormatrix(ambix, mtx);
      ambix_matrix_destroy(mtx);
 
      while(haveData) {
-       // acquire blocksize samples of a full set of 3rd order ambisonics data (16 channels)
-       // into ambidata (interleaved)
-       // ...
+       /* acquire blocksize samples of a full set of 3rd order ambisonics data (16 channels)
+        *  into ambidata (interleaved)
+        * ...
+	*/
 
        block = ambix_write_float32(ambix, ambidata, NULL, blocksize);
      }
