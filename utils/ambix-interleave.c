@@ -504,12 +504,13 @@ static ai_t*ai_copy_block(ai_t*ai,
   for(i=0; i<ai->numIns; i++) {
     uint64_t offset=channels*frames;
     SNDFILE*in=ai->inhandles[i];
+    uint32_t inchannels=ai->ininfo[i].channels;
     if(in) {
       //printf("reading %d frames from[%d] at %p+%d\n", (int)frames, (int)i, interleavedata, (int)offset);
       if(frames!=sf_readf_float(in, deinterleavedata+offset, frames)) {
         return ai_close(ai);
       }
-      channels+=ai->ininfo[i].channels;
+      channels+=inchannels;
     }
   }
 
