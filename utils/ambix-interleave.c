@@ -539,9 +539,9 @@ static ai_t*ai_copy(ai_t*ai) {
   channels=(ai->info.ambichannels+ai->info.extrachannels);
 
   if(ai->info.ambichannels>0)
-    ambidata =(float32_t*)malloc(sizeof(float32_t)*ai->info.ambichannels *blocksize);
+    ambidata =malloc(sizeof(*ambidata )*ai->info.ambichannels *blocksize);
   if(ai->info.extrachannels>0)
-    extradata=(float32_t*)malloc(sizeof(float32_t)*ai->info.extrachannels*blocksize);
+    extradata=malloc(sizeof(*extradata)*ai->info.extrachannels*blocksize);
 
   interleavebuffer=(float32_t*)malloc(sizeof(float32_t)*channels*blocksize);
 
