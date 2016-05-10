@@ -49,8 +49,9 @@
 
 #include <stdio.h>
 static void _ambix_printUUID4(const char data[2]) {
- printf("%02x%02x", (signed char)data[0], (signed char)data[1]);
-
+  unsigned char data0=data[0];
+  unsigned char data1=data[1];
+  printf("%02x%02x", data0, data1);
 }
 static void _ambix_printUUID(const char data[16]) {
  /* 8-4-4-4-12 */
