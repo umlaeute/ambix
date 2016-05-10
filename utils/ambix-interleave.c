@@ -495,6 +495,7 @@ static ai_t*ai_copy_block(ai_t*ai,
                           float*ambidata,
                           float*extradata,
                           float*deinterleavedata,
+                          float*sourcedata,
                           uint64_t frames) {
   uint32_t i;
   uint64_t channels=0;
@@ -530,7 +531,8 @@ static ai_t*ai_copy_block(ai_t*ai,
 static ai_t*ai_copy(ai_t*ai) {
   uint64_t blocksize=0, blocks=0;
   uint64_t frames=0, channels=0;
-  float32_t*ambidata=NULL,*extradata=NULL,*interleavebuffer=NULL;
+  float32_t*ambidata=NULL,*extradata=NULL,*interleavebuffer=NULL,*source=NULL;
+  uint64_t i, maxchannels=0;
   if(!ai)return ai;
   blocksize=ai->blocksize;
   if(blocksize<1)
@@ -538,26 +540,35 @@ static ai_t*ai_copy(ai_t*ai) {
   frames=ai->info.frames;
   channels=(ai->info.ambichannels+ai->info.extrachannels);
 
+  for(i=0; i<ai->numIns; i++) {
+    uint64_t c=ai->ininfo[i].channels;
+    if(c>maxchannels)maxchannels=c;
+  }
+
   if(ai->info.ambichannels>0)
     ambidata =malloc(sizeof(*ambidata )*ai->info.ambichannels *blocksize);
   if(ai->info.extrachannels>0)
     extradata=malloc(sizeof(*extradata)*ai->info.extrachannels*blocksize);
+  if(maxchannels>1)
+    source   =malloc(sizeof(*source   )*maxchannels           *blocksize);
 
   interleavebuffer=(float32_t*)malloc(sizeof(float32_t)*channels*blocksize);
 
   while(frames>blocksize) {
     blocks++;
-    ai=ai_copy_block(ai, ambidata, extradata, interleavebuffer, blocksize);
+    ai=ai_copy_block(ai, ambidata, extradata, interleavebuffer, source, blocksize);
     if(!ai) break;
     frames-=blocksize;
   }
   if(ai)
-    ai=ai_copy_block(ai, ambidata, extradata, interleavebuffer, frames);
+    ai=ai_copy_block(ai, ambidata, extradata, interleavebuffer, source, frames);
 
 
   free(ambidata);
   free(extradata);
   free(interleavebuffer);
+  free(source);
+
   return ai;
 }
 
