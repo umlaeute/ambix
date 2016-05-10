@@ -203,8 +203,9 @@
  * ambix_info_t struct to @ref AMBIX_BASIC prior to opening the file.
  *
  * You will need to provide a full set of ambisonics channels when writing data
- * to the file, and must not set an adaptor matrix. A full set of ambisonics
- * must always satisfy the formula @f$channels=(order_{ambi}+1)^2@f$.
+ * to the file, and must not set an adaptor matrix (see also @ref writebasic2extended_usage).
+ * A full set of ambisonics must always satisfy the formula
+ * @f$channels=(order_{ambi}+1)^2@f$.
  *
  * You cannot write extra audio channels into a "BASIC" ambix file.
  *
@@ -293,6 +294,66 @@
    }
  * @endcode
  *
+ * @subsection writebasic2extended_usage Writing EXTENDED ambix files using the BASIC interface
+ *
+ * Finally, you can create "EXTENDED" ambix files from a full set of ambisonics channels and an
+ * adaptor matrix.
+ * This can be useful if you have a setup that works with full ambisonics sets (e.g. a DAW project)
+ * and you want to create a size-optimized ambix file that only stores a reduced set.
+ *
+ * This can be achieved by setting the 'fileformat' member of the ambix_info_t struct to
+ * @ref AMBIX_BASIC (because you will provide the full ambisonics set as if the file were opened in
+ * "BASIC" mode) and the 'ambichannels' member to the (reduced) number of ambisonics channel as will
+ * be written to the disk, and then setting an adaptor matrix ambix_set_adaptormatrix(), that will
+ * convert the reduced set back to the full set.
+ * libambix will internally reduce the full ambisonics set (as passed to @ref ambix_writef) using
+ * the (pseudo) inverse of the adaptor-matrix.
+ *
+ * @note you must ensure yourself that the adaptor matrix is able to reconstruct the (desired) full
+ * ambisonics set from the reduced set (e.g. if you pass an adaptor matrix that converts a
+ * 1st order horizontal-only ambisonics set to a 2nd order fully periphonic set, the reconstructed
+ * ambisonics set will have muted channels (those that contain 3rd-order and/or Z-axis components))
+ *
+ * @code
+   ambix_t*ambix = NULL;
+   ambix_info_t*info  = calloc(1, sizeof(ambix_info_t));
+
+   // need to specify samplerate and sampleformat
+   info->samplerate   = 44100;
+   info->sampleformat = AMBIX_SAMPLEFORMAT_PCM24;
+   info->fileformat   = AMBIX_BASIC;
+   info->ambichannels = 7; // 3rd-order horizontal only
+
+   ambix = ambix_open("ambixfile.caf", AMBIX_WRITE, info);
+   if(ambix) {
+     uint64_t fullambichannels = 16;
+     uint64_t frames = info->frames;
+     uint64_t blocksize = 1024;
+     uint64_t block;
+
+     float32_t*ambidata  = calloc(fullambichannels  * blocksize, sizeof(float32_t));
+
+     // on disk, the data is stored as 3rd-order horizontal-only Furse-Malham set
+     // we need to provide an adaptor that converts *from* the 7 FuMa-channels
+     // to the 16 AMBIX channels
+     ambix_matrix_t*mtx = NULL;
+     mtx = ambix_matrix_init(fullambichannels, info->ambichannels, mtx);
+     mtx = ambix_matrix_fill(mtx, ABIX_MATRIX_FUMA); // fuma->ambix matrix [16x7]
+     ambix_set_adaptormatrix(ambix, mtx);
+     ambix_matrix_destroy(mtx);
+
+     while(haveData) {
+       // acquire blocksize samples of a full set of 3rd order ambisonics data (16 channels)
+       // into ambidata (interleaved)
+       // ...
+
+       block = ambix_write_float32(ambix, ambidata, NULL, blocksize);
+     }
+
+     ambix_close(ambix);
+     free(ambidata);
+   }
+ * @endcode
  *
  */
 
