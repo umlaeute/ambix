@@ -28,6 +28,7 @@ matrix:
 before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -qq libvorbis-dev libflac-dev libasound2-dev
+  - sudo apt-get install -qq doxygen
 install:
   ## build libsndfile
   - mkdir -p libsndfile/build && curl "$LIBSNDFILE_URL" | tar --strip-components=1 -C libsndfile -xvzf -
