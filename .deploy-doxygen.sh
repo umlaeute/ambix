@@ -1,8 +1,9 @@
 #!/bin/sh
 
-INPUTDIR=$(realpath doc/apiref)
+WD=$(pwd)
+INPUTDIR="${WD}/doc/apiref"
+OUTPUTDIR="${WD}/gh-pages"
 REMOTE=$(git remote get-url origin)
-OUTPUTDIR=gh-pages
 
 if [ -e "${INPUTDIR}/index.html" ]; then
  :
@@ -29,7 +30,6 @@ fi
 }
 
 git clone -b gh-pages "${REMOTE}" "${OUTPUTDIR}"
-OUTPUTDIR=$(realpath "${OUTPUTDIR}")
 cd "${OUTPUTDIR}" || exit 1
 
 ##### Configure git.
