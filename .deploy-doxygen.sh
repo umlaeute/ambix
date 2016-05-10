@@ -5,12 +5,18 @@ INPUTDIR="${WD}/doc/apiref"
 OUTPUTDIR="${WD}/gh-pages"
 REMOTE=https://github.com/iem-projects/ambix
 
+error() {
+ echo "$@" 1>&2
+}
+
 if [ -e "${INPUTDIR}/index.html" ]; then
  :
 else
+ error "missing {INPUTDIR}/index.html"
  exit 0
 fi
 if [ "x${REMOTE}" = "x" ]; then
+ error "no remote"
  exit 0
 fi
 COMMIT=$(git describe --always)
