@@ -238,17 +238,17 @@ _ambix_matrix_pinvert_cholesky(const ambix_matrix_t*input, ambix_matrix_t*invers
   do {
     if(!trans)break;
     if(input->rows > input->cols) {
-      chinv=ambix_matrix_multiply(trans, input, chinv);
+      chinv=_ambix_matrix_multiply(trans, input, chinv);
       if(!chinv)break;
       _am_cholesky2_decomp(chinv, toler);
       _am_cholesky2_inverse(chinv);
-      result=ambix_matrix_multiply(chinv, trans, inverse);
+      result=_ambix_matrix_multiply(chinv, trans, inverse);
     } else {
-      chinv=ambix_matrix_multiply(input, trans, chinv);
+      chinv=_ambix_matrix_multiply(input, trans, chinv);
       if(!chinv)break;
       _am_cholesky2_decomp(chinv, toler);
       _am_cholesky2_inverse(chinv);
-      result=ambix_matrix_multiply(trans, chinv, inverse);
+      result=_ambix_matrix_multiply(trans, chinv, inverse);
     }
   } while(0);
   if(trans)ambix_matrix_destroy(trans);

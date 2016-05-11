@@ -172,7 +172,7 @@ ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambix_info_
 #if 0
       ambix_matrix_init(ambix->info.ambichannels, ambix->realinfo.ambichannels, &ambix->matrix);
       ambix_matrix_fill(&ambix->matrix, AMBIX_MATRIX_IDENTITY);
-      ambix_matrix_pinv(&ambix->matrix, &ambix->matrix2);
+      _ambix_matrix_pinv(&ambix->matrix, &ambix->matrix2);
 #endif
     }
     if(0) {
@@ -241,7 +241,7 @@ ambix_err_t ambix_set_adaptormatrix	(ambix_t*ambix, const ambix_matrix_t*matrix)
     ambix_matrix_t*mtx=NULL;
     /* multiply the matrix with the previous adaptor matrix */
     if(AMBIX_EXTENDED == ambix->realinfo.fileformat) {
-      mtx=ambix_matrix_multiply(matrix, &ambix->matrix, &ambix->matrix2);
+      mtx=_ambix_matrix_multiply(matrix, &ambix->matrix, &ambix->matrix2);
       if(mtx != &ambix->matrix2)
         return AMBIX_ERR_UNKNOWN;
       ambix->use_matrix=2;
@@ -288,7 +288,7 @@ ambix_err_t ambix_set_adaptormatrix	(ambix_t*ambix, const ambix_matrix_t*matrix)
     if(!ambix_is_fullset(matrix->rows))
       return AMBIX_ERR_INVALID_DIMENSION;
 
-    pinv=ambix_matrix_pinv(matrix, pinv);
+    pinv=_ambix_matrix_pinv(matrix, pinv);
     if(!pinv)
       return AMBIX_ERR_INVALID_MATRIX;
 

@@ -68,7 +68,7 @@ fuma2ambix_weightorder(void) {
   weight_m=_matrix_diag  (weight_m, weights, sizeof(weights)/sizeof(*weights));
   order_m =_matrix_router(order_m , order, sizeof(order)/sizeof(*order), 1);
 
-  result_m=ambix_matrix_multiply(weight_m, order_m, result_m);
+  result_m=_ambix_matrix_multiply(weight_m, order_m, result_m);
 
   ambix_matrix_destroy(weight_m);weight_m=NULL;
   ambix_matrix_destroy(order_m); order_m=NULL;
@@ -104,7 +104,7 @@ ambix2fuma_weightorder(void) {
   weight_m=_matrix_diag  (weight_m, weights, sizeof(weights)/sizeof(*weights));
   order_m =_matrix_router(order_m , order, sizeof(order)/sizeof(*order), 0);
 
-  result_m=ambix_matrix_multiply(order_m, weight_m, result_m);
+  result_m=_ambix_matrix_multiply(order_m, weight_m, result_m);
 
   ambix_matrix_destroy(weight_m);weight_m=NULL;
   ambix_matrix_destroy(order_m); order_m=NULL;
@@ -120,8 +120,8 @@ _matrix_multiply3(ambix_matrix_t*mtx1,
                   ambix_matrix_t*result) {
   ambix_matrix_t*tmp=NULL;
 
-  tmp=ambix_matrix_multiply(mtx1, mtx2, tmp);
-  result=ambix_matrix_multiply(tmp, mtx3, result);
+  tmp=_ambix_matrix_multiply(mtx1, mtx2, tmp);
+  result=_ambix_matrix_multiply(tmp, mtx3, result);
 
   ambix_matrix_destroy(tmp);
   return result;

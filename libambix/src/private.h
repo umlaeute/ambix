@@ -239,6 +239,39 @@ _ambix_matrix_fill_data_byteswapped(ambix_matrix_t*mtx, const number32_t*data);
  */
 ambix_matrix_t*
 _ambix_matrix_transpose(const ambix_matrix_t*matrix, ambix_matrix_t*xirtam);
+/** @brief Multiply two matrices
+ *
+ * Multiply matrices dest=A*B, possibly resizing or creating the destination
+ * matrix.
+ *
+ * @param A left-hand operator
+ *
+ * @param B right-hand operator
+ *
+ * @param result pointer to the matrix object that will hold the result or NULL
+ *
+ * @return pointer to the result matrix, or NULL in case the matrix
+ * multiplication did not succeed.
+ *
+ * @remark If this returns a newly allocated matrix object (result!=return
+ * value), the host has to take care of calling ambix_matrix_destroy().
+ */
+ambix_matrix_t*
+_ambix_matrix_multiply (const ambix_matrix_t *A, const ambix_matrix_t *B, ambix_matrix_t *result) ;
+/** @brief Get the Moore-Penrose pseudoinverse of a matrix.
+ *
+ * Get the Moore-Penrose pseudoinverse of the matrix input and write the result
+ * to pinv
+ *
+ * @param matrix input matrix
+ *
+ * @param pinv pointer to the matrix object that will hold the result or NULL
+ *
+ * @return pointer to the result matrix, or NULL in case the matrix
+ * inversion did not succeed.
+ */
+ambix_matrix_t*
+_ambix_matrix_pinv(const ambix_matrix_t*matrix, ambix_matrix_t*pinv) ;
 
 /** @brief Invert a matrix using Gauss-Jordan
  *

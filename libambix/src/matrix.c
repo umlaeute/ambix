@@ -183,7 +183,7 @@ ambix_matrix_copy(const ambix_matrix_t*src, ambix_matrix_t*dest) {
 
 
 ambix_matrix_t*
-ambix_matrix_multiply(const ambix_matrix_t*left, const ambix_matrix_t*right, ambix_matrix_t*dest) {
+_ambix_matrix_multiply(const ambix_matrix_t*left, const ambix_matrix_t*right, ambix_matrix_t*dest) {
   uint32_t r, c, rows, cols, common;
   float32_t**ldat,**rdat,**ddat;
   float32_t lv, rv;
@@ -336,7 +336,7 @@ ambix_matrix_fill(ambix_matrix_t*matrix, ambix_matrixtype_t typ) {
 }
 
 ambix_matrix_t*
-ambix_matrix_pinv(const ambix_matrix_t*A, ambix_matrix_t*P) {
+_ambix_matrix_pinv(const ambix_matrix_t*A, ambix_matrix_t*P) {
   const float32_t eps=1e-7;
   ambix_matrix_t *result = NULL;
 
@@ -362,19 +362,19 @@ ambix_matrix_pinv(const ambix_matrix_t*A, ambix_matrix_t*P) {
       At = _ambix_matrix_transpose(A, At);
 
       if (A->rows > A->cols) {
-	temp = ambix_matrix_multiply(At, A, NULL);
+	temp = _ambix_matrix_multiply(At, A, NULL);
 	if (!temp)break;
 	temp2 = _ambix_matrix_invert_gaussjordan(temp, temp2, eps);
 	if (!temp2)break;
 
-	result = ambix_matrix_multiply(temp2, At, P);
+	result = _ambix_matrix_multiply(temp2, At, P);
       } else {
-	temp = ambix_matrix_multiply(A, At, NULL);
+	temp = _ambix_matrix_multiply(A, At, NULL);
 	if (!temp)break;
 	temp2 = _ambix_matrix_invert_gaussjordan(temp, temp2, eps);
 	if (!temp2)break;
 
-	result = ambix_matrix_multiply(At, temp2, P);
+	result = _ambix_matrix_multiply(At, temp2, P);
       }
     } while (0);
     if(At)   ambix_matrix_destroy(At);
@@ -502,4 +502,14 @@ ambix_matrix_t*_matrix_permutate(ambix_matrix_t*matrix, const float32_t*route, i
     }
   }
   return matrix;
+}
+
+
+ambix_matrix_t*
+ambix_matrix_pinv(const ambix_matrix_t*A, ambix_matrix_t*P) {
+  return _ambix_matrix_pinv(A, P);
+}
+ambix_matrix_t*
+ambix_matrix_multiply(const ambix_matrix_t*left, const ambix_matrix_t*right, ambix_matrix_t*dest) {
+  return _ambix_matrix_multiply(left, right, dest);
 }
