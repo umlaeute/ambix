@@ -1,6 +1,6 @@
 /* adaptor.c -  extracting ambisonics data from data using adaptor matrices              -*- c -*-
 
-   Copyright © 2012 IOhannes m zmölnig <zmoelnig@iem.at>.
+   Copyright © 2012-2016 IOhannes m zmölnig <zmoelnig@iem.at>.
          Institute of Electronic Music and Acoustics (IEM),
          University of Music and Dramatic Arts, Graz
 

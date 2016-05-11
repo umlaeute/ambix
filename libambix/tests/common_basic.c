@@ -1,6 +1,6 @@
 /* simple - test ambix simple
 
-   Copyright © 2012 IOhannes m zmölnig <zmoelnig@iem.at>.
+   Copyright © 2012-2016 IOhannes m zmölnig <zmoelnig@iem.at>.
          Institute of Electronic Music and Acoustics (IEM),
          University of Music and Dramatic Arts, Graz
 

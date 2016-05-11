@@ -1,7 +1,7 @@
 /* ambix-jplay.c -  play back an ambix file via jack            -*- c -*-
 
    Copyright © 2003-2010 Rohan Drape <rd@slavepianos.org>
-   Copyright © 2012 IOhannes m zmölnig <zmoelnig@iem.at>.
+   Copyright © 2012-2014 IOhannes m zmölnig <zmoelnig@iem.at>.
          Institute of Electronic Music and Acoustics (IEM),
          University of Music and Dramatic Arts, Graz
 

@@ -1,6 +1,6 @@
 /* ambix_dump -  create an ambix file              -*- c -*-
 
-   Copyright © 2012 IOhannes m zmölnig <zmoelnig@iem.at>.
+   Copyright © 2012-2014 IOhannes m zmölnig <zmoelnig@iem.at>.
          Institute of Electronic Music and Acoustics (IEM),
          University of Music and Dramatic Arts, Graz
 

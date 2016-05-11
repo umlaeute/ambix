@@ -1,7 +1,8 @@
 /* ambix_write~ -  write AMBIsonics eXchange files in Pd        -*- c -*-
 
  Copyright © 1997-1999 Miller Puckette <msp@ucsd.edu>.
- Copyright © 2012 IOhannes m zmölnig <zmoelnig@iem.at>.
+ Copyright © 2012-2014 IOhannes m zmölnig <zmoelnig@iem.at>.
+ Copyright © 2016, Matthias Kronlachner
  Institute of Electronic Music and Acoustics (IEM),
  University of Music and Dramatic Arts, Graz
 
