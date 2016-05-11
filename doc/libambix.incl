@@ -346,10 +346,9 @@
      ambix_matrix_destroy(mtx);
 
      while(haveData) {
-       /* acquire blocksize samples of a full set of 3rd order ambisonics data (16 channels)
-        *  into ambidata (interleaved)
-        * ...
-	*/
+       // acquire blocksize samples of a full set of 3rd order ambisonics data (16 channels)
+       //  into ambidata (interleaved)
+       // ...
 
        block = ambix_write_float32(ambix, ambidata, NULL, blocksize);
      }
