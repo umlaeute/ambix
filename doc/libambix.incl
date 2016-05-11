@@ -451,7 +451,6 @@
  *
  */
 
-
 /**
  * @page utilities ambix commandline utilities
  *
@@ -469,4 +468,75 @@
  * @section tests
  * @subsection ambix-test ambix-test
  * @subsection ambix-matrix ambix-matrix
+ */
+
+
+/**
+ * @page FAQ Frequently Asked Questions
+ *
+ * @section Terms
+ *
+ * @subsection term-ambix What does libambix stand for?
+ * @c libambix is a <b>lib</b>rary for reading and writing <b>ambi</b>sonics e<b>x</b>change files.
+ *
+ * @subsection basic-vs-extended What is the difference between BASIC and EXTENDED ambix files?
+ * @c BASIC ambix files contain exactly a full set of periphonic ambisonics channels,
+ * using ACN channel ordering and SN3D normalisation.
+ *
+ * @c EXTENDED ambix files contain an additional adaptor matrix at the beginning of the file,
+ * which can be used to turn the actually stored audio channels into a full set of
+ * periphonic ambisonics channels (periphonic, ACN, SN3D).
+ * These files can be used to store a reduced number of channels
+ * (e.g. when your soundfield is horizontal only,
+ * there is no need to store the channels with height-information, as they will be muted anyhow),
+ * while providing a simple and standardized way to play them back on a full ambisonics decoder.
+ *
+ * See @ref format for more information.
+ *
+ * @section HOW-TOs
+ *
+ * @subsection howto-channels2basic How can I create an ambix file from a set of mono soundfiles?
+ * If you have an ambisonics recording as multiple mono soundfiles following the ambix standard
+ * (channel ordering: ACN, normalisation: SN3D), you can merge them into an ambix files
+ * using the `ambix-interleave` command.
+ * @code
+ ambix-interleave -o ambixfile.caf recording-ambi0.wav recording-ambi1.wav recording-ambi2.wav recording-ambi3.wav
+ * @endcode
+ *
+ * @subsection howto-multichannel2basic How can I create an ambix file from a multichannel soundfile?
+ * If you have an ambisonics recording already as a multichannel soundfile, with the channels
+ * following the ambix standard (channel ordering: ACN, normalisation: SN3D),
+ * you can create an ambix file from that using the `ambix-interleave` command.
+ * @code
+ ambix-interleave -o ambixfile.caf recording.wav
+ * @endcode
+ *
+ * @subsection howto-amb2extended How can I convert my .amb files to ambix?
+ * You can use the `ambix-interleave` file to create EXTENDED ambix files from your
+ * old .amb recordings.
+ * If `ambix-interleave` detects that the input is an .amb file, it will
+ * add an adaptor matrix that converts from .amb's Furse-Malham channels to ambix channels,
+ * and will otherwise leave the audio data intact.
+ * @code
+ ambix-interleave -o ambixfile.caf recording.amb
+ * @endcode
+ *
+ * @subsection howto-amb2basic How can I convert my .amb files to ambix?
+ * To create BASIC ambix files (without an adaptor matrix), you can use
+ * `ambix-deinterleave` to convert the .amb file to SN3D/ACN channels, and then
+ * use `ambix-interleave` to merge those files into a single ambix file:
+ * @code
+ ambix-deinterleave recording.amb
+ ambix-interleave -o ambixfile.caf recording-ambi*
+ * @endcode
+ *
+ * @subsection howto-extended2basic How can I convert an EXTENDED ambix file to BASIC?
+ * The easiest way to convert an EXTENDED ambix file to a BASIC file is to first
+ * extract the channels into separate files using `ambix-deinterleave`,
+ * and then merge them back using `ambix-interleave`:
+ * @code
+ ambix-deinterleave ambixextended.caf
+ ambix-interleave -o ambixbasic.caf ambixextended-ambi*
+ * @endcode
+ *
  */
