@@ -586,6 +586,7 @@ ambix_err_t ambix_matrix_fill_data (ambix_matrix_t *mtx, const float32_t *data) 
  */
 AMBIX_API
 ambix_matrix_t *ambix_matrix_copy (const ambix_matrix_t *src, ambix_matrix_t *dest) ;
+/** @cond DEPRECATED */
 /** @brief Multiply two matrices
  *
  * Multiply matrices dest=A*B, possibly resizing or creating the destination
@@ -623,6 +624,7 @@ ambix_matrix_t *ambix_matrix_multiply (const ambix_matrix_t *A, const ambix_matr
  */
 AMBIX_API
 ambix_matrix_t* ambix_matrix_pinv(const ambix_matrix_t*matrix, ambix_matrix_t*pinv) ;
+/** @endcond */
 /** @brief Multiply a matrix with data
  * @defgroup ambix_matrix_multiply_data ambix_matrix_multiply_data()
  * @ingroup ambix_matrix

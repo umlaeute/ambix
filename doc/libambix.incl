@@ -452,6 +452,7 @@
  */
 
 /**
+ * @cond
  * @page utilities ambix commandline utilities
  *
  * libambix comes with a number of commandline utilities
@@ -468,6 +469,7 @@
  * @section tests
  * @subsection ambix-test ambix-test
  * @subsection ambix-matrix ambix-matrix
+ * @endcond
  */
 
 
