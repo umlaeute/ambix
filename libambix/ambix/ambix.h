@@ -606,7 +606,7 @@ ambix_matrix_t *ambix_matrix_copy (const ambix_matrix_t *src, ambix_matrix_t *de
  *
  * @ingroup ambix_matrix
  */
-AMBIX_API
+AMBIX_API AMBIX_DEPRECATED
 ambix_matrix_t *ambix_matrix_multiply (const ambix_matrix_t *A, const ambix_matrix_t *B, ambix_matrix_t *result) ;
 /** @brief Get the Moore-Penrose pseudoinverse of a matrix.
  *
@@ -622,7 +622,7 @@ ambix_matrix_t *ambix_matrix_multiply (const ambix_matrix_t *A, const ambix_matr
  *
  * @ingroup ambix_matrix
  */
-AMBIX_API
+AMBIX_API AMBIX_DEPRECATED
 ambix_matrix_t* ambix_matrix_pinv(const ambix_matrix_t*matrix, ambix_matrix_t*pinv) ;
 /** @endcond */
 /** @brief Multiply a matrix with data
@@ -647,6 +647,7 @@ ambix_matrix_t* ambix_matrix_pinv(const ambix_matrix_t*matrix, ambix_matrix_t*pi
  * @remark Both source and dest data are arranged column-wise (as is the default
  * for interleaved audio-data).
  */
+
 /** @brief Multiply a matrix with (32bit floating point) data
  *
  * @ingroup ambix_matrix_multiply_data
