@@ -389,7 +389,7 @@
  *
  * @section format_bugfix Bug-fixes for the format-specification
  *
- * The original @link http://ambisonics.iem.at/xchange/format/2011_NachbarZotterSontacchiDeleflie_ambix.pdf format proposal@endlink
+ * The original <a href="http://ambisonics.iem.at/xchange/fileformat/2011_nachbarzottersontacchideleflie_ambix.pdf">format proposal</a>
  * had a number of flaws and bugs that have been discovered during the implenentation of @em libambix.
  * Consequently, these flaws and bugs have been fixed.
  *
