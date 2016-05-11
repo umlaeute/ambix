@@ -313,10 +313,17 @@
  * libambix will internally reduce the full ambisonics set (as passed to @ref ambix_writef) using
  * the (pseudo) inverse of the adaptor-matrix.
  *
- * @note you must ensure yourself that the adaptor matrix is able to reconstruct the (desired) full
- * ambisonics set from the reduced set (e.g. if you pass an adaptor matrix that converts a
- * 1st order horizontal-only ambisonics set to a 2nd order fully periphonic set, the reconstructed
- * ambisonics set will have muted channels (those that contain 3rd-order and/or Z-axis components))
+ * @note You must ensure yourself that the adaptor matrix is inversible.
+ *
+ * The adaptor matrix gets written to disk prior to writing any samples to the file
+ * (or closing the ambix file). It is an error to call ambix_set_adaptormatrix()
+ * after starting to write samples.
+ *
+ * @note If you pass an adaptor matrix that expands a reduced set to full ambisonics
+ * (e.g. converting from 1st order horizontal-only ambisonics set to a 2nd order fully periphonic set)
+ * the reconstructed ambisonics channels (when reading the ambix file later),
+ * might be different from the ambisonics channels you passed in when writing the file
+ * (e.g. channels that contain 3rd-order and/or Z-axis components will be muted).
  *
  * @code
    ambix_t*ambix = NULL;
