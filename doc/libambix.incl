@@ -161,7 +161,7 @@
  *
  * @subsection readunknown_usage Reading any ambix files
  *
- * If you don't specify the format prior to opening, you can query the format of the file
+ * If you do not specify the format prior to opening, you can query the format of the file
  * from the ambix_info_t struct.
  *
  * @code
@@ -184,9 +184,6 @@
      default:
        printf("this file is of unknown format...\n");
      }
-
-     // using the adaptormatrix
-     // ...
 
      ambix_close(ambix);
    }
@@ -274,7 +271,7 @@
      uint64_t block;
 
      float32_t*ambidata  = calloc(info->ambichannels  * blocksize, sizeof(float32_t));
-     float32_t*extradata  = calloc(info->extrachannels  * blocksize, sizeof(float32_t));
+     float32_t*extradata = calloc(info->extrachannels  * blocksize, sizeof(float32_t));
 
      /* create an adaptormatrix: */
      ambix_matrix_t adaptormatrix = {0, 0, NULL};
