@@ -48,6 +48,8 @@
  */
 
 #include <stdio.h>
+
+#if 0
 static void _ambix_printUUID4(const char data[2]) {
   unsigned char data0=data[0];
   unsigned char data1=data[1];
@@ -68,7 +70,7 @@ static void _ambix_printUUID(const char data[16]) {
  _ambix_printUUID4(data);data+=2;
  _ambix_printUUID4(data);data+=2;
 }
-
+#endif
  /*
   * uarg, this is not a UUID!
   * (well it is...UUID::Tiny thinks it's a v2 (DCE security) UUID
