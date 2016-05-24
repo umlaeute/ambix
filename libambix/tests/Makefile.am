@@ -33,6 +33,8 @@ fail_if0_SOURCES=fail_if0.c
 fail_if1_SOURCES=fail_if1.c
 
 
+TESTS += datatest
+datatest_SOURCES = datatest.c common.c
 
 TESTS += matrix
 matrix_SOURCES = matrix.c common.c
