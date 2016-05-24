@@ -8,6 +8,9 @@ SUBDIRS=data
 @VALGRIND_CHECK_RULES@
 
 AM_CPPFLAGS = -I$(top_srcdir)/libambix
+if DEBUG
+AM_CPPFLAGS += -I$(top_srcdir)/libambix/src -DAMBIX_INTERNAL
+endif
 LDADD = $(top_builddir)/libambix/src/libambix.la
 
 check_PROGRAMS =
@@ -44,6 +47,11 @@ matrices_SOURCES = matrices.c common.c
 
 TESTS += const_matrix
 const_matrix_SOURCES = const_matrix.c common.c
+
+if DEBUG
+TESTS += debug_utils
+debug_utils_SOURCES = debug_utils.c common.c
+endif
 
 TESTS          += none_float32
 none_float32_SOURCES = none_float32.c common_none.c common.c
