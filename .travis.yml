@@ -17,6 +17,7 @@ addons:
       - libflac-dev
       - libasound2-dev
       - doxygen
+      - lcov
 
 matrix:
   include:
@@ -44,4 +45,5 @@ script:
 - LD_LIBRARY_PATH=/usr/local/lib make distcheck
 
 after_success:
+  - if [[ -n $COVERITY_SCAN_PROJECT_NAME ]] ; then LD_LIBRARY_PATH=/usr/local/lib ./coverage.sh; fi
   - if [[ "yes.${TRAVIS_BRANCH}.${TRAVIS_PULLREQUEST}" = "yes.master." ]]; then ./.deploy-documentation.sh ; fi
