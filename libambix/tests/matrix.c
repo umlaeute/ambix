@@ -23,6 +23,7 @@
 
 #include "common.h"
 #include <string.h>
+#include <stdlib.h>
 
 static float32_t leftdata_4_3[]= {
    0.19, 0.06, 0.14,
@@ -393,6 +394,102 @@ void datamul_4_2_tests(uint32_t chunksize, float32_t eps) {
   STOPTEST("\n");
 }
 
+void mtx_diff(float32_t eps) {
+  float32_t errf;
+  ambix_matrix_t *left=NULL, *right=NULL;
+  unsigned int i;
+  const unsigned int rows=4;
+  const unsigned int cols=3;
+  float32_t*leftdata=leftdata_4_3;
+  float32_t*rightdata=malloc(sizeof(leftdata_4_3));
+  float32_t maxeps=eps;
+
+  STARTTEST("\n");
+
+  left=ambix_matrix_create();
+  right=ambix_matrix_create();
+
+  /* comparisions:
+     - failing tests:
+       - different dimensions
+       - left/right matrix is NULL
+     - non-failing tests:
+       - all values diff==0
+       - all values diff<eps
+       - few values diff<eps
+       - many values diff<eps
+  */
+  fail_if((left !=ambix_matrix_init(3, 4, left )), __LINE__, "initializing left matrix failed");
+  fail_if((right!=ambix_matrix_init(3, 4, right)), __LINE__, "initializing right matrix failed");
+
+  /* compare equal matrices */
+  STARTTEST("ident\n");
+  ambix_matrix_fill_data(left, leftdata);
+  errf=matrix_diff(__LINE__, left, left, eps);
+  fail_if(errf>0.f, __LINE__, "diffing mtx with itself returned %g (>%g)", errf, 0.f);
+
+  /* compare equal matrices */
+  STARTTEST("equal\n");
+  for(i=0; i<rows*cols; i++) {
+    rightdata[i]=leftdata[i];
+  }
+  ambix_matrix_fill_data(left , leftdata);
+  ambix_matrix_fill_data(right, rightdata);
+  errf=matrix_diff(__LINE__, left, right, eps);
+  fail_if(errf>0.f, __LINE__, "diffing mtx with copy returned %g (>%g)", errf, 0.f);
+
+  /* compare matrices where all values differ, but <eps */
+  STARTTEST("all<eps\n");
+  for(i=0; i<rows*cols; i++) {
+    rightdata[i]=leftdata[i]+eps*0.5;
+  }
+  ambix_matrix_fill_data(left , leftdata);
+  ambix_matrix_fill_data(right, rightdata);
+  errf=matrix_diff(__LINE__, left, right, eps);
+  fail_if(errf>eps, __LINE__, "diffing mtx with mtx+eps/2 returned %g (>%g)", errf, eps);
+  for(i=0; i<rows*cols; i++) {
+    rightdata[i]=leftdata[i]-eps*0.5;
+  }
+  ambix_matrix_fill_data(left , leftdata);
+  ambix_matrix_fill_data(right, rightdata);
+  errf=matrix_diff(__LINE__, left, right, eps);
+  fail_if(errf>eps, __LINE__, "diffing mtx with mtx-eps/2 returned %g (>%g)", errf, eps);
+
+  /* compare matrices where many values differ with <eps; but one with >eps */
+  STARTTEST("most<eps;one>eps\n");
+  for(i=0; i<rows*cols; i++) {
+    rightdata[i]=leftdata[i];
+  }
+  for(i=0; i<rows; i++) {
+    rightdata[i]=leftdata[i]+eps*0.5;
+  }
+  rightdata[0]=leftdata[0]+eps*1.5;
+  ambix_matrix_fill_data(left , leftdata);
+  ambix_matrix_fill_data(right, rightdata);
+  errf=matrix_diff(__LINE__, left, right, eps);
+  fail_if(errf>(eps*2.0), __LINE__, "diffing mtx with one value>eps returned %g (>%g)", errf, eps);
+  fail_if(errf<(eps*1.0), __LINE__, "diffing mtx with one value>eps returned %g (>%g)", errf, eps);
+
+  /* compare matrices where most values differ with >eps */
+  STARTTEST("most>eps\n");
+  for(i=0; i<rows*cols; i++) {
+    rightdata[i]=leftdata[i];
+  }
+  maxeps=eps*1.5;
+  for(i=0; i<(rows*cols)-1; i++) {
+    rightdata[i]=leftdata[i]-maxeps;
+  }
+  ambix_matrix_fill_data(left , leftdata);
+  ambix_matrix_fill_data(right, rightdata);
+  errf=matrix_diff(__LINE__, left, right, eps);
+  fail_if(errf<eps*1.0, __LINE__, "diffing mtx with one value>eps returned %g (<%g)", errf, eps*1.0);
+  fail_if(errf>eps*2.0, __LINE__, "diffing mtx with one value>eps returned %g (<%g)", errf, eps*2.0);
+
+  ambix_matrix_destroy(left);
+  ambix_matrix_destroy(right);
+  free(rightdata);
+  STOPTEST("\n");
+}
 
 void create_tests(float32_t eps) {
   int rows=4;
@@ -402,16 +499,19 @@ void create_tests(float32_t eps) {
   STARTTEST("\n");
 
   memset(&matrix, 0, sizeof(matrix));
+  matrix_print(&matrix);
 
   left=ambix_matrix_create();
   fail_if((left==NULL), __LINE__, "failed to create left matrix");
   fail_if((left->rows || left->cols), __LINE__, "created empty matrix has non-zero size");
   fail_if((left!=ambix_matrix_init(rows, cols, left)), __LINE__, "initializing existing matrix* returned new matrix");
   fail_if((left->rows!=rows || left->cols!=cols), __LINE__, "created matrix [%dx%d] does not match [%dx%d]", left->rows, left->cols, cols, cols2);
+  matrix_print(left);
 
   right=ambix_matrix_init(cols, cols2, NULL);
   fail_if((right==NULL), __LINE__, "failed to create right matrix");
   fail_if((right->rows!=cols || right->cols!=cols2), __LINE__, "created matrix [%dx%d] does not match [%dx%d]", right->rows, right->cols, cols, cols2);
+  matrix_print(right);
 
   fail_if((&matrix!=ambix_matrix_init(rows, cols2, &matrix)), __LINE__, "initializing existing matrix returned new matrix");
   fail_if((matrix.rows!=rows || matrix.cols!=cols2), __LINE__, "initialized matrix [%dx%d] does not match [%dx%d]", matrix.rows, matrix.cols, rows, cols2);
@@ -433,6 +533,8 @@ void create_tests(float32_t eps) {
 int main(int argc, char**argv) {
 #if 1
   create_tests(1e-7);
+  mtx_diff(1e-1);
+  mtx_diff(1e-7);
   mtxmul_tests(1e-7);
   mtxmul_eye_tests(1e-7);
   datamul_tests(1e-7);
