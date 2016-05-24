@@ -2,6 +2,7 @@
 
 WD=$(pwd)
 INPUTDIR="${WD}/doc/apiref"
+INPUT2DIR="${WD}/coverage"
 OUTPUTDIR="${WD}/gh-pages"
 REMOTE=https://github.com/iem-projects/ambix
 
@@ -53,6 +54,15 @@ cp -rav "${INPUTDIR}" "${INPUTDIR##*/}"
 
 ## add and commit to git
 git add --all "${INPUTDIR##*/}"
+
+## add coverage info (if it is there)
+if [ -d "${INPUT2DIR}" ]; then
+  rm -rf "${INPUT2DIR##*/}"
+  cp -rav "${INPUT2DIR}" "${INPUT2DIR##*/}"
+  git add --all "${INPUT2DIR##*/}"
+fi
+
+
 commit_msg | git commit "${INPUTDIR##*/}" -F -
 
 
