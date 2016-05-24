@@ -57,16 +57,18 @@ git add --all "${INPUTDIR##*/}"
 
 ## add coverage info (if it is there)
 if [ -d "${INPUT2DIR}" ]; then
+  error "adding coverage info ${INPUT2DIR##*/}"
   rm -rf "${INPUT2DIR##*/}"
   cp -rav "${INPUT2DIR}" "${INPUT2DIR##*/}"
   git add --all "${INPUT2DIR##*/}"
 fi
 
-
-commit_msg | git commit "${INPUTDIR##*/}" -F -
+error "committing to git"
+commit_msg | git commit -F - .
 
 
 # and push
+error "pushing to git"
 if [ "x${GH_REPO_TOKEN}" != "x" ]; then
   GH_REPO_REF=${REMOTE#*@}
   GH_REPO_REF=${GH_REPO_REF#*//}
