@@ -27,9 +27,10 @@
 #include <ambix/ambix.h>
 
 #include <stdlib.h>
-static inline void pass(void) {exit(0); }
-static inline void fail(void) {exit(1); }
-static inline void skip(void) {exit(77); }
+static inline int my_exit(int i) {exit(i); return i;}
+static inline int pass(void) {return my_exit(0); }
+static inline int fail(void) {return my_exit(1); }
+static inline int skip(void) {return my_exit(77); }
 
 #include <stdio.h>
 #include <stdarg.h>
@@ -44,7 +45,7 @@ static inline int pass_if (int test, int line, const char *format, ...)
     vprintf (format, argptr) ;
     va_end (argptr) ;
     printf("\n");
-    pass();
+    return pass();
   } ;
   return test;
 } /* pass_if */
@@ -57,7 +58,7 @@ static inline int skip_if (int test, int line, const char *format, ...)
     vprintf (format, argptr) ;
     va_end (argptr) ;
     printf("\n");
-    skip();
+    return skip();
   } ;
   return test;
 } /* skip_if */
@@ -70,7 +71,7 @@ static inline int fail_if (int test, int line, const char *format, ...)
     vprintf (format, argptr) ;
     va_end (argptr) ;
     printf("\n");
-    fail();
+    return fail();
   } ;
   return test;
 } /* fail_if */

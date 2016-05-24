@@ -8,6 +8,5 @@ void check_create_extended(const char*path, ambix_sampleformat_t format, uint32_
 int main(int argc, char**argv) {
   check_create_extended("test2-pcm32.caf",  AMBIX_SAMPLEFORMAT_PCM32, 1024, 1e-5);
 
-  pass();
-  return 0;
+  return pass();
 }

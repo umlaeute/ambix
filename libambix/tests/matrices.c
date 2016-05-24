@@ -195,6 +195,5 @@ int main(int argc, char**argv) {
   }
   STOPTEST("\n");
 
-  pass();
-  return 0;
+  return pass();
 }

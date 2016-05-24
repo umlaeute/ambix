@@ -21,6 +21,5 @@ int test_defaultmatrix(const char*name, uint32_t rows, uint32_t cols, ambix_matr
 int main(int argc, char**argv) {
   int err=0;
   err+=test_defaultmatrix("N3D"     , 4, 4, AMBIX_MATRIX_N3D     , 3, 1024, 4e-5);
-  pass();
-  return 0;
+  return pass();
 }

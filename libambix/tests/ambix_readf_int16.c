@@ -3,6 +3,5 @@
 int main ()
 {
   /* FIXXME: no test yet */
-  skip();
-  return 0;
+  return skip();
 }

@@ -258,8 +258,7 @@ int main(int argc, char**argv) {
 #warning  test_ambix_matrix_multiply_int32(1e-7);
 #warning  test_ambix_matrix_multiply_int16(1e-7);
 
-  pass();
-  return 0;
+  return pass();
 }
 
 #if 0

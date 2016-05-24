@@ -31,6 +31,5 @@ void check_create_none(const char*path, ambix_sampleformat_t format);
 int main(int argc, char**argv) {
   check_create_none("test-simple.caf",  AMBIX_SAMPLEFORMAT_FLOAT32);
 
-  pass();
-  return 0;
+  return pass();
 }

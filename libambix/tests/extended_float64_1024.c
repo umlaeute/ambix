@@ -8,6 +8,5 @@ void check_create_extended(const char*path, ambix_sampleformat_t format, uint32_
 int main(int argc, char**argv) {
   check_create_extended("test2-float32.caf",AMBIX_SAMPLEFORMAT_FLOAT64, 1024, 1e-7);
 
-  pass();
-  return 0;
+  return pass();
 }

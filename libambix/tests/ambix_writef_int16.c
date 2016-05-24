@@ -28,7 +28,5 @@ int main ()
   free(info);
 
   /* FIXXME: no test yet */
-  skip();
-
-  return 0;
+  return skip();
 }

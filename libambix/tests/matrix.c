@@ -543,6 +543,5 @@ int main(int argc, char**argv) {
   datamul_4_2_tests(1024, 1e-7);
   mtxinverse_tests(1e-5);
 
-  pass();
-  return 0;
+  return pass();
 }

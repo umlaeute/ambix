@@ -110,6 +110,5 @@ int main(int argc, char**argv) {
   do_diff(1e-1);
   do_diff(1e-7);
 
-  pass();
-  return 0;
+  return pass();
 }

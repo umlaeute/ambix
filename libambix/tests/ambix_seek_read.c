@@ -33,7 +33,5 @@ int main()
   free(info);
 
   /* FIXXXME: this test is not working yet */
-  skip();
-
-  return 0;
+  return skip();
 }

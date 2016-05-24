@@ -28,6 +28,5 @@ int test_datamatrix(const char*name, uint32_t rows, uint32_t cols, float32_t*dat
 int main(int argc, char**argv) {
   int err=0;
   err+=test_datamatrix   ("'rand'[4x9]", 4, 9, data_4_9          , 3, 1024, 5e-7);
-  pass();
-  return 0;
+  return pass();
 }
