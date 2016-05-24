@@ -7,7 +7,8 @@ MAKE=make
 ${MAKE} clean
 
 # Reconfigure with gcov support
-CXXFLAGS="-g -O0 --coverage" CFLAGS="-g -O0 --coverage" ./configure || exit 1
+CFLAGS="-g -O0 --coverage" CXXFLAGS="-g -O0 --coverage" LDFLAGS="--coverage" \
+	./configure --enable-debug --disable-silent-rules || exit 1
 
 # Generate gcov output
 ${MAKE} || exit 1
