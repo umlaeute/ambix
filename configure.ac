@@ -65,6 +65,18 @@ AC_HEADER_STDC
 AM_CONDITIONAL(DISABLED, [test "xno" = "xyes"])
 AM_CONDITIONAL(ENABLED, [test "xyes" = "xyes"])
 
+
+AC_ARG_ENABLE(debug,
+AS_HELP_STRING([--enable-debug],
+               [enable debugging build, default: no]),
+	       AS_CASE(["$enableval"],
+			yes, debug=true,
+			no,  debug=false,
+			AC_MSG_ERROR([bad value ${enableval} for --enable-debug])),
+               [debug=false])
+AM_CONDITIONAL(DEBUG, test x"$debug" = x"true")
+
+
 ## check for math
 AC_CHECK_LIB([m],[sqrt])
 
