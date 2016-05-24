@@ -23,6 +23,17 @@ pass_SOURCES=pass.c
 skip_SOURCES=skip.c
 fail_SOURCES=fail.c
 
+TESTS += pass_if0 pass_if1 skip_if0 skip_if1 fail_if0 fail_if1
+XFAIL_TESTS += fail_if1
+pass_if0_SOURCES=pass_if0.c
+pass_if1_SOURCES=pass_if1.c
+skip_if0_SOURCES=skip_if0.c
+skip_if1_SOURCES=skip_if1.c
+fail_if0_SOURCES=fail_if0.c
+fail_if1_SOURCES=fail_if1.c
+
+
+
 TESTS += matrix
 matrix_SOURCES = matrix.c common.c
 
