@@ -36,9 +36,9 @@ lib_LTLIBRARIES = libambix.la
 # 3. Programs may need to be changed, recompiled, relinked in order to use the
 #    new version. Bump current, set revision and age to 0.
 
-libambix_la_LDFLAGS = -version-info 0:0:0 -no-undefined
 libambix_la_CFLAGS  = -DAMBIX_INTERNAL
 libambix_la_CFLAGS += -fvisibility=hidden
+libambix_la_LDFLAGS = -version-info 0:0:0 -no-undefined
 libambix_la_LIBADD  = $(LIBM)
 
 libambix_la_OBJCFLAGS = $(libambix_la_CFLAGS)
