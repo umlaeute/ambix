@@ -173,7 +173,7 @@ void mtxinverse_tests(float32_t eps) {
 }
 void mtxmul_tests(float32_t eps) {
   float32_t errf;
-  ambix_matrix_t *left, *right, *result, *testresult;
+  ambix_matrix_t *left=NULL, *right=NULL, *result, *testresult;
   STARTTEST("\n");
 
  /* fill in some test data */
@@ -186,6 +186,14 @@ void mtxmul_tests(float32_t eps) {
 
   errf=matrix_diff(__LINE__, left, left, eps);
   fail_if(!(errf<eps), __LINE__, "diffing matrix with itself returned %f (>%f)", errf, eps);
+
+  /* NULL multiplications */
+  result=ambix_matrix_multiply(NULL, NULL, NULL);
+  fail_if(NULL!=result, __LINE__, "multiplying NULL*NULL returned success");
+  result=ambix_matrix_multiply(left, NULL, result);
+  fail_if(NULL!=result, __LINE__, "multiplying left*NULL returned success");
+  result=ambix_matrix_multiply(NULL, left, result);
+  fail_if(NULL!=result, __LINE__, "multiplying NULL*left returned success");
 
   /* do some matrix multiplication */
   result=ambix_matrix_multiply(left, right, NULL);
@@ -394,6 +402,37 @@ void datamul_4_2_tests(uint32_t chunksize, float32_t eps) {
   STOPTEST("\n");
 }
 
+void mtx_copy(float32_t eps) {
+  float32_t errf;
+  ambix_matrix_t *left=NULL, *right=NULL;
+  unsigned int i;
+  float32_t maxeps=eps;
+
+  STARTTEST("\n");
+
+  right=ambix_matrix_copy(left, NULL);
+  fail_if((NULL!=right), __LINE__, "copying from NULL matrix erroneously succeeded");
+
+  left=ambix_matrix_create();
+  fail_if((left !=ambix_matrix_init(4, 3, left )), __LINE__, "initializing left matrix failed");
+  ambix_matrix_fill_data(left, leftdata_4_3);
+
+  right=ambix_matrix_copy(left, NULL);
+  fail_if((NULL==right), __LINE__, "copying to NULL matrix failed");
+  errf=matrix_diff(__LINE__, left, right, eps);
+  fail_if(errf>0.f, __LINE__, "diffing mtx with copy0 returned %g (>%g)", errf, 0.f);
+
+  right=ambix_matrix_copy(left, right);
+  fail_if((NULL==right), __LINE__, "copying to right matrix failed");
+  errf=matrix_diff(__LINE__, left, right, eps);
+  fail_if(errf>0.f, __LINE__, "diffing mtx with copy returned %g (>%g)", errf, 0.f);
+
+  ambix_matrix_destroy(left);
+  ambix_matrix_destroy(right);
+  STOPTEST("\n");
+
+}
+
 void mtx_diff(float32_t eps) {
   float32_t errf;
   ambix_matrix_t *left=NULL, *right=NULL;
@@ -533,6 +572,7 @@ void create_tests(float32_t eps) {
 int main(int argc, char**argv) {
 #if 1
   create_tests(1e-7);
+  mtx_copy(1e-7);
   mtx_diff(1e-1);
   mtx_diff(1e-7);
   mtxmul_tests(1e-7);

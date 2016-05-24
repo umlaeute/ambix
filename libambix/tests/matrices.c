@@ -133,6 +133,21 @@ void check_matrix(const char*name, ambix_matrixtype_t typ, uint32_t rows, uint32
   ambix_matrix_destroy(mtx);
   ambix_matrix_destroy(zeros);
 }
+void check_nomatrix(const char*name, ambix_matrixtype_t typ, uint32_t rows, uint32_t cols) {
+  ambix_matrix_t*mtx=NULL;
+  ambix_matrix_t*result=NULL;
+  float32_t errf=0.f;
+  float32_t eps=1e-20;
+
+  STARTTEST("%s\n", name);
+
+  mtx=ambix_matrix_init(rows, cols, mtx);
+  skip_if(NULL==mtx, __LINE__, "couldn't create mtx-matrix");
+  result=ambix_matrix_fill(mtx, typ);
+  fail_if(NULL!=result, __LINE__, "filled illegal result-matrix");
+  ambix_matrix_destroy(mtx);
+}
+
 
 int main(int argc, char**argv) {
   uint32_t r, c, o;
@@ -159,9 +174,29 @@ int main(int argc, char**argv) {
   check_matrix("FuMa[16, 8]", AMBIX_MATRIX_FUMA, 16,  8);
   check_matrix("FuMa[16,11]", AMBIX_MATRIX_FUMA, 16, 11);
   check_matrix("FuMa[16,16]", AMBIX_MATRIX_FUMA, 16, 16);
+  check_nomatrix("FuMa[ 4, 2]", AMBIX_MATRIX_FUMA,  4,  2);
+  check_nomatrix("FuMa[16,10]", AMBIX_MATRIX_FUMA, 16, 10);
+  check_nomatrix("FuMa[16,12]", AMBIX_MATRIX_FUMA, 16, 12);
+  check_nomatrix("FuMa[16,13]", AMBIX_MATRIX_FUMA, 16, 13);
+  check_nomatrix("FuMa[16,14]", AMBIX_MATRIX_FUMA, 16, 14);
+  check_nomatrix("FuMa[16,15]", AMBIX_MATRIX_FUMA, 16, 15);
+  check_nomatrix("FuMa[25,25]", AMBIX_MATRIX_FUMA, 25, 25);
+
+  check_nomatrix("MaFu[ 4, 2]", AMBIX_MATRIX_TO_FUMA,  2,  4);
+  check_nomatrix("MaFu[16,10]", AMBIX_MATRIX_TO_FUMA, 10, 16);
+  check_nomatrix("MaFu[16,12]", AMBIX_MATRIX_TO_FUMA, 12, 16);
+  check_nomatrix("MaFu[16,13]", AMBIX_MATRIX_TO_FUMA, 13, 16);
+  check_nomatrix("MaFu[16,14]", AMBIX_MATRIX_TO_FUMA, 14, 16);
+  check_nomatrix("MaFu[16,15]", AMBIX_MATRIX_TO_FUMA, 15, 16);
+  check_nomatrix("MaFu[25,25]", AMBIX_MATRIX_TO_FUMA, 25, 25);
+
+  check_nomatrix("sid2acn [ 7, 7]", AMBIX_MATRIX_SID,  7,  7);
+  check_nomatrix("acn2sid [ 7, 7]", AMBIX_MATRIX_TO_SID,  7,  7);
+  check_nomatrix("n3d->sn3d [ 7, 7]", AMBIX_MATRIX_N3D,  7,  7);
+  check_nomatrix("sn3d->n3d [ 7, 7]", AMBIX_MATRIX_TO_N3D,  7,  7);
+  check_nomatrix("nada[ 4, 4]", AMBIX_MATRIX_INVALID,  4,  4);
+
   STOPTEST("matrices\n");
-
-
 
   check_inversion("FuMa[ 1, 1]", AMBIX_MATRIX_FUMA,  1,  1);
   check_inversion("FuMa[ 4, 3]", AMBIX_MATRIX_FUMA,  4,  3);
