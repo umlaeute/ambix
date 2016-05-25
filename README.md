@@ -47,7 +47,7 @@ and (less often) to
 
 # API Documentation
 
-An uptodate API Documentation can be found at
+An up-to-date API Documentation can be found at
   http://iem-projects.github.io/ambix/apiref/
 
 # Directory layout
