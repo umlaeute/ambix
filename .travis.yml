@@ -47,6 +47,6 @@ script:
 - LD_LIBRARY_PATH=/usr/local/lib make distcheck
 
 after_success:
-  - bash <(curl -s https://codecov.io/bash)
   - if [[ "x${DO_COVERAGE}" = "xyes" ]] ; then LD_LIBRARY_PATH=/usr/local/lib ./coverage.sh; fi
   - if [[ "yes.${TRAVIS_BRANCH}.${TRAVIS_PULLREQUEST}" = "yes.master." ]]; then ./.deploy-documentation.sh ; fi
+  - bash <(curl -s https://codecov.io/bash)
