@@ -257,53 +257,47 @@ ambix_err_t ambix_set_adaptormatrix	(ambix_t*ambix, const ambix_matrix_t*matrix)
         return AMBIX_ERR_UNKNOWN;
       }
     }
-  } else if((ambix->filemode & AMBIX_WRITE) && (AMBIX_EXTENDED == ambix->info.fileformat)) {
+  } else if(ambix->filemode & AMBIX_WRITE) {
+    int basic2extended = AMBIX_BASIC == ambix->info.fileformat;
+    if ((AMBIX_EXTENDED != ambix->info.fileformat) && (AMBIX_BASIC != ambix->info.fileformat))
+      return AMBIX_ERR_UNKNOWN;
     /* too late, writing started already */
     if(ambix->startedWriting)
       return AMBIX_ERR_UNKNOWN;
-
     /* check whether the matrix will expand to a full set */
     if(!ambix_is_fullset(matrix->rows))
       return AMBIX_ERR_INVALID_DIMENSION;
 
-    if(!ambix_matrix_copy(matrix, &ambix->matrix))
-      return AMBIX_ERR_UNKNOWN;
-    /* ready to write it to file */
-    ambix->pendingHeaders=1;
-    return AMBIX_ERR_SUCCESS;
-  } else if((ambix->filemode & AMBIX_WRITE) && (AMBIX_BASIC == ambix->info.fileformat)) {
-    ambix_matrix_t*pinv=0;
-    /* user requested AMBIX_BASIC, but now sets a matrix...
-     * so we write an ambix-extended format, and create the ambix-channels by
-     * multiplying the full-set with pinv(matrix)
-     */
-    if(ambix->startedWriting)    /* too late, writing started already */
-      return AMBIX_ERR_UNKNOWN;
+    if(basic2extended) {
+      ambix_matrix_t*pinv=NULL;
+      /* user requested AMBIX_BASIC, but now sets a matrix...
+       * so we write an ambix-extended format, and create the ambix-channels by
+       * multiplying the full-set with pinv(matrix)
+       */
 
-    /* check whether the reduced set has the same number of channels as we created our file for */
-    if(ambix->realinfo.ambichannels != matrix->cols)
-      return AMBIX_ERR_INVALID_DIMENSION;
+      /* check whether the reduced set has the same number of channels as we created our file for */
+      if(ambix->realinfo.ambichannels != matrix->cols)
+	return AMBIX_ERR_INVALID_DIMENSION;
 
-    /* check whether the matrix will expand to a full set */
-    if(!ambix_is_fullset(matrix->rows))
-      return AMBIX_ERR_INVALID_DIMENSION;
+      /* check whether the matrix is actually invertible */
+      pinv=_ambix_matrix_pinv(matrix, pinv);
+      if(!pinv)
+	return AMBIX_ERR_INVALID_MATRIX;
 
-    pinv=_ambix_matrix_pinv(matrix, pinv);
-    if(!pinv)
-      return AMBIX_ERR_INVALID_MATRIX;
+      if(!ambix_matrix_copy(pinv, &ambix->matrix2))
+	return AMBIX_ERR_UNKNOWN;
+
+      ambix_matrix_destroy(pinv);
+    }
 
     if(!ambix_matrix_copy(matrix, &ambix->matrix))
       return AMBIX_ERR_UNKNOWN;
-    if(!ambix_matrix_copy(pinv, &ambix->matrix2))
-      return AMBIX_ERR_UNKNOWN;
 
-    ambix_matrix_destroy(pinv);
-
-    ambix->realinfo.fileformat=AMBIX_EXTENDED;
-    //ambix->realinfo.ambichannels=matrix->cols;
-    ambix->info.ambichannels=matrix->rows;
-
-    ambix->use_matrix=2;
+    if(basic2extended) {
+      ambix->realinfo.fileformat=AMBIX_EXTENDED;
+      ambix->info.ambichannels=matrix->rows;
+      ambix->use_matrix=2;
+    }
 
     /* ready to write it to file */
     ambix->pendingHeaders=1;
