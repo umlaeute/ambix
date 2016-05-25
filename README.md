@@ -12,6 +12,7 @@ files following the "ambix" (AMBIsonics eXchange) conventions.
 | :--------------------- | :------------------------------------------------------------------ |
 | Continuous Integration | ![Travis-CI](https://api.travis-ci.org/umlaeute/pd-iemnet.svg)      |
 | Static Code Analysis   | ![Coverity Scan](https://scan.coverity.com/projects/1736/badge.svg) |
+| Test Coverage          | [![codecov](https://codecov.io/gh/iem-projects/ambix/branch/master/graph/badge.svg)](https://codecov.io/gh/iem-projects/ambix) |
 
 
 # INTRODUCTION
