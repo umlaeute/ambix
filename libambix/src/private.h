@@ -89,6 +89,15 @@ struct ambix_t_struct {
   /** ambisonics order of the full set */
   uint32_t ambisonics_order;
 
+  /** the number of stored markers */
+  uint32_t num_markers;
+  /** storage for markers */
+  ambix_marker_t *markers;
+  /** the number of stored regions */
+  uint32_t num_regions;
+  /** storage for regions */
+  ambix_region_t *regions;
+
   /** whether we already started reading samples */
   int startedReading;
   /** whether we already started writing samples */
