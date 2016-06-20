@@ -213,6 +213,9 @@ ambix_err_t	ambix_close	(ambix_t*ambix) {
   ambix_matrix_deinit(&ambix->matrix);
   ambix_matrix_deinit(&ambix->matrix2);
 
+  ambix_delete_markers(ambix);
+  ambix_delete_regions(ambix);
+
   free(ambix);
   ambix=NULL;
   return res;
@@ -229,6 +232,89 @@ struct SNDFILE_tag*ambix_get_sndfile	(ambix_t*ambix) {
   return NULL;
 }
 
+uint32_t ambix_get_num_markers (ambix_t*ambix) {
+  return ambix->num_markers;
+}
+uint32_t ambix_get_num_regions(ambix_t *ambix) {
+  return ambix->num_regions;
+}
+ambix_marker_t *ambix_get_marker(ambix_t *ambix, uint32_t id) {
+  if (id < ambix->num_markers)
+    return &ambix->markers[id];
+  else
+    return NULL;
+}
+ambix_region_t *ambix_get_region(ambix_t *ambix, uint32_t id) {
+  if (id < ambix->num_regions)
+    return &ambix->regions[id];
+  else
+    return NULL;
+}
+ambix_err_t ambix_add_marker(ambix_t *ambix, ambix_marker_t *marker) {
+  if(ambix->startedWriting)
+    return AMBIX_ERR_UNKNOWN;
+
+  if (!marker)
+    return AMBIX_ERR_UNKNOWN;
+
+  if (ambix->num_markers > 0)
+    if (ambix->markers)
+      ambix->markers = (ambix_marker_t*)realloc(ambix->markers, (ambix->num_markers+1)*sizeof(ambix_marker_t));
+    else
+      return AMBIX_ERR_UNKNOWN;
+  else
+    ambix->markers = (ambix_marker_t*)calloc(1, sizeof(ambix_marker_t));
+
+  memcpy(&ambix->markers[ambix->num_markers], marker, sizeof(ambix_marker_t));
+  ambix->num_markers += 1;
+
+  return AMBIX_ERR_SUCCESS;
+}
+ambix_err_t ambix_add_region(ambix_t *ambix, ambix_region_t *region) {
+  if(ambix->startedWriting)
+    return AMBIX_ERR_UNKNOWN;
+
+  if (!region)
+    return AMBIX_ERR_UNKNOWN;
+
+  if (ambix->num_regions > 0)
+    if (ambix->regions)
+      ambix->regions = (ambix_region_t*)realloc(ambix->regions, (ambix->num_regions+1)*sizeof(ambix_region_t));
+    else
+      return AMBIX_ERR_UNKNOWN;
+  else
+    ambix->regions = (ambix_region_t*)calloc(1, sizeof(ambix_region_t));
+
+  memcpy(&ambix->regions[ambix->num_regions], region, sizeof(ambix_region_t));
+  ambix->num_regions += 1;
+
+  return AMBIX_ERR_SUCCESS;
+}
+ambix_err_t ambix_delete_markers(ambix_t *ambix) {
+  if (ambix->num_markers > 0) {
+    if (ambix->markers)
+      free (ambix->markers);
+    else
+      return AMBIX_ERR_UNKNOWN;
+
+    ambix->num_markers = 0;
+    return AMBIX_ERR_SUCCESS;
+  }
+
+  return AMBIX_ERR_UNKNOWN;
+}
+ambix_err_t ambix_delete_regions(ambix_t *ambix) {
+  if (ambix->num_regions > 0) {
+    if (ambix->regions)
+      free (ambix->regions);
+    else
+      return AMBIX_ERR_UNKNOWN;
+
+    ambix->num_regions = 0;
+    return AMBIX_ERR_SUCCESS;
+  }
+  return AMBIX_ERR_UNKNOWN;
+}
 
 const ambix_matrix_t*ambix_get_adaptormatrix	(ambix_t*ambix) {
   if(AMBIX_EXTENDED==ambix->info.fileformat)
