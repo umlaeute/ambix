@@ -227,6 +227,19 @@ typedef struct ambix_info_t {
   uint32_t ambichannels;
 } ambix_info_t;
 
+/** struct for holding a marker with a position in samples and a name */
+typedef struct ambix_marker_t {
+  float64_t position;
+  unsigned char name[256];
+} ambix_marker_t;
+
+/** struct for holding a region with start/end position in samples and a name */
+typedef struct ambix_region_t {
+  float64_t start_position;
+  float64_t end_position;
+  unsigned char name[256];
+} ambix_region_t;
+
 /*
  * @section api_main Main Interface
  */
@@ -417,6 +430,82 @@ struct SNDFILE_tag;
  */
 AMBIX_API
 struct SNDFILE_tag *ambix_get_sndfile (ambix_t *ambix) ;
+/** @brief Get the number of stored markers within the ambix file.
+ *
+ * @return number of markers.
+ *
+ * @ingroup ambix
+ */
+AMBIX_API
+uint32_t ambix_get_num_markers(ambix_t *ambix) ;
+/** @brief Get the number of stored regions within the ambix file.
+ *
+ * @return Number of regions.
+ *
+ * @ingroup ambix
+ */
+AMBIX_API
+uint32_t ambix_get_num_regions(ambix_t *ambix) ;
+/** @brief Get one marker.
+ *
+ * @param id The id of the marker to retrieve.
+ *
+ * @return The marker requested or NULL in case the marker does not exist.
+ *
+ * @ingroup ambix
+ */
+AMBIX_API
+ambix_marker_t *ambix_get_marker(ambix_t *ambix, uint32_t id) ;
+/** @brief Get one region.
+ *
+ * @param id The id of the region to retrieve.
+ *
+ * @return The region requested or NULL in case the region does not exist.
+ *
+ * @ingroup ambix
+ */
+AMBIX_API
+ambix_region_t *ambix_get_region(ambix_t *ambix, uint32_t id) ;
+/** @brief Add a new marker to the ambix file.
+ *
+ * @remark Markers have to be set before sample data is written!
+ *
+ * @param marker A valid marker that should be added to the ambix file.
+ *
+ * @return an errorcode indicating success.
+ *
+ * @ingroup ambix
+ */
+AMBIX_API
+ambix_err_t ambix_add_marker(ambix_t *ambix, ambix_marker_t *marker) ;  // returns id
+/** @brief Add a new region to the ambix file.
+ *
+ * @remark Regions have to be set before sample data is written!
+ *
+ * @param region A valid region that should be added to the ambix file.
+ *
+ * @return an errorcode indicating success.
+ *
+ * @ingroup ambix
+ */
+AMBIX_API
+ambix_err_t ambix_add_region(ambix_t *ambix, ambix_region_t *region) ; // returns id
+/** @brief Deletes all markers in the ambix file.
+ *
+ * @return an errorcode indicating success.
+ *
+ * @ingroup ambix
+ */
+AMBIX_API
+ambix_err_t ambix_delete_markers(ambix_t *ambix) ;
+/** @brief Deletes all regions in the ambix file.
+ *
+ * @return an errorcode indicating success.
+ *
+ * @ingroup ambix
+ */
+AMBIX_API
+ambix_err_t ambix_delete_regions(ambix_t *ambix) ;
 /** @brief Various utilities to handle matrices
  * @defgroup ambix_matrix ambix_matrix
  */
