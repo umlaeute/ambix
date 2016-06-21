@@ -202,7 +202,11 @@ static int fmtsize(ambixtest_presentationformat_t fmt) {
 }
 
 static void*data_calloc(ambixtest_presentationformat_t fmt, uint64_t frames, uint32_t channels) {
-  return calloc(frames*channels*fmtsize(fmt)/sizeof(float64_t)+1, sizeof(float64_t));
+  size_t nmemb=frames*channels*fmtsize(fmt)/sizeof(float64_t)+1;
+  size_t size = sizeof(float64_t);
+  void*data=calloc(nmemb, size);
+  //printf("%dx%d[%d] allocated %d of %d bytes to %p\n", (int)frames, channels, fmt, (int)nmemb, (int)size, data);
+  return data;
 }
 
 void*data_sine(ambixtest_presentationformat_t fmt, uint64_t frames, uint32_t channels, float32_t freq) {
