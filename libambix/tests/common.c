@@ -124,6 +124,15 @@ void data_transpose(float32_t*outdata, const float32_t*indata, uint32_t inrows, 
   }
 }
 
+float32_t float32cast(ambixtest_presentationformat_t fmt, float32_t value) {
+   switch(fmt) {
+     case INT16: return (float32_t)((int16_t)(value*32768.))/32768.;
+     case INT32: return (float32_t)((int32_t)(value*2147483648.))/2147483648.;
+     default   : break;
+   }
+   return value;
+}
+
 
 float32_t*data_sine(uint64_t frames, uint32_t channels, float32_t freq) {
   float32_t periods=freq/44100.;
