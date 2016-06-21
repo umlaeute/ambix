@@ -1,4 +1,4 @@
-#include "common.h"
+#include "common_basic2extended.h"
 
 float32_t data_4_7[]={
 0.588219, 0.758465, 0.240167, 0.827193, 0.899134, 0.121186, 0.974490,
@@ -7,9 +7,6 @@ float32_t data_4_7[]={
 0.183465, 0.654321, 0.243639, 0.779875, 0.250082, 0.939078, 0.449736,
 };
 
-int check_create_b2e(const char*path, ambix_sampleformat_t format,
-		     ambix_matrix_t*matrix, uint32_t extrachannels,
-		     uint32_t chunksize, float32_t eps);
 int test_datamatrix(const char*name, uint32_t rows, uint32_t cols, float32_t*data,
 		    uint32_t xtrachannels, uint32_t chunksize, float32_t eps) {
   int result=0;
@@ -20,7 +17,7 @@ int test_datamatrix(const char*name, uint32_t rows, uint32_t cols, float32_t*dat
   ambix_matrix_fill_data(mtx, data);
   result=check_create_b2e("test2-b2e-float32.caf", AMBIX_SAMPLEFORMAT_PCM32,
 			  mtx,xtrachannels,
-			  chunksize, eps);
+			  chunksize, FLOAT32, eps);
   ambix_matrix_destroy(mtx);
   return result;
 }
