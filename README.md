@@ -23,7 +23,8 @@ Such files are:
 - *with* a special `UUID-chunk`
 
 Audio data as output (and accepted as input) by libambix will follow the following specification:
-- sample format is either `PCM16`, `PCM24` or `float32` (the latter being best tested)
+- sample format is either `PCM16`, `PCM24`, `float32` (this one being best
+  tested) and `float64`
 - audio data is *interleaved*
 - ambisonics channels are
 	- normalization		: `SN3D`
