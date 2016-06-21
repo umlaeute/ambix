@@ -22,7 +22,7 @@ Such files are:
 - `CAF` (Core Audio Format) files
 - *with* a special `UUID-chunk`
 
-Audio data as output by libambix will follow the following specification:
+Audio data as output (and accepted as input) by libambix will follow the following specification:
 - sample format is either `PCM16`, `PCM24` or `float32` (the latter being best tested)
 - audio data is *interleaved*
 - ambisonics channels are
