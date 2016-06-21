@@ -62,7 +62,7 @@ An up-to-date API Documentation can be found at
 ## DEPENDENCIES
 Currently libambix uses libsndfile to read the actual file.
 Due to some advanced functionality, you need at least libsndfile-1.0.26.
-The current version o libsndfile can be obtained from
+The current version of libsndfile can be obtained from
   https://github.com/erikd/libsndfile
 
 
