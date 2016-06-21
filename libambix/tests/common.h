@@ -103,8 +103,8 @@ void data_print(const float32_t*data, uint64_t frames);
 float32_t data_diff(uint32_t line, const float32_t*A, const float32_t*B, uint64_t frames, float32_t eps);
 
 void data_transpose(float32_t*outdata, const float32_t*indata, uint32_t inrows, uint32_t incols);
-float32_t*data_sine(uint64_t frames, uint32_t channels, float32_t periods);
-float32_t*data_ramp(uint64_t frames, uint32_t channels);
+float32_t*data_sine(ambixtest_presentationformat_t fmt, uint64_t frames, uint32_t channels, float32_t periods);
+float32_t*data_ramp(ambixtest_presentationformat_t fmt, uint64_t frames, uint32_t channels);
 
 #define STRINGIFY(x) #x
 #define STARTTEST   printf("<<< running TEST %s[%04d]:%s\t", __FILE__, __LINE__, __FUNCTION__),printf

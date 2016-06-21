@@ -134,33 +134,33 @@ float32_t float32cast(ambixtest_presentationformat_t fmt, float32_t value) {
 }
 
 
-float32_t*data_sine(uint64_t frames, uint32_t channels, float32_t freq) {
+float32_t*data_sine(ambixtest_presentationformat_t fmt, uint64_t frames, uint32_t channels, float32_t freq) {
   float32_t periods=freq/44100.;
   float32_t*data=(float32_t*)calloc(frames*channels, sizeof(float32_t));
   float32_t*datap=data;
   int64_t frame;
   for(frame=0; frame<frames; frame++) {
-    //    float f=(float32_t)frame*periods/(float32_t)frames;
-    float f=(float32_t)frame*periods;
-    float32_t value=0.5*sinf(f);
     int32_t chan;
+    float32_t f=(float32_t)frame*periods;
+    float32_t value=float32cast(fmt, 0.5*sinf(f));
     for(chan=0; chan<channels; chan++)
       *datap++=value;
   }
   return data;
 }
 
-float32_t*data_ramp(uint64_t frames, uint32_t channels) {
+float32_t*data_ramp(ambixtest_presentationformat_t fmt, uint64_t frames, uint32_t channels) {
   float32_t*data=(float32_t*)calloc(frames*channels, sizeof(float32_t));
   float32_t*datap=data;
   double increment=1./(double)frames;
   double value=0.;
   int64_t frame;
   for(frame=0; frame<frames; frame++) {
-    value+=increment;
     int32_t chan;
+    float32_t v32=float32cast(fmt, value-0.5);
+    value+=increment;
     for(chan=0; chan<channels; chan++)
-      *datap++=(value-0.5);
+      *datap++=v32;
   }
   return data;
 }
