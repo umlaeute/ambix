@@ -53,8 +53,8 @@ void check_create_none(const char*path, ambix_sampleformat_t format) {
   ambix=ambix_open(path, AMBIX_WRITE, &rinfo);
   fail_if((NULL==ambix), __LINE__, "couldn't create ambix file '%s' for writing", path);
 
-  orgdata=data_sine(frames, channels, periods);
-  //data_print(orgdata, 100);
+  orgdata=data_sine(FLOAT32, frames, channels, periods);
+  //data_print(FLOAT32, orgdata, 100);
 
   memcpy(data, orgdata, frames*channels*sizeof(float32_t));
 
@@ -63,7 +63,7 @@ void check_create_none(const char*path, ambix_sampleformat_t format) {
   err64=ambix_writef_float32(ambix, NULL, data, frames);
   fail_if((err64!=frames), __LINE__, "wrote only %d frames of %d", (int)err64, (int)frames);
 
-  diff=data_diff(__LINE__, orgdata, data, frames*channels, eps);
+  diff=data_diff(__LINE__, FLOAT32, orgdata, data, frames*channels, eps);
   fail_if((diff>eps), __LINE__, "data diff %f > %f", diff, eps);
 
   fail_if((AMBIX_ERR_SUCCESS!=ambix_close(ambix)), __LINE__, "closing ambix file %p", ambix);
@@ -85,7 +85,7 @@ void check_create_none(const char*path, ambix_sampleformat_t format) {
     gotframes+=err64;
   } while(err64>0 && gotframes<frames);
 
-  diff=data_diff(__LINE__, orgdata, resultdata, frames*channels, eps);
+  diff=data_diff(__LINE__, FLOAT32, orgdata, resultdata, frames*channels, eps);
   fail_if((diff>eps), __LINE__, "data diff %f > %f", diff, eps);
 
   fail_if((AMBIX_ERR_SUCCESS!=ambix_close(ambix)), __LINE__, "closing ambix file %p", ambix);

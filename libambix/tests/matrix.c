@@ -268,27 +268,27 @@ void datamul_tests(float32_t eps) {
 
   data_transpose(resultdataT, resultdata, 2, 4);
 
-  errf=data_diff(__LINE__, resultdataT, resultdata_4_2, 4*2, eps);
+  errf=data_diff(__LINE__, FLOAT32, resultdataT, resultdata_4_2, 4*2, eps);
   if(errf>eps) {
     printf("matrix:\n");
     matrix_print(mtx);
     printf("input:\n");
-    data_print(inputdata, 3*2);
+    data_print(FLOAT32, inputdata, 3*2);
 
     printf("expected:\n");
-    data_print(resultdata_4_2, 4*2);
+    data_print(FLOAT32, resultdata_4_2, 4*2);
     printf("calculated:\n");
-    data_print(resultdataT   , 4*2);
+    data_print(FLOAT32, resultdataT   , 4*2);
 
   }
   fail_if(!(errf<eps), __LINE__, "diffing data multiplication returned %f (>%f)", errf, eps);
 
 #if 0
   printf("matrix:\n");matrix_print(mtx);
-  printf("input :\n");  data_print(rightdata_3_2, 3*2);
-  printf("output:\n");  data_print(resultdata, 4*2);
+  printf("input :\n");  data_print(FLOAT32, rightdata_3_2, 3*2);
+  printf("output:\n");  data_print(FLOAT32, resultdata, 4*2);
 
-  printf("target:\n");  data_print(resultdata_4_2, 4*2);
+  printf("target:\n");  data_print(FLOAT32, resultdata_4_2, 4*2);
 #endif
 
 
@@ -309,7 +309,7 @@ void datamul_eye_tests(float32_t eps) {
   ambix_matrix_t eye = {0, 0, NULL};
   STARTTEST("\n");
 
-  inputdata =data_sine(frames, channels, freq);
+  inputdata =data_sine(FLOAT32, frames, channels, freq);
   outputdata=(float32_t*)malloc(sizeof(float32_t)*frames*channels);
   fail_if((NULL==outputdata), __LINE__, "couldn't mallocate outputdata");
 
@@ -319,13 +319,13 @@ void datamul_eye_tests(float32_t eps) {
   fail_if(AMBIX_ERR_SUCCESS!=ambix_matrix_multiply_float32(outputdata, &eye, inputdata, frames),
           __LINE__, "data multilplication failed");
 
-  errf=data_diff(__LINE__, inputdata, outputdata, frames*channels, eps);
+  errf=data_diff(__LINE__, FLOAT32, inputdata, outputdata, frames*channels, eps);
   fail_if(!(errf<eps), __LINE__, "diffing data multiplication returned %f (>%f)", errf, eps);
 
 #if 0
   printf("matrix:\n");  matrix_print(&eye);
-  printf("input :\n");  data_print(inputdata, frames*channels);
-  printf("output:\n");  data_print(outputdata,frames*channels);
+  printf("input :\n");  data_print(FLOAT32, inputdata, frames*channels);
+  printf("output:\n");  data_print(FLOAT32, outputdata,frames*channels);
 #endif
 
   free(inputdata);
@@ -350,8 +350,8 @@ void datamul_4_2_tests(uint32_t chunksize, float32_t eps) {
   ambix_matrix_t eye = {0, 0, NULL};
   STARTTEST("\n");
 
-  inputdata =data_sine(frames, rawchannels, freq);
-  targetdata=data_sine(frames, cokchannels, freq);
+  inputdata =data_sine(FLOAT32, frames, rawchannels, freq);
+  targetdata=data_sine(FLOAT32, frames, cokchannels, freq);
 
   outputdata=(float32_t*)malloc(sizeof(float32_t)*frames*cokchannels);
   fail_if((NULL==outputdata), __LINE__, "couldn't allocate outputdata");
@@ -369,7 +369,7 @@ void datamul_4_2_tests(uint32_t chunksize, float32_t eps) {
 #if 0
   matrix_print(&eye);
   printf("input\n");
-  data_print(inputdata, rawchannels*frames);
+  data_print(FLOAT32, inputdata, rawchannels*frames);
 #endif
 
   fail_if(AMBIX_ERR_SUCCESS!=ambix_matrix_multiply_float32(outputdata, &eye, inputdata, frames),
@@ -377,21 +377,21 @@ void datamul_4_2_tests(uint32_t chunksize, float32_t eps) {
 
 #if 0
   printf("output\n");
-  data_print(outputdata, cokchannels*frames);
+  data_print(FLOAT32, outputdata, cokchannels*frames);
 
   printf("target\n");
-  data_print(targetdata, cokchannels*frames);
+  data_print(FLOAT32, targetdata, cokchannels*frames);
 #endif
 
 
 
-  errf=data_diff(__LINE__, targetdata, outputdata, frames*cokchannels, eps);
+  errf=data_diff(__LINE__, FLOAT32, targetdata, outputdata, frames*cokchannels, eps);
   fail_if(!(errf<eps), __LINE__, "diffing data multiplication returned %f (>%f)", errf, eps);
 
 #if 0
   printf("matrix:\n");  matrix_print(&eye);
-  printf("input :\n");  data_print(inputdata, frames*channels);
-  printf("output:\n");  data_print(outputdata,frames*channels);
+  printf("input :\n");  data_print(FLOAT32, inputdata, frames*channels);
+  printf("output:\n");  data_print(FLOAT32, outputdata,frames*channels);
 #endif
 
   ambix_matrix_deinit(&eye);
