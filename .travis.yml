@@ -50,3 +50,7 @@ after_success:
   - if [[ "x${DO_COVERAGE}" = "xyes" ]] ; then LD_LIBRARY_PATH=/usr/local/lib ./coverage.sh; fi
   - if [[ "yes.${TRAVIS_BRANCH}.${TRAVIS_PULLREQUEST}" = "yes.master." ]]; then ./.deploy-documentation.sh ; fi
   - bash <(curl -s https://codecov.io/bash)
+
+after_failure:
+  # spit out any test-suite results...
+  - find . -name test-suite.log -exec grep . {} \+
