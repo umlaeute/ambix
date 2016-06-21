@@ -6,10 +6,12 @@ if HAVE_DOXYGEN
 html_DATA+=apiref/*
 endif
 
+DOXYFILE=$(srcdir)/libambix.doxy
+
 apiref/*: all-local
 
 all-local:
-	$(DOXYGEN) $(srcdir)/libambix.doxy
+	$(DOXYGEN) $(DOXYFILE)
 
 clean-local:
 	-rm -rf apiref
