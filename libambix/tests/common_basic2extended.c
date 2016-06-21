@@ -41,8 +41,8 @@ int check_create_b2e(const char*path, ambix_sampleformat_t format,
   int64_t err64, gotframes;
   float32_t diff=0.;
   ambix_err_t err=0;
-  STARTTEST("ambi=[%dx%d],extra=%d, format=%d\n",
-	    matrix?matrix->rows:-1, matrix?matrix->cols:-1, extrachannels, format);
+  STARTTEST("ambi=[%dx%d],extra=%d, format=%d datafmt=%d\n",
+	    matrix?matrix->rows:-1, matrix?matrix->cols:-1, extrachannels, format, fmt);
 
   resultambidata=(float32_t*)calloc(max_u32(fullambichannels, ambixchannels)*framesize, sizeof(float32_t));
   ambidata=(float32_t*)calloc(fullambichannels*framesize, sizeof(float32_t));

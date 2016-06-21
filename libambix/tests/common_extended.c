@@ -65,7 +65,7 @@ void check_create_extended(const char*path, ambix_sampleformat_t format, uint32_
   ambix=ambix_open(path, AMBIX_WRITE, &rinfo);
   fail_if((NULL==ambix), __LINE__, "couldn't create ambix file '%s' for writing", path);
 
-  orgambidata=data_sine(FLOAT32, framesize, ambichannels, periods);
+  orgambidata=data_sine (FLOAT32, framesize, ambichannels, periods);
   orgotherdata=data_ramp(FLOAT32, framesize, extrachannels);
   //data_print(FLOAT32, orgdata, 100);
   fail_if((NULL==orgambidata), __LINE__, "couldn't create ambidata %dx%d sine @ %f", (int)framesize, (int)ambichannels, (float)periods);
