@@ -19,5 +19,9 @@ int main(int argc, char**argv) {
   int err=0;
   err+=test_defaultmatrix("IDENTITY1024:float32", 4, 4, AMBIX_MATRIX_IDENTITY, 0, 1024, 0, FLOAT32);
   err+=test_defaultmatrix("IDENTITY0000:float32", 4, 4, AMBIX_MATRIX_IDENTITY, 0,    0, 0, FLOAT32);
+  err+=test_defaultmatrix("IDENTITY1024:int32", 4, 4, AMBIX_MATRIX_IDENTITY, 0, 1024, 0, INT32);
+  err+=test_defaultmatrix("IDENTITY0000:int32", 4, 4, AMBIX_MATRIX_IDENTITY, 0,    0, 0, INT32);
+  err+=test_defaultmatrix("IDENTITY1024:int16", 4, 4, AMBIX_MATRIX_IDENTITY, 0, 1024, 0, INT16);
+  err+=test_defaultmatrix("IDENTITY0000:int16", 4, 4, AMBIX_MATRIX_IDENTITY, 0,    0, 0, INT16);
   return pass();
 }
