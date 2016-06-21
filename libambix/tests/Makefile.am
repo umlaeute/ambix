@@ -19,8 +19,8 @@ TESTS = \
 
 XFAIL_TESTS = fail
 
-SOURCES=common.c common.h data.h
-noinst_HEADERS = common.h data.h
+SOURCES=common.c common.h data.h common_basic2extended.h
+noinst_HEADERS = common.h data.h common_basic2extended.h
 
 pass_SOURCES=pass.c
 skip_SOURCES=skip.c
