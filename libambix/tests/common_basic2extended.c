@@ -88,8 +88,7 @@ int check_create_b2e(const char*path, ambix_sampleformat_t format,
     }
     if(pinv)ambix_matrix_destroy(pinv);
   }
-  if(fail_if((AMBIX_ERR_SUCCESS!=err),
-	     __LINE__, "failed setting adaptor matrix [%d]", err))return 1;
+  if(fail_if((AMBIX_ERR_SUCCESS!=err), __LINE__, "failed setting adaptor matrix [%d]", err))return 1;
 
   if(chunksize>0) {
     uint32_t subframe=chunksize;
