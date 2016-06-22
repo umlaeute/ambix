@@ -327,7 +327,7 @@ ambix_matrix_fill(ambix_matrix_t*matrix, ambix_matrixtype_t typ) {
         counter++;
       }
     }
-   matrix=_matrix_diag(matrix, weights, rows);
+    matrix=_matrix_diag(matrix, weights, rows);
     free(weights);
   }
     break;
@@ -387,36 +387,36 @@ _ambix_matrix_pinv(const ambix_matrix_t*A, ambix_matrix_t*P) {
   return result;
 }
 
-#define MTXMULTIPLY_DATA_FLOAT(typ) \
+#define MTXMULTIPLY_DATA_FLOAT(typ)                                     \
   ambix_err_t ambix_matrix_multiply_##typ(typ##_t*dest, const ambix_matrix_t*matrix, const typ##_t*source, int64_t frames) { \
-    float32_t**mtx=matrix->data; \
-    const uint32_t outchannels=matrix->rows; \
-    const uint32_t inchannels=matrix->cols; \
-    int64_t frame; \
-    typ##_t*dst=dest; \
-    const typ##_t*src=source; \
-    for(frame=0; frame<frames; frame++) { \
-      uint32_t outchan; \
-      for(outchan=0; outchan<outchannels; outchan++) { \
-        double sum=0.; \
-        uint32_t inchan; \
-        for(inchan=0; inchan<inchannels; inchan++) { \
-          double scale=mtx[outchan][inchan]; \
-          double in=src[frame*inchannels+inchan]; \
-          sum+=scale*in; \
-        } \
-        dst[frame*outchannels+outchan]=(typ##_t)sum; \
-      } \
-    } \
-    return AMBIX_ERR_SUCCESS; \
-  } \
+    float32_t**mtx=matrix->data;                                        \
+    const uint32_t outchannels=matrix->rows;                            \
+    const uint32_t inchannels=matrix->cols;                             \
+    int64_t frame;                                                      \
+    typ##_t*dst=dest;                                                   \
+    const typ##_t*src=source;                                           \
+    for(frame=0; frame<frames; frame++) {                               \
+      uint32_t outchan;                                                 \
+      for(outchan=0; outchan<outchannels; outchan++) {                  \
+        double sum=0.;                                                  \
+        uint32_t inchan;                                                \
+        for(inchan=0; inchan<inchannels; inchan++) {                    \
+          double scale=mtx[outchan][inchan];                            \
+          double in=src[frame*inchannels+inchan];                       \
+          sum+=scale*in;                                                \
+        }                                                               \
+        dst[frame*outchannels+outchan]=(typ##_t)sum;                    \
+      }                                                                 \
+    }                                                                   \
+    return AMBIX_ERR_SUCCESS;                                           \
+  }                                                                     \
 
 MTXMULTIPLY_DATA_FLOAT(float32);
 MTXMULTIPLY_DATA_FLOAT(float64);
 
 #define MTXMULTIPLY_DATA_INT(typ)                                       \
   ambix_err_t ambix_matrix_multiply_##typ(typ##_t*dest, const ambix_matrix_t*matrix, const typ##_t*source, int64_t frames) { \
-    float32_t**mtx=matrix->data;                                        \
+    float32_t**mtx=matrix->data; \
     const uint32_t outchannels=matrix->rows;                            \
     const uint32_t inchannels=matrix->cols;                             \
     int64_t frame;                                                      \
@@ -432,7 +432,7 @@ MTXMULTIPLY_DATA_FLOAT(float64);
           double in=src[inchan*frames];                                 \
           sum+=scale * in;                                              \
         }                                                               \
-		dst[frames*outchan]=(typ##_t)(sum);  /* FIXXXME: saturation */  \
+        dst[frames*outchan]=(typ##_t)(sum);  /* FIXXXME: saturation */  \
       }                                                                 \
     }                                                                   \
     return AMBIX_ERR_SUCCESS;                                           \

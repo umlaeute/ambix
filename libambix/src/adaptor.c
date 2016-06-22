@@ -65,7 +65,7 @@ ambix_err_t _ambix_adaptorbuffer_destroy(ambix_t*ambix) {
 }
 
 
-#define _AMBIX_SPLITADAPTOR(type) \
+#define _AMBIX_SPLITADAPTOR(type)                                       \
   ambix_err_t _ambix_splitAdaptor_##type(const type##_t*source, uint32_t sourcechannels, \
                                          uint32_t ambichannels, type##_t*dest_ambi, type##_t*dest_other, \
                                          int64_t frames) {              \

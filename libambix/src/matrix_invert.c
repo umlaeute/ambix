@@ -43,22 +43,22 @@ _ambix_matrix_invert_gaussjordan(ambix_matrix_t*input, ambix_matrix_t*inverse, f
   int errors=0; /* error counter */
 
   if(input==0)
-  { // no input matrix
-    return NULL;
-  }
+    { // no input matrix
+      return NULL;
+    }
 
   if (input->cols != input->rows)
-  {// matrix is not squared
-    return NULL;
-  }
+    {// matrix is not squared
+      return NULL;
+    }
 
   int col=input->cols, row=input->rows;
 
   /* 1a reserve space for the inverted matrix */
   if(!inverse)
-  {
-    inverse=ambix_matrix_init(row, col, NULL);
-  }
+    {
+      inverse=ambix_matrix_init(row, col, NULL);
+    }
 
   float32_t **original=input->data;
   float32_t **inverted=inverse->data;
@@ -80,24 +80,24 @@ _ambix_matrix_invert_gaussjordan(ambix_matrix_t*input, ambix_matrix_t*inverse, f
 
     /* normalize current row (set the diagonal-element to 1 */
     for (i=0; i < row; i++)
-    {
-      original[k][i] *= i_diagel;
-      inverted[k][i] *= i_diagel;
-    }
+      {
+        original[k][i] *= i_diagel;
+        inverted[k][i] *= i_diagel;
+      }
 
     /* eliminate the k-th element in each row by adding the weighted normalized row */
     for (i=0; i < row; i++)
-    {
-      if (i-k)
       {
-        float32_t f =-original[i][k];
-        int j;
-        for (j=row-1; j >= 0; j--) {
-          original[i][j] += f * original[k][j];
-          inverted[i][j] += f * inverted[k][j];
-        }
+        if (i-k)
+          {
+            float32_t f =-original[i][k];
+            int j;
+            for (j=row-1; j >= 0; j--) {
+              original[i][j] += f * original[k][j];
+              inverted[i][j] += f * inverted[k][j];
+            }
+          }
       }
-    }
   }
 
   if (errors > 0) {
