@@ -15,7 +15,7 @@ int test_datamatrix(const char*name, uint32_t rows, uint32_t cols, float32_t*dat
   mtx=ambix_matrix_init(rows,cols,mtx);
   if(!mtx)return 1;
   ambix_matrix_fill_data(mtx, data);
-  result=check_create_b2e("test2-b2e-float32.caf", AMBIX_SAMPLEFORMAT_FLOAT64,
+  result=check_create_b2e(FILENAME_FILE, AMBIX_SAMPLEFORMAT_FLOAT64,
 			  mtx,xtrachannels,
 			  chunksize, FLOAT32, eps);
   ambix_matrix_destroy(mtx);

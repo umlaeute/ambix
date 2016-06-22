@@ -12,7 +12,7 @@ int test_defaultmatrix(const char*name, uint32_t rows, uint32_t cols, ambix_matr
   mtx=ambix_matrix_init(rows,cols,mtx);
   if(!mtx)return 1;
   ambix_matrix_fill(mtx, mtyp);
-  result=check_create_b2e("test2-b2e-float32.caf", AMBIX_SAMPLEFORMAT_FLOAT32,
+  result=check_create_b2e(FILENAME_FILE, AMBIX_SAMPLEFORMAT_FLOAT32,
 			  mtx,xtrachannels,
 			  chunksize, fmt, eps);
   ambix_matrix_destroy(mtx);

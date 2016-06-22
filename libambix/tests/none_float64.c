@@ -29,7 +29,7 @@
 void check_create_none(const char*path, ambix_sampleformat_t format);
 
 int main(int argc, char**argv) {
-  check_create_none("test-simple.caf",  AMBIX_SAMPLEFORMAT_FLOAT64);
+  check_create_none(FILENAME_FILE,  AMBIX_SAMPLEFORMAT_FLOAT64);
 
   return pass();
 }
