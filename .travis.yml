@@ -18,6 +18,7 @@ addons:
       - libasound2-dev
       - doxygen
       - lcov
+      - ca-certificates
 
 matrix:
   include:
