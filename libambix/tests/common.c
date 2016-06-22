@@ -298,3 +298,8 @@ int ambixtest_uniquenumber() {
 #endif
   return 0;
 }
+char*ambixtest_uniquefilename(char*inbuf, size_t length, const char*basename, const char*ext_) {
+  const char*ext=(ext_)?ext_:".caf";
+  snprintf(inbuf, length, "%s-%d.%s", basename, ambix_uniquenumber(), ext);
+  return inbuf;
+}

@@ -122,6 +122,7 @@ int64_t ambixtest_writef (ambix_t *ambix, ambixtest_presentationformat_t fmt,
                           int64_t frames);
 int ambixtest_rmfile(const char*path);
 int ambixtest_uniquenumber(void);
+char*ambixtest_uniquefilename(char*inbuf, size_t length, const char*basename, const char*ext);
 
 #define STRINGIFY(x) #x
 #define STARTTEST   printf("<<< running TEST %s[%04d]:%s\t", __FILE__, __LINE__, __FUNCTION__),printf
