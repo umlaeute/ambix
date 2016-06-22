@@ -23,6 +23,9 @@
 
 #include "common.h"
 #include <math.h>
+#ifdef HAVE_UNISTD_H
+# include <unistd.h>
+#endif
 
 static char* snprintdata(char*out, size_t size, ambixtest_presentationformat_t fmt, const void*data, uint64_t index) {
   switch(fmt) {
@@ -284,3 +287,14 @@ int64_t ambixtest_writef (ambix_t *ambix, ambixtest_presentationformat_t fmt,
 }
 
 
+int ambixtest_rmfile(const char*path) {
+  /* only remove if AMBIXTEST_KEEPFILES is not set */
+  if(NULL==getenv("AMBIXTEST_KEEPFILES"))return unlink(path);
+  return 0;
+}
+int ambixtest_uniquenumber() {
+#ifdef HAVE_UNISTD_H
+  return getpid();
+#endif
+  return 0;
+}

@@ -26,6 +26,10 @@
 
 #include <ambix/ambix.h>
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 #include <stdlib.h>
 static inline int my_exit(int i) {exit(i); return i;}
 static inline int pass(void) {return my_exit(0); }
@@ -116,6 +120,8 @@ int64_t ambixtest_writef (ambix_t *ambix, ambixtest_presentationformat_t fmt,
                           const void*ambidata , const uint64_t ambioffset,
                           const void*otherdata, const uint64_t otheroffset,
                           int64_t frames);
+int ambixtest_rmfile(const char*path);
+int ambixtest_uniquenumber(void);
 
 #define STRINGIFY(x) #x
 #define STARTTEST   printf("<<< running TEST %s[%04d]:%s\t", __FILE__, __LINE__, __FUNCTION__),printf
