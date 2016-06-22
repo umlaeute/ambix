@@ -155,5 +155,5 @@ void check_create_extended(const char*path, ambix_sampleformat_t format, uint32_
 
   ambix_matrix_deinit(&eye);
 
-  unlink(path);
+  ambixtest_rmfile(path);
 }

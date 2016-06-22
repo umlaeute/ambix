@@ -97,5 +97,5 @@ void check_create_simple(const char*path, ambix_sampleformat_t format, float32_t
   free(resultdata);
   free(orgdata);
 
-  unlink(path);
+  ambixtest_rmfile(path);
 }
