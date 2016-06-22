@@ -21,12 +21,11 @@
 */
 
 #include "common.h"
-#include <unistd.h>
 #include <string.h>
 
 uint32_t max_u32(uint32_t a, uint32_t b) { return (a>b)?a:b;}
 
-int check_create_b2e(const char*path, ambix_sampleformat_t format,
+int check_create_b2e(const char*cpath, ambix_sampleformat_t format,
 		      ambix_matrix_t*matrix, uint32_t extrachannels,
 		      uint32_t chunksize, ambixtest_presentationformat_t fmt,float32_t eps) {
   uint32_t fullambichannels = matrix?matrix->rows:0;
@@ -41,9 +40,11 @@ int check_create_b2e(const char*path, ambix_sampleformat_t format,
   int64_t err64, gotframes;
   float32_t diff=0.;
   ambix_err_t err=0;
+  unsigned int pid=ambixtest_uniquenumber();
+  char path[1024];
   STARTTEST("ambi=[%dx%d],extra=%d, format=%d datafmt=%d\n",
 	    matrix?matrix->rows:-1, matrix?matrix->cols:-1, extrachannels, format, fmt);
-
+  snprintf(path, 1024, "%s.%d.caf", cpath, pid);
   resultambidata=data_calloc(fmt, max_u32(fullambichannels, ambixchannels)*framesize);
   ambidata=data_calloc(fmt, fullambichannels*framesize);
 
@@ -196,6 +197,6 @@ int check_create_b2e(const char*path, ambix_sampleformat_t format,
   free(orgambidata);
   free(orgotherdata);
 
-  unlink(path);
+  ambixtest_rmfile(path);
   return 0;
 }
