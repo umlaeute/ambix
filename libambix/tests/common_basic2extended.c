@@ -33,8 +33,8 @@ int check_create_b2e(const char*path, ambix_sampleformat_t format,
   uint32_t ambixchannels = matrix?matrix->cols:0;
   ambix_info_t info, rinfo, winfo;
   ambix_t*ambix=NULL;
-  float32_t*orgambidata,*ambidata,*resultambidata;
-  float32_t*orgotherdata,*otherdata,*resultotherdata;
+  void*orgambidata,*ambidata,*resultambidata;
+  void*orgotherdata,*otherdata,*resultotherdata;
   uint32_t framesize=441000;
   float32_t periods=8192;
   const ambix_matrix_t*mtx2=NULL;
@@ -44,11 +44,11 @@ int check_create_b2e(const char*path, ambix_sampleformat_t format,
   STARTTEST("ambi=[%dx%d],extra=%d, format=%d datafmt=%d\n",
 	    matrix?matrix->rows:-1, matrix?matrix->cols:-1, extrachannels, format, fmt);
 
-  resultambidata=(float32_t*)calloc(max_u32(fullambichannels, ambixchannels)*framesize, sizeof(float32_t));
-  ambidata=(float32_t*)calloc(fullambichannels*framesize, sizeof(float32_t));
+  resultambidata=data_calloc(fmt, max_u32(fullambichannels, ambixchannels)*framesize);
+  ambidata=data_calloc(fmt, fullambichannels*framesize);
 
-  resultotherdata=(float32_t*)calloc(extrachannels*framesize, sizeof(float32_t));
-  otherdata=(float32_t*)calloc(extrachannels*framesize, sizeof(float32_t));
+  resultotherdata=data_calloc(fmt, extrachannels*framesize);
+  otherdata=data_calloc(fmt, extrachannels*framesize);
 
   memset(&info, 0, sizeof(info));
   info.fileformat=AMBIX_EXTENDED;
@@ -69,8 +69,8 @@ int check_create_b2e(const char*path, ambix_sampleformat_t format,
   if(fail_if((NULL==orgambidata), __LINE__, "couldn't create ambidata %dx%d sine @ %f", (int)framesize, (int)fullambichannels, (float)periods))return 1;
   if(fail_if((NULL==orgotherdata), __LINE__, "couldn't create otherdata %dx%d sine @ %f", (int)framesize, (int)extrachannels, (float)periods))return 1;
 
-  memcpy(ambidata, orgambidata, framesize*fullambichannels*sizeof(float32_t));
-  memcpy(otherdata, orgotherdata, framesize*extrachannels*sizeof(float32_t));
+  memcpy(ambidata, orgambidata, framesize*fullambichannels*data_size(fmt));
+  memcpy(otherdata, orgotherdata, framesize*extrachannels*data_size(fmt));
 
   err=ambix_set_adaptormatrix(ambix, matrix);
 #if 0
