@@ -177,32 +177,33 @@ void data_transpose(float32_t*outdata, const float32_t*indata, uint32_t inrows, 
 }
 
 static void setdata(ambixtest_presentationformat_t fmt, void*data, uint64_t index, float64_t value) {
-   switch(fmt) {
-   case INT16  :
-     ((int16_t*)data)[index]=(int16_t)(value*32768.);
-     break;
-   case INT32  :
-     ((int32_t*)data)[index]=(int32_t)(value*2147483648.);
-     break;
-   case FLOAT32:
-     ((float32_t*)data)[index]=(float32_t)value;
-     break;
-   case FLOAT64:
-     ((float64_t*)data)[index]=(float64_t)value;
-     break;
-   default     : break;
-   }
+  switch(fmt) {
+  case INT16  :
+    s=(int16_t)(value*32768.);
+    ((int16_t*)data)[index]=(int16_t)(value*32768.);
+    break;
+  case INT32  :
+    ((int32_t*)data)[index]=(int32_t)(value*2147483648.);
+    break;
+  case FLOAT32:
+    ((float32_t*)data)[index]=(float32_t)value;
+    break;
+  case FLOAT64:
+    ((float64_t*)data)[index]=(float64_t)value;
+    break;
+  default     : break;
+  }
 }
 
 size_t data_size(ambixtest_presentationformat_t fmt) {
-   switch(fmt) {
-   case INT16  : return 2;
-   case INT32  : return 4;
-   case FLOAT32: return 4;
-   case FLOAT64: return 8;
-   default     : break;
-   }
-   return 0;
+  switch(fmt) {
+  case INT16  : return 2;
+  case INT32  : return 4;
+  case FLOAT32: return 4;
+  case FLOAT64: return 8;
+  default     : break;
+  }
+  return 0;
 }
 
 void*data_calloc(ambixtest_presentationformat_t fmt, size_t nmembers) {
