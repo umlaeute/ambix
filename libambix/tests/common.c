@@ -190,7 +190,7 @@ static void setdata(ambixtest_presentationformat_t fmt, void*data, uint64_t inde
    }
 }
 
-static int fmtsize(ambixtest_presentationformat_t fmt) {
+size_t data_size(ambixtest_presentationformat_t fmt) {
    switch(fmt) {
    case INT16  : return 2;
    case INT32  : return 4;
@@ -201,8 +201,8 @@ static int fmtsize(ambixtest_presentationformat_t fmt) {
    return 0;
 }
 
-static void*data_calloc(ambixtest_presentationformat_t fmt, uint64_t frames, uint32_t channels) {
-  size_t nmemb=frames*channels*fmtsize(fmt)/sizeof(float64_t)+1;
+void*data_calloc(ambixtest_presentationformat_t fmt, size_t nmembers) {
+  size_t nmemb=nmembers*data_size(fmt)/sizeof(float64_t)+1;
   size_t size = sizeof(float64_t);
   void*data=calloc(nmemb, size);
   //printf("%dx%d[%d] allocated %d of %d bytes to %p\n", (int)frames, channels, fmt, (int)nmemb, (int)size, data);
@@ -211,7 +211,7 @@ static void*data_calloc(ambixtest_presentationformat_t fmt, uint64_t frames, uin
 
 void*data_sine(ambixtest_presentationformat_t fmt, uint64_t frames, uint32_t channels, float32_t freq) {
   float32_t periods=freq/44100.;
-  void*data=data_calloc(fmt, frames, channels);
+  void*data=data_calloc(fmt, frames*channels);
   int64_t frame;
   for(frame=0; frame<frames; frame++) {
     int32_t chan;
@@ -224,7 +224,7 @@ void*data_sine(ambixtest_presentationformat_t fmt, uint64_t frames, uint32_t cha
 }
 
 void*data_ramp(ambixtest_presentationformat_t fmt, uint64_t frames, uint32_t channels) {
-  void*data=data_calloc(fmt, frames, channels);
+  void*data=data_calloc(fmt, frames*channels);
   double increment=1./(double)frames;
   double value=0.;
   int64_t frame;
