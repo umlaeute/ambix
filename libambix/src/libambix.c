@@ -55,11 +55,11 @@ static ambix_err_t _check_write_ambixinfo(ambix_info_t*info) {
 }
 
 static void _ambix_info_set(ambix_t*ambix
-                       , ambix_fileformat_t format
-                       , int32_t otherchannels
-                       , int32_t ambichannels
-                       , int32_t fullambichannels
-                       ) {
+                            , ambix_fileformat_t format
+                            , int32_t otherchannels
+                            , int32_t ambichannels
+                            , int32_t fullambichannels
+                            ) {
   switch(format) {
   case AMBIX_NONE:
     ambichannels=fullambichannels=0;
@@ -368,7 +368,7 @@ static ambix_err_t _ambix_check_read(ambix_t*ambix, const void*ambidata, const v
 }
 
 
-#define AMBIX_READF(type) \
+#define AMBIX_READF(type)                                               \
   int64_t ambix_readf_##type (ambix_t*ambix, type##_t*ambidata, type##_t*otherdata, int64_t frames) { \
     int64_t realframes;                                                 \
     type##_t*adaptorbuffer;                                             \
@@ -391,7 +391,7 @@ static ambix_err_t _ambix_check_read(ambix_t*ambix, const void*ambidata, const v
     return realframes;                                                  \
   }
 
-#define AMBIX_WRITEF(type) \
+#define AMBIX_WRITEF(type)                                              \
   int64_t ambix_writef_##type (ambix_t*ambix, const type##_t *ambidata, const type##_t*otherdata, int64_t frames) { \
     type##_t*adaptorbuffer;                                             \
     ambix_err_t err= _ambix_check_write(ambix, (const void*)ambidata, (const void*)otherdata, frames); \
@@ -401,13 +401,13 @@ static ambix_err_t _ambix_check_read(ambix_t*ambix, const void*ambidata, const v
     adaptorbuffer=(type##_t*)ambix->adaptorbuffer;                      \
     switch(ambix->use_matrix) {                                         \
     case 1:                                                             \
-    _ambix_mergeAdaptormatrix_##type(ambidata, &ambix->matrix , otherdata, ambix->info.extrachannels, adaptorbuffer, frames); \
-    break;                                                              \
+      _ambix_mergeAdaptormatrix_##type(ambidata, &ambix->matrix , otherdata, ambix->info.extrachannels, adaptorbuffer, frames); \
+      break;                                                            \
     case 2:                                                             \
-    _ambix_mergeAdaptormatrix_##type(ambidata, &ambix->matrix2, otherdata, ambix->info.extrachannels, adaptorbuffer, frames); \
-    break;                                                              \
+      _ambix_mergeAdaptormatrix_##type(ambidata, &ambix->matrix2, otherdata, ambix->info.extrachannels, adaptorbuffer, frames); \
+      break;                                                            \
     default:                                                            \
-    _ambix_mergeAdaptor_##type(ambidata, ambix->info.ambichannels, otherdata, ambix->info.extrachannels, adaptorbuffer, frames); \
+      _ambix_mergeAdaptor_##type(ambidata, ambix->info.ambichannels, otherdata, ambix->info.extrachannels, adaptorbuffer, frames); \
     };                                                                  \
     return _ambix_writef_##type(ambix, adaptorbuffer, frames);          \
   }

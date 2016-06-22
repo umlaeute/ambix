@@ -111,16 +111,16 @@ sndfile2ambix_info(const SF_INFO*sfinfo, ambix_info_t*axinfo) {
 static int
 read_uuidchunk(ambix_t*ax) {
 #if defined HAVE_SF_GET_CHUNK_ITERATOR && defined (HAVE_SF_CHUNK_INFO)
-	int				err ;
-	SF_CHUNK_INFO	chunk_info ;
+  int				err ;
+  SF_CHUNK_INFO	chunk_info ;
   SNDFILE*file=PRIVATE(ax)->sf_file;
   SF_CHUNK_ITERATOR *iterator;
   uint32_t chunkver=0;
 
   const char*id="uuid";
-	memset (&chunk_info, 0, sizeof (chunk_info)) ;
-	snprintf (chunk_info.id, sizeof (chunk_info.id), "%s", id) ;
-	chunk_info.id_size = 4 ;
+  memset (&chunk_info, 0, sizeof (chunk_info)) ;
+  snprintf (chunk_info.id, sizeof (chunk_info.id), "%s", id) ;
+  chunk_info.id_size = 4 ;
 
   for(iterator = sf_get_chunk_iterator (file, &chunk_info); NULL!=iterator; iterator=sf_next_chunk_iterator (iterator)) {
     if(chunk_info.data)
@@ -160,17 +160,17 @@ read_uuidchunk(ambix_t*ax) {
   return AMBIX_ERR_UNKNOWN;
 
 #elif defined HAVE_SF_UUID_INFO
-		SF_UUID_INFO uuid;
-    SNDFILE*file=PRIVATE(ax)->sf_file;
+  SF_UUID_INFO uuid;
+  SNDFILE*file=PRIVATE(ax)->sf_file;
 
-		memset(&uuid, 0, sizeof(uuid));
-		strncpy(uuid.id, _ambix_getUUID(1), 16);
-		if ( !sf_command(file, SFC_GET_UUID, &uuid, sizeof(uuid)) )	{
-			// extended
-      if(_ambix_uuid1_to_matrix(uuid.data, uuid.data_size, &ax->matrix, ax->byteswap)) {
-        return AMBIX_ERR_SUCCESS;
-      }
-		}
+  memset(&uuid, 0, sizeof(uuid));
+  strncpy(uuid.id, _ambix_getUUID(1), 16);
+  if ( !sf_command(file, SFC_GET_UUID, &uuid, sizeof(uuid)) )	{
+    // extended
+    if(_ambix_uuid1_to_matrix(uuid.data, uuid.data_size, &ax->matrix, ax->byteswap)) {
+      return AMBIX_ERR_SUCCESS;
+    }
+  }
 #endif
   return AMBIX_ERR_UNKNOWN;
 }
@@ -348,34 +348,34 @@ int64_t _ambix_writef_float64   (ambix_t*ambix, const float64_t*data, int64_t fr
 }
 ambix_err_t _ambix_write_uuidchunk(ambix_t*ax, const void*data, int64_t datasize) {
 #if defined HAVE_SF_SET_CHUNK && defined (HAVE_SF_CHUNK_INFO)
-	int				err ;
+  int				err ;
   SF_CHUNK_INFO*chunk=&PRIVATE(ax)->sf_chunk;
   int64_t datasize4 = datasize>>2;
 
   if(datasize4*4 < datasize)
     datasize4++;
-	memset (chunk, 0, sizeof (*chunk)) ;
-	snprintf (chunk->id, sizeof (chunk->id), "uuid") ;
-	chunk->id_size = 4 ;
+  memset (chunk, 0, sizeof (*chunk)) ;
+  snprintf (chunk->id, sizeof (chunk->id), "uuid") ;
+  chunk->id_size = 4 ;
   if(chunk->data)
     free(chunk->data);
 
-	chunk->data = calloc(datasize4, 4);
+  chunk->data = calloc(datasize4, 4);
 
   memcpy(chunk->data, data, datasize);
-	chunk->datalen = datasize ;
-	err = sf_set_chunk (PRIVATE(ax)->sf_file, chunk) ;
+  chunk->datalen = datasize ;
+  err = sf_set_chunk (PRIVATE(ax)->sf_file, chunk) ;
   if(SF_ERR_NO_ERROR != err)
     return AMBIX_ERR_UNKNOWN;
   return AMBIX_ERR_SUCCESS;
 #elif defined HAVE_SF_UUID_INFO
-		SF_UUID_INFO uuid;
-    memcpy(uuid.id, data, 16);
-		uuid.data=(void*)(data+16);
-		uuid.data_size=datasize-16;
-		if(!sf_command(PRIVATE(ax)->sf_file, SFC_SET_UUID, &uuid, sizeof(uuid))) {
-      return  AMBIX_ERR_SUCCESS;
-    }
+  SF_UUID_INFO uuid;
+  memcpy(uuid.id, data, 16);
+  uuid.data=(void*)(data+16);
+  uuid.data_size=datasize-16;
+  if(!sf_command(PRIVATE(ax)->sf_file, SFC_SET_UUID, &uuid, sizeof(uuid))) {
+    return  AMBIX_ERR_SUCCESS;
+  }
 #endif
   return  AMBIX_ERR_UNKNOWN;
 }
