@@ -179,7 +179,6 @@ void data_transpose(float32_t*outdata, const float32_t*indata, uint32_t inrows, 
 static void setdata(ambixtest_presentationformat_t fmt, void*data, uint64_t index, float64_t value) {
   switch(fmt) {
   case INT16  :
-    s=(int16_t)(value*32768.);
     ((int16_t*)data)[index]=(int16_t)(value*32768.);
     break;
   case INT32  :
