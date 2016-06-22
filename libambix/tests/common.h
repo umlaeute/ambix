@@ -102,6 +102,8 @@ float32_t matrix_diff(uint32_t line, const ambix_matrix_t*A, const ambix_matrix_
 void data_print(ambixtest_presentationformat_t fmt, const void*data, uint64_t frames);
 float32_t data_diff(uint32_t line, ambixtest_presentationformat_t fmt, const void*A, const void*B, uint64_t frames, float32_t eps);
 
+size_t data_size(ambixtest_presentationformat_t fmt);
+void*data_calloc(ambixtest_presentationformat_t fmt, size_t nmembers);
 void data_transpose(float32_t*outdata, const float32_t*indata, uint32_t inrows, uint32_t incols);
 void*data_sine(ambixtest_presentationformat_t fmt, uint64_t frames, uint32_t channels, float32_t periods);
 void*data_ramp(ambixtest_presentationformat_t fmt, uint64_t frames, uint32_t channels);
