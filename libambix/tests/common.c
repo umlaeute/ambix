@@ -307,9 +307,11 @@ const char*getbasename(const char*fullpath) {
   return fullpath;
 }
 char*ambixtest_getfname(char*inbuf, size_t length, const char*path_, const char*basename_, const char*ext_) {
+  static unsigned int count=0;
   const char*ext=(ext_)?ext_:".caf";
   const char*path=(path_)?path_:"";
   const char*basename=getbasename(basename_);
-  snprintf(inbuf, length, "%s%s-%d%s", path, basename, ambixtest_uniquenumber(), ext);
+  snprintf(inbuf, length, "%s%s-%d.%d%s", path, basename, ambixtest_uniquenumber(), count, ext);
+  count++;
   return inbuf;
 }
