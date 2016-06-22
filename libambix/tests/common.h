@@ -125,6 +125,8 @@ int ambixtest_uniquenumber(void);
 /* write uniquish filename into 'inbuf' and return a pointer to it
  * if ext is NULL, it defaults to '.caf'*/
 char*ambixtest_getfname(char*inbuf, size_t length, const char*path, const char*basename, const char*ext);
+#define FILENAME_MAIN ambixtest_getfname(alloca(1024), 1024, 0, argv[0], 0)
+#define FILENAME_FILE ambixtest_getfname(alloca(1024), 1024, 0, __FILE__, 0)
 
 #define STRINGIFY(x) #x
 #define STARTTEST   printf("<<< running TEST %s[%04d]:%s\t", __FILE__, __LINE__, __FUNCTION__),printf
