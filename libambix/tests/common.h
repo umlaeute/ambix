@@ -106,6 +106,15 @@ void data_transpose(float32_t*outdata, const float32_t*indata, uint32_t inrows, 
 void*data_sine(ambixtest_presentationformat_t fmt, uint64_t frames, uint32_t channels, float32_t periods);
 void*data_ramp(ambixtest_presentationformat_t fmt, uint64_t frames, uint32_t channels);
 
+int64_t ambixtest_readf (ambix_t *ambix, ambixtest_presentationformat_t fmt,
+                         void*ambidata , uint64_t ambioffset,
+                         void*otherdata, uint64_t otheroffset,
+                         int64_t frames);
+int64_t ambixtest_writef (ambix_t *ambix, ambixtest_presentationformat_t fmt,
+                          const void*ambidata , const uint64_t ambioffset,
+                          const void*otherdata, const uint64_t otheroffset,
+                          int64_t frames);
+
 #define STRINGIFY(x) #x
 #define STARTTEST   printf("<<< running TEST %s[%04d]:%s\t", __FILE__, __LINE__, __FUNCTION__),printf
 #define STOPTEST    printf(">>> test SUCCESS %s[%04d]:%s\t", __FILE__, __LINE__, __FUNCTION__),printf

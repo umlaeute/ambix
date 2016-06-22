@@ -239,4 +239,48 @@ void*data_ramp(ambixtest_presentationformat_t fmt, uint64_t frames, uint32_t cha
 }
 
 
+int64_t ambixtest_readf (ambix_t *ambix, ambixtest_presentationformat_t fmt,
+                         void*ambidata , uint64_t ambioffset,
+                         void*otherdata, uint64_t otheroffset,
+                         int64_t frames) {
+   switch(fmt) {
+   case INT16  :
+     return ambix_readf_int16(ambix, ((int16_t*)ambidata)+ambioffset, ((int16_t*)otherdata)+otheroffset, frames);
+   case INT32  :
+     return ambix_readf_int32(ambix, ((int32_t*)ambidata)+ambioffset, ((int32_t*)otherdata)+otheroffset, frames);
+   case FLOAT32:
+     return ambix_readf_float32(ambix, ((float32_t*)ambidata)+ambioffset, ((float32_t*)otherdata)+otheroffset, frames);
+   case FLOAT64:
+     return ambix_readf_float64(ambix, ((float64_t*)ambidata)+ambioffset, ((float64_t*)otherdata)+otheroffset, frames);
+   default     : break;
+   }
+   return -1;
+}
+
+int64_t ambixtest_writef (ambix_t *ambix, ambixtest_presentationformat_t fmt,
+                          const void*ambidata , const uint64_t ambioffset,
+                          const void*otherdata, const uint64_t otheroffset,
+                          int64_t frames) {
+   switch(fmt) {
+   case INT16  :
+     return ambix_writef_int16(ambix,
+                               ((const int16_t*)ambidata)+ambioffset, ((const int16_t*)otherdata)+otheroffset,
+                               frames);
+   case INT32  :
+     return ambix_writef_int32(ambix,
+                               ((const int32_t*)ambidata)+ambioffset, ((const int32_t*)otherdata)+otheroffset,
+                               frames);
+   case FLOAT32:
+     return ambix_writef_float32(ambix,
+                                 ((const float32_t*)ambidata)+ambioffset, ((const float32_t*)otherdata)+otheroffset,
+                                 frames);
+   case FLOAT64:
+     return ambix_writef_float64(ambix,
+                                 ((const float64_t*)ambidata)+ambioffset, ((const float64_t*)otherdata)+otheroffset,
+                                 frames);
+   default     : break;
+   }
+   return -1;
+}
+
 
