@@ -26,6 +26,7 @@
 #ifdef HAVE_UNISTD_H
 # include <unistd.h>
 #endif
+#include <string.h>
 
 static char* snprintdata(char*out, size_t size, ambixtest_presentationformat_t fmt, const void*data, uint64_t index) {
   switch(fmt) {
@@ -298,8 +299,17 @@ int ambixtest_uniquenumber() {
 #endif
   return 0;
 }
-char*ambixtest_uniquefilename(char*inbuf, size_t length, const char*basename, const char*ext_) {
+const char*getbasename(const char*fullpath) {
+  char*pos=NULL;
+  if(!fullpath)return "";
+  pos=strrchr(fullpath, '/');
+  if(pos)return pos+1;
+  return fullpath;
+}
+char*ambixtest_getfname(char*inbuf, size_t length, const char*path_, const char*basename_, const char*ext_) {
   const char*ext=(ext_)?ext_:".caf";
-  snprintf(inbuf, length, "%s-%d.%s", basename, ambix_uniquenumber(), ext);
+  const char*path=(path_)?path_:"";
+  const char*basename=getbasename(basename_);
+  snprintf(inbuf, length, "%s%s-%d%s", path, basename, ambixtest_uniquenumber(), ext);
   return inbuf;
 }
