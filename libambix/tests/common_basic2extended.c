@@ -95,16 +95,21 @@ int check_create_b2e(const char*path, ambix_sampleformat_t format,
     uint32_t framesleft=framesize;
     uint32_t frame;
     for(frame=0; frame<chunks; frame++) {
-      err64=ambix_writef_float32(ambix, ambidata+fullambichannels*frame*chunksize, otherdata+extrachannels*frame*chunksize, chunksize);
+      err64=ambixtest_writef(ambix, fmt,
+                             ambidata, fullambichannels*frame*chunksize, otherdata, extrachannels*frame*chunksize,
+                             chunksize);
       if(fail_if((err64!=chunksize), __LINE__, "wrote only %d chunksize of %d", (int)err64, (int)chunksize))return 1;
       framesleft-=chunksize;
     }
     subframe=framesleft;
-    err64=ambix_writef_float32(ambix, ambidata+fullambichannels*frame*chunksize, otherdata+extrachannels*frame*chunksize, subframe);
+    err64=ambixtest_writef(ambix, fmt,
+                           ambidata, fullambichannels*frame*chunksize,
+                           otherdata,extrachannels*frame*chunksize,
+                           subframe);
     if(fail_if((err64!=subframe), __LINE__, "wrote only %d subframe of %d", (int)err64, (int)subframe))return 1;
 
   } else {
-    err64=ambix_writef_float32(ambix, ambidata, otherdata, framesize);
+    err64=ambixtest_writef(ambix, fmt, ambidata, 0, otherdata, 0, framesize);
     if(fail_if((err64!=framesize), __LINE__, "wrote only %d frames of %d", (int)err64, (int)framesize))return 1;
   }
 
@@ -131,10 +136,10 @@ int check_create_b2e(const char*path, ambix_sampleformat_t format,
 
   gotframes=0;
   do {
-      err64=ambix_readf_float32(ambix,
-			resultambidata +(gotframes*fullambichannels ),
-			resultotherdata+(gotframes*extrachannels),
-			(framesize-gotframes));
+    err64=ambixtest_readf(ambix, fmt,
+                          resultambidata,(gotframes*fullambichannels ),
+                          resultotherdata,(gotframes*extrachannels),
+                          (framesize-gotframes));
     if(fail_if((err64<0), __LINE__, "reading frames failed after %d/%d frames", (int)gotframes, (int)framesize))return 1;
     gotframes+=err64;
   } while(err64>0 && gotframes<framesize);
@@ -170,10 +175,10 @@ int check_create_b2e(const char*path, ambix_sampleformat_t format,
 
   gotframes=0;
   do {
-      err64=ambix_readf_float32(ambix,
-			resultambidata +(gotframes*ambixchannels ),
-			resultotherdata+(gotframes*extrachannels),
-			(framesize-gotframes));
+    err64=ambixtest_readf(ambix, fmt,
+                          resultambidata,(gotframes*ambixchannels ),
+                          resultotherdata,(gotframes*extrachannels),
+                          (framesize-gotframes));
     if(fail_if((err64<0), __LINE__, "reading frames failed after %d/%d frames", (int)gotframes, (int)framesize))return 1;
     gotframes+=err64;
   } while(err64>0 && gotframes<framesize);
