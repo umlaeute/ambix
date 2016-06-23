@@ -40,7 +40,7 @@ TESTS += datatest
 datatest_SOURCES = datatest.c common.c
 
 TESTS += matrix
-matrix_SOURCES = matrix.c common.c
+matrix_SOURCES = matrixtests.c common.c
 
 TESTS += matrices
 matrices_SOURCES = matrices.c common.c
