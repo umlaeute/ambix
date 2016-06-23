@@ -43,6 +43,9 @@
 # define snprintf _snprintf
 #endif /* _MSC_VER */
 
+//#define DEBUG_SFINFO
+
+
 typedef struct ambixsndfile_private_t {
   /** handle to the libsndfile object */
   SNDFILE*sf_file;
@@ -81,6 +84,7 @@ ambix2sndfile_sampleformat(ambix_sampleformat_t asformat) {
   }
   return SF_FORMAT_PCM_24;
 }
+#ifdef DEBUG_SFINFO
 static void print_sfinfo(SF_INFO*info) {
   printf("SF_INFO %p\n", info);
   printf("  frames\t: %d\n", (int)(info->frames));
@@ -90,6 +94,7 @@ static void print_sfinfo(SF_INFO*info) {
   printf("  sections\t: %d\n", info->sections);
   printf("  seekable\t: %d\n", info->seekable);
 }
+#endif
 
 static void
 ambix2sndfile_info(const ambix_info_t*axinfo, SF_INFO *sfinfo) {
@@ -279,9 +284,9 @@ ambix_err_t _ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t
   }
 
   ambix->is_AMBIX=is_ambix;
-  if(0) {
+#ifdef DEBUG_SFINFO
     print_sfinfo( &PRIVATE(ambix)->sf_info);
-  }
+#endif
 
   return AMBIX_ERR_SUCCESS;
 }
