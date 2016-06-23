@@ -145,6 +145,15 @@ void mtxinverse_tests(float32_t eps) {
   ambix_matrix_fill(testresult, AMBIX_MATRIX_IDENTITY);
   mtxinverse_test(mtx, testresult, eps);
 
+  STARTTEST("[one:4x4]\n");
+  mtx=ambix_matrix_init(4, 4, mtx);
+  ambix_matrix_fill(mtx, AMBIX_MATRIX_ONE);
+  mtxinverse_test(mtx, NULL, eps);
+  STARTTEST("[zero:4x4]\n");
+  mtx=ambix_matrix_init(4, 4, mtx);
+  ambix_matrix_fill(mtx, AMBIX_MATRIX_ZERO);
+  mtxinverse_test(mtx, NULL, eps);
+
   STARTTEST("[SID:4x4]\n");
   mtx=ambix_matrix_init(4, 4, mtx);
   ambix_matrix_fill(mtx, AMBIX_MATRIX_SID);
