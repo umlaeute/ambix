@@ -79,9 +79,11 @@ extended_pcm16_1024_SOURCES   = extended_pcm16_1024.c common_extended.c common.c
 TESTS += ambix_open
 ambix_open_SOURCES = ambix_open.c
 
-
 TESTS += ambix_close
 ambix_close_SOURCES = ambix_close.c
+
+TESTS += ambix_get_sndfile
+ambix_get_sndfile_SOURCES = ambix_get_sndfile.c
 
 TESTS += ambix_seek
 ambix_seek_SOURCES = ambix_seek.c
