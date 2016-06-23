@@ -9,6 +9,7 @@
 *\.pd_*
 \.deps/
 \.libs/
+*\.gcno
 # autotools byproducts
 Makefile
 Makefile\.in
