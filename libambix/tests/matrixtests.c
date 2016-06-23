@@ -70,7 +70,6 @@ static void mtxinverse_test(const ambix_matrix_t *mtx, const ambix_matrix_t *res
   int min_rowcol=(mtx->cols<mtx->rows)?mtx->cols:mtx->rows;
 
   fail_if((NULL==mtx), __LINE__, "cannot invert NULL-matrix");
-  fail_if((NULL==result), __LINE__, "cannot invert to NULL-matrix");
   eye=ambix_matrix_init(min_rowcol, min_rowcol, eye);
   eye=ambix_matrix_fill(eye, AMBIX_MATRIX_IDENTITY);
   fail_if((NULL==eye), __LINE__, "cannot create eye-matrix for pinv-verification");
@@ -88,15 +87,17 @@ static void mtxinverse_test(const ambix_matrix_t *mtx, const ambix_matrix_t *res
   matrix_print(mtx);
   matrix_print(pinv);
   matrix_print(mul);
-  //matrix_print(result);
+  if(result)matrix_print(result);
   printf("------------\n");
 #endif
 
-  errf=matrix_diff(__LINE__, pinv, result, eps);
-  fail_if((errf>eps), __LINE__, "diffing (pseudo)inverse returned %g (>%g)", errf, eps);
+  if(result) {
+    errf=matrix_diff(__LINE__, pinv, result, eps);
+    fail_if((errf>eps), __LINE__, "diffing (pseudo)inverse returned %g (>%g)", errf, eps);
 
-  errf=matrix_diff(__LINE__, mul, eye, eps);
-  fail_if((errf>eps), __LINE__, "diffing mtx*pinv(mtx) returned %g (>%g)", errf, eps);
+    errf=matrix_diff(__LINE__, mul, eye, eps);
+    fail_if((errf>eps), __LINE__, "diffing mtx*pinv(mtx) returned %g (>%g)", errf, eps);
+  } else matrix_print(pinv);
 
   ambix_matrix_destroy(pinv);
   ambix_matrix_destroy(mul);
