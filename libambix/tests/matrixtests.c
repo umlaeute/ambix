@@ -97,7 +97,10 @@ static void mtxinverse_test(const ambix_matrix_t *mtx, const ambix_matrix_t *res
 
     errf=matrix_diff(__LINE__, mul, eye, eps);
     fail_if((errf>eps), __LINE__, "diffing mtx*pinv(mtx) returned %g (>%g)", errf, eps);
-  } else matrix_print(pinv);
+  } else {
+    errf=matrix_diff(__LINE__, mul, eye, eps);
+    fail_if((!(isnan(errf) || isinf(errf) || (errf>eps))), __LINE__, "diffing invalid mtx*pinv(mtx) returned %g (!>%g)", errf, eps);
+  }
 
   ambix_matrix_destroy(pinv);
   ambix_matrix_destroy(mul);
