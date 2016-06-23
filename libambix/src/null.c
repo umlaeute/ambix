@@ -22,15 +22,15 @@
 
 #include "private.h"
 
-ambix_err_t _ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t mode, const ambix_info_t*ambixinfo) {
+ambix_err_t _ambix_open (ambix_t*ambix, const char *path, const ambix_filemode_t mode, const ambix_info_t*ambixinfo) {
   return AMBIX_ERR_INVALID_FILE;
 }
 
-ambix_err_t	_ambix_close	(ambix_t*ambix) {
+ambix_err_t     _ambix_close    (ambix_t*ambix) {
   return AMBIX_ERR_INVALID_FILE;
 }
 
-struct SNDFILE_tag*_ambix_get_sndfile	(ambix_t*ambix) {
+struct SNDFILE_tag*_ambix_get_sndfile   (ambix_t*ambix) {
   return 0;
 }
 

@@ -116,8 +116,8 @@ sndfile2ambix_info(const SF_INFO*sfinfo, ambix_info_t*axinfo) {
 static int
 read_uuidchunk(ambix_t*ax) {
 #if defined HAVE_SF_GET_CHUNK_ITERATOR && defined (HAVE_SF_CHUNK_INFO)
-  int				err ;
-  SF_CHUNK_INFO	chunk_info ;
+  int                           err ;
+  SF_CHUNK_INFO chunk_info ;
   SNDFILE*file=PRIVATE(ax)->sf_file;
   SF_CHUNK_ITERATOR *iterator;
   uint32_t chunkver=0;
@@ -153,7 +153,7 @@ read_uuidchunk(ambix_t*ax) {
     chunkver=_ambix_checkUUID((const char*)chunk_info.data);
     if(1==chunkver) {
       if(_ambix_uuid1_to_matrix(((const char*)chunk_info.data+16), chunk_info.datalen-16, &ax->matrix, ax->byteswap)) {
-	free(chunk_info.data);
+        free(chunk_info.data);
         return AMBIX_ERR_SUCCESS;
       }
     } else
@@ -170,7 +170,7 @@ read_uuidchunk(ambix_t*ax) {
 
   memset(&uuid, 0, sizeof(uuid));
   strncpy(uuid.id, _ambix_getUUID(1), 16);
-  if ( !sf_command(file, SFC_GET_UUID, &uuid, sizeof(uuid)) )	{
+  if ( !sf_command(file, SFC_GET_UUID, &uuid, sizeof(uuid)) )   {
     // extended
     if(_ambix_uuid1_to_matrix(uuid.data, uuid.data_size, &ax->matrix, ax->byteswap)) {
       return AMBIX_ERR_SUCCESS;
@@ -183,7 +183,7 @@ read_uuidchunk(ambix_t*ax) {
 
 
 
-ambix_err_t _ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t mode, const ambix_info_t*ambixinfo) {
+ambix_err_t _ambix_open (ambix_t*ambix, const char *path, const ambix_filemode_t mode, const ambix_info_t*ambixinfo) {
   int sfmode=0;
   int caf=0;
   int is_ambix=0;
@@ -192,11 +192,11 @@ ambix_err_t _ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t
   ambix2sndfile_info(ambixinfo, &PRIVATE(ambix)->sf_info);
 
   if((mode & AMBIX_READ) && (mode & AMBIX_WRITE))
-    sfmode=	SFM_RDWR;
+    sfmode=     SFM_RDWR;
   else if (mode & AMBIX_WRITE)
-    sfmode=	SFM_WRITE;
+    sfmode=     SFM_WRITE;
   else if (mode & AMBIX_READ)
-    sfmode=	SFM_READ;
+    sfmode=     SFM_READ;
 
   PRIVATE(ambix)->sf_file=sf_open(path, sfmode, &PRIVATE(ambix)->sf_info) ;
   if(!PRIVATE(ambix)->sf_file)
@@ -291,7 +291,7 @@ ambix_err_t _ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t
   return AMBIX_ERR_SUCCESS;
 }
 
-ambix_err_t	_ambix_close	(ambix_t*ambix) {
+ambix_err_t     _ambix_close    (ambix_t*ambix) {
   if(PRIVATE(ambix)->sf_file)
     sf_close(PRIVATE(ambix)->sf_file);
   PRIVATE(ambix)->sf_file=NULL;
@@ -323,7 +323,7 @@ int64_t _ambix_seek (ambix_t* ambix, int64_t frames, int bias) {
   return -1;
 }
 
-SNDFILE*_ambix_get_sndfile	(ambix_t*ambix) {
+SNDFILE*_ambix_get_sndfile      (ambix_t*ambix) {
   return PRIVATE(ambix)->sf_file;
 }
 int64_t _ambix_readf_int16   (ambix_t*ambix, int16_t*data, int64_t frames) {
@@ -353,7 +353,7 @@ int64_t _ambix_writef_float64   (ambix_t*ambix, const float64_t*data, int64_t fr
 }
 ambix_err_t _ambix_write_uuidchunk(ambix_t*ax, const void*data, int64_t datasize) {
 #if defined HAVE_SF_SET_CHUNK && defined (HAVE_SF_CHUNK_INFO)
-  int				err ;
+  int                           err ;
   SF_CHUNK_INFO*chunk=&PRIVATE(ax)->sf_chunk;
   int64_t datasize4 = datasize>>2;
 

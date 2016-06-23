@@ -147,26 +147,26 @@ _AMBIX_MERGEADAPTOR(int16);
   ambix_err_t _ambix_mergeAdaptormatrix_##type(const type##_t*ambi_data, const ambix_matrix_t*matrix, \
                                                const type##_t*otherdata, uint32_t source2channels, \
                                                type##_t*destination, int64_t frames) { \
-    float32_t**mtx=matrix->data;					\
-    const uint32_t fullambichannels=matrix->cols;			\
-    const uint32_t ambixchannels=matrix->rows;				\
-    int64_t f;								\
-    for(f=0; f<frames; f++) {						\
-      /* encode ambisonics->ambix and store in destination */		\
-      uint32_t outchan, inchan;						\
-      const type##_t*src = ambi_data+fullambichannels*f;		\
-      for(outchan=0; outchan<ambixchannels; outchan++) {		\
-	float32_t sum=0.;						\
-	for(inchan=0; inchan<fullambichannels; inchan++) {		\
-	  sum+=mtx[outchan][inchan] * src[inchan];			\
-	}								\
-	*destination++=(type##_t)sum;					\
-      }									\
-      /* store the otherchannels */					\
-      for(inchan=0; inchan<source2channels; inchan++)			\
-	*destination++=*otherdata++;					\
-    }									\
-    return AMBIX_ERR_SUCCESS;						\
+    float32_t**mtx=matrix->data;                                        \
+    const uint32_t fullambichannels=matrix->cols;                       \
+    const uint32_t ambixchannels=matrix->rows;                          \
+    int64_t f;                                                          \
+    for(f=0; f<frames; f++) {                                           \
+      /* encode ambisonics->ambix and store in destination */           \
+      uint32_t outchan, inchan;                                         \
+      const type##_t*src = ambi_data+fullambichannels*f;                \
+      for(outchan=0; outchan<ambixchannels; outchan++) {                \
+        float32_t sum=0.;                                               \
+        for(inchan=0; inchan<fullambichannels; inchan++) {              \
+          sum+=mtx[outchan][inchan] * src[inchan];                      \
+        }                                                               \
+        *destination++=(type##_t)sum;                                   \
+      }                                                                 \
+      /* store the otherchannels */                                     \
+      for(inchan=0; inchan<source2channels; inchan++)                   \
+        *destination++=*otherdata++;                                    \
+    }                                                                   \
+    return AMBIX_ERR_SUCCESS;                                           \
   }
 
 _AMBIX_MERGEADAPTOR_MATRIX(float32);

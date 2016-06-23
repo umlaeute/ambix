@@ -31,7 +31,7 @@
 #endif /* HAVE_STRING_H */
 
 /* forward declarations */
-ambix_err_t	_ambix_write_header	(ambix_t*ambix);
+ambix_err_t     _ambix_write_header     (ambix_t*ambix);
 
 
 static ambix_err_t _check_write_ambixinfo(ambix_info_t*info) {
@@ -76,7 +76,7 @@ static void _ambix_info_set(ambix_t*ambix
   ambix->ambisonics_order=(fullambichannels>0)?ambix_channels2order(fullambichannels):0;
 }
 
-ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambix_info_t*ambixinfo) {
+ambix_t*        ambix_open      (const char *path, const ambix_filemode_t mode, ambix_info_t*ambixinfo) {
   ambix_t*ambix=NULL;
   ambix_err_t err = AMBIX_ERR_UNKNOWN;
   int32_t ambichannels=0, otherchannels=0;
@@ -91,18 +91,18 @@ ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambix_info_
     err=_check_write_ambixinfo(ambixinfo);
     if(err!=AMBIX_ERR_SUCCESS) {
       if (AMBIX_BASIC == ambixinfo->fileformat) {
-	/* the user might actually try to write an EXTENDED file as BASIC:
-	 * - ambichannels do not form a full set
-	 * - otherchannels>0
-	 * LATER add better checks whether this is really the case
-	 */
-	ambixinfo->fileformat = AMBIX_EXTENDED;
-	err=_check_write_ambixinfo(ambixinfo);
-	if(err!=AMBIX_ERR_SUCCESS)
-	  return NULL;
-	basic2extended = 1;
+        /* the user might actually try to write an EXTENDED file as BASIC:
+         * - ambichannels do not form a full set
+         * - otherchannels>0
+         * LATER add better checks whether this is really the case
+         */
+        ambixinfo->fileformat = AMBIX_EXTENDED;
+        err=_check_write_ambixinfo(ambixinfo);
+        if(err!=AMBIX_ERR_SUCCESS)
+          return NULL;
+        basic2extended = 1;
       } else
-	return NULL;
+        return NULL;
     }
     ambichannels=ambixinfo->ambichannels;
     otherchannels=ambixinfo->extrachannels;
@@ -197,7 +197,7 @@ ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambix_info_
   return NULL;
 }
 
-ambix_err_t	ambix_close	(ambix_t*ambix) {
+ambix_err_t     ambix_close     (ambix_t*ambix) {
   ambix_err_t res=AMBIX_ERR_SUCCESS;
   if(NULL==ambix) {
     return AMBIX_ERR_INVALID_HANDLE;
@@ -222,7 +222,7 @@ int64_t ambix_seek (ambix_t* ambix, int64_t frames, int whence) {
   return _ambix_seek(ambix, frames, whence);
 }
 
-struct SNDFILE_tag*ambix_get_sndfile	(ambix_t*ambix) {
+struct SNDFILE_tag*ambix_get_sndfile    (ambix_t*ambix) {
 #ifdef HAVE_SNDFILE_H
   return _ambix_get_sndfile(ambix);
 #endif
@@ -230,12 +230,12 @@ struct SNDFILE_tag*ambix_get_sndfile	(ambix_t*ambix) {
 }
 
 
-const ambix_matrix_t*ambix_get_adaptormatrix	(ambix_t*ambix) {
+const ambix_matrix_t*ambix_get_adaptormatrix    (ambix_t*ambix) {
   if(AMBIX_EXTENDED==ambix->info.fileformat)
     return &(ambix->matrix);
   return NULL;
 }
-ambix_err_t ambix_set_adaptormatrix	(ambix_t*ambix, const ambix_matrix_t*matrix) {
+ambix_err_t ambix_set_adaptormatrix     (ambix_t*ambix, const ambix_matrix_t*matrix) {
   if(0) {
   } else if((ambix->filemode & AMBIX_READ ) && (AMBIX_BASIC   == ambix->info.fileformat)) {
     ambix_matrix_t*mtx=NULL;
@@ -277,15 +277,15 @@ ambix_err_t ambix_set_adaptormatrix	(ambix_t*ambix, const ambix_matrix_t*matrix)
 
       /* check whether the reduced set has the same number of channels as we created our file for */
       if(ambix->realinfo.ambichannels != matrix->cols)
-	return AMBIX_ERR_INVALID_DIMENSION;
+        return AMBIX_ERR_INVALID_DIMENSION;
 
       /* check whether the matrix is actually invertible */
       pinv=_ambix_matrix_pinv(matrix, pinv);
       if(!pinv)
-	return AMBIX_ERR_INVALID_MATRIX;
+        return AMBIX_ERR_INVALID_MATRIX;
 
       if(!ambix_matrix_copy(pinv, &ambix->matrix2))
-	return AMBIX_ERR_UNKNOWN;
+        return AMBIX_ERR_UNKNOWN;
 
       ambix_matrix_destroy(pinv);
     }
@@ -307,7 +307,7 @@ ambix_err_t ambix_set_adaptormatrix	(ambix_t*ambix, const ambix_matrix_t*matrix)
   return AMBIX_ERR_UNKNOWN;
 }
 
-ambix_err_t	_ambix_write_header	(ambix_t*ambix) {
+ambix_err_t     _ambix_write_header     (ambix_t*ambix) {
   void*data=NULL;
   if(ambix->filemode & AMBIX_WRITE) {
     if((AMBIX_EXTENDED == ambix->realinfo.fileformat)) {

@@ -364,19 +364,19 @@ _ambix_matrix_pinv(const ambix_matrix_t*A, ambix_matrix_t*P) {
       At = _ambix_matrix_transpose(A, At);
 
       if (A->rows > A->cols) {
-	temp = _ambix_matrix_multiply(At, A, NULL);
-	if (!temp)break;
-	temp2 = _ambix_matrix_invert_gaussjordan(temp, temp2, eps);
-	if (!temp2)break;
+        temp = _ambix_matrix_multiply(At, A, NULL);
+        if (!temp)break;
+        temp2 = _ambix_matrix_invert_gaussjordan(temp, temp2, eps);
+        if (!temp2)break;
 
-	result = _ambix_matrix_multiply(temp2, At, P);
+        result = _ambix_matrix_multiply(temp2, At, P);
       } else {
-	temp = _ambix_matrix_multiply(A, At, NULL);
-	if (!temp)break;
-	temp2 = _ambix_matrix_invert_gaussjordan(temp, temp2, eps);
-	if (!temp2)break;
+        temp = _ambix_matrix_multiply(A, At, NULL);
+        if (!temp)break;
+        temp2 = _ambix_matrix_invert_gaussjordan(temp, temp2, eps);
+        if (!temp2)break;
 
-	result = _ambix_matrix_multiply(At, temp2, P);
+        result = _ambix_matrix_multiply(At, temp2, P);
       }
     } while (0);
     if(At)   ambix_matrix_destroy(At);

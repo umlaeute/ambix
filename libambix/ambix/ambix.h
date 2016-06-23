@@ -21,8 +21,8 @@
 */
 
 /**
- * @file	ambix/ambix.h
- * @brief	AMBIsonics eXchange Library Interface
+ * @file        ambix/ambix.h
+ * @brief       AMBIsonics eXchange Library Interface
  * @details This file is part of libambix
  * @author IOhannes m zmölnig <zmoelnig@iem.at>
  * @date 2012

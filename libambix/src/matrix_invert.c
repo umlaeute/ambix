@@ -154,15 +154,15 @@ static int _am_cholesky2_decomp(ambix_matrix_t*mtx, float32_t toler)
     if (pivot < eps) {
       matrix[i][i] = 0;
       if (pivot < -8 * eps)
-	nonneg = -1;
+        nonneg = -1;
     } else {
       rank++;
       for (j = (i + 1); j < columns; j++) {
-	temp = matrix[j][i] / pivot;
-	matrix[j][i] = temp;
-	matrix[j][j] -= temp * temp * pivot;
-	for (k = (j + 1); k < columns; k++)
-	  matrix[k][j] -= temp * matrix[k][i];
+        temp = matrix[j][i] / pivot;
+        matrix[j][i] = temp;
+        matrix[j][j] -= temp * temp * pivot;
+        for (k = (j + 1); k < columns; k++)
+          matrix[k][j] -= temp * matrix[k][i];
       }
     }
   }
@@ -190,9 +190,9 @@ static void _am_cholesky2_inverse(ambix_matrix_t*mtx)
     if (matrix[i][i] > 0) {
       matrix[i][i] = 1 / matrix[i][i]; /*this line inverts D */
       for (j = (i + 1); j < columns; j++) {
-	matrix[j][i] = -matrix[j][i];
-	for (k = 0; k < i; k++) /* sweep operator */
-	  matrix[j][k] += matrix[j][i] * matrix[i][k];
+        matrix[j][i] = -matrix[j][i];
+        for (k = 0; k < i; k++) /* sweep operator */
+          matrix[j][k] += matrix[j][i] * matrix[i][k];
       }
     }
   }
@@ -205,16 +205,16 @@ static void _am_cholesky2_inverse(ambix_matrix_t*mtx)
   for (i = 0; i < columns; i++) {
     if (matrix[i][i] == 0) { /* singular row */
       for (j = 0; j < i; j++)
-	matrix[j][i] = 0;
+        matrix[j][i] = 0;
       for (j = i; j < columns; j++)
-	matrix[i][j] = 0;
+        matrix[i][j] = 0;
     } else {
       for (j = (i + 1); j < columns; j++) {
-	temp = matrix[j][i] * matrix[j][j];
-	if (j != i)
-	  matrix[i][j] = temp;
-	for (k = i; k < j; k++)
-	  matrix[i][k] += temp * matrix[j][k];
+        temp = matrix[j][i] * matrix[j][j];
+        if (j != i)
+          matrix[i][j] = temp;
+        for (k = i; k < j; k++)
+          matrix[i][k] += temp * matrix[j][k];
       }
     }
   }
