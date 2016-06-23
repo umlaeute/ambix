@@ -82,7 +82,7 @@ float32_t matrix_diff(uint32_t line, const ambix_matrix_t*A, const ambix_matrix_
     for(c=0; c<B->cols; c++) {
       float32_t v=a[r][c]-b[r][c];
       float32_t vabs=(v<0)?-v:v;
-      fail_if(isnan(v), line, "[%d|%d] is NaN: %f <-> %f", r, c, a[r][c], b[r][c]);
+      if(isnan(v))return v;
       if(vabs>maxdiff)
         maxdiff=vabs;
       sum+=vabs;
