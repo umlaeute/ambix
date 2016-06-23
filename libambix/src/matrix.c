@@ -347,7 +347,7 @@ _ambix_matrix_pinv(const ambix_matrix_t*A, ambix_matrix_t*P) {
   if(result)
     return result;
 
-  /* if that fails (should never happen), gall back to gauss-jordan */
+  /* if that fails (should never happen), fall back to gauss-jordan */
   if (A->rows==A->cols) {
     ambix_matrix_t*Ax = ambix_matrix_copy(A, NULL);
     result = _ambix_matrix_invert_gaussjordan(Ax, P, eps); // do normal inverse if square matrix
