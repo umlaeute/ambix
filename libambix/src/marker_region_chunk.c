@@ -199,13 +199,11 @@ ambix_err_t _ambix_read_markersregions(ambix_t*ambix) {
   strg_id.b[0] = 's'; strg_id.b[1] = 't'; strg_id.b[2] = 'r'; strg_id.b[3] = 'g';
   while (strings_datasize) {
     strings_data = _ambix_read_chunk(ambix, strg_id.a, chunk_it++, &strings_datasize);
-    printf("Got strings data with size: %d \n", strings_datasize);
     if (strings_datasize > 0) {
       CAFStrings* strings_chunk = (CAFStrings*)strings_data;
       if (byteswap)
         _ambix_swap4array(&strings_chunk->mNumEntries, 1);
       if (strings_datasize < (SIZEOF_CAFStrings + strings_chunk->mNumEntries*sizeof(CAFStringID))) {
-        printf("invalid strings chunk!\n");
         if (strings_data)
           free(strings_data);
         break;
@@ -231,7 +229,6 @@ ambix_err_t _ambix_read_markersregions(ambix_t*ambix) {
         if (caf_stringid[i].mStringStartByteOffset >= mstrings_datasize)
           break; // invalid offset!
         unsigned char* mString = (unsigned char*) (strings_ptr+caf_stringid[i].mStringStartByteOffset);
-        // printf("StringID: ID: %d, ByteOffset: %lld, String: %s\n", caf_stringid[i].mStringID, caf_stringid[i].mStringStartByteOffset, mString);
         mystrings.string_ids[mystrings.num_strings] = caf_stringid[i].mStringID;
         mystrings.strings[mystrings.num_strings] = calloc((strlen(mString)+1), sizeof(unsigned char));
         memcpy(mystrings.strings[mystrings.num_strings], mString, strlen(mString)*sizeof(unsigned char));
@@ -250,13 +247,11 @@ ambix_err_t _ambix_read_markersregions(ambix_t*ambix) {
   mark_id.b[0] = 'm'; mark_id.b[1] = 'a'; mark_id.b[2] = 'r'; mark_id.b[3] = 'k';
   while (marker_datasize) {
     marker_data = _ambix_read_chunk(ambix, mark_id.a, chunk_it++, &marker_datasize);
-    printf("Got marker data with size: %d \n", marker_datasize);
     if (marker_datasize > 0) {
       CAFMarkerChunk* marker_chunk = (CAFMarkerChunk*)marker_data;
       if (byteswap)
         swap_marker_chunk(marker_chunk);
       if (marker_datasize < (marker_chunk->mNumberMarkers*(sizeof(CAFMarker)) + 2*sizeof(uint32_t))) {
-        printf("broken marker chunk detected...\n");
         if (marker_data)
           free(marker_data);
         break;
@@ -290,13 +285,11 @@ ambix_err_t _ambix_read_markersregions(ambix_t*ambix) {
   regn_id.b[0] = 'r'; regn_id.b[1] = 'e'; regn_id.b[2] = 'g'; regn_id.b[3] = 'n';
   while (region_datasize) {
     region_data = _ambix_read_chunk(ambix, regn_id.a, chunk_it++, &region_datasize);
-    printf("Got region data with size: %d \n", region_datasize);
     if (region_datasize > 0) {
       CAFRegionChunk* region_chunk = (CAFRegionChunk*)region_data;
       if (byteswap)
          swap_region_chunk(region_chunk);
       if (region_datasize < (region_chunk->mNumberRegions*(SIZEOF_CAFRegion + 2*sizeof(uint32_t)))) {
-        printf("broken region chunk detected...\n");
         if (region_data)
           free(region_data);
         break;
@@ -308,7 +301,6 @@ ambix_err_t _ambix_read_markersregions(ambix_t*ambix) {
         CAFRegion *caf_region = (CAFRegion*)bytePtr;
         if (byteswap)
           swap_region(caf_region);
-        printf("Region #%d has %d Markers.\n", caf_region->mRegionID, caf_region->mNumberMarkers);
         ambix_region_t new_ambix_region;
         memset(&new_ambix_region, 0, sizeof(ambix_region_t));
         /* iterate over all markers and find startMarker and endMarker */
@@ -334,14 +326,7 @@ ambix_err_t _ambix_read_markersregions(ambix_t*ambix) {
     if (marker_data)
       free(marker_data);
   }
-  
-  /*
-  for (uint32_t i=0; i<mystrings.num_strings; i++)
-  {
-    printf("Stored String %d: StringID: %d String: %s\n", i, mystrings.string_ids[i], mystrings.strings[i]);
-  }
-  */
-  
+
   /* free allocated strings data */
   if (mystrings.string_ids)
     free(mystrings.string_ids);
@@ -355,11 +340,9 @@ ambix_err_t _ambix_read_markersregions(ambix_t*ambix) {
   return AMBIX_ERR_UNKNOWN;
 }
 
-// add_string_to_data(i+1, byte_ptr_stringid, ambix->markers[i].name, &byteoffset_strings, byte_ptr_strings, &datasize_strings, byteswap);
 void add_string_to_data(int id, unsigned char *byte_ptr_stringid, char *name, int64_t *byteoffset_strings, unsigned char *byte_ptr_strings, uint32_t *datasize_strings, int byteswap) {
   /* handle the string */
   CAFStringID* string_id = (CAFStringID*)byte_ptr_stringid;
-  // printf("string length: %d, byteoffset_strings: %d, byte_ptr_stringid: %0x, datasize_strings: %d\n", strlen(name), *byteoffset_strings, byte_ptr_stringid, *datasize_strings);
   string_id->mStringID = id;
   string_id->mStringStartByteOffset = *byteoffset_strings;
   memcpy(byte_ptr_strings, name, strlen(name)*sizeof(char));
