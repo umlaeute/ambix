@@ -128,3 +128,10 @@ void _ambix_swap4array(uint32_t*data, uint64_t datasize) {
     *data++=swap4(v);
   }
 }
+void _ambix_swap8array(uint64_t*data, uint64_t datasize) {
+  uint64_t i;
+  for(i=0; i<datasize; i++) {
+    uint64_t v=*data;
+    *data++=swap8(v);
+  }
+}
