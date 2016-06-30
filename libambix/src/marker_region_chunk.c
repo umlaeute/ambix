@@ -468,5 +468,5 @@ ambix_err_t _ambix_write_markersregions(ambix_t*ambix) {
   _ambix_write_chunk(ambix, strg_id.a, strings_data, datasize_strings);
   free(strings_data);
 
-  return AMBIX_ERR_UNKNOWN;
+  return AMBIX_ERR_SUCCESS;
 }
