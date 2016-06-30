@@ -199,7 +199,7 @@ ambix_err_t _ambix_read_markersregions(ambix_t*ambix) {
   strg_id.b[0] = 's'; strg_id.b[1] = 't'; strg_id.b[2] = 'r'; strg_id.b[3] = 'g';
   while (strings_datasize) {
     strings_data = _ambix_read_chunk(ambix, strg_id.a, chunk_it++, &strings_datasize);
-    if (strings_datasize > 0) {
+    if (strings_datasize > SIZEOF_CAFStrings) {
       CAFStrings* strings_chunk = (CAFStrings*)strings_data;
       if (byteswap)
         _ambix_swap4array(&strings_chunk->mNumEntries, 1);
@@ -247,7 +247,7 @@ ambix_err_t _ambix_read_markersregions(ambix_t*ambix) {
   mark_id.b[0] = 'm'; mark_id.b[1] = 'a'; mark_id.b[2] = 'r'; mark_id.b[3] = 'k';
   while (marker_datasize) {
     marker_data = _ambix_read_chunk(ambix, mark_id.a, chunk_it++, &marker_datasize);
-    if (marker_datasize > 0) {
+    if (marker_datasize > 2*sizeof(uint32_t)) {
       CAFMarkerChunk* marker_chunk = (CAFMarkerChunk*)marker_data;
       if (byteswap)
         swap_marker_chunk(marker_chunk);
@@ -285,29 +285,33 @@ ambix_err_t _ambix_read_markersregions(ambix_t*ambix) {
   regn_id.b[0] = 'r'; regn_id.b[1] = 'e'; regn_id.b[2] = 'g'; regn_id.b[3] = 'n';
   while (region_datasize) {
     region_data = _ambix_read_chunk(ambix, regn_id.a, chunk_it++, &region_datasize);
-    if (region_datasize > 0) {
+    if (region_datasize > 2*sizeof(uint32_t)) {
+      int64_t data_read = 0;
       CAFRegionChunk* region_chunk = (CAFRegionChunk*)region_data;
       if (byteswap)
          swap_region_chunk(region_chunk);
-      if (region_datasize < (region_chunk->mNumberRegions*(SIZEOF_CAFRegion + 2*sizeof(uint32_t)))) {
+      if (region_datasize < (region_chunk->mNumberRegions*(SIZEOF_CAFRegion+sizeof(CAFMarker)) + SIZEOF_CAFRegionChunk)) {
         if (region_data)
           free(region_data);
         break;
       }
       unsigned char* bytePtr = (unsigned char*)region_data;
-      bytePtr += 2*sizeof(uint32_t);
+      data_read += 2*sizeof(uint32_t); // SIZEOF_CAFRegionChunk
       for (uint32_t i=0; i<region_chunk->mNumberRegions; i++) {
-        /////////////// FINISH!!!
-        CAFRegion *caf_region = (CAFRegion*)bytePtr;
+        if (region_datasize < data_read + SIZEOF_CAFRegion)
+          break;
+        CAFRegion *caf_region = (CAFRegion*)&bytePtr[data_read];
         if (byteswap)
           swap_region(caf_region);
         ambix_region_t new_ambix_region;
         memset(&new_ambix_region, 0, sizeof(ambix_region_t));
         /* iterate over all markers and find startMarker and endMarker */
-        bytePtr += SIZEOF_CAFRegion;
+        data_read += SIZEOF_CAFRegion;
         for (uint32_t i=0; i<caf_region->mNumberMarkers; i++)
         {
-          CAFMarker *caf_marker = (CAFMarker*)bytePtr;
+          if (region_datasize < data_read + sizeof(CAFMarker))
+            break;
+          CAFMarker *caf_marker = (CAFMarker*)&bytePtr[data_read];
           if (byteswap)
             swap_marker(caf_marker);
           if (caf_marker->mType == kCAFMarkerType_RegionStart) {
@@ -318,7 +322,7 @@ ambix_err_t _ambix_read_markersregions(ambix_t*ambix) {
           }
           else if (caf_marker->mType == kCAFMarkerType_RegionEnd)
             new_ambix_region.end_position = caf_marker->mFramePosition;
-          bytePtr += sizeof(CAFMarker);
+          data_read += sizeof(CAFMarker);
         }
         ambix_add_region(ambix, &new_ambix_region);
       }
