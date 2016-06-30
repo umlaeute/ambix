@@ -157,6 +157,8 @@ ambix_t* 	ambix_open	(const char *path, const ambix_filemode_t mode, ambix_info_
           }
         }
       }
+      /* retrieve markers/regions/strings*/
+      _ambix_read_markersregions(ambix);
     } else {
       /* it's not a CAF file.... */
       _ambix_info_set(ambix, AMBIX_NONE, channels, 0, 0);
@@ -268,6 +270,7 @@ ambix_err_t ambix_add_marker(ambix_t *ambix, ambix_marker_t *marker) {
   memcpy(&ambix->markers[ambix->num_markers], marker, sizeof(ambix_marker_t));
   ambix->num_markers += 1;
 
+  ambix->pendingHeaders = 1;
   return AMBIX_ERR_SUCCESS;
 }
 ambix_err_t ambix_add_region(ambix_t *ambix, ambix_region_t *region) {
@@ -288,6 +291,7 @@ ambix_err_t ambix_add_region(ambix_t *ambix, ambix_region_t *region) {
   memcpy(&ambix->regions[ambix->num_regions], region, sizeof(ambix_region_t));
   ambix->num_regions += 1;
 
+  ambix->pendingHeaders = 1;
   return AMBIX_ERR_SUCCESS;
 }
 ambix_err_t ambix_delete_markers(ambix_t *ambix) {
@@ -397,6 +401,7 @@ ambix_err_t	_ambix_write_header	(ambix_t*ambix) {
   void*data=NULL;
   if(ambix->filemode & AMBIX_WRITE) {
     if((AMBIX_EXTENDED == ambix->realinfo.fileformat)) {
+      _ambix_write_markersregions(ambix); // this need to be done in a more elegant way...!
       ambix_err_t res;
       /* generate UUID-chunk */
       uint64_t datalen=_ambix_matrix_to_uuid1(&ambix->matrix, NULL, ambix->byteswap);
@@ -418,8 +423,13 @@ ambix_err_t	_ambix_write_header	(ambix_t*ambix) {
         ambix->pendingHeaders=0;
 
       return res;
+    } else {
+      ambix_err_t res;
+      res = _ambix_write_markersregions(ambix); // this need to be done in a more elegant way...!
+      if(AMBIX_ERR_SUCCESS==res)
+         ambix->pendingHeaders=0;
+      return res;
     }
-    return AMBIX_ERR_INVALID_FORMAT;
   } else
     return AMBIX_ERR_INVALID_FILE;
 
