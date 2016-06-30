@@ -231,8 +231,9 @@ ambix_err_t _ambix_read_markersregions(ambix_t*ambix) {
           break; // invalid offset!
         unsigned char* mString = (unsigned char*) (strings_ptr+caf_stringid[i].mStringStartByteOffset);
         mystrings.string_ids[mystrings.num_strings] = caf_stringid[i].mStringID;
-        mystrings.strings[mystrings.num_strings] = calloc((strlen(mString)+1), sizeof(unsigned char));
-        memcpy(mystrings.strings[mystrings.num_strings], mString, strlen(mString)*sizeof(unsigned char));
+        uint32_t mString_len = strlen((const char *)mString);
+        mystrings.strings[mystrings.num_strings] = calloc((mString_len+1), sizeof(unsigned char));
+        memcpy(mystrings.strings[mystrings.num_strings], mString, mString_len*sizeof(unsigned char));
         mystrings.num_strings++;
       }
     }
@@ -268,8 +269,9 @@ ambix_err_t _ambix_read_markersregions(ambix_t*ambix) {
         memset(&new_ambix_marker, 0, sizeof(ambix_marker_t));
         new_ambix_marker.position = caf_marker->mFramePosition;
         unsigned char* string = get_string_from_buffer(&mystrings, caf_marker->mMarkerID);
-        if (string)
-          strncpy(new_ambix_marker.name, string, 255);
+        if (string) {
+          strncpy(new_ambix_marker.name, (const char *)string, 255);
+        }
         ambix_add_marker(ambix, &new_ambix_marker);
         bytePtr += sizeof(CAFMarker);
       }
@@ -319,7 +321,7 @@ ambix_err_t _ambix_read_markersregions(ambix_t*ambix) {
             new_ambix_region.start_position = caf_marker->mFramePosition;
             unsigned char* string = get_string_from_buffer(&mystrings, caf_marker->mMarkerID);
             if (string)
-              strncpy(new_ambix_region.name, string, 255);
+              strncpy(new_ambix_region.name, (const char *)string, 255);
           }
           else if (caf_marker->mType == kCAFMarkerType_RegionEnd)
             new_ambix_region.end_position = caf_marker->mFramePosition;
@@ -350,10 +352,11 @@ void add_string_to_data(int id, unsigned char *byte_ptr_stringid, char *name, in
   CAFStringID* string_id = (CAFStringID*)byte_ptr_stringid;
   string_id->mStringID = id;
   string_id->mStringStartByteOffset = *byteoffset_strings;
-  memcpy(byte_ptr_strings, name, strlen(name)*sizeof(char));
-  byte_ptr_strings[strlen(name)] = 0; // set the last char to NUL
-  *byteoffset_strings += (strlen(name)+1);
-  *datasize_strings += (strlen(name)+1);
+  uint32_t name_len = strlen((const char *)name);
+  memcpy(byte_ptr_strings, name, name_len*sizeof(char));
+  byte_ptr_strings[name_len] = 0; // set the last char to NUL
+  *byteoffset_strings += (name_len+1);
+  *datasize_strings += (name_len+1);
   if (byteswap)
     swap_stringid(string_id);
 }
@@ -401,7 +404,7 @@ ambix_err_t _ambix_write_markersregions(ambix_t*ambix) {
     bytePtr += sizeof(CAFMarker);
 
     add_string_to_data(i+1, byte_ptr_stringid, ambix->markers[i].name, &byteoffset_strings, byte_ptr_strings, &datasize_strings, byteswap);
-    byte_ptr_strings += (strlen(ambix->markers[i].name)+1);
+    byte_ptr_strings += (strlen((const char*)ambix->markers[i].name)+1);
     byte_ptr_stringid += sizeof(CAFStringID);
   }
 
@@ -445,7 +448,7 @@ ambix_err_t _ambix_write_markersregions(ambix_t*ambix) {
     byte_ptr_regions += sizeof(CAFMarker);
 
     add_string_to_data(ambix->num_markers+i+1, byte_ptr_stringid, ambix->regions[i].name, &byteoffset_strings, byte_ptr_strings, &datasize_strings, byteswap);
-    byte_ptr_strings += (strlen(ambix->regions[i].name)+1);
+    byte_ptr_strings += (strlen((const char*)ambix->regions[i].name)+1);
     byte_ptr_stringid += sizeof(CAFStringID);
   }
 
