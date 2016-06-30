@@ -160,7 +160,7 @@ void swap_marker_chunk(CAFMarkerChunk* marker_chunk) {
 }
 void swap_marker(CAFMarker* marker) {
   _ambix_swap4array(&marker->mType, 1);
-  _ambix_swap8array(&marker->mFramePosition, 1);
+  _ambix_swap8array((uint64_t *)&marker->mFramePosition, 1);
   _ambix_swap4array(&marker->mMarkerID, 1);
   _ambix_swap4array(&marker->mChannel, 1);
 }
@@ -175,7 +175,7 @@ void swap_region_chunk(CAFRegionChunk* region_chunk) {
 }
 void swap_stringid(CAFStringID* caf_stringid) {
   _ambix_swap4array(&caf_stringid->mStringID, 1);
-  _ambix_swap8array(&caf_stringid->mStringStartByteOffset, 1);
+  _ambix_swap8array((uint64_t *)&caf_stringid->mStringStartByteOffset, 1);
 }
 unsigned char* get_string_from_buffer(strings_buffer* buffer, uint32_t id) {
   if (buffer) {
