@@ -173,7 +173,10 @@ void swap_region_chunk(CAFRegionChunk* region_chunk) {
   _ambix_swap4array(&region_chunk->mSMPTE_TimeType, 1);
   _ambix_swap4array(&region_chunk->mNumberRegions, 1);
 }
-
+void swap_stringid(CAFStringID* caf_stringid) {
+  _ambix_swap4array(&caf_stringid->mStringID, 1);
+  _ambix_swap8array(&caf_stringid->mStringStartByteOffset, 1);
+}
 unsigned char* get_string_from_buffer(strings_buffer* buffer, uint32_t id) {
   if (buffer) {
     for (uint32_t i=0; i<buffer->num_strings;i++) {
@@ -222,10 +225,8 @@ ambix_err_t _ambix_read_markersregions(ambix_t*ambix) {
       strings_ptr += (4+temp_num_strings*sizeof(CAFStringID)); // start of mStrings
       CAFStringID* caf_stringid = (CAFStringID*)(&strings_data[4]);
       for (uint32_t i=0; i<temp_num_strings; i++) {
-        if (byteswap) {
-          _ambix_swap4array(&caf_stringid[i].mStringID, 1);
-          _ambix_swap8array(&caf_stringid[i].mStringStartByteOffset, 1);
-        }
+        if (byteswap)
+          swap_stringid(&caf_stringid[i]);
         if (caf_stringid[i].mStringStartByteOffset >= mstrings_datasize)
           break; // invalid offset!
         unsigned char* mString = (unsigned char*) (strings_ptr+caf_stringid[i].mStringStartByteOffset);
@@ -353,10 +354,8 @@ void add_string_to_data(int id, unsigned char *byte_ptr_stringid, char *name, in
   byte_ptr_strings[strlen(name)] = 0; // set the last char to NUL
   *byteoffset_strings += (strlen(name)+1);
   *datasize_strings += (strlen(name)+1);
-  if (byteswap) {
-    _ambix_swap4array(&(string_id->mStringID), 1);
-    _ambix_swap8array(&(string_id->mStringStartByteOffset), 1);
-  }
+  if (byteswap)
+    swap_stringid(string_id);
 }
 
 ambix_err_t _ambix_write_markersregions(ambix_t*ambix) {
