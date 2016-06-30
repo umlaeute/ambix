@@ -42,7 +42,7 @@ void do_diff(float32_t eps) {
   STARTTEST("\n");
   data_print(FLOAT32, left, size);
 
-  /* comparisions:
+  /* comparisons:
        - left/right data is NULL
      - non-failing tests:
        - all values diff==0

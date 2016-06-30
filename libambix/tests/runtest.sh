@@ -32,7 +32,6 @@ case "$1" in
     echo ${HELGRIND}
  ;;
  *)
-    
  ;;
 esac
 }

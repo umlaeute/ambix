@@ -463,7 +463,7 @@ ambix_matrix_t*_matrix_router(ambix_matrix_t*orgmatrix, const float32_t*route, u
  * @param permutate permutation vector (if(permutate[1]==4)then{row#1 of output matrix will be [0 0 0 0 1 0 ...]}; 
  *        the permutate vector must have matrix->rows elements (matrix->cols if swap is TRUE);
  *        negative permutation indices will skip the given row (if(permutate[3]=-1)then{row#3 will be [0 0 0 ...]};
- *        permutation indicies exceeding the valid range will restult in an error
+ *        permutation indices exceeding the valid range will restult in an error
  * @param transpose whether the result should be transposed (swapped rows and columns)
  * @return pointer to the resulting permutation matrix, or NULL in case something went wrong
  */

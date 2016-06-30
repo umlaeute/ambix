@@ -461,7 +461,7 @@ void mtx_diff(float32_t eps) {
   left=ambix_matrix_create();
   right=ambix_matrix_create();
 
-  /* comparisions:
+  /* comparisons:
      - failing tests:
        - different dimensions
        - left/right matrix is NULL

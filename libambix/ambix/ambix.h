@@ -60,7 +60,7 @@ typedef unsigned long uint64_t;
 # include <stdint.h>
 #endif
 
-/** a 32bit number (either float or int), useful for endianess operations */
+/** a 32bit number (either float or int), useful for endianness operations */
 typedef union {
   /** 32bit floating point */
   float32_t f;
@@ -201,7 +201,7 @@ typedef struct ambix_info_t {
    * E.g. when setting this to @ref AMBIX_BASIC to read an @ref AMBIX_EXTENDED
    * file, the library will automatically convert the reduced channel set
    * to the full set (using the embedded adaptor matrix).
-   * Similarily, when setting this to @ref AMBIX_BASIC for writing a file,
+   * Similarly, when setting this to @ref AMBIX_BASIC for writing a file,
    * and then setting an adaptor matrix (using @ref ambix_set_adaptormatrix())
    * the actual file will be @ref AMBIX_EXTENDED, but the user has to provide
    * the full set (and the library will store the reduced set).
@@ -406,7 +406,7 @@ struct SNDFILE_tag;
 /** @brief Get the libsndfile handle associated with the ambix handle
  *
  * If possible, require an SNDFILE handle if possible; if the ambix handle is
- * not asociated with SNDFILE (e.g. because libambix is compiled without
+ * not associated with SNDFILE (e.g. because libambix is compiled without
  * libsndfile support), NULL is returned.
  *
  * @param ambix The handle to an ambix file
@@ -452,7 +452,7 @@ const ambix_matrix_t *ambix_get_adaptormatrix (ambix_t *ambix) ;
  * of operation this can have different meanings! When READing an ambix '@ref
  * AMBIX_BASIC' file, this tells the library to do an (additional)
  * matrix-multiplication When reconstructing the full ambisonics set; you can
- * use use this to get the ambisonics channels in a format other than SN3D/ACN
+ * use this to get the ambisonics channels in a format other than SN3D/ACN
  * (e.g. using an ambix to Furse-Malham adaptor matrix) or getting the
  * loudspeaker feeds directly (by supplying a decoder matrix); in this case, the
  * matrix MUST have ambix->ambichannels columns. When WRITEing an ambix '@ref
