@@ -67,9 +67,6 @@ int main(int argc, char**argv) {
 
   /* write testsamples */
   err64=ambix_writef_float32(ambix, data, NULL, frames);
-  
-  printf("::::::::: STORE THIS DATA: \n\n");
-  _ambix_print_ambix(ambix);
 
   ambix_close(ambix);
 
@@ -77,9 +74,6 @@ int main(int argc, char**argv) {
   /* open the file again and see wheter the markers and regions have been saved and can be read */
   memset(&info, 0, sizeof(info));
   ambix=ambix_open("marker_regions.caf", AMBIX_READ, &info);
-
-  printf("::::::::: RETRIEVED THIS DATA: \n\n");
-  _ambix_print_ambix(ambix);
 
   fail_if(0 == ambix_get_num_markers(ambix), __LINE__, "No markers in file");
   fail_if(0 == ambix_get_num_regions(ambix), __LINE__, "No regions in file");
