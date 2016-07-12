@@ -1,9 +1,6 @@
 #include "common.h"
 #include "data.h"
 
-/* libambix's private header */
-#include "private.h"
-
 #include <string.h>
 
 int main(int argc, char**argv) {
@@ -37,8 +34,14 @@ int main(int argc, char**argv) {
   marker_2.position = 2.0;
   strncpy(marker_2.name, "this is marker #2", 255);
 
+
+  ambix_marker_t marker_3;
+  memset(&marker_3, 0, sizeof(ambix_marker_t));
+  marker_3.position = 3.0;
+
   fail_if(0!=ambix_add_marker(ambix, &marker_1), __LINE__, "Could not add marker");
   fail_if(0!=ambix_add_marker(ambix, &marker_2), __LINE__, "Could not add marker");
+  fail_if(0!=ambix_add_marker(ambix, &marker_3), __LINE__, "Could not add marker");
 
   /* add some regions */
   ambix_region_t region_1;
@@ -53,12 +56,19 @@ int main(int argc, char**argv) {
   region_2.end_position = 4.0;
   strncpy(region_2.name, "this is region #2", 255);
 
+  ambix_region_t region_3;
+  memset(&region_3, 0, sizeof(ambix_region_t));
+  region_3.start_position = 3.0;
+  region_3.end_position = 4.0;
+
   fail_if(0!=ambix_add_region(ambix, &region_1), __LINE__, "Could not add region");
   fail_if(0!=ambix_add_region(ambix, &region_2), __LINE__, "Could not add region");
+  fail_if(0!=ambix_add_region(ambix, &region_3), __LINE__, "Could not add region");
 
   /* write testsamples */
   err64=ambix_writef_float32(ambix, data, NULL, frames);
   
+  printf("::::::::: STORE THIS DATA: \n\n");
   _ambix_print_ambix(ambix);
 
   ambix_close(ambix);
@@ -68,30 +78,41 @@ int main(int argc, char**argv) {
   memset(&info, 0, sizeof(info));
   ambix=ambix_open("marker_regions.caf", AMBIX_READ, &info);
 
+  printf("::::::::: RETRIEVED THIS DATA: \n\n");
+  _ambix_print_ambix(ambix);
+
   fail_if(0 == ambix_get_num_markers(ambix), __LINE__, "No markers in file");
   fail_if(0 == ambix_get_num_regions(ambix), __LINE__, "No regions in file");
 
   ambix_marker_t *marker_1_retr;
   ambix_marker_t *marker_2_retr;
+  ambix_marker_t *marker_3_retr;
 
   ambix_region_t *region_1_retr;
   ambix_region_t *region_2_retr;
+  ambix_region_t *region_3_retr;
 
   marker_1_retr=ambix_get_marker(ambix, 0);
   marker_2_retr=ambix_get_marker(ambix, 1);
+  marker_3_retr=ambix_get_marker(ambix, 2);
 
   region_1_retr=ambix_get_region(ambix, 0);
   region_2_retr=ambix_get_region(ambix, 1);
+  region_3_retr=ambix_get_region(ambix, 2);
 
   fail_if(marker_1_retr==NULL, __LINE__, "Could not retrieve marker 1");
   fail_if(marker_2_retr==NULL, __LINE__, "Could not retrieve marker 2");
+  fail_if(marker_3_retr==NULL, __LINE__, "Could not retrieve marker 3");
   fail_if(region_1_retr==NULL, __LINE__, "Could not retrieve region 1");
   fail_if(region_2_retr==NULL, __LINE__, "Could not retrieve region 2");
+  fail_if(region_3_retr==NULL, __LINE__, "Could not retrieve region 3");
 
   fail_if(memcmp(&marker_1, marker_1_retr, sizeof(ambix_marker_t)), __LINE__, "Marker 1 does not match");
   fail_if(memcmp(&marker_2, marker_2_retr, sizeof(ambix_marker_t)), __LINE__, "Marker 2 does not match");
+  fail_if(memcmp(&marker_3, marker_3_retr, sizeof(ambix_marker_t)), __LINE__, "Marker 3 does not match");
   fail_if(memcmp(&region_1, region_1_retr, sizeof(ambix_region_t)), __LINE__, "Region 1 does not match");
   fail_if(memcmp(&region_2, region_2_retr, sizeof(ambix_region_t)), __LINE__, "Region 2 does not match");
+  fail_if(memcmp(&region_3, region_3_retr, sizeof(ambix_region_t)), __LINE__, "Region 3 does not match");
 
   return pass();
 }
