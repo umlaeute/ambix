@@ -24,15 +24,15 @@
   http://members.tripod.com/martin_leese/Ambisonic/B-Format_file_format.html
 
 #chan|fuma|   type     | xy | z | channels         | done
-  3 	h 	  horizontal 	  1 	0 	WXY                 X
-  4 	f 	  full-sphere 	1 	1 	WXYZ                X
-  5 	hh 	  horizontal   	2 	0 	WXYUV
-  6 	fh 	  mixed-order 	2 	1 	WXYZUV
-  9 	ff 	  full-sphere 	2 	2 	WXYZRSTUV           X
-  7 	hhh 	horizontal 	  3 	0 	WXYUVPQ
-  8 	fhh 	mixed-order 	3 	1 	WXYZUVPQ
-  11 	ffh 	mixed-order 	3 	2 	WXYZRSTUVPQ
-  16 	fff 	full-sphere 	3 	3 	WXYZRSTUVKLMNOPQ    X
+  3     h         horizontal      1     0       WXY                 X
+  4     f         full-sphere   1       1       WXYZ                X
+  5     hh        horizontal    2       0       WXYUV
+  6     fh        mixed-order   2       1       WXYZUV
+  9     ff        full-sphere   2       2       WXYZRSTUV           X
+  7     hhh     horizontal        3     0       WXYUVPQ
+  8     fhh     mixed-order     3       1       WXYZUVPQ
+  11    ffh     mixed-order     3       2       WXYZRSTUVPQ
+  16    fff     full-sphere     3       3       WXYZRSTUVKLMNOPQ    X
 */
 
 #include "private.h"

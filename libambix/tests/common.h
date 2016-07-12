@@ -26,6 +26,10 @@
 
 #include <ambix/ambix.h>
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 #include <stdlib.h>
 static inline int my_exit(int i) {exit(i); return i;}
 static inline int pass(void) {return my_exit(0); }
@@ -88,16 +92,41 @@ static inline int print_if (int test, int line, const char *format, ...)
   return test;
 } /* print_if */
 
+typedef enum {
+ INT16,
+ INT32,
+ FLOAT32,
+ FLOAT64
+} ambixtest_presentationformat_t;
+
 
 void matrix_print(const ambix_matrix_t*mtx);
 float32_t matrix_diff(uint32_t line, const ambix_matrix_t*A, const ambix_matrix_t*B, float32_t eps);
 
-void data_print(const float32_t*data, uint64_t frames);
-float32_t data_diff(uint32_t line, const float32_t*A, const float32_t*B, uint64_t frames, float32_t eps);
+void data_print(ambixtest_presentationformat_t fmt, const void*data, uint64_t frames);
+float32_t data_diff(uint32_t line, ambixtest_presentationformat_t fmt, const void*A, const void*B, uint64_t frames, float32_t eps);
 
+size_t data_size(ambixtest_presentationformat_t fmt);
+void*data_calloc(ambixtest_presentationformat_t fmt, size_t nmembers);
 void data_transpose(float32_t*outdata, const float32_t*indata, uint32_t inrows, uint32_t incols);
-float32_t*data_sine(uint64_t frames, uint32_t channels, float32_t periods);
-float32_t*data_ramp(uint64_t frames, uint32_t channels);
+void*data_sine(ambixtest_presentationformat_t fmt, uint64_t frames, uint32_t channels, float32_t periods);
+void*data_ramp(ambixtest_presentationformat_t fmt, uint64_t frames, uint32_t channels);
+
+int64_t ambixtest_readf (ambix_t *ambix, ambixtest_presentationformat_t fmt,
+                         void*ambidata , uint64_t ambioffset,
+                         void*otherdata, uint64_t otheroffset,
+                         int64_t frames);
+int64_t ambixtest_writef (ambix_t *ambix, ambixtest_presentationformat_t fmt,
+                          const void*ambidata , const uint64_t ambioffset,
+                          const void*otherdata, const uint64_t otheroffset,
+                          int64_t frames);
+int ambixtest_rmfile(const char*path);
+int ambixtest_uniquenumber(void);
+/* write uniquish filename into 'inbuf' and return a pointer to it
+ * if ext is NULL, it defaults to '.caf'*/
+char*ambixtest_getfname(char*inbuf, size_t length, const char*path, const char*basename, const char*ext);
+#define FILENAME_MAIN ambixtest_getfname(alloca(1024), 1024, 0, argv[0], 0)
+#define FILENAME_FILE ambixtest_getfname(alloca(1024), 1024, 0, __FILE__, 0)
 
 #define STRINGIFY(x) #x
 #define STARTTEST   printf("<<< running TEST %s[%04d]:%s\t", __FILE__, __LINE__, __FUNCTION__),printf

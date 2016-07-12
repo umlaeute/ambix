@@ -1,6 +1,6 @@
-/* none_float32 - test ambix none (FLOAT64)
+/* tests/common_basic2extended.h -  AMBIsonics eXchange Library test utilities              -*- c -*-
 
-   Copyright © 2012-2016 IOhannes m zmölnig <zmoelnig@iem.at>.
+   Copyright © 2012 IOhannes m zmölnig <zmoelnig@iem.at>.
          Institute of Electronic Music and Acoustics (IEM),
          University of Music and Dramatic Arts, Graz
 
@@ -21,15 +21,17 @@
 
 */
 
+#ifndef TESTS_COMMON_BASIC2EXTENDED_H
+#define TESTS_COMMON_BASIC2EXTENDED_H
+
 #include "common.h"
-#include <unistd.h>
-#include <string.h>
+
+/* specific helper-functions */
+int check_create_b2e(const char*path, ambix_sampleformat_t format,
+                     ambix_matrix_t*matrix, uint32_t extrachannels,
+                     uint32_t chunksize, ambixtest_presentationformat_t fmt,float32_t eps);
 
 
-void check_create_none(const char*path, ambix_sampleformat_t format);
 
-int main(int argc, char**argv) {
-  check_create_none(FILENAME_FILE,  AMBIX_SAMPLEFORMAT_FLOAT64);
+#endif /* TESTS_COMMON_BASIC2EXTENDED_H */
 
-  return pass();
-}

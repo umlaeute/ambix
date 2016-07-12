@@ -43,22 +43,22 @@ _ambix_matrix_invert_gaussjordan(ambix_matrix_t*input, ambix_matrix_t*inverse, f
   int errors=0; /* error counter */
 
   if(input==0)
-  { // no input matrix
-    return NULL;
-  }
+    { // no input matrix
+      return NULL;
+    }
 
   if (input->cols != input->rows)
-  {// matrix is not squared
-    return NULL;
-  }
+    {// matrix is not squared
+      return NULL;
+    }
 
   int col=input->cols, row=input->rows;
 
   /* 1a reserve space for the inverted matrix */
   if(!inverse)
-  {
-    inverse=ambix_matrix_init(row, col, NULL);
-  }
+    {
+      inverse=ambix_matrix_init(row, col, NULL);
+    }
 
   float32_t **original=input->data;
   float32_t **inverted=inverse->data;
@@ -80,24 +80,24 @@ _ambix_matrix_invert_gaussjordan(ambix_matrix_t*input, ambix_matrix_t*inverse, f
 
     /* normalize current row (set the diagonal-element to 1 */
     for (i=0; i < row; i++)
-    {
-      original[k][i] *= i_diagel;
-      inverted[k][i] *= i_diagel;
-    }
+      {
+        original[k][i] *= i_diagel;
+        inverted[k][i] *= i_diagel;
+      }
 
     /* eliminate the k-th element in each row by adding the weighted normalized row */
     for (i=0; i < row; i++)
-    {
-      if (i-k)
       {
-        float32_t f =-original[i][k];
-        int j;
-        for (j=row-1; j >= 0; j--) {
-          original[i][j] += f * original[k][j];
-          inverted[i][j] += f * inverted[k][j];
-        }
+        if (i-k)
+          {
+            float32_t f =-original[i][k];
+            int j;
+            for (j=row-1; j >= 0; j--) {
+              original[i][j] += f * original[k][j];
+              inverted[i][j] += f * inverted[k][j];
+            }
+          }
       }
-    }
   }
 
   if (errors > 0) {
@@ -154,15 +154,15 @@ static int _am_cholesky2_decomp(ambix_matrix_t*mtx, float32_t toler)
     if (pivot < eps) {
       matrix[i][i] = 0;
       if (pivot < -8 * eps)
-	nonneg = -1;
+        nonneg = -1;
     } else {
       rank++;
       for (j = (i + 1); j < columns; j++) {
-	temp = matrix[j][i] / pivot;
-	matrix[j][i] = temp;
-	matrix[j][j] -= temp * temp * pivot;
-	for (k = (j + 1); k < columns; k++)
-	  matrix[k][j] -= temp * matrix[k][i];
+        temp = matrix[j][i] / pivot;
+        matrix[j][i] = temp;
+        matrix[j][j] -= temp * temp * pivot;
+        for (k = (j + 1); k < columns; k++)
+          matrix[k][j] -= temp * matrix[k][i];
       }
     }
   }
@@ -190,9 +190,9 @@ static void _am_cholesky2_inverse(ambix_matrix_t*mtx)
     if (matrix[i][i] > 0) {
       matrix[i][i] = 1 / matrix[i][i]; /*this line inverts D */
       for (j = (i + 1); j < columns; j++) {
-	matrix[j][i] = -matrix[j][i];
-	for (k = 0; k < i; k++) /* sweep operator */
-	  matrix[j][k] += matrix[j][i] * matrix[i][k];
+        matrix[j][i] = -matrix[j][i];
+        for (k = 0; k < i; k++) /* sweep operator */
+          matrix[j][k] += matrix[j][i] * matrix[i][k];
       }
     }
   }
@@ -205,16 +205,16 @@ static void _am_cholesky2_inverse(ambix_matrix_t*mtx)
   for (i = 0; i < columns; i++) {
     if (matrix[i][i] == 0) { /* singular row */
       for (j = 0; j < i; j++)
-	matrix[j][i] = 0;
+        matrix[j][i] = 0;
       for (j = i; j < columns; j++)
-	matrix[i][j] = 0;
+        matrix[i][j] = 0;
     } else {
       for (j = (i + 1); j < columns; j++) {
-	temp = matrix[j][i] * matrix[j][j];
-	if (j != i)
-	  matrix[i][j] = temp;
-	for (k = i; k < j; k++)
-	  matrix[i][k] += temp * matrix[j][k];
+        temp = matrix[j][i] * matrix[j][j];
+        if (j != i)
+          matrix[i][j] = temp;
+        for (k = i; k < j; k++)
+          matrix[i][k] += temp * matrix[j][k];
       }
     }
   }

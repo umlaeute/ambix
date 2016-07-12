@@ -22,8 +22,9 @@ Such files are:
 - `CAF` (Core Audio Format) files
 - *with* a special `UUID-chunk`
 
-Audio data as output by libambix will follow the following specification:
-- sample format is either `PCM16`, `PCM24` or `float32` (the latter being best tested)
+Audio data as output (and accepted as input) by libambix will follow the following specification:
+- sample format is either `PCM16`, `PCM24`, `float32` (this one being best
+  tested) and `float64`
 - audio data is *interleaved*
 - ambisonics channels are
 	- normalization		: `SN3D`
@@ -62,7 +63,7 @@ An up-to-date API Documentation can be found at
 ## DEPENDENCIES
 Currently libambix uses libsndfile to read the actual file.
 Due to some advanced functionality, you need at least libsndfile-1.0.26.
-The current version o libsndfile can be obtained from
+The current version of libsndfile can be obtained from
   https://github.com/erikd/libsndfile
 
 

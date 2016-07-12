@@ -40,9 +40,9 @@ void do_diff(float32_t eps) {
   float32_t maxeps=eps;
 
   STARTTEST("\n");
-  data_print(left, size);
+  data_print(FLOAT32, left, size);
 
-  /* comparisions:
+  /* comparisons:
        - left/right data is NULL
      - non-failing tests:
        - all values diff==0
@@ -52,7 +52,7 @@ void do_diff(float32_t eps) {
   */
   /* compare equal data */
   STARTTEST("ident\n");
-  errf=data_diff(__LINE__, left, left, size, eps);
+  errf=data_diff(__LINE__, FLOAT32, left, left, size, eps);
   fail_if(errf>0.f, __LINE__, "diffing mtx with itself returned %g (>%g)", errf, 0.f);
 
   /* compare equal data */
@@ -60,7 +60,7 @@ void do_diff(float32_t eps) {
   for(i=0; i<size; i++) {
     right[i]=left[i];
   }
-  errf=data_diff(__LINE__, left, right, size, eps);
+  errf=data_diff(__LINE__, FLOAT32, left, right, size, eps);
   fail_if(errf>0.f, __LINE__, "diffing mtx with copy returned %g (>%g)", errf, 0.f);
 
   /* compare data where all values differ, but <eps */
@@ -68,12 +68,12 @@ void do_diff(float32_t eps) {
   for(i=0; i<size; i++) {
     right[i]=left[i]+eps*0.5;
   }
-  errf=data_diff(__LINE__, left, right, size, eps);
+  errf=data_diff(__LINE__, FLOAT32, left, right, size, eps);
   fail_if(errf>eps, __LINE__, "diffing mtx with mtx+eps/2 returned %g (>%g)", errf, size, eps);
   for(i=0; i<size; i++) {
     right[i]=left[i]-eps*0.5;
   }
-  errf=data_diff(__LINE__, left, right, size, eps);
+  errf=data_diff(__LINE__, FLOAT32, left, right, size, eps);
   fail_if(errf>eps, __LINE__, "diffing mtx with mtx-eps/2 returned %g (>%g)", errf, size, eps);
 
   /* compare data where many values differ with <eps; but one with >eps */
@@ -85,7 +85,7 @@ void do_diff(float32_t eps) {
     right[i]=left[i]+eps*0.5;
   }
   right[0]=left[0]+eps*1.5;
-  errf=data_diff(__LINE__, left, right, size, eps);
+  errf=data_diff(__LINE__, FLOAT32, left, right, size, eps);
   fail_if(errf>(eps*2.0), __LINE__, "diffing mtx with one value>eps returned %g (>%g)", errf, size, eps);
   fail_if(errf<(eps*1.0), __LINE__, "diffing mtx with one value>eps returned %g (>%g)", errf, size, eps);
 
@@ -98,7 +98,7 @@ void do_diff(float32_t eps) {
   for(i=0; i<(size-1); i++) {
     right[i]=left[i]-maxeps;
   }
-  errf=data_diff(__LINE__, left, right, size, eps);
+  errf=data_diff(__LINE__, FLOAT32, left, right, size, eps);
   fail_if(errf<eps*1.0, __LINE__, "diffing mtx with one value>eps returned %g (<%g)", errf, eps*1.0);
   fail_if(errf>eps*2.0, __LINE__, "diffing mtx with one value>eps returned %g (<%g)", errf, eps*2.0);
 

@@ -65,9 +65,9 @@ void check_create_extended(const char*path, ambix_sampleformat_t format, uint32_
   ambix=ambix_open(path, AMBIX_WRITE, &rinfo);
   fail_if((NULL==ambix), __LINE__, "couldn't create ambix file '%s' for writing", path);
 
-  orgambidata=data_sine(framesize, ambichannels, periods);
-  orgotherdata=data_ramp(framesize, extrachannels);
-  //data_print(orgdata, 100);
+  orgambidata=data_sine (FLOAT32, framesize, ambichannels, periods);
+  orgotherdata=data_ramp(FLOAT32, framesize, extrachannels);
+  //data_print(FLOAT32, orgdata, 100);
   fail_if((NULL==orgambidata), __LINE__, "couldn't create ambidata %dx%d sine @ %f", (int)framesize, (int)ambichannels, (float)periods);
   fail_if((NULL==orgotherdata), __LINE__, "couldn't create otherdata %dx%d sine @ %f", (int)framesize, (int)extrachannels, (float)periods);
 
@@ -98,9 +98,9 @@ void check_create_extended(const char*path, ambix_sampleformat_t format, uint32_
     fail_if((err64!=framesize), __LINE__, "wrote only %d frames of %d", (int)err64, (int)framesize);
   }
 
-  diff=data_diff(__LINE__, orgambidata, ambidata, framesize*ambichannels, eps);
+  diff=data_diff(__LINE__, FLOAT32, orgambidata, ambidata, framesize*ambichannels, eps);
   fail_if((diff>eps), __LINE__, "ambidata diff %f > %f", diff, eps);
-  diff=data_diff(__LINE__, orgotherdata, otherdata, framesize*extrachannels, eps);
+  diff=data_diff(__LINE__, FLOAT32, orgotherdata, otherdata, framesize*extrachannels, eps);
   fail_if((diff>eps), __LINE__, "otherdata diff %f > %f", diff, eps);
 
   fail_if((AMBIX_ERR_SUCCESS!=ambix_close(ambix)), __LINE__, "closing ambix file %p", ambix);
@@ -136,10 +136,10 @@ void check_create_extended(const char*path, ambix_sampleformat_t format, uint32_
     gotframes+=err64;
   } while(err64>0 && gotframes<framesize);
 
-  diff=data_diff(__LINE__, orgambidata, resultambidata, framesize*ambichannels, eps);
+  diff=data_diff(__LINE__, FLOAT32, orgambidata, resultambidata, framesize*ambichannels, eps);
   fail_if((diff>eps), __LINE__, "ambidata diff %f > %f", diff, eps);
 
-  diff=data_diff(__LINE__, orgotherdata, resultotherdata, framesize*extrachannels, eps);
+  diff=data_diff(__LINE__, FLOAT32, orgotherdata, resultotherdata, framesize*extrachannels, eps);
   fail_if((diff>eps), __LINE__, "otherdata diff %f > %f", diff, eps);
 
   fail_if((AMBIX_ERR_SUCCESS!=ambix_close(ambix)), __LINE__, "closing ambix file %p", ambix);
@@ -155,5 +155,5 @@ void check_create_extended(const char*path, ambix_sampleformat_t format, uint32_
 
   ambix_matrix_deinit(&eye);
 
-  unlink(path);
+  ambixtest_rmfile(path);
 }

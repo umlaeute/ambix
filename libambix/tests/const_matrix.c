@@ -63,14 +63,14 @@ static void test__amfd(unsigned int rows, unsigned int cols,
   STARTTEST("[%dx%d]\n", rows, cols);
   /* make a copy of the org data, and verify it */
   memcpy(data, orgdata, frames*sizeof(*orgdata));
-  errf = data_diff(line, orgdata, data, frames, eps);
+  errf = data_diff(line, FLOAT32, orgdata, data, frames, eps);
   fail_if(!(errf<eps), line, "orgdata differs from memcpy by %g (>%g)", errf, eps);
 
   /* fill in the data */
   ambix_matrix_fill_data(mtx, data);
 
   /* check if data has been modified */
-  errf = data_diff(line, orgdata, data, frames, eps);
+  errf = data_diff(line, FLOAT32, orgdata, data, frames, eps);
   fail_if(!(errf<eps), line, "orgdata differs from filled data by %g (>%g)", errf, eps);
 
   free(data);
@@ -127,7 +127,7 @@ static void test__amc(unsigned int rows, unsigned int cols,
             "original matrix row[%d: %p] does not match copied-from matrix row[%d: %p]",
             r, org_row, r, row);
     /* compare the actual row-vector */
-    errf=data_diff(line, org_data[r], mtx->data[r], cols, eps);
+    errf=data_diff(line, FLOAT32, org_data[r], mtx->data[r], cols, eps);
     fail_if(!(errf<eps), line, "orgdata differs from copied-from data by %g (>%g)", errf, eps);
   }
 

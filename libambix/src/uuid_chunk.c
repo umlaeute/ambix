@@ -56,25 +56,25 @@ static void _ambix_printUUID4(const char data[2]) {
   printf("%02x%02x", data0, data1);
 }
 static void _ambix_printUUID(const char data[16]) {
- /* 8-4-4-4-12 */
- _ambix_printUUID4(data);data+=2;
- _ambix_printUUID4(data);data+=2;
+  /* 8-4-4-4-12 */
+  _ambix_printUUID4(data);data+=2;
+  _ambix_printUUID4(data);data+=2;
   printf("-");
- _ambix_printUUID4(data);data+=2;
+  _ambix_printUUID4(data);data+=2;
   printf("-");
- _ambix_printUUID4(data);data+=2;
+  _ambix_printUUID4(data);data+=2;
   printf("-");
- _ambix_printUUID4(data);data+=2;
+  _ambix_printUUID4(data);data+=2;
   printf("-");
- _ambix_printUUID4(data);data+=2;
- _ambix_printUUID4(data);data+=2;
- _ambix_printUUID4(data);data+=2;
+  _ambix_printUUID4(data);data+=2;
+  _ambix_printUUID4(data);data+=2;
+  _ambix_printUUID4(data);data+=2;
 }
 #endif
- /*
-  * uarg, this is not a UUID!
-  * (well it is...UUID::Tiny thinks it's a v2 (DCE security) UUID
-  */
+/*
+ * uarg, this is not a UUID!
+ * (well it is...UUID::Tiny thinks it's a v2 (DCE security) UUID
+ */
 static const char _ambix_uuid_v1_[]="IEM.AT/AMBIX/XML";
 /*
  * that's a better UUID, based on a SHA1-hash of "http://ambisonics.iem.at/xchange/format/1.0"
@@ -141,7 +141,7 @@ _ambix_uuid1_to_matrix(const void*vdata, uint64_t datasize, ambix_matrix_t*orgmt
   }
 
   if(!ambix_matrix_init(rows, cols, mtx))
-      goto cleanup;
+    goto cleanup;
 
   if(swap) {
     if(_ambix_matrix_fill_data_byteswapped(mtx, (number32_t*)(cdata+index)) != AMBIX_ERR_SUCCESS)

@@ -6,7 +6,7 @@
 void check_create_extended(const char*path, ambix_sampleformat_t format, uint32_t chunksize, float32_t eps);
 
 int main(int argc, char**argv) {
-  check_create_extended("test2-pcm32.caf",  AMBIX_SAMPLEFORMAT_PCM32, 1024, 1e-5);
+  check_create_extended(FILENAME_FILE,  AMBIX_SAMPLEFORMAT_PCM32, 1024, 1e-5);
 
   return pass();
 }

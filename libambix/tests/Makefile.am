@@ -19,8 +19,8 @@ TESTS = \
 
 XFAIL_TESTS = fail
 
-SOURCES=common.c common.h data.h
-noinst_HEADERS = common.h data.h
+SOURCES=common.c common.h data.h common_basic2extended.h
+noinst_HEADERS = common.h data.h common_basic2extended.h
 
 pass_SOURCES=pass.c
 skip_SOURCES=skip.c
@@ -40,7 +40,7 @@ TESTS += datatest
 datatest_SOURCES = datatest.c common.c
 
 TESTS += matrix
-matrix_SOURCES = matrix.c common.c
+matrix_SOURCES = matrixtests.c common.c
 
 TESTS += matrices
 matrices_SOURCES = matrices.c common.c
@@ -82,9 +82,11 @@ extended_pcm16_1024_SOURCES   = extended_pcm16_1024.c common_extended.c common.c
 TESTS += ambix_open
 ambix_open_SOURCES = ambix_open.c
 
-
 TESTS += ambix_close
 ambix_close_SOURCES = ambix_close.c
+
+TESTS += ambix_get_sndfile
+ambix_get_sndfile_SOURCES = ambix_get_sndfile.c
 
 TESTS += ambix_seek
 ambix_seek_SOURCES = ambix_seek.c
@@ -125,6 +127,14 @@ basic2extended_SID4x4_3extra_float32_SOURCES = basic2extended_SID4x4_3extra_floa
 basic2extended_FUMA4x4_3extra_float32_SOURCES = basic2extended_FUMA4x4_3extra_float32.c $(common_b2x)
 basic2extended_rand4x9_3extra_float32_SOURCES = basic2extended_rand4x9_3extra_float32.c $(common_b2x)
 basic2extended_rand4x7_3extra_float32_SOURCES = basic2extended_rand4x7_3extra_float32.c $(common_b2x)
+
+TESTS          += \
+	basic2extended_identity4x4_float32__f64 \
+	basic2extended_identity4x4_float32__i16 \
+	basic2extended_identity4x4_float32__i32
+basic2extended_identity4x4_float32__f64_SOURCES = basic2extended_identity4x4_float32__f64.c $(common_b2x)
+basic2extended_identity4x4_float32__i16_SOURCES = basic2extended_identity4x4_float32__i16.c $(common_b2x)
+basic2extended_identity4x4_float32__i32_SOURCES = basic2extended_identity4x4_float32__i32.c $(common_b2x)
 
 ## float64
 TESTS          += \

@@ -327,7 +327,7 @@ ambix_matrix_fill(ambix_matrix_t*matrix, ambix_matrixtype_t typ) {
         counter++;
       }
     }
-   matrix=_matrix_diag(matrix, weights, rows);
+    matrix=_matrix_diag(matrix, weights, rows);
     free(weights);
   }
     break;
@@ -347,7 +347,7 @@ _ambix_matrix_pinv(const ambix_matrix_t*A, ambix_matrix_t*P) {
   if(result)
     return result;
 
-  /* if that fails (should never happen), gall back to gauss-jordan */
+  /* if that fails (should never happen), fall back to gauss-jordan */
   if (A->rows==A->cols) {
     ambix_matrix_t*Ax = ambix_matrix_copy(A, NULL);
     result = _ambix_matrix_invert_gaussjordan(Ax, P, eps); // do normal inverse if square matrix
@@ -364,19 +364,19 @@ _ambix_matrix_pinv(const ambix_matrix_t*A, ambix_matrix_t*P) {
       At = _ambix_matrix_transpose(A, At);
 
       if (A->rows > A->cols) {
-	temp = _ambix_matrix_multiply(At, A, NULL);
-	if (!temp)break;
-	temp2 = _ambix_matrix_invert_gaussjordan(temp, temp2, eps);
-	if (!temp2)break;
+        temp = _ambix_matrix_multiply(At, A, NULL);
+        if (!temp)break;
+        temp2 = _ambix_matrix_invert_gaussjordan(temp, temp2, eps);
+        if (!temp2)break;
 
-	result = _ambix_matrix_multiply(temp2, At, P);
+        result = _ambix_matrix_multiply(temp2, At, P);
       } else {
-	temp = _ambix_matrix_multiply(A, At, NULL);
-	if (!temp)break;
-	temp2 = _ambix_matrix_invert_gaussjordan(temp, temp2, eps);
-	if (!temp2)break;
+        temp = _ambix_matrix_multiply(A, At, NULL);
+        if (!temp)break;
+        temp2 = _ambix_matrix_invert_gaussjordan(temp, temp2, eps);
+        if (!temp2)break;
 
-	result = _ambix_matrix_multiply(At, temp2, P);
+        result = _ambix_matrix_multiply(At, temp2, P);
       }
     } while (0);
     if(At)   ambix_matrix_destroy(At);
@@ -387,36 +387,36 @@ _ambix_matrix_pinv(const ambix_matrix_t*A, ambix_matrix_t*P) {
   return result;
 }
 
-#define MTXMULTIPLY_DATA_FLOAT(typ) \
+#define MTXMULTIPLY_DATA_FLOAT(typ)                                     \
   ambix_err_t ambix_matrix_multiply_##typ(typ##_t*dest, const ambix_matrix_t*matrix, const typ##_t*source, int64_t frames) { \
-    float32_t**mtx=matrix->data; \
-    const uint32_t outchannels=matrix->rows; \
-    const uint32_t inchannels=matrix->cols; \
-    int64_t frame; \
-    typ##_t*dst=dest; \
-    const typ##_t*src=source; \
-    for(frame=0; frame<frames; frame++) { \
-      uint32_t outchan; \
-      for(outchan=0; outchan<outchannels; outchan++) { \
-        double sum=0.; \
-        uint32_t inchan; \
-        for(inchan=0; inchan<inchannels; inchan++) { \
-          double scale=mtx[outchan][inchan]; \
-          double in=src[frame*inchannels+inchan]; \
-          sum+=scale*in; \
-        } \
-        dst[frame*outchannels+outchan]=(typ##_t)sum; \
-      } \
-    } \
-    return AMBIX_ERR_SUCCESS; \
-  } \
+    float32_t**mtx=matrix->data;                                        \
+    const uint32_t outchannels=matrix->rows;                            \
+    const uint32_t inchannels=matrix->cols;                             \
+    int64_t frame;                                                      \
+    typ##_t*dst=dest;                                                   \
+    const typ##_t*src=source;                                           \
+    for(frame=0; frame<frames; frame++) {                               \
+      uint32_t outchan;                                                 \
+      for(outchan=0; outchan<outchannels; outchan++) {                  \
+        double sum=0.;                                                  \
+        uint32_t inchan;                                                \
+        for(inchan=0; inchan<inchannels; inchan++) {                    \
+          double scale=mtx[outchan][inchan];                            \
+          double in=src[frame*inchannels+inchan];                       \
+          sum+=scale*in;                                                \
+        }                                                               \
+        dst[frame*outchannels+outchan]=(typ##_t)sum;                    \
+      }                                                                 \
+    }                                                                   \
+    return AMBIX_ERR_SUCCESS;                                           \
+  }                                                                     \
 
 MTXMULTIPLY_DATA_FLOAT(float32);
 MTXMULTIPLY_DATA_FLOAT(float64);
 
 #define MTXMULTIPLY_DATA_INT(typ)                                       \
   ambix_err_t ambix_matrix_multiply_##typ(typ##_t*dest, const ambix_matrix_t*matrix, const typ##_t*source, int64_t frames) { \
-    float32_t**mtx=matrix->data;                                        \
+    float32_t**mtx=matrix->data; \
     const uint32_t outchannels=matrix->rows;                            \
     const uint32_t inchannels=matrix->cols;                             \
     int64_t frame;                                                      \
@@ -432,7 +432,7 @@ MTXMULTIPLY_DATA_FLOAT(float64);
           double in=src[inchan*frames];                                 \
           sum+=scale * in;                                              \
         }                                                               \
-		dst[frames*outchan]=(typ##_t)(sum);  /* FIXXXME: saturation */  \
+        dst[frames*outchan]=(typ##_t)(sum);  /* FIXXXME: saturation */  \
       }                                                                 \
     }                                                                   \
     return AMBIX_ERR_SUCCESS;                                           \

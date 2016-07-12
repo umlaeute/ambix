@@ -23,6 +23,32 @@
 
 #include "common.h"
 #include <math.h>
+#ifdef HAVE_UNISTD_H
+# include <unistd.h>
+#endif
+#include <string.h>
+
+static char* snprintdata(char*out, size_t size, ambixtest_presentationformat_t fmt, const void*data, uint64_t index) {
+  switch(fmt) {
+  case INT16  :
+    snprintf(out, size, "%d", ((int16_t*)data)[index]);
+    break;
+  case INT32  :
+    snprintf(out, size, "%d", ((int32_t*)data)[index]);
+    break;
+  case FLOAT32:
+    snprintf(out, size, "%g", ((float32_t*)data)[index]);
+    break;
+  case FLOAT64:
+    snprintf(out, size, "%g", ((float64_t*)data)[index]);
+    break;
+  default     :
+    snprintf(out, size, "???");
+    break;
+  }
+  out[size-1]=0;
+  return out;
+}
 
 void matrix_print(const ambix_matrix_t*mtx) {
   printf("matrix[%p] ", mtx);
@@ -56,7 +82,7 @@ float32_t matrix_diff(uint32_t line, const ambix_matrix_t*A, const ambix_matrix_
     for(c=0; c<B->cols; c++) {
       float32_t v=a[r][c]-b[r][c];
       float32_t vabs=(v<0)?-v:v;
-      fail_if(isnan(v), line, "[%d|%d] is NaN: %f <-> %f", r, c, a[r][c], b[r][c]);
+      if(isnan(v))return v;
       if(vabs>maxdiff)
         maxdiff=vabs;
       sum+=vabs;
@@ -73,26 +99,52 @@ float32_t matrix_diff(uint32_t line, const ambix_matrix_t*A, const ambix_matrix_
 }
 
 
-float32_t data_diff(uint32_t line, const float32_t*A, const float32_t*B, uint64_t frames, float32_t eps) {
+float32_t data_diff(uint32_t line,
+                    ambixtest_presentationformat_t fmt,
+                    const void*A, const void*B, uint64_t frames,
+                    float32_t eps) {
   uint64_t i;
   float32_t sum=0.;
   float32_t maxdiff=-1.f;
   uint64_t overcount=0;
+  char aout[16];
+  char bout[16];
 
   fail_if((NULL==A), line, "left-hand data of datadiff is NULL");
   fail_if((NULL==B), line, "right-hand data of datadiff is NULL");
 
   for(i=0; i<frames; i++) {
-    float32_t v=A[i]-B[i];
-    float32_t vabs=(v<0)?-v:v;
-    fail_if(isnan(v), line, "[%d] is NaN: %f <-> %f", i, A[i], B[i]);
+    float64_t v=0;
+    float64_t vabs=0;
+    switch(fmt) {
+    case INT16  :
+      v=((int16_t*)A)[i]-((int16_t*)B)[i];
+      break;
+    case INT32  :
+      v=((int32_t*)A)[i]-((int32_t*)B)[i];
+      break;
+    case FLOAT32:
+      v=((float32_t*)A)[i]-((float32_t*)B)[i];
+      break;
+    case FLOAT64:
+      v=((float64_t*)A)[i]-((float64_t*)B)[i];
+      break;
+    default: break;
+    }
+    fail_if(isnan(v), line, "[%d] is NaN: %s <-> %s", i,
+            snprintdata(aout, 16, fmt, A, i),
+            snprintdata(bout, 16, fmt, B, i));
+    vabs=(v<0)?-v:v;
     if(vabs>maxdiff)
       maxdiff=vabs;
     sum+=vabs;
     if(vabs>eps) {
       overcount++;
       if(overcount<MAX_OVER)
-        printf("%+f - %+f=%g @ %d\n", A[i], B[i], v, (int)i);
+        printf("%s - %s=%g @ %d\n",
+               snprintdata(aout, 16, fmt, A, i),
+               snprintdata(bout, 16, fmt, B, i),
+               v, (int)i);
     }
 
   }
@@ -104,11 +156,11 @@ float32_t data_diff(uint32_t line, const float32_t*A, const float32_t*B, uint64_
 }
 
 
-void data_print(const float32_t*data, uint64_t frames) {
+void data_print(ambixtest_presentationformat_t fmt, const void*data, uint64_t frames) {
   uint64_t i;
+  char out[16];
   for(i=0; i<frames; i++) {
-    float f=*data++;
-    printf("%05d: %f\n", (int)i, f);
+    printf("%05d: %s\n", (int)i, snprintdata(out, 16, fmt, data, i));
   }
 }
 
@@ -124,37 +176,142 @@ void data_transpose(float32_t*outdata, const float32_t*indata, uint32_t inrows, 
   }
 }
 
+static void setdata(ambixtest_presentationformat_t fmt, void*data, uint64_t index, float64_t value) {
+  switch(fmt) {
+  case INT16  :
+    ((int16_t*)data)[index]=(int16_t)(value*32768.);
+    break;
+  case INT32  :
+    ((int32_t*)data)[index]=(int32_t)(value*2147483648.);
+    break;
+  case FLOAT32:
+    ((float32_t*)data)[index]=(float32_t)value;
+    break;
+  case FLOAT64:
+    ((float64_t*)data)[index]=(float64_t)value;
+    break;
+  default     : break;
+  }
+}
 
-float32_t*data_sine(uint64_t frames, uint32_t channels, float32_t freq) {
+size_t data_size(ambixtest_presentationformat_t fmt) {
+  switch(fmt) {
+  case INT16  : return 2;
+  case INT32  : return 4;
+  case FLOAT32: return 4;
+  case FLOAT64: return 8;
+  default     : break;
+  }
+  return 0;
+}
+
+void*data_calloc(ambixtest_presentationformat_t fmt, size_t nmembers) {
+  size_t nmemb=nmembers*data_size(fmt)/sizeof(float64_t)+1;
+  size_t size = sizeof(float64_t);
+  void*data=calloc(nmemb, size);
+  //printf("%dx%d[%d] allocated %d of %d bytes to %p\n", (int)frames, channels, fmt, (int)nmemb, (int)size, data);
+  return data;
+}
+
+void*data_sine(ambixtest_presentationformat_t fmt, uint64_t frames, uint32_t channels, float32_t freq) {
   float32_t periods=freq/44100.;
-  float32_t*data=(float32_t*)calloc(frames*channels, sizeof(float32_t));
-  float32_t*datap=data;
+  void*data=data_calloc(fmt, frames*channels);
   int64_t frame;
   for(frame=0; frame<frames; frame++) {
-    //    float f=(float32_t)frame*periods/(float32_t)frames;
-    float f=(float32_t)frame*periods;
-    float32_t value=0.5*sinf(f);
     int32_t chan;
+    float64_t f=(float64_t)frame*periods;
+    float64_t value=0.5*sinf(f);
     for(chan=0; chan<channels; chan++)
-      *datap++=value;
+      setdata(fmt, data, f*channels+chan, value);
   }
   return data;
 }
 
-float32_t*data_ramp(uint64_t frames, uint32_t channels) {
-  float32_t*data=(float32_t*)calloc(frames*channels, sizeof(float32_t));
-  float32_t*datap=data;
+void*data_ramp(ambixtest_presentationformat_t fmt, uint64_t frames, uint32_t channels) {
+  void*data=data_calloc(fmt, frames*channels);
   double increment=1./(double)frames;
   double value=0.;
   int64_t frame;
   for(frame=0; frame<frames; frame++) {
-    value+=increment;
     int32_t chan;
+    float32_t v32=value-0.5;
+    value+=increment;
     for(chan=0; chan<channels; chan++)
-      *datap++=(value-0.5);
+      setdata(fmt, data, frame*channels+chan, v32);
   }
   return data;
 }
 
 
+int64_t ambixtest_readf (ambix_t *ambix, ambixtest_presentationformat_t fmt,
+                         void*ambidata , uint64_t ambioffset,
+                         void*otherdata, uint64_t otheroffset,
+                         int64_t frames) {
+   switch(fmt) {
+   case INT16  :
+     return ambix_readf_int16(ambix, ((int16_t*)ambidata)+ambioffset, ((int16_t*)otherdata)+otheroffset, frames);
+   case INT32  :
+     return ambix_readf_int32(ambix, ((int32_t*)ambidata)+ambioffset, ((int32_t*)otherdata)+otheroffset, frames);
+   case FLOAT32:
+     return ambix_readf_float32(ambix, ((float32_t*)ambidata)+ambioffset, ((float32_t*)otherdata)+otheroffset, frames);
+   case FLOAT64:
+     return ambix_readf_float64(ambix, ((float64_t*)ambidata)+ambioffset, ((float64_t*)otherdata)+otheroffset, frames);
+   default     : break;
+   }
+   return -1;
+}
 
+int64_t ambixtest_writef (ambix_t *ambix, ambixtest_presentationformat_t fmt,
+                          const void*ambidata , const uint64_t ambioffset,
+                          const void*otherdata, const uint64_t otheroffset,
+                          int64_t frames) {
+   switch(fmt) {
+   case INT16  :
+     return ambix_writef_int16(ambix,
+                               ((const int16_t*)ambidata)+ambioffset, ((const int16_t*)otherdata)+otheroffset,
+                               frames);
+   case INT32  :
+     return ambix_writef_int32(ambix,
+                               ((const int32_t*)ambidata)+ambioffset, ((const int32_t*)otherdata)+otheroffset,
+                               frames);
+   case FLOAT32:
+     return ambix_writef_float32(ambix,
+                                 ((const float32_t*)ambidata)+ambioffset, ((const float32_t*)otherdata)+otheroffset,
+                                 frames);
+   case FLOAT64:
+     return ambix_writef_float64(ambix,
+                                 ((const float64_t*)ambidata)+ambioffset, ((const float64_t*)otherdata)+otheroffset,
+                                 frames);
+   default     : break;
+   }
+   return -1;
+}
+
+
+int ambixtest_rmfile(const char*path) {
+  /* only remove if AMBIXTEST_KEEPFILES is not set */
+  if(NULL==getenv("AMBIXTEST_KEEPFILES"))return unlink(path);
+  return 0;
+}
+int ambixtest_uniquenumber() {
+#ifdef HAVE_UNISTD_H
+  return getpid();
+#endif
+  return 0;
+}
+const char*getbasename(const char*fullpath) {
+  char*pos=NULL;
+  if(!fullpath)return "";
+  pos=strrchr(fullpath, '/');
+  if(pos)return pos+1;
+  return fullpath;
+}
+char*ambixtest_getfname(char*inbuf, size_t length, const char*path_, const char*basename_, const char*ext_) {
+  static unsigned int count=0;
+  const char*ext=(ext_)?ext_:".caf";
+  const char*path=(path_)?path_:"";
+  const char*basename=getbasename(basename_);
+  snprintf(inbuf, length, "%s%s-%d.%d%s", path, basename, ambixtest_uniquenumber(), count, ext);
+  count++;
+  return inbuf;
+}

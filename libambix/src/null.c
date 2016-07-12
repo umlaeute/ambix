@@ -22,15 +22,15 @@
 
 #include "private.h"
 
-ambix_err_t _ambix_open	(ambix_t*ambix, const char *path, const ambix_filemode_t mode, const ambix_info_t*ambixinfo) {
+ambix_err_t _ambix_open (ambix_t*ambix, const char *path, const ambix_filemode_t mode, const ambix_info_t*ambixinfo) {
   return AMBIX_ERR_INVALID_FILE;
 }
 
-ambix_err_t	_ambix_close	(ambix_t*ambix) {
+ambix_err_t     _ambix_close    (ambix_t*ambix) {
   return AMBIX_ERR_INVALID_FILE;
 }
 
-struct SNDFILE_tag*_ambix_get_sndfile	(ambix_t*ambix) {
+struct SNDFILE_tag*_ambix_get_sndfile   (ambix_t*ambix) {
   return 0;
 }
 
@@ -57,7 +57,7 @@ int64_t _ambix_writef_float32   (ambix_t*ambix, const float32_t*data, int64_t fr
   return -1;
 }
 int64_t _ambix_writef_float64   (ambix_t*ambix, const float64_t*data, int64_t frames) {
-    return -1;
+  return -1;
 }
 ambix_err_t _ambix_write_uuidchunk(ambix_t*ax, const void*data, int64_t datasize) {
   return  AMBIX_ERR_UNKNOWN;
