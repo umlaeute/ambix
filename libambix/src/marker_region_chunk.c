@@ -365,47 +365,55 @@ ambix_err_t _ambix_write_markersregions(ambix_t*ambix) {
   int byteswap = ambix->byteswap;
 
   /* reserve space for strings */
-  void *strings_data;
+  void *strings_data = NULL;
   uint32_t num_strings = ambix->num_markers+ambix->num_regions;
-  uint32_t datasize_strings = sizeof(uint32_t)+num_strings*sizeof(CAFStringID);  
+  uint32_t datasize_strings = 0;
+  unsigned char* byte_ptr_strings = NULL;
+  unsigned char* byte_ptr_stringid = NULL;
   int64_t byteoffset_strings = 0;
-  strings_data = calloc(1, datasize_strings+256); // reserve a fixed space of 256 bytes for each string
-  unsigned char* byte_ptr_strings = (unsigned char*)strings_data;
-  byte_ptr_strings += (sizeof(uint32_t)+num_strings*(sizeof(CAFStringID)));
-  unsigned char* byte_ptr_stringid = (unsigned char*)strings_data;
-  byte_ptr_stringid += sizeof(uint32_t);
-  CAFStrings *strings_chunk = (CAFStrings*)strings_data;
-  strings_chunk->mNumEntries = num_strings;
-  if (byteswap)
-    _ambix_swap4array(&strings_chunk->mNumEntries, 1);
+  if (num_strings > 0) {
+    datasize_strings = sizeof(uint32_t)+num_strings*sizeof(CAFStringID);
+    strings_data = calloc(1, datasize_strings+256); // reserve a fixed space of 256 bytes for each string
+    byte_ptr_strings = (unsigned char*)strings_data;
+    byte_ptr_strings += (sizeof(uint32_t)+num_strings*(sizeof(CAFStringID)));
+    byte_ptr_stringid = (unsigned char*)strings_data;
+    byte_ptr_stringid += sizeof(uint32_t);
+    CAFStrings *strings_chunk = (CAFStrings*)strings_data;
+    strings_chunk->mNumEntries = num_strings;
+    if (byteswap)
+      _ambix_swap4array(&strings_chunk->mNumEntries, 1);
+  }
 
   /* markers */
-  uint32_t datasize_markers = 2*sizeof(uint32_t) + ambix->num_markers*sizeof(CAFMarker);
-  void *marker_data;
-  marker_data = calloc(1, datasize_markers);
-  CAFMarkerChunk* marker_chunk = (CAFMarkerChunk*)marker_data;
-  marker_chunk->mSMPTE_TimeType = kCAF_SMPTE_TimeTypeNone;
-  marker_chunk->mNumberMarkers = ambix->num_markers;
-  if (byteswap)
-    swap_marker_chunk(marker_chunk);
+  void *marker_data = NULL;
+  uint32_t datasize_markers = 0; 
+  if (ambix->num_markers > 0) {
+    datasize_markers = 2*sizeof(uint32_t) + ambix->num_markers*sizeof(CAFMarker);
+    marker_data = calloc(1, datasize_markers);
+    CAFMarkerChunk* marker_chunk = (CAFMarkerChunk*)marker_data;
+    marker_chunk->mSMPTE_TimeType = kCAF_SMPTE_TimeTypeNone;
+    marker_chunk->mNumberMarkers = ambix->num_markers;
+    if (byteswap)
+      swap_marker_chunk(marker_chunk);
 
-  // offset the data pointer by 2*uint32_t to point to start of markers
-  unsigned char* bytePtr = (unsigned char*)marker_data;
-  bytePtr += 2*sizeof(uint32_t);
-  for (uint32_t i=0; i<ambix->num_markers;i++) {
-    CAFMarker* new_marker = (CAFMarker*) bytePtr;
-    new_marker->mType = kCAFMarkerType_Generic;
-    new_marker->mFramePosition = ambix->markers[i].position;
-    new_marker->mMarkerID = i+1; // string ID -> 1...num_markers
-    new_marker->mChannel = 0; // 0 means for all channels
-    if (byteswap) {
-      swap_marker(new_marker);
+    // offset the data pointer by 2*uint32_t to point to start of markers
+    unsigned char* bytePtr = (unsigned char*)marker_data;
+    bytePtr += 2*sizeof(uint32_t);
+    for (uint32_t i=0; i<ambix->num_markers;i++) {
+      CAFMarker* new_marker = (CAFMarker*) bytePtr;
+      new_marker->mType = kCAFMarkerType_Generic;
+      new_marker->mFramePosition = ambix->markers[i].position;
+      new_marker->mMarkerID = i+1; // string ID -> 1...num_markers
+      new_marker->mChannel = 0; // 0 means for all channels
+      if (byteswap) {
+        swap_marker(new_marker);
+      }
+      bytePtr += sizeof(CAFMarker);
+
+      add_string_to_data(i+1, byte_ptr_stringid, ambix->markers[i].name, &byteoffset_strings, byte_ptr_strings, &datasize_strings, byteswap);
+      byte_ptr_strings += (strlen((const char*)ambix->markers[i].name)+1);
+      byte_ptr_stringid += sizeof(CAFStringID);
     }
-    bytePtr += sizeof(CAFMarker);
-
-    add_string_to_data(i+1, byte_ptr_stringid, ambix->markers[i].name, &byteoffset_strings, byte_ptr_strings, &datasize_strings, byteswap);
-    byte_ptr_strings += (strlen((const char*)ambix->markers[i].name)+1);
-    byte_ptr_stringid += sizeof(CAFStringID);
   }
 
   /* regions */
