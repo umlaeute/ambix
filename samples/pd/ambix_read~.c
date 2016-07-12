@@ -201,6 +201,7 @@ typedef struct _ambix_read {
 
   ambix_matrix_t x_matrix;
   ambix_info_t   x_ambix;
+  ambix_t        *x_ambix_t;
 
   int x_fifosize;         /* buffer size appropriately rounded down */
   int x_fifohead;         /* index of next byte to get from file */
@@ -220,7 +221,7 @@ typedef struct _ambix_read {
 
 static void *ambix_read_child_main(void *zz) {
   t_ambix_read *x = (t_ambix_read*)zz;
-  ambix_t*ambix=NULL;
+  x->x_ambix_t=NULL;
   const uint32_t want_ambichannels    = x->x_ambichannels;
   const uint32_t want_xtrachannels    = x->x_xtrachannels;
   const ambix_fileformat_t want_fileformat = x->x_fileformat;
@@ -260,15 +261,15 @@ static void *ambix_read_child_main(void *zz) {
 
       memset(&ainfo, 0, sizeof(ainfo));
       ainfo.fileformat=want_fileformat;
-      if (ambix)
-        ambix_close(ambix);
-      ambix=ambix_open(filename, AMBIX_READ, &ainfo);
+      if (x->x_ambix_t)
+        ambix_close(x->x_ambix_t);
+      x->x_ambix_t=ambix_open(filename, AMBIX_READ, &ainfo);
       free(filename);
 
-      if(ambix) {
-        matrix=ambix_get_adaptormatrix(ambix);
+      if(x->x_ambix_t) {
+        matrix=ambix_get_adaptormatrix(x->x_ambix_t);
         if(onsetframes) {
-          ambix_seek(ambix, onsetframes, SEEK_SET);
+          ambix_seek(x->x_ambix_t, onsetframes, SEEK_SET);
         }
       }
 
@@ -280,7 +281,7 @@ static void *ambix_read_child_main(void *zz) {
 
       pthread_mutex_lock(&x->x_mutex);
 
-      if (NULL==ambix) {
+      if (NULL==x->x_ambix_t) {
         x->x_fileerror = errno;
         x->x_eof = 1;
         goto lost;
@@ -359,7 +360,7 @@ static void *ambix_read_child_main(void *zz) {
           ambibuf = (float32_t*)calloc(localfifosize*ambichannels, sizeof(float32_t));
           xtrabuf = (float32_t*)calloc(localfifosize*xtrachannels, sizeof(float32_t));
         }
-        sysrtn = ambix_readf_float32(ambix, ambibuf, xtrabuf, wantframes);
+        sysrtn = ambix_readf_float32(x->x_ambix_t, ambibuf, xtrabuf, wantframes);
         if(sysrtn>0) {
           merge_samples(ambibuf, ambichannels, want_ambichannels,
                         xtrabuf, xtrachannels, want_xtrachannels,
@@ -390,30 +391,30 @@ static void *ambix_read_child_main(void *zz) {
         x->x_requestcode = REQUEST_NOTHING;
       /* fell out of read loop: close file if necessary,
          set EOF and signal once more */
-      if(ambix) {
+      if(x->x_ambix_t) {
         pthread_mutex_unlock(&x->x_mutex);
-        ambix_close(ambix);
-        ambix=NULL;
+        ambix_close(x->x_ambix_t);
+        x->x_ambix_t=NULL;
         pthread_mutex_lock(&x->x_mutex);
       }
 
       pthread_cond_signal(&x->x_answercondition);
 
     } else if (x->x_requestcode == REQUEST_CLOSE) {
-      if(ambix) {
+      if(x->x_ambix_t) {
         pthread_mutex_unlock(&x->x_mutex);
-        ambix_close(ambix);
-        ambix=NULL;
+        ambix_close(x->x_ambix_t);
+        x->x_ambix_t=NULL;
         pthread_mutex_lock(&x->x_mutex);
       }
       if (x->x_requestcode == REQUEST_CLOSE)
         x->x_requestcode = REQUEST_NOTHING;
       pthread_cond_signal(&x->x_answercondition);
     } else if (x->x_requestcode == REQUEST_QUIT) {
-      if(ambix) {
+      if(x->x_ambix_t) {
         pthread_mutex_unlock(&x->x_mutex);
-        ambix_close(ambix);
-        ambix=NULL;
+        ambix_close(x->x_ambix_t);
+        x->x_ambix_t=NULL;
         pthread_mutex_lock(&x->x_mutex);
       }
       x->x_requestcode = REQUEST_NOTHING;
@@ -555,6 +556,14 @@ static void ambix_read_tick(t_ambix_read *x) {
     /* number of sample frames in file */
     SETFLOAT(atoms+0, (t_float)(x->x_ambix.frames));
     outlet_anything(x->x_infoout, gensym("frames"), 1, atoms);
+
+    /* number of markers in the file */
+    SETFLOAT(atoms+0, (t_float)(ambix_get_num_markers(x->x_ambix_t)));
+    outlet_anything(x->x_infoout, gensym("num_markers"), 1, atoms);
+
+    /* number of regions in the file */
+    SETFLOAT(atoms+0, (t_float)(ambix_get_num_regions(x->x_ambix_t)));
+    outlet_anything(x->x_infoout, gensym("num_regions"), 1, atoms);
   }
 
 
