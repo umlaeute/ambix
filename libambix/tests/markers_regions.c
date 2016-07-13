@@ -4,6 +4,7 @@
 #include <string.h>
 
 int main(int argc, char**argv) {
+  const char*markerfile=FILENAME_FILE;
   ambix_t*ambix=NULL;
   ambix_info_t info;
   memset(&info, 0, sizeof(info));
@@ -20,7 +21,7 @@ int main(int argc, char**argv) {
   
   data=(float32_t*)calloc(channels*frames, sizeof(float32_t));
   
-  ambix=ambix_open("marker_regions.caf", AMBIX_WRITE, &info);
+  ambix=ambix_open(markerfile, AMBIX_WRITE, &info);
   fail_if(NULL==ambix, __LINE__, "File was not open");
 
   /* add some markers */
@@ -73,7 +74,7 @@ int main(int argc, char**argv) {
 
   /* open the file again and see wheter the markers and regions have been saved and can be read */
   memset(&info, 0, sizeof(info));
-  ambix=ambix_open("marker_regions.caf", AMBIX_READ, &info);
+  ambix=ambix_open(markerfile, AMBIX_READ, &info);
 
   fail_if(0 == ambix_get_num_markers(ambix), __LINE__, "No markers in file");
   fail_if(0 == ambix_get_num_regions(ambix), __LINE__, "No regions in file");
