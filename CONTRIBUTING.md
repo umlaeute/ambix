@@ -64,3 +64,41 @@ Please *do not use* these legacy repositories:
 TODO (follow mine :-))
 - no whitespace at the end-of-line
 - no empty line at the end-of-file
+
+
+# Code Testing
+
+## Unit Tests
+
+See `libambix/tests/` for example tests.
+
+All public functionality (and as far as possible all private functionality)
+should be tested via unit tests.
+The testing "framework" in use is provided by autotools.
+
+When testing private interfaces (non-public functions), the unit tests
+need to be compiled in debug-mode (using the `--enable-debug` configure option)
+and the tests should be protected by an `if DEBUG / endif` clause
+`libambix/tests/Makefile.am`.
+
+## Checking for memory leaks
+The unit tests can be instrumented to be run through valgrind:
+
+    cd libambix/tests
+    make check-valgrind
+
+The above will run the tests through the standard `memcheck` tool.
+If you want to use another valgrind tool, You can specify that as well:
+
+    cd libambix/tests
+    make check-valgrind-tool VALGRIND_TOOL=memcheck
+
+## Continuous Integration
+The library is automatically built and tested via
+[Travis-CI](https://travis-ci.org/iem-projects/ambix) whenever new code is
+committed.
+
+If you do not have write access to the main repository of libambix, you can
+Trigger a CI build for your contribution simply by creating a *Pull Request*
+against the [iem-projects/ambix](https://github.com/iem-projects/ambix)
+repository on GitHub.
