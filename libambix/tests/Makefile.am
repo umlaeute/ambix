@@ -54,7 +54,7 @@ debug_utils_SOURCES = debug_utils.c common.c
 endif
 
 TESTS          += markers_regions
-markers_regions_SOURCE = markers_regions.c
+markers_regions_SOURCES = markers_regions.c common.c
 
 TESTS          += none_float32
 none_float32_SOURCES = none_float32.c common_none.c common.c
