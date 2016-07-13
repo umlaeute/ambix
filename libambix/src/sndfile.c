@@ -295,6 +295,7 @@ ambix_err_t _ambix_open (ambix_t*ambix, const char *path, const ambix_filemode_t
 }
 
 ambix_err_t     _ambix_close    (ambix_t*ambix) {
+  int i;
   if(PRIVATE(ambix)->sf_file)
     sf_close(PRIVATE(ambix)->sf_file);
   PRIVATE(ambix)->sf_file=NULL;
@@ -302,7 +303,7 @@ ambix_err_t     _ambix_close    (ambix_t*ambix) {
 #if defined HAVE_SF_SET_CHUNK && defined (HAVE_SF_CHUNK_INFO)
   if((PRIVATE(ambix)->sf_chunk).data)
     free((PRIVATE(ambix)->sf_chunk).data);
-  for (int i=0;i<PRIVATE(ambix)->sf_numchunks;i++) {
+  for (i=0;i<PRIVATE(ambix)->sf_numchunks;i++) {
     if (PRIVATE(ambix)->sf_otherchunks[i].data)
       free(PRIVATE(ambix)->sf_otherchunks[i].data);
   }
@@ -441,6 +442,7 @@ void* _ambix_read_chunk(ambix_t*ax, uint32_t id, uint32_t chunk_it, int64_t *dat
   int err;
   SF_CHUNK_INFO	chunk_info;
   SF_CHUNK_ITERATOR * iterator;
+  int i;
   memset (&chunk_info, 0, sizeof (chunk_info));
   memcpy(chunk_info.id, &id, 4);
   chunk_info.id_size = 4;
@@ -450,7 +452,7 @@ void* _ambix_read_chunk(ambix_t*ax, uint32_t id, uint32_t chunk_it, int64_t *dat
     return NULL;
   }
   // jump to wanted iterator
-  for (int i=0; i<chunk_it; i++) {
+  for (i=0; i<chunk_it; i++) {
     iterator = sf_next_chunk_iterator (iterator) ;
     if (!iterator) {
       *datasize = 0;

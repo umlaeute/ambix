@@ -76,7 +76,8 @@ void _ambix_print_matrix(const ambix_matrix_t*mtx) {
 void _ambix_print_markers(const ambix_t*ambix)
 {
   if (ambix->markers) {
-    for (int i=0; i < ambix->num_markers; i++) {
+    int i;
+    for (i=0; i < ambix->num_markers; i++) {
       printf("    marker %d: name: %s position: %f \n", i, ambix->markers[i].name, ambix->markers[i].position);
     }
   }
@@ -84,7 +85,8 @@ void _ambix_print_markers(const ambix_t*ambix)
 void _ambix_print_regions(const ambix_t*ambix)
 {
   if (ambix->regions) {
-    for (int i=0; i < ambix->num_regions; i++) {
+    int i;
+    for (i=0; i < ambix->num_regions; i++) {
       printf("    region %d: name: %s start_position: %f end_position: %f \n", i, ambix->regions[i].name, ambix->regions[i].start_position, ambix->regions[i].end_position);
     }
   }

@@ -814,10 +814,11 @@ static void ambix_read_marker(t_ambix_read*x, t_float marker_id) {
 }
 
 static void ambix_read_all_markers(t_ambix_read*x) {
+  int nummarkers, i;
   if (!x->x_ambix_t)
     return;
-  int nummarkers = ambix_get_num_markers(x->x_ambix_t);
-  for (int i=0; i<nummarkers; i++) {
+  nummarkers = ambix_get_num_markers(x->x_ambix_t);
+  for (i=0; i<nummarkers; i++) {
     ambix_read_marker(x, i);
   }
 }
@@ -842,10 +843,11 @@ static void ambix_read_region(t_ambix_read*x, t_float region_id) {
 }
 
 static void ambix_read_all_regions(t_ambix_read*x) {
+  int numregions, i;
   if (!x->x_ambix_t)
     return;
-  int numregions = ambix_get_num_regions(x->x_ambix_t);
-  for (int i=0; i<numregions; i++) {
+  numregions = ambix_get_num_regions(x->x_ambix_t);
+  for (i=0; i<numregions; i++) {
     ambix_read_region(x, i);
   }
 }

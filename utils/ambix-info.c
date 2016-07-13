@@ -38,7 +38,8 @@ void print_markers(ambix_t*ambix)
   uint32_t num_markers = ambix_get_num_markers(ambix);
   if (num_markers) {
     ambix_marker_t *marker = NULL;
-    for (uint32_t i=0; i < num_markers; i++) {
+    uint32_t i;
+    for (i=0; i < num_markers; i++) {
       marker = ambix_get_marker(ambix, i);
       if (marker)
         printf("  Marker %d: name: %s position: %f \n", i, marker->name, marker->position);
@@ -50,7 +51,8 @@ void print_regions(ambix_t*ambix)
   uint32_t num_regions = ambix_get_num_regions(ambix);
   if (num_regions) {
     ambix_region_t *region = NULL;
-    for (uint32_t i=0; i < num_regions; i++) {
+    uint32_t i;
+    for (i=0; i < num_regions; i++) {
       region = ambix_get_region(ambix, i);
       printf("  Region %d: name: %s start_position: %f end_position: %f \n", i, region->name, region->start_position, region->end_position);
     }

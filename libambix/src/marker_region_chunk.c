@@ -88,7 +88,7 @@ typedef enum {
 typedef struct {
     uint32_t        mType;
     float64_t       mFramePosition;
-    uint32_t        mMarkerID;        // reference to a mStringsIDs for naming 
+    uint32_t        mMarkerID;        // reference to a mStringsIDs for naming
     CAF_SMPTE_Time  mSMPTETime;
     uint32_t        mChannel;
 } CAFMarker;
@@ -179,7 +179,8 @@ void swap_stringid(CAFStringID* caf_stringid) {
 }
 unsigned char* get_string_from_buffer(strings_buffer* buffer, uint32_t id) {
   if (buffer) {
-    for (uint32_t i=0; i<buffer->num_strings;i++) {
+    uint32_t i;
+    for (i=0; i<buffer->num_strings;i++) {
       if (buffer->string_ids[i] == id)
         return buffer->strings[i];
     }
@@ -191,18 +192,23 @@ unsigned char* get_string_from_buffer(strings_buffer* buffer, uint32_t id) {
 ambix_err_t _ambix_read_markersregions(ambix_t*ambix) {
   int byteswap = ambix->byteswap;
   uint32_t chunk_it = 0;
+  uint32_t i;
 
-  /* first parse strings and save into a struct for later usage */
-  strings_buffer mystrings;
-  memset(&mystrings, 0, sizeof(strings_buffer));
-  
-  void* strings_data = NULL;
   int64_t strings_datasize = 1;
   union int_chars strg_id;
+  strings_buffer mystrings;
+  memset(&mystrings, 0, sizeof(strings_buffer));
+
   strg_id.b[0] = 's'; strg_id.b[1] = 't'; strg_id.b[2] = 'r'; strg_id.b[3] = 'g';
+
+  /* first parse strings and save into a struct for later usage */
   while (strings_datasize) {
-    strings_data = _ambix_read_chunk(ambix, strg_id.a, chunk_it++, &strings_datasize);
+    void*strings_data = _ambix_read_chunk(ambix, strg_id.a, chunk_it++, &strings_datasize);
     if (strings_datasize > SIZEOF_CAFStrings) {
+      uint32_t temp_num_strings = 0;
+      int64_t mstrings_datasize = 0;
+      char *strings_ptr = NULL;
+      CAFStringID* caf_stringid = NULL;
       CAFStrings* strings_chunk = (CAFStrings*)strings_data;
       if (byteswap)
         _ambix_swap4array(&strings_chunk->mNumEntries, 1);
@@ -211,8 +217,8 @@ ambix_err_t _ambix_read_markersregions(ambix_t*ambix) {
           free(strings_data);
         break;
       }
-      uint32_t temp_num_strings = strings_chunk->mNumEntries;
-      int64_t mstrings_datasize = strings_datasize - (SIZEOF_CAFStrings + temp_num_strings*sizeof(CAFStringID));
+      temp_num_strings = strings_chunk->mNumEntries;
+      mstrings_datasize = strings_datasize - (SIZEOF_CAFStrings + temp_num_strings*sizeof(CAFStringID));
       // allocate memory for mystrings
       if (!mystrings.string_ids) {
         mystrings.string_ids = malloc((mystrings.num_strings+temp_num_strings)*sizeof(uint32_t));
@@ -221,17 +227,19 @@ ambix_err_t _ambix_read_markersregions(ambix_t*ambix) {
         mystrings.string_ids = realloc(mystrings.string_ids, (mystrings.num_strings+temp_num_strings)*sizeof(uint32_t));
         mystrings.strings = realloc(mystrings.strings, (mystrings.num_strings+temp_num_strings)*sizeof(unsigned char*));
       }
-      char *strings_ptr = strings_data;
+      strings_ptr = strings_data;
       strings_ptr += (4+temp_num_strings*sizeof(CAFStringID)); // start of mStrings
-      CAFStringID* caf_stringid = (CAFStringID*)(&strings_data[4]);
-      for (uint32_t i=0; i<temp_num_strings; i++) {
+      caf_stringid = (CAFStringID*)(&strings_data[4]);
+      for (i=0; i<temp_num_strings; i++) {
+        unsigned char* mString = NULL;
+        uint32_t mString_len = 0;
         if (byteswap)
           swap_stringid(&caf_stringid[i]);
         if (caf_stringid[i].mStringStartByteOffset >= mstrings_datasize)
           break; // invalid offset!
-        unsigned char* mString = (unsigned char*) (strings_ptr+caf_stringid[i].mStringStartByteOffset);
+        mString = (unsigned char*) (strings_ptr+caf_stringid[i].mStringStartByteOffset);
         mystrings.string_ids[mystrings.num_strings] = caf_stringid[i].mStringID;
-        uint32_t mString_len = strlen((const char *)mString);
+        mString_len = strlen((const char *)mString);
         mystrings.strings[mystrings.num_strings] = calloc((mString_len+1), sizeof(unsigned char));
         memcpy(mystrings.strings[mystrings.num_strings], mString, mString_len*sizeof(unsigned char));
         mystrings.num_strings++;
@@ -242,105 +250,112 @@ ambix_err_t _ambix_read_markersregions(ambix_t*ambix) {
   }
 
   /* parse markers */
-  chunk_it = 0;
-  void* marker_data = NULL;
-  int64_t marker_datasize = 1;
-  union int_chars mark_id;
-  mark_id.b[0] = 'm'; mark_id.b[1] = 'a'; mark_id.b[2] = 'r'; mark_id.b[3] = 'k';
-  while (marker_datasize) {
-    marker_data = _ambix_read_chunk(ambix, mark_id.a, chunk_it++, &marker_datasize);
-    if (marker_datasize > 2*sizeof(uint32_t)) {
-      CAFMarkerChunk* marker_chunk = (CAFMarkerChunk*)marker_data;
-      if (byteswap)
-        swap_marker_chunk(marker_chunk);
-      if (marker_datasize < (marker_chunk->mNumberMarkers*(sizeof(CAFMarker)) + 2*sizeof(uint32_t))) {
-        if (marker_data)
-          free(marker_data);
-        break;
-      }
-      unsigned char* bytePtr = (unsigned char*)marker_data;
-      bytePtr += 2*sizeof(uint32_t);
-      for (uint32_t i=0; i<marker_chunk->mNumberMarkers; i++)
-      {
-        CAFMarker *caf_marker = (CAFMarker*)bytePtr;
+  do {
+    int64_t marker_datasize = 1;
+    union int_chars mark_id;
+    chunk_it = 0;
+    mark_id.b[0] = 'm'; mark_id.b[1] = 'a'; mark_id.b[2] = 'r'; mark_id.b[3] = 'k';
+    while (marker_datasize) {
+      void*marker_data = _ambix_read_chunk(ambix, mark_id.a, chunk_it++, &marker_datasize);
+      if (marker_datasize > 2*sizeof(uint32_t)) {
+        CAFMarkerChunk* marker_chunk = (CAFMarkerChunk*)marker_data;
+        unsigned char* bytePtr = NULL;
         if (byteswap)
-          swap_marker(caf_marker);
-        ambix_marker_t new_ambix_marker;
-        memset(&new_ambix_marker, 0, sizeof(ambix_marker_t));
-        new_ambix_marker.position = caf_marker->mFramePosition;
-        unsigned char* string = get_string_from_buffer(&mystrings, caf_marker->mMarkerID);
-        if (string) {
-          strncpy(new_ambix_marker.name, (const char *)string, 255);
-        }
-        ambix_add_marker(ambix, &new_ambix_marker);
-        bytePtr += sizeof(CAFMarker);
-      }
-    }
-    if (marker_data)
-      free(marker_data);
-  }
-
-  /* parse regions */
-  chunk_it = 0;
-  void* region_data = NULL;
-  int64_t region_datasize = 1;
-  union int_chars regn_id;
-  regn_id.b[0] = 'r'; regn_id.b[1] = 'e'; regn_id.b[2] = 'g'; regn_id.b[3] = 'n';
-  while (region_datasize) {
-    region_data = _ambix_read_chunk(ambix, regn_id.a, chunk_it++, &region_datasize);
-    if (region_datasize > 2*sizeof(uint32_t)) {
-      int64_t data_read = 0;
-      CAFRegionChunk* region_chunk = (CAFRegionChunk*)region_data;
-      if (byteswap)
-         swap_region_chunk(region_chunk);
-      if (region_datasize < (region_chunk->mNumberRegions*(SIZEOF_CAFRegion+sizeof(CAFMarker)) + SIZEOF_CAFRegionChunk)) {
-        if (region_data)
-          free(region_data);
-        break;
-      }
-      unsigned char* bytePtr = (unsigned char*)region_data;
-      data_read += 2*sizeof(uint32_t); // SIZEOF_CAFRegionChunk
-      for (uint32_t i=0; i<region_chunk->mNumberRegions; i++) {
-        if (region_datasize < data_read + SIZEOF_CAFRegion)
+          swap_marker_chunk(marker_chunk);
+        if (marker_datasize < (marker_chunk->mNumberMarkers*(sizeof(CAFMarker)) + 2*sizeof(uint32_t))) {
+          if (marker_data)
+            free(marker_data);
           break;
-        CAFRegion *caf_region = (CAFRegion*)&bytePtr[data_read];
-        if (byteswap)
-          swap_region(caf_region);
-        ambix_region_t new_ambix_region;
-        memset(&new_ambix_region, 0, sizeof(ambix_region_t));
-        /* iterate over all markers and find startMarker and endMarker */
-        data_read += SIZEOF_CAFRegion;
-        for (uint32_t i=0; i<caf_region->mNumberMarkers; i++)
-        {
-          if (region_datasize < data_read + sizeof(CAFMarker))
-            break;
-          CAFMarker *caf_marker = (CAFMarker*)&bytePtr[data_read];
+        }
+        bytePtr = (unsigned char*)marker_data;
+        bytePtr += 2*sizeof(uint32_t);
+        for (i=0; i<marker_chunk->mNumberMarkers; i++) {
+          ambix_marker_t new_ambix_marker;
+          CAFMarker *caf_marker = (CAFMarker*)bytePtr;
+          unsigned char* string = NULL;
           if (byteswap)
             swap_marker(caf_marker);
-          if (caf_marker->mType == kCAFMarkerType_RegionStart) {
-            new_ambix_region.start_position = caf_marker->mFramePosition;
-            unsigned char* string = get_string_from_buffer(&mystrings, caf_marker->mMarkerID);
-            if (string)
-              strncpy(new_ambix_region.name, (const char *)string, 255);
+          memset(&new_ambix_marker, 0, sizeof(ambix_marker_t));
+          new_ambix_marker.position = caf_marker->mFramePosition;
+          string = get_string_from_buffer(&mystrings, caf_marker->mMarkerID);
+          if (string) {
+            strncpy(new_ambix_marker.name, (const char *)string, 255);
           }
-          else if (caf_marker->mType == kCAFMarkerType_RegionEnd)
-            new_ambix_region.end_position = caf_marker->mFramePosition;
-          data_read += sizeof(CAFMarker);
+          ambix_add_marker(ambix, &new_ambix_marker);
+          bytePtr += sizeof(CAFMarker);
         }
-        ambix_add_region(ambix, &new_ambix_region);
       }
+      if (marker_data)
+        free(marker_data);
     }
-    if (marker_data)
-      free(marker_data);
-    if (region_data)
-      free(region_data);
-  }
+  } while(0);
+
+  /* parse regions */
+  do {
+    void* region_data = NULL;
+    int64_t region_datasize = 1;
+    union int_chars regn_id;
+    regn_id.b[0] = 'r'; regn_id.b[1] = 'e'; regn_id.b[2] = 'g'; regn_id.b[3] = 'n';
+
+    chunk_it = 0;
+
+    while (region_datasize) {
+      region_data = _ambix_read_chunk(ambix, regn_id.a, chunk_it++, &region_datasize);
+      if (region_datasize > 2*sizeof(uint32_t)) {
+        int64_t data_read = 0;
+        unsigned char* bytePtr = NULL;
+        CAFRegionChunk* region_chunk = (CAFRegionChunk*)region_data;
+        if (byteswap)
+          swap_region_chunk(region_chunk);
+        if (region_datasize < (region_chunk->mNumberRegions*(SIZEOF_CAFRegion+sizeof(CAFMarker)) + SIZEOF_CAFRegionChunk)) {
+          if (region_data)
+            free(region_data);
+          break;
+        }
+        bytePtr = (unsigned char*)region_data;
+        data_read += 2*sizeof(uint32_t); // SIZEOF_CAFRegionChunk
+        for (i=0; i<region_chunk->mNumberRegions; i++) {
+          uint32_t j;
+          ambix_region_t new_ambix_region;
+          CAFRegion *caf_region = NULL;
+          if (region_datasize < data_read + SIZEOF_CAFRegion)
+            break;
+          caf_region = (CAFRegion*)&bytePtr[data_read];
+          if (byteswap)
+            swap_region(caf_region);
+          memset(&new_ambix_region, 0, sizeof(ambix_region_t));
+          /* iterate over all markers and find startMarker and endMarker */
+          data_read += SIZEOF_CAFRegion;
+          for (j=0; j<caf_region->mNumberMarkers; j++) {
+            CAFMarker *caf_marker = NULL;
+            if (region_datasize < data_read + sizeof(CAFMarker))
+              break;
+            caf_marker = (CAFMarker*)&bytePtr[data_read];
+            if (byteswap)
+              swap_marker(caf_marker);
+            if (caf_marker->mType == kCAFMarkerType_RegionStart) {
+              unsigned char* string = NULL;
+              new_ambix_region.start_position = caf_marker->mFramePosition;
+              string = get_string_from_buffer(&mystrings, caf_marker->mMarkerID);
+              if (string)
+                strncpy(new_ambix_region.name, (const char *)string, 255);
+            }
+            else if (caf_marker->mType == kCAFMarkerType_RegionEnd)
+              new_ambix_region.end_position = caf_marker->mFramePosition;
+            data_read += sizeof(CAFMarker);
+          }
+          ambix_add_region(ambix, &new_ambix_region);
+        }
+      }
+      if (region_data)
+        free(region_data);
+    }
+  } while(0);
 
   /* free allocated strings data */
   if (mystrings.string_ids)
     free(mystrings.string_ids);
-  for (uint32_t i=0; i<mystrings.num_strings; i++)
-  {
+  for (i=0; i<mystrings.num_strings; i++) {
     if (mystrings.strings[i])
       free(mystrings.strings[i]);
   }
@@ -354,9 +369,9 @@ ambix_err_t _ambix_read_markersregions(ambix_t*ambix) {
 void add_string_to_data(int id, unsigned char *byte_ptr_stringid, char *name, int64_t *byteoffset_strings, unsigned char *byte_ptr_strings, uint32_t *datasize_strings, int byteswap) {
   /* handle the string */
   CAFStringID* string_id = (CAFStringID*)byte_ptr_stringid;
+  uint32_t name_len = strlen((const char *)name);
   string_id->mStringID = id;
   string_id->mStringStartByteOffset = *byteoffset_strings;
-  uint32_t name_len = strlen((const char *)name);
   memcpy(byte_ptr_strings, name, name_len*sizeof(char));
   byte_ptr_strings[name_len] = 0; // set the last char to NUL
   *byteoffset_strings += (name_len+1);
@@ -366,44 +381,50 @@ void add_string_to_data(int id, unsigned char *byte_ptr_stringid, char *name, in
 }
 
 ambix_err_t _ambix_write_markersregions(ambix_t*ambix) {
+  uint32_t i;
   int byteswap = ambix->byteswap;
 
-  /* reserve space for strings */
   void *strings_data = NULL;
   uint32_t num_strings = ambix->num_markers+ambix->num_regions;
   uint32_t datasize_strings = 0;
   unsigned char* byte_ptr_strings = NULL;
   unsigned char* byte_ptr_stringid = NULL;
   int64_t byteoffset_strings = 0;
+
+  void *marker_data = NULL;
+  uint32_t datasize_markers = 0;
+
+  /* reserve space for strings */
   if (num_strings > 0) {
+    CAFStrings *strings_chunk = NULL;
     datasize_strings = sizeof(uint32_t)+num_strings*sizeof(CAFStringID);
     strings_data = calloc(1, datasize_strings+256); // reserve a fixed space of 256 bytes for each string
     byte_ptr_strings = (unsigned char*)strings_data;
     byte_ptr_strings += (sizeof(uint32_t)+num_strings*(sizeof(CAFStringID)));
     byte_ptr_stringid = (unsigned char*)strings_data;
     byte_ptr_stringid += sizeof(uint32_t);
-    CAFStrings *strings_chunk = (CAFStrings*)strings_data;
+    strings_chunk = (CAFStrings*)strings_data;
     strings_chunk->mNumEntries = num_strings;
     if (byteswap)
       _ambix_swap4array(&strings_chunk->mNumEntries, 1);
   }
-
   /* markers */
-  void *marker_data = NULL;
-  uint32_t datasize_markers = 0; 
   if (ambix->num_markers > 0) {
+    CAFMarkerChunk* marker_chunk = NULL;
+    unsigned char* bytePtr = NULL;
     datasize_markers = 2*sizeof(uint32_t) + ambix->num_markers*sizeof(CAFMarker);
     marker_data = calloc(1, datasize_markers);
-    CAFMarkerChunk* marker_chunk = (CAFMarkerChunk*)marker_data;
+    bytePtr = (unsigned char*)marker_data;
+
+    marker_chunk = (CAFMarkerChunk*)marker_data;
     marker_chunk->mSMPTE_TimeType = kCAF_SMPTE_TimeTypeNone;
     marker_chunk->mNumberMarkers = ambix->num_markers;
     if (byteswap)
       swap_marker_chunk(marker_chunk);
 
     // offset the data pointer by 2*uint32_t to point to start of markers
-    unsigned char* bytePtr = (unsigned char*)marker_data;
     bytePtr += 2*sizeof(uint32_t);
-    for (uint32_t i=0; i<ambix->num_markers;i++) {
+    for (i=0; i<ambix->num_markers;i++) {
       CAFMarker* new_marker = (CAFMarker*) bytePtr;
       new_marker->mType = kCAFMarkerType_Generic;
       new_marker->mFramePosition = ambix->markers[i].position;
@@ -422,32 +443,37 @@ ambix_err_t _ambix_write_markersregions(ambix_t*ambix) {
 
   /* regions */
   // a region consists of 2 markers (start,end) and region chunk
-  uint32_t datasize_regions = 2*sizeof(uint32_t) + ambix->num_regions*(SIZEOF_CAFRegion + 2*sizeof(CAFMarker)); 
-  void *region_data;
-  region_data = calloc(1, datasize_regions);
-  CAFRegionChunk* region_chunk = (CAFRegionChunk*)region_data;
+  uint32_t datasize_regions = 2*sizeof(uint32_t) + ambix->num_regions*(SIZEOF_CAFRegion + 2*sizeof(CAFMarker));
+  void *region_data               = calloc(1, datasize_regions);
+  CAFRegionChunk* region_chunk    = (CAFRegionChunk*)region_data;
+  unsigned char* byte_ptr_regions = (unsigned char*)region_data;
   region_chunk->mSMPTE_TimeType = kCAF_SMPTE_TimeTypeNone;
   region_chunk->mNumberRegions = ambix->num_regions;
   if (byteswap)
     swap_region_chunk(region_chunk);
   // offset the data pointer by 2*uint32_t to point to start of mRegions
-  unsigned char* byte_ptr_regions = (unsigned char*)region_data;
   byte_ptr_regions += 2*sizeof(uint32_t);
-  for (uint32_t i=0; i<ambix->num_regions;i++) {
-    CAFRegion* new_region = (CAFRegion*) byte_ptr_regions;
+  for (i=0; i<ambix->num_regions;i++) {
+    CAFRegion *new_region   = NULL;
+    CAFMarker *start_marker = NULL, *end_marker = NULL;
+
+    /* region */
+    new_region = (CAFRegion*) byte_ptr_regions;
     new_region->mRegionID = i+1; // does not have a connection with a string
     new_region->mFlags = 0;
     new_region->mNumberMarkers = 2; // start, end marker
+
     /* start region marker */
     byte_ptr_regions += SIZEOF_CAFRegion; // offset pointer to start marker
-    CAFMarker* start_marker = (CAFMarker*)byte_ptr_regions;// &((new_region->mMarkers)[0]);
+    start_marker = (CAFMarker*)byte_ptr_regions;// &((new_region->mMarkers)[0]);
     start_marker->mType = kCAFMarkerType_RegionStart;
     start_marker->mFramePosition = ambix->regions[i].start_position;
     start_marker->mMarkerID = ambix->num_markers+i+1; // string ID -> num_markers+1...num_markers+num_regions
     start_marker->mChannel = 0; // 0 means for all channels
+
     /* end region marker */
     byte_ptr_regions += sizeof(CAFMarker); // offset pointer to end marker
-    CAFMarker* end_marker = (CAFMarker*)byte_ptr_regions; // &new_region->mMarkers[1];
+    end_marker = (CAFMarker*)byte_ptr_regions; // &new_region->mMarkers[1];
     end_marker->mType = kCAFMarkerType_RegionEnd;
     end_marker->mFramePosition = ambix->regions[i].end_position;
     end_marker->mMarkerID = ambix->num_markers+i+1; // string ID -> num_markers+1...num_markers+num_regions
@@ -465,20 +491,20 @@ ambix_err_t _ambix_write_markersregions(ambix_t*ambix) {
   }
 
   /* add the chunk data */
-  union int_chars mark_id;
-  mark_id.b[0] = 'm'; mark_id.b[1] = 'a'; mark_id.b[2] = 'r'; mark_id.b[3] = 'k';
-  _ambix_write_chunk(ambix, mark_id.a, marker_data, datasize_markers);
-  free(marker_data);
+  do {
+    union int_chars mark_id, regn_id, strg_id;
 
-  union int_chars regn_id;
-  regn_id.b[0] = 'r'; regn_id.b[1] = 'e'; regn_id.b[2] = 'g'; regn_id.b[3] = 'n';
-  _ambix_write_chunk(ambix, regn_id.a, region_data, datasize_regions);
-  free(region_data);
+    mark_id.b[0] = 'm'; mark_id.b[1] = 'a'; mark_id.b[2] = 'r'; mark_id.b[3] = 'k';
+    _ambix_write_chunk(ambix, mark_id.a, marker_data, datasize_markers);
+    free(marker_data);
 
-  union int_chars strg_id;
-  strg_id.b[0] = 's'; strg_id.b[1] = 't'; strg_id.b[2] = 'r'; strg_id.b[3] = 'g';
-  _ambix_write_chunk(ambix, strg_id.a, strings_data, datasize_strings);
-  free(strings_data);
+    regn_id.b[0] = 'r'; regn_id.b[1] = 'e'; regn_id.b[2] = 'g'; regn_id.b[3] = 'n';
+    _ambix_write_chunk(ambix, regn_id.a, region_data, datasize_regions);
+    free(region_data);
 
+    strg_id.b[0] = 's'; strg_id.b[1] = 't'; strg_id.b[2] = 'r'; strg_id.b[3] = 'g';
+    _ambix_write_chunk(ambix, strg_id.a, strings_data, datasize_strings);
+    free(strings_data);
+  } while(0);
   return AMBIX_ERR_SUCCESS;
 }
