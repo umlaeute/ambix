@@ -395,25 +395,26 @@ ambix_err_t _ambix_write_uuidchunk(ambix_t*ax, const void*data, int64_t datasize
 ambix_err_t _ambix_write_chunk(ambix_t*ax, uint32_t id, const void*data, int64_t datasize) {
 #if defined (HAVE_SF_SET_CHUNK)
   int err ;
-  /* (re-)allocate memory for the new chunk - data has to be kept until file closes! */
-  if (PRIVATE(ax)->sf_numchunks == 0)
-    PRIVATE(ax)->sf_otherchunks = (SF_CHUNK_INFO*)calloc(1, sizeof(SF_CHUNK_INFO));
-  else
-  {
-    unsigned int numchunks=(PRIVATE(ax)->sf_numchunks);
-    SF_CHUNK_INFO *chunks = (SF_CHUNK_INFO*)realloc(PRIVATE(ax)->sf_otherchunks, (numchunks+1)*sizeof(SF_CHUNK_INFO));
-    if (NULL == chunks)
-      return AMBIX_ERR_UNKNOWN;
-    memset(chunks+numchunks, 0, sizeof(SF_CHUNK_INFO));
-    PRIVATE(ax)->sf_otherchunks = chunks;
-  }
-
-  SF_CHUNK_INFO*chunk=&PRIVATE(ax)->sf_otherchunks[PRIVATE(ax)->sf_numchunks];
   int64_t datasize4 = datasize>>2;
+
+  SF_CHUNK_INFO *chunks = NULL;
+  SF_CHUNK_INFO *chunk  = NULL;
+  unsigned int numchunks=(PRIVATE(ax)->sf_numchunks);
 
   if(datasize4*4 < datasize)
     datasize4++;
+
+  /* (re-)allocate memory for the new chunk - data has to be kept until file closes! */
+  if (0 == numchunks) {
+    chunks = (SF_CHUNK_INFO*)calloc(1, sizeof(*chunks));
+  } else {
+    chunks = (SF_CHUNK_INFO*)realloc(PRIVATE(ax)->sf_otherchunks, (numchunks+1)*sizeof(*chunks));
+  }
+  if (NULL == chunks)
+    return AMBIX_ERR_UNKNOWN;
+  chunk = chunks + numchunks;
   memset (chunk, 0, sizeof (*chunk)) ;
+
   //snprintf (chunk->id, 4, id) ;
   memcpy(chunk->id, &id, 4);
   chunk->id_size = 4 ;
@@ -425,7 +426,10 @@ ambix_err_t _ambix_write_chunk(ambix_t*ax, uint32_t id, const void*data, int64_t
   memcpy(chunk->data, data, datasize);
   chunk->datalen = datasize ;
   err = sf_set_chunk (PRIVATE(ax)->sf_file, chunk);
+
   PRIVATE(ax)->sf_numchunks += 1;
+  PRIVATE(ax)->sf_otherchunks = chunks;
+
   if(SF_ERR_NO_ERROR != err)
     return AMBIX_ERR_UNKNOWN;
   return AMBIX_ERR_SUCCESS;
