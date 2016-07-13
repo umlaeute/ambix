@@ -112,5 +112,6 @@ int main(int argc, char**argv) {
   if(data)
     free(data);
   ambix_close(ambix);
+  ambixtest_rmfile(markerfile);
   return pass();
 }
