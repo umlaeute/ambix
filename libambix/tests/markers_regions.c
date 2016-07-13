@@ -108,5 +108,8 @@ int main(int argc, char**argv) {
   fail_if(memcmp(&region_2, region_2_retr, sizeof(ambix_region_t)), __LINE__, "Region 2 does not match");
   fail_if(memcmp(&region_3, region_3_retr, sizeof(ambix_region_t)), __LINE__, "Region 3 does not match");
 
+  if(data)
+    free(data);
+  ambix_close(ambix);
   return pass();
 }
