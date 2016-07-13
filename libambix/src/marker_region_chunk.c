@@ -332,6 +332,8 @@ ambix_err_t _ambix_read_markersregions(ambix_t*ambix) {
     }
     if (marker_data)
       free(marker_data);
+    if (region_data)
+      free(region_data);
   }
 
   /* free allocated strings data */
@@ -342,6 +344,8 @@ ambix_err_t _ambix_read_markersregions(ambix_t*ambix) {
     if (mystrings.strings[i])
       free(mystrings.strings[i]);
   }
+  if (mystrings.strings)
+    free(mystrings.strings);
   memset(&mystrings, 0, sizeof(strings_buffer));
 
   return AMBIX_ERR_UNKNOWN;

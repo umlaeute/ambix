@@ -302,11 +302,11 @@ ambix_err_t     _ambix_close    (ambix_t*ambix) {
 #if defined HAVE_SF_SET_CHUNK && defined (HAVE_SF_CHUNK_INFO)
   if((PRIVATE(ambix)->sf_chunk).data)
     free((PRIVATE(ambix)->sf_chunk).data);
-
   for (int i=0;i<PRIVATE(ambix)->sf_numchunks;i++) {
     if (PRIVATE(ambix)->sf_otherchunks[i].data)
       free(PRIVATE(ambix)->sf_otherchunks[i].data);
   }
+  free(PRIVATE(ambix)->sf_otherchunks);
 #endif
 
   free(PRIVATE(ambix));
@@ -400,8 +400,12 @@ ambix_err_t _ambix_write_chunk(ambix_t*ax, uint32_t id, const void*data, int64_t
     PRIVATE(ax)->sf_otherchunks = (SF_CHUNK_INFO*)calloc(1, sizeof(SF_CHUNK_INFO));
   else
   {
-    PRIVATE(ax)->sf_otherchunks = (SF_CHUNK_INFO*)realloc(PRIVATE(ax)->sf_otherchunks, (PRIVATE(ax)->sf_numchunks+1)*sizeof(SF_CHUNK_INFO));
-    memset(PRIVATE(ax)->sf_otherchunks, 0, sizeof(SF_CHUNK_INFO));
+    unsigned int numchunks=(PRIVATE(ax)->sf_numchunks);
+    SF_CHUNK_INFO *chunks = (SF_CHUNK_INFO*)realloc(PRIVATE(ax)->sf_otherchunks, (numchunks+1)*sizeof(SF_CHUNK_INFO));
+    if (NULL == chunks)
+      return AMBIX_ERR_UNKNOWN;
+    memset(chunks+numchunks, 0, sizeof(SF_CHUNK_INFO));
+    PRIVATE(ax)->sf_otherchunks = chunks;
   }
 
   SF_CHUNK_INFO*chunk=&PRIVATE(ax)->sf_otherchunks[PRIVATE(ax)->sf_numchunks];
