@@ -58,6 +58,7 @@ libambix_la_SOURCES = libambix.c \
 	matrix.c matrix_invert.c \
 	utils.c \
 	uuid_chunk.c \
+  marker_region_chunk.c \
 	private.h
 
 if HAVE_SNDFILE

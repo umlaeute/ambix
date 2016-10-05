@@ -89,6 +89,15 @@ struct ambix_t_struct {
   /** ambisonics order of the full set */
   uint32_t ambisonics_order;
 
+  /** the number of stored markers */
+  uint32_t num_markers;
+  /** storage for markers */
+  ambix_marker_t *markers;
+  /** the number of stored regions */
+  uint32_t num_regions;
+  /** storage for regions */
+  ambix_region_t *regions;
+
   /** whether we already started reading samples */
   int startedReading;
   /** whether we already started writing samples */
@@ -217,6 +226,37 @@ uint64_t _ambix_matrix_to_uuid1(const ambix_matrix_t*matrix, void*data, int byte
  */
 ambix_err_t _ambix_write_uuidchunk(ambix_t*ax, const void*data, int64_t datasize);
 
+/** @brief read marker, region and corresponding strings chunk from file
+ * @param ambix valid ambix handle
+ * @return error code indicating success
+ */
+ambix_err_t _ambix_read_markersregions(ambix_t*ax);
+/** @brief write marker, region and corresponding strings chunk to file
+ * @param ambix valid ambix handle
+ * @return error code indicating success
+ */
+ambix_err_t _ambix_write_markersregions(ambix_t*ax);
+/** @brief write general chunk to file
+ * @param ambix valid ambix handle
+ * @param id four-character code identifying the chunk
+ * @param data pointer to memory holding the chunk
+ * @param datasize size of data
+ * @return error code indicating success
+ */
+ambix_err_t _ambix_write_chunk(ambix_t*ax, uint32_t id, const void*data, int64_t datasize);
+/** @brief read general chunk to file
+ * @param ambix valid ambix handle
+ * @param id four-character code identifying the chunk
+ * @param chunk_it try to get the chunk_it-th chunk with the specified id
+ * @param datasize returns size of data
+ * @return data pointer to memory holding the chunk
+ *
+ * @remark several chunks with the same id may exist in the file
+ * use chunk_it from 0...n for retrieving all existing chunks
+ *
+ * @remark in case of success the caller has to free the returned data! 
+ */
+void* _ambix_read_chunk(ambix_t*ax, uint32_t id, uint32_t chunk_it, int64_t *datasize);
 
 /** @brief Fill a matrix with byteswapped values
  *
@@ -310,11 +350,31 @@ static inline uint32_t swap4(uint32_t n)
   return (((n & 0xff) << 24) | ((n & 0xff00) << 8) |
           ((n & 0xff0000) >> 8) | ((n & 0xff000000) >> 24));
 }
+/** @brief byte-swap 64bit data
+ * @param n a 64bit chunk in the wrong byte order
+ * @return byte-swapped data
+ */
+static inline uint64_t swap8(uint64_t n)
+{
+  return ((((n) & 0xff00000000000000ull) >> 56) |
+          (((n) & 0x00ff000000000000ull) >> 40) |
+          (((n) & 0x0000ff0000000000ull) >> 24) |
+          (((n) & 0x000000ff00000000ull) >> 8 ) |
+          (((n) & 0x00000000ff000000ull) << 8 ) |
+          (((n) & 0x0000000000ff0000ull) << 24) |
+          (((n) & 0x000000000000ff00ull) << 40) |
+          (((n) & 0x00000000000000ffull) << 56));
+}
 /** @brief byte-swap arrays of 32bit data
  * @param data a pointer to an array of 32bit data to be byteswapped
  * @param datasize the size of the array
  */
 void _ambix_swap4array(uint32_t*data, uint64_t datasize);
+/** @brief byte-swap arrays of 64bit data
+ * @param data a pointer to an array of 64bit data to be byteswapped
+ * @param datasize the size of the array
+ */
+void _ambix_swap8array(uint64_t*data, uint64_t datasize);
 
 /** @brief resize adaptor buffer to given size
  *

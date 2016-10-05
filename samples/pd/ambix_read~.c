@@ -201,6 +201,7 @@ typedef struct _ambix_read {
 
   ambix_matrix_t x_matrix;
   ambix_info_t   x_ambix;
+  ambix_t        *x_ambix_t;
 
   int x_fifosize;         /* buffer size appropriately rounded down */
   int x_fifohead;         /* index of next byte to get from file */
@@ -220,7 +221,7 @@ typedef struct _ambix_read {
 
 static void *ambix_read_child_main(void *zz) {
   t_ambix_read *x = (t_ambix_read*)zz;
-  ambix_t*ambix=NULL;
+  x->x_ambix_t=NULL;
   const uint32_t want_ambichannels    = x->x_ambichannels;
   const uint32_t want_xtrachannels    = x->x_xtrachannels;
   const ambix_fileformat_t want_fileformat = x->x_fileformat;
@@ -260,15 +261,15 @@ static void *ambix_read_child_main(void *zz) {
 
       memset(&ainfo, 0, sizeof(ainfo));
       ainfo.fileformat=want_fileformat;
-      if (ambix)
-        ambix_close(ambix);
-      ambix=ambix_open(filename, AMBIX_READ, &ainfo);
+      if (x->x_ambix_t)
+        ambix_close(x->x_ambix_t);
+      x->x_ambix_t=ambix_open(filename, AMBIX_READ, &ainfo);
       free(filename);
 
-      if(ambix) {
-        matrix=ambix_get_adaptormatrix(ambix);
+      if(x->x_ambix_t) {
+        matrix=ambix_get_adaptormatrix(x->x_ambix_t);
         if(onsetframes) {
-          ambix_seek(ambix, onsetframes, SEEK_SET);
+          ambix_seek(x->x_ambix_t, onsetframes, SEEK_SET);
         }
       }
 
@@ -280,7 +281,7 @@ static void *ambix_read_child_main(void *zz) {
 
       pthread_mutex_lock(&x->x_mutex);
 
-      if (NULL==ambix) {
+      if (NULL==x->x_ambix_t) {
         x->x_fileerror = errno;
         x->x_eof = 1;
         goto lost;
@@ -359,7 +360,7 @@ static void *ambix_read_child_main(void *zz) {
           ambibuf = (float32_t*)calloc(localfifosize*ambichannels, sizeof(float32_t));
           xtrabuf = (float32_t*)calloc(localfifosize*xtrachannels, sizeof(float32_t));
         }
-        sysrtn = ambix_readf_float32(ambix, ambibuf, xtrabuf, wantframes);
+        sysrtn = ambix_readf_float32(x->x_ambix_t, ambibuf, xtrabuf, wantframes);
         if(sysrtn>0) {
           merge_samples(ambibuf, ambichannels, want_ambichannels,
                         xtrabuf, xtrachannels, want_xtrachannels,
@@ -390,30 +391,30 @@ static void *ambix_read_child_main(void *zz) {
         x->x_requestcode = REQUEST_NOTHING;
       /* fell out of read loop: close file if necessary,
          set EOF and signal once more */
-      if(ambix) {
+      if(x->x_ambix_t) {
         pthread_mutex_unlock(&x->x_mutex);
-        ambix_close(ambix);
-        ambix=NULL;
+        ambix_close(x->x_ambix_t);
+        x->x_ambix_t=NULL;
         pthread_mutex_lock(&x->x_mutex);
       }
 
       pthread_cond_signal(&x->x_answercondition);
 
     } else if (x->x_requestcode == REQUEST_CLOSE) {
-      if(ambix) {
+      if(x->x_ambix_t) {
         pthread_mutex_unlock(&x->x_mutex);
-        ambix_close(ambix);
-        ambix=NULL;
+        ambix_close(x->x_ambix_t);
+        x->x_ambix_t=NULL;
         pthread_mutex_lock(&x->x_mutex);
       }
       if (x->x_requestcode == REQUEST_CLOSE)
         x->x_requestcode = REQUEST_NOTHING;
       pthread_cond_signal(&x->x_answercondition);
     } else if (x->x_requestcode == REQUEST_QUIT) {
-      if(ambix) {
+      if(x->x_ambix_t) {
         pthread_mutex_unlock(&x->x_mutex);
-        ambix_close(ambix);
-        ambix=NULL;
+        ambix_close(x->x_ambix_t);
+        x->x_ambix_t=NULL;
         pthread_mutex_lock(&x->x_mutex);
       }
       x->x_requestcode = REQUEST_NOTHING;
@@ -555,6 +556,14 @@ static void ambix_read_tick(t_ambix_read *x) {
     /* number of sample frames in file */
     SETFLOAT(atoms+0, (t_float)(x->x_ambix.frames));
     outlet_anything(x->x_infoout, gensym("frames"), 1, atoms);
+
+    /* number of markers in the file */
+    SETFLOAT(atoms+0, (t_float)(ambix_get_num_markers(x->x_ambix_t)));
+    outlet_anything(x->x_infoout, gensym("num_markers"), 1, atoms);
+
+    /* number of regions in the file */
+    SETFLOAT(atoms+0, (t_float)(ambix_get_num_regions(x->x_ambix_t)));
+    outlet_anything(x->x_infoout, gensym("num_regions"), 1, atoms);
   }
 
 
@@ -786,6 +795,80 @@ static void ambix_read_free(t_ambix_read *x) {
   ambix_matrix_deinit(&x->x_matrix);
 }
 
+static void ambix_read_marker(t_ambix_read*x, t_float marker_id) {
+  if (!x->x_ambix_t)
+    return;
+  if ( ((int)marker_id >= 0) && ((int)marker_id < ambix_get_num_markers(x->x_ambix_t)) ) {
+    ambix_marker_t *marker;
+    marker = ambix_get_marker(x->x_ambix_t, (int)marker_id);
+    if (marker) {
+      t_atom atoms[3]; // id pos name
+      SETFLOAT(atoms+0, (t_float)(int)marker_id);
+      SETFLOAT(atoms+1, (t_float)marker->position);
+      SETSYMBOL(atoms+2, gensym(marker->name));
+      outlet_anything(x->x_infoout, gensym("marker"), 3, atoms);
+    }
+  } else {
+    pd_error(x, "ambix_read~: no marker with this id in file");
+  }
+}
+
+static void ambix_read_all_markers(t_ambix_read*x) {
+  int nummarkers, i;
+  if (!x->x_ambix_t)
+    return;
+  nummarkers = ambix_get_num_markers(x->x_ambix_t);
+  for (i=0; i<nummarkers; i++) {
+    ambix_read_marker(x, i);
+  }
+}
+
+static void ambix_read_region(t_ambix_read*x, t_float region_id) {
+  if (!x->x_ambix_t)
+    return;
+  if ( ((int)region_id >= 0) && ((int)region_id < ambix_get_num_regions(x->x_ambix_t)) ) {
+    ambix_region_t *region;
+    region = ambix_get_region(x->x_ambix_t, (int)region_id);
+    if (region) {
+      t_atom atoms[4]; // id start_pos end_pos name
+      SETFLOAT(atoms+0, (t_float)(int)region_id);
+      SETFLOAT(atoms+1, (t_float)region->start_position);
+      SETFLOAT(atoms+2, (t_float)region->end_position);
+      SETSYMBOL(atoms+3, gensym(region->name));
+      outlet_anything(x->x_infoout, gensym("region"), 4, atoms);
+    }
+  } else {
+    pd_error(x, "ambix_read~: no region with this id in file");
+  }
+}
+
+static void ambix_read_all_regions(t_ambix_read*x) {
+  int numregions, i;
+  if (!x->x_ambix_t)
+    return;
+  numregions = ambix_get_num_regions(x->x_ambix_t);
+  for (i=0; i<numregions; i++) {
+    ambix_read_region(x, i);
+  }
+}
+
+static void ambix_seek_pos(t_ambix_read*x, t_float position) {
+  if (!x->x_ambix_t) {
+    pd_error(x, "ambix_read~: seek not possible, requested with no prior 'open'");
+    return;
+  }
+  pthread_mutex_lock(&x->x_mutex);
+  if (x->x_state == STATE_STARTUP) {
+    int64_t ret = ambix_seek(x->x_ambix_t, (int64_t)position, SEEK_SET);
+    if (ret < 0)
+      pd_error(x, "ambix_read~: seek not possible");
+    pthread_mutex_unlock(&x->x_mutex);
+  } else {
+    pthread_mutex_unlock(&x->x_mutex);
+    pd_error(x, "ambix_read~: seek not possible, playback already started");
+  }
+}
+
 AMBIX_EXPORT
 void ambix_read_tilde_setup(void) {
   ambix_read_class = class_new(gensym("ambix_read~"), (t_newmethod)ambix_read_new,
@@ -798,6 +881,11 @@ void ambix_read_tilde_setup(void) {
   class_addmethod(ambix_read_class, (t_method)ambix_read_dsp, gensym("dsp"), A_NULL);
   class_addmethod(ambix_read_class, (t_method)ambix_read_open, gensym("open"), A_SYMBOL, A_DEFFLOAT, A_NULL);
   class_addmethod(ambix_read_class, (t_method)ambix_read_print, gensym("print"), A_NULL);
+  class_addmethod(ambix_read_class, (t_method)ambix_read_marker, gensym("get_marker"), A_DEFFLOAT, A_NULL);
+  class_addmethod(ambix_read_class, (t_method)ambix_read_all_markers, gensym("get_all_markers"), A_NULL);
+  class_addmethod(ambix_read_class, (t_method)ambix_read_region, gensym("get_region"), A_DEFFLOAT, A_NULL);
+  class_addmethod(ambix_read_class, (t_method)ambix_read_all_regions, gensym("get_all_regions"), A_NULL);
+  class_addmethod(ambix_read_class, (t_method)ambix_seek_pos, gensym("seek"), A_DEFFLOAT, A_NULL);
 
   if(0)
     MARK("[ambix_read~] setup done");

@@ -33,6 +33,32 @@
 void print_usage(const char*name);
 void print_version(const char*name);
 
+void print_markers(ambix_t*ambix)
+{
+  uint32_t num_markers = ambix_get_num_markers(ambix);
+  if (num_markers) {
+    ambix_marker_t *marker = NULL;
+    uint32_t i;
+    for (i=0; i < num_markers; i++) {
+      marker = ambix_get_marker(ambix, i);
+      if (marker)
+        printf("  Marker %d: name: %s position: %f \n", i, marker->name, marker->position);
+    }
+  }
+}
+void print_regions(ambix_t*ambix)
+{
+  uint32_t num_regions = ambix_get_num_regions(ambix);
+  if (num_regions) {
+    ambix_region_t *region = NULL;
+    uint32_t i;
+    for (i=0; i < num_regions; i++) {
+      region = ambix_get_region(ambix, i);
+      printf("  Region %d: name: %s start_position: %f end_position: %f \n", i, region->name, region->start_position, region->end_position);
+    }
+  }
+}
+
 void printinfo(const char*path) {
   ambix_info_t info;
   ambix_t*ambix;
@@ -94,6 +120,11 @@ void printinfo(const char*path) {
     }
   }
   printf("\n");
+
+  printf("Number of Markers\t: %d\n", ambix_get_num_markers(ambix));
+  print_markers(ambix);
+  printf("Number of Regions\t: %d\n", ambix_get_num_regions(ambix));
+  print_regions(ambix);
 
   printf("Close file '%s': ", path);
   if(AMBIX_ERR_SUCCESS!=ambix_close(ambix))

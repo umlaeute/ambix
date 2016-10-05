@@ -73,6 +73,25 @@ void _ambix_print_matrix(const ambix_matrix_t*mtx) {
 
 }
 
+void _ambix_print_markers(const ambix_t*ambix)
+{
+  if (ambix->markers) {
+    int i;
+    for (i=0; i < ambix->num_markers; i++) {
+      printf("    marker %d: name: %s position: %f \n", i, ambix->markers[i].name, ambix->markers[i].position);
+    }
+  }
+}
+void _ambix_print_regions(const ambix_t*ambix)
+{
+  if (ambix->regions) {
+    int i;
+    for (i=0; i < ambix->num_regions; i++) {
+      printf("    region %d: name: %s start_position: %f end_position: %f \n", i, ambix->regions[i].name, ambix->regions[i].start_position, ambix->regions[i].end_position);
+    }
+  }
+}
+
 void _ambix_print_ambix(const ambix_t*ambix) {
   printf("AMBIX %p\n", ambix);
   if(!ambix)return;
@@ -95,6 +114,10 @@ void _ambix_print_ambix(const ambix_t*ambix) {
   printf("  adaptorbuffer\t: %p\n", ambix->adaptorbuffer);
   printf("  adaptorbuffersize\t: %d\n", (int)(ambix->adaptorbuffersize));
   printf("  ambisonics_order\t: %d\n", ambix->ambisonics_order);
+  printf("  num_markers\t: %d\n", ambix->num_markers);
+  _ambix_print_markers(ambix);
+  printf("  num_regions\t: %d\n", ambix->num_regions);
+  _ambix_print_regions(ambix);
   printf("  startedReading\t: %d\n", ambix->startedReading);
   printf("  startedWriting\t: %d\n", ambix->startedWriting);
 }
@@ -105,5 +128,12 @@ void _ambix_swap4array(uint32_t*data, uint64_t datasize) {
   for(i=0; i<datasize; i++) {
     uint32_t v=*data;
     *data++=swap4(v);
+  }
+}
+void _ambix_swap8array(uint64_t*data, uint64_t datasize) {
+  uint64_t i;
+  for(i=0; i<datasize; i++) {
+    uint64_t v=*data;
+    *data++=swap8(v);
   }
 }

@@ -54,6 +54,9 @@ typedef struct ambixsndfile_private_t {
 #if defined HAVE_SF_CHUNK_INFO
   /** for writing uuid chunks */
   SF_CHUNK_INFO sf_chunk;
+  /** for writing other kind of chunks */
+  SF_CHUNK_INFO *sf_otherchunks;
+  uint32_t sf_numchunks;
 #elif defined HAVE_SF_UUID_INFO
 #endif
 }ambixsndfile_private_t;
@@ -292,6 +295,7 @@ ambix_err_t _ambix_open (ambix_t*ambix, const char *path, const ambix_filemode_t
 }
 
 ambix_err_t     _ambix_close    (ambix_t*ambix) {
+  int i;
   if(PRIVATE(ambix)->sf_file)
     sf_close(PRIVATE(ambix)->sf_file);
   PRIVATE(ambix)->sf_file=NULL;
@@ -299,6 +303,11 @@ ambix_err_t     _ambix_close    (ambix_t*ambix) {
 #if defined HAVE_SF_SET_CHUNK && defined (HAVE_SF_CHUNK_INFO)
   if((PRIVATE(ambix)->sf_chunk).data)
     free((PRIVATE(ambix)->sf_chunk).data);
+  for (i=0;i<PRIVATE(ambix)->sf_numchunks;i++) {
+    if (PRIVATE(ambix)->sf_otherchunks[i].data)
+      free(PRIVATE(ambix)->sf_otherchunks[i].data);
+  }
+  free(PRIVATE(ambix)->sf_otherchunks);
 #endif
 
   free(PRIVATE(ambix));
@@ -383,4 +392,86 @@ ambix_err_t _ambix_write_uuidchunk(ambix_t*ax, const void*data, int64_t datasize
   }
 #endif
   return  AMBIX_ERR_UNKNOWN;
+}
+ambix_err_t _ambix_write_chunk(ambix_t*ax, uint32_t id, const void*data, int64_t datasize) {
+#if defined (HAVE_SF_SET_CHUNK)
+  int err ;
+  int64_t datasize4 = datasize>>2;
+
+  SF_CHUNK_INFO *chunks = NULL;
+  SF_CHUNK_INFO *chunk  = NULL;
+  unsigned int numchunks=(PRIVATE(ax)->sf_numchunks);
+
+  if(datasize4*4 < datasize)
+    datasize4++;
+
+  /* (re-)allocate memory for the new chunk - data has to be kept until file closes! */
+  if (0 == numchunks) {
+    chunks = (SF_CHUNK_INFO*)calloc(1, sizeof(*chunks));
+  } else {
+    chunks = (SF_CHUNK_INFO*)realloc(PRIVATE(ax)->sf_otherchunks, (numchunks+1)*sizeof(*chunks));
+  }
+  if (NULL == chunks)
+    return AMBIX_ERR_UNKNOWN;
+  chunk = chunks + numchunks;
+  memset (chunk, 0, sizeof (*chunk)) ;
+
+  //snprintf (chunk->id, 4, id) ;
+  memcpy(chunk->id, &id, 4);
+  chunk->id_size = 4 ;
+  if(chunk->data)
+    free(chunk->data);
+
+  chunk->data = calloc(datasize4, 4);
+
+  memcpy(chunk->data, data, datasize);
+  chunk->datalen = datasize ;
+  err = sf_set_chunk (PRIVATE(ax)->sf_file, chunk);
+
+  PRIVATE(ax)->sf_numchunks += 1;
+  PRIVATE(ax)->sf_otherchunks = chunks;
+
+  if(SF_ERR_NO_ERROR != err)
+    return AMBIX_ERR_UNKNOWN;
+  return AMBIX_ERR_SUCCESS;
+#endif
+  return  AMBIX_ERR_UNKNOWN;
+}
+void* _ambix_read_chunk(ambix_t*ax, uint32_t id, uint32_t chunk_it, int64_t *datasize) {
+#if defined HAVE_SF_GET_CHUNK_ITERATOR
+  int err;
+  SF_CHUNK_INFO	chunk_info;
+  SF_CHUNK_ITERATOR * iterator;
+  int i;
+  memset (&chunk_info, 0, sizeof (chunk_info));
+  memcpy(chunk_info.id, &id, 4);
+  chunk_info.id_size = 4;
+  iterator = sf_get_chunk_iterator (PRIVATE(ax)->sf_file, &chunk_info);
+  if (!iterator) {
+    *datasize = 0;
+    return NULL;
+  }
+  // jump to wanted iterator
+  for (i=0; i<chunk_it; i++) {
+    iterator = sf_next_chunk_iterator (iterator) ;
+    if (!iterator) {
+      *datasize = 0;
+      return NULL;
+    }
+  }
+  memset (&chunk_info, 0, sizeof (chunk_info));
+  err = sf_get_chunk_size (iterator, &chunk_info);
+  if (!chunk_info.datalen) {
+    *datasize = 0;
+    return NULL;
+  }
+  chunk_info.data = malloc (chunk_info.datalen); // has to be freed later by the caller!
+  err = sf_get_chunk_data (iterator, &chunk_info);
+
+  // free (chunk_info.data);
+  *datasize = chunk_info.datalen;
+  return chunk_info.data;
+#endif
+  *datasize = 0;
+  return NULL;
 }
