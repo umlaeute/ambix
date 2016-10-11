@@ -204,6 +204,8 @@ ambix_err_t _ambix_read_markersregions(ambix_t*ambix) {
   /* first parse strings and save into a struct for later usage */
   while (strings_datasize) {
     void*strings_data = _ambix_read_chunk(ambix, strg_id.a, chunk_it++, &strings_datasize);
+    if (!strings_data)
+      continue;
     if (strings_datasize > SIZEOF_CAFStrings) {
       uint32_t temp_num_strings = 0;
       int64_t mstrings_datasize = 0;
@@ -213,8 +215,7 @@ ambix_err_t _ambix_read_markersregions(ambix_t*ambix) {
       if (byteswap)
         _ambix_swap4array(&strings_chunk->mNumEntries, 1);
       if (strings_datasize < (SIZEOF_CAFStrings + strings_chunk->mNumEntries*sizeof(CAFStringID))) {
-        if (strings_data)
-          free(strings_data);
+        free(strings_data);
         break;
       }
       temp_num_strings = strings_chunk->mNumEntries;
@@ -245,8 +246,7 @@ ambix_err_t _ambix_read_markersregions(ambix_t*ambix) {
         mystrings.num_strings++;
       }
     }
-    if (strings_data)
-      free(strings_data);
+    free(strings_data);
   }
 
   /* parse markers */
@@ -257,14 +257,15 @@ ambix_err_t _ambix_read_markersregions(ambix_t*ambix) {
     mark_id.b[0] = 'm'; mark_id.b[1] = 'a'; mark_id.b[2] = 'r'; mark_id.b[3] = 'k';
     while (marker_datasize) {
       void*marker_data = _ambix_read_chunk(ambix, mark_id.a, chunk_it++, &marker_datasize);
+      if (!marker_data)
+        continue;
       if (marker_datasize > 2*sizeof(uint32_t)) {
         CAFMarkerChunk* marker_chunk = (CAFMarkerChunk*)marker_data;
         unsigned char* bytePtr = NULL;
         if (byteswap)
           swap_marker_chunk(marker_chunk);
         if (marker_datasize < (marker_chunk->mNumberMarkers*(sizeof(CAFMarker)) + 2*sizeof(uint32_t))) {
-          if (marker_data)
-            free(marker_data);
+          free(marker_data);
           break;
         }
         bytePtr = (unsigned char*)marker_data;
@@ -285,8 +286,7 @@ ambix_err_t _ambix_read_markersregions(ambix_t*ambix) {
           bytePtr += sizeof(CAFMarker);
         }
       }
-      if (marker_data)
-        free(marker_data);
+      free(marker_data);
     }
   } while(0);
 
@@ -301,6 +301,8 @@ ambix_err_t _ambix_read_markersregions(ambix_t*ambix) {
 
     while (region_datasize) {
       region_data = _ambix_read_chunk(ambix, regn_id.a, chunk_it++, &region_datasize);
+      if(!region_data)
+        continue;
       if (region_datasize > 2*sizeof(uint32_t)) {
         int64_t data_read = 0;
         unsigned char* bytePtr = NULL;
@@ -308,8 +310,7 @@ ambix_err_t _ambix_read_markersregions(ambix_t*ambix) {
         if (byteswap)
           swap_region_chunk(region_chunk);
         if (region_datasize < (region_chunk->mNumberRegions*(SIZEOF_CAFRegion+sizeof(CAFMarker)) + SIZEOF_CAFRegionChunk)) {
-          if (region_data)
-            free(region_data);
+          free(region_data);
           break;
         }
         bytePtr = (unsigned char*)region_data;
@@ -347,8 +348,7 @@ ambix_err_t _ambix_read_markersregions(ambix_t*ambix) {
           ambix_add_region(ambix, &new_ambix_region);
         }
       }
-      if (region_data)
-        free(region_data);
+      free(region_data);
     }
   } while(0);
 
