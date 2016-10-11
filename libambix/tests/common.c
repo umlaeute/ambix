@@ -131,9 +131,11 @@ float32_t data_diff(uint32_t line,
     switch(fmt) {
     case INT16  :
       v=((int16_t*)A)[i]-((int16_t*)B)[i];
+      v/=0xFFFF;
       break;
     case INT32  :
       v=((int32_t*)A)[i]-((int32_t*)B)[i];
+      v/=0xFFFFFFFF;
       break;
     case FLOAT32:
       v=((float32_t*)A)[i]-((float32_t*)B)[i];
