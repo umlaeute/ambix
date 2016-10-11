@@ -62,31 +62,32 @@ typedef enum {
 } kCAF_SMPTE_TimeType; // uint32_t
 
 /* this is for the mType field of CAFMarker */
+#define AMBIX_MAKE_MARKER(a, b, c, d) ((uint32_t) ((((uint32_t) (a)) << 24) | ((b) << 16) | ((c) << 8) | (d)))
 typedef enum {
     kCAFMarkerType_Generic              = 0,
-    kCAFMarkerType_ProgramStart         = 'pbeg',
-    kCAFMarkerType_ProgramEnd           = 'pend',
-    kCAFMarkerType_TrackStart           = 'tbeg',
-    kCAFMarkerType_TrackEnd             = 'tend',
-    kCAFMarkerType_Index                = 'indx',
-    kCAFMarkerType_RegionStart          = 'rbeg',
-    kCAFMarkerType_RegionEnd            = 'rend',
-    kCAFMarkerType_RegionSyncPoint      = 'rsyc',
-    kCAFMarkerType_SelectionStart       = 'sbeg',
-    kCAFMarkerType_SelectionEnd         = 'send',
-    kCAFMarkerType_EditSourceBegin      = 'cbeg',
-    kCAFMarkerType_EditSourceEnd        = 'cend',
-    kCAFMarkerType_EditDestinationBegin = 'dbeg',
-    kCAFMarkerType_EditDestinationEnd   = 'dend',
-    kCAFMarkerType_SustainLoopStart     = 'slbg',
-    kCAFMarkerType_SustainLoopEnd       = 'slen',
-    kCAFMarkerType_ReleaseLoopStart     = 'rlbg',
-    kCAFMarkerType_ReleaseLoopEnd       = 'rlen'
+    kCAFMarkerType_ProgramStart         = AMBIX_MAKE_MARKER('p', 'b', 'e', 'g'),
+    kCAFMarkerType_ProgramEnd           = AMBIX_MAKE_MARKER('p', 'e', 'n', 'd'),
+    kCAFMarkerType_TrackStart           = AMBIX_MAKE_MARKER('t', 'b', 'e', 'g'),
+    kCAFMarkerType_TrackEnd             = AMBIX_MAKE_MARKER('t', 'e', 'n', 'd'),
+    kCAFMarkerType_Index                = AMBIX_MAKE_MARKER('i', 'n', 'd', 'x'),
+    kCAFMarkerType_RegionStart          = AMBIX_MAKE_MARKER('r', 'b', 'e', 'g'),
+    kCAFMarkerType_RegionEnd            = AMBIX_MAKE_MARKER('r', 'e', 'n', 'd'),
+    kCAFMarkerType_RegionSyncPoint      = AMBIX_MAKE_MARKER('r', 's', 'y', 'c'),
+    kCAFMarkerType_SelectionStart       = AMBIX_MAKE_MARKER('s', 'b', 'e', 'g'),
+    kCAFMarkerType_SelectionEnd         = AMBIX_MAKE_MARKER('s', 'e', 'n', 'd'),
+    kCAFMarkerType_EditSourceBegin      = AMBIX_MAKE_MARKER('c', 'b', 'e', 'g'),
+    kCAFMarkerType_EditSourceEnd        = AMBIX_MAKE_MARKER('c', 'e', 'n', 'd'),
+    kCAFMarkerType_EditDestinationBegin = AMBIX_MAKE_MARKER('d', 'b', 'e', 'g'),
+    kCAFMarkerType_EditDestinationEnd   = AMBIX_MAKE_MARKER('d', 'e', 'n', 'd'),
+    kCAFMarkerType_SustainLoopStart     = AMBIX_MAKE_MARKER('s', 'l', 'b', 'g'),
+    kCAFMarkerType_SustainLoopEnd       = AMBIX_MAKE_MARKER('s', 'l', 'e', 'n'),
+    kCAFMarkerType_ReleaseLoopStart     = AMBIX_MAKE_MARKER('r', 'l', 'b', 'g'),
+    kCAFMarkerType_ReleaseLoopEnd       = AMBIX_MAKE_MARKER('r', 'l', 'e', 'n'),
 } kCAFMarkerType; // uint32_t
 
 /* individual marker struct */
 typedef struct {
-    uint32_t        mType;
+    kCAFMarkerType  mType;
     float64_t       mFramePosition;
     uint32_t        mMarkerID;        // reference to a mStringsIDs for naming
     CAF_SMPTE_Time  mSMPTETime;
