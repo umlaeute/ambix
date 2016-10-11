@@ -28,6 +28,17 @@
 #endif
 #include <string.h>
 
+#include <float.h>
+#ifdef DBL_DECIMAL_DIG
+  #define OP_DBL_Digs (DBL_DECIMAL_DIG)
+#else
+  #ifdef DECIMAL_DIG
+    #define OP_DBL_Digs (DECIMAL_DIG)
+  #else
+    #define OP_DBL_Digs (DBL_DIG + 3)
+  #endif
+#endif
+
 static char* snprintdata(char*out, size_t size, ambixtest_presentationformat_t fmt, const void*data, uint64_t index) {
   switch(fmt) {
   case INT16  :
@@ -52,15 +63,16 @@ static char* snprintdata(char*out, size_t size, ambixtest_presentationformat_t f
 
 void matrix_print(const ambix_matrix_t*mtx) {
   printf("matrix[%p] ", mtx);
-  printf(" [%dx%d]@%p\n", mtx->rows, mtx->cols, mtx->data);
+  printf(" [%dx%d]@%p\n[\n", mtx->rows, mtx->cols, mtx->data);
   if(mtx->data) {
     uint32_t c, r;
     for(r=0; r<mtx->rows; r++) {
       for(c=0; c<mtx->cols; c++)
-        printf(" %05f", mtx->data[r][c]);
+        printf(" %.*e", OP_DBL_Digs - 1, mtx->data[r][c]);
       printf("\n");
     }
   }
+  printf("]\n");
 }
 #define MAX_OVER 10
 float32_t matrix_diff(uint32_t line, const ambix_matrix_t*A, const ambix_matrix_t*B, float32_t eps) {
