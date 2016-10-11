@@ -594,7 +594,7 @@ int main(int argc, char**argv) {
   datamul_eye_tests(1e-7);
 #endif
   datamul_4_2_tests(1024, 1e-7);
-  mtxinverse_tests(1e-5);
+  mtxinverse_tests(3e-5);
 
   return pass();
 }
