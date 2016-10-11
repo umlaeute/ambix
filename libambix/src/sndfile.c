@@ -472,6 +472,7 @@ void* _ambix_read_chunk(ambix_t*ax, uint32_t id, uint32_t chunk_it, int64_t *dat
   *datasize = chunk_info.datalen;
   return chunk_info.data;
 #endif
+  /* coverity[unreachable]: reachable in the case of sndfile without set_chunk */
   *datasize = 0;
   return NULL;
 }
