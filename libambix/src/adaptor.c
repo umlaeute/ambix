@@ -87,7 +87,7 @@ _AMBIX_SPLITADAPTOR(int16);
 
 
 
-#define _AMBIX_SPLITADAPTOR_MATRIX(type)                                \
+#define _AMBIX_SPLITADAPTOR_MATRIX(type, sumtype)                       \
   ambix_err_t _ambix_splitAdaptormatrix_##type(const type##_t*source, uint32_t sourcechannels, \
                                                const ambix_matrix_t*matrix, \
                                                type##_t*dest_ambi, type##_t*dest_other, \
@@ -100,7 +100,7 @@ _AMBIX_SPLITADAPTOR(int16);
       uint32_t outchan, inchan;                                         \
       const type##_t*src = source+sourcechannels*f;                     \
       for(outchan=0; outchan<fullambichannels; outchan++) {             \
-        float32_t sum=0.;                                               \
+        sumtype##_t sum=0.;                                             \
         for(inchan=0; inchan<rawambichannels; inchan++) {               \
           sum+=mtx[outchan][inchan] * src[inchan];                      \
         }                                                               \
@@ -112,13 +112,13 @@ _AMBIX_SPLITADAPTOR(int16);
     return AMBIX_ERR_SUCCESS;                                           \
   }
 
-_AMBIX_SPLITADAPTOR_MATRIX(float32);
-_AMBIX_SPLITADAPTOR_MATRIX(float64);
+_AMBIX_SPLITADAPTOR_MATRIX(float32, float32);
+_AMBIX_SPLITADAPTOR_MATRIX(float64, float64);
 /* both _int16 and _int32 are highly unoptimized!
  * LATER: add some fixed point magic to speed things up
  */
-_AMBIX_SPLITADAPTOR_MATRIX(int32);
-_AMBIX_SPLITADAPTOR_MATRIX(int16);
+_AMBIX_SPLITADAPTOR_MATRIX(int32, float32);
+_AMBIX_SPLITADAPTOR_MATRIX(int16, float32);
 
 #define _AMBIX_MERGEADAPTOR(type)                                       \
   ambix_err_t _ambix_mergeAdaptor_##type(const type##_t*source1, uint32_t source1channels, \
@@ -143,7 +143,7 @@ _AMBIX_MERGEADAPTOR(int16);
 
 //#define _AMBIX_MERGEADAPTOR_MATRIX(type)      \
 
-#define _AMBIX_MERGEADAPTOR_MATRIX(type)                                \
+#define _AMBIX_MERGEADAPTOR_MATRIX(type, sumtype)                       \
   ambix_err_t _ambix_mergeAdaptormatrix_##type(const type##_t*ambi_data, const ambix_matrix_t*matrix, \
                                                const type##_t*otherdata, uint32_t source2channels, \
                                                type##_t*destination, int64_t frames) { \
@@ -156,7 +156,7 @@ _AMBIX_MERGEADAPTOR(int16);
       uint32_t outchan, inchan;                                         \
       const type##_t*src = ambi_data+fullambichannels*f;                \
       for(outchan=0; outchan<ambixchannels; outchan++) {                \
-        float32_t sum=0.;                                               \
+        sumtype##_t sum=0.;                                               \
         for(inchan=0; inchan<fullambichannels; inchan++) {              \
           sum+=mtx[outchan][inchan] * src[inchan];                      \
         }                                                               \
@@ -169,7 +169,7 @@ _AMBIX_MERGEADAPTOR(int16);
     return AMBIX_ERR_SUCCESS;                                           \
   }
 
-_AMBIX_MERGEADAPTOR_MATRIX(float32);
-_AMBIX_MERGEADAPTOR_MATRIX(float64);
-_AMBIX_MERGEADAPTOR_MATRIX(int32);
-_AMBIX_MERGEADAPTOR_MATRIX(int16);
+_AMBIX_MERGEADAPTOR_MATRIX(float32, float32);
+_AMBIX_MERGEADAPTOR_MATRIX(float64, float64);
+_AMBIX_MERGEADAPTOR_MATRIX(int32, float32);
+_AMBIX_MERGEADAPTOR_MATRIX(int16, float32);
