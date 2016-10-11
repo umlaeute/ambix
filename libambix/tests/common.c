@@ -228,13 +228,13 @@ void*data_calloc(ambixtest_presentationformat_t fmt, size_t nmembers) {
 }
 
 void*data_sine(ambixtest_presentationformat_t fmt, uint64_t frames, uint32_t channels, float32_t freq) {
-  float32_t periods=freq/44100.;
+  float64_t periods=freq/44100.;
   void*data=data_calloc(fmt, frames*channels);
   int64_t frame;
   for(frame=0; frame<frames; frame++) {
     int32_t chan;
     float64_t f=(float64_t)frame*periods;
-    float64_t value=0.5*sinf(f);
+    float64_t value=0.5*sin(f);
     for(chan=0; chan<channels; chan++)
       setdata(fmt, data, f*channels+chan, value);
   }
@@ -243,8 +243,8 @@ void*data_sine(ambixtest_presentationformat_t fmt, uint64_t frames, uint32_t cha
 
 void*data_ramp(ambixtest_presentationformat_t fmt, uint64_t frames, uint32_t channels) {
   void*data=data_calloc(fmt, frames*channels);
-  double increment=1./(double)frames;
-  double value=0.;
+  float64_t increment=1./(double)frames;
+  float64_t value=0.;
   int64_t frame;
   for(frame=0; frame<frames; frame++) {
     int32_t chan;
