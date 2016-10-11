@@ -383,31 +383,35 @@ void add_string_to_data(int id, unsigned char *byte_ptr_stringid, char *name, in
 ambix_err_t _ambix_write_markersregions(ambix_t*ambix) {
   uint32_t i;
   int byteswap = ambix->byteswap;
+  uint32_t num_strings = ambix->num_markers+ambix->num_regions;
 
   void *strings_data = NULL;
-  uint32_t num_strings = ambix->num_markers+ambix->num_regions;
+  void *marker_data = NULL;
+  void *region_data = NULL;
   uint32_t datasize_strings = 0;
+  uint32_t datasize_markers = 0;
+  uint32_t datasize_regions = 0;
+
   unsigned char* byte_ptr_strings = NULL;
   unsigned char* byte_ptr_stringid = NULL;
   int64_t byteoffset_strings = 0;
-
-  void *marker_data = NULL;
-  uint32_t datasize_markers = 0;
+  CAFStrings *strings_chunk = NULL;
 
   /* reserve space for strings */
-  if (num_strings > 0) {
-    CAFStrings *strings_chunk = NULL;
-    datasize_strings = sizeof(uint32_t)+num_strings*sizeof(CAFStringID);
-    strings_data = calloc(1, datasize_strings+256); // reserve a fixed space of 256 bytes for each string
-    byte_ptr_strings = (unsigned char*)strings_data;
-    byte_ptr_strings += (sizeof(uint32_t)+num_strings*(sizeof(CAFStringID)));
-    byte_ptr_stringid = (unsigned char*)strings_data;
-    byte_ptr_stringid += sizeof(uint32_t);
-    strings_chunk = (CAFStrings*)strings_data;
-    strings_chunk->mNumEntries = num_strings;
-    if (byteswap)
-      _ambix_swap4array(&strings_chunk->mNumEntries, 1);
+  if (!num_strings) {
+    return AMBIX_ERR_SUCCESS;
   }
+  datasize_strings = sizeof(uint32_t)+num_strings*sizeof(CAFStringID);
+  strings_data = calloc(1, datasize_strings+256); // reserve a fixed space of 256 bytes for each string
+  byte_ptr_strings = (unsigned char*)strings_data;
+  byte_ptr_strings += (sizeof(uint32_t)+num_strings*(sizeof(CAFStringID)));
+  byte_ptr_stringid = (unsigned char*)strings_data;
+  byte_ptr_stringid += sizeof(uint32_t);
+  strings_chunk = (CAFStrings*)strings_data;
+  strings_chunk->mNumEntries = num_strings;
+  if (byteswap)
+    _ambix_swap4array(&strings_chunk->mNumEntries, 1);
+
   /* markers */
   if (ambix->num_markers > 0) {
     CAFMarkerChunk* marker_chunk = NULL;
@@ -442,52 +446,57 @@ ambix_err_t _ambix_write_markersregions(ambix_t*ambix) {
   }
 
   /* regions */
-  // a region consists of 2 markers (start,end) and region chunk
-  uint32_t datasize_regions = 2*sizeof(uint32_t) + ambix->num_regions*(SIZEOF_CAFRegion + 2*sizeof(CAFMarker));
-  void *region_data               = calloc(1, datasize_regions);
-  CAFRegionChunk* region_chunk    = (CAFRegionChunk*)region_data;
-  unsigned char* byte_ptr_regions = (unsigned char*)region_data;
-  region_chunk->mSMPTE_TimeType = kCAF_SMPTE_TimeTypeNone;
-  region_chunk->mNumberRegions = ambix->num_regions;
-  if (byteswap)
-    swap_region_chunk(region_chunk);
-  // offset the data pointer by 2*uint32_t to point to start of mRegions
-  byte_ptr_regions += 2*sizeof(uint32_t);
-  for (i=0; i<ambix->num_regions;i++) {
-    CAFRegion *new_region   = NULL;
-    CAFMarker *start_marker = NULL, *end_marker = NULL;
+  if (ambix->num_regions > 0) {
+    // a region consists of 2 markers (start,end) and region chunk
+    CAFRegionChunk* region_chunk = NULL;
+    unsigned char* byte_ptr_regions = NULL;
+    datasize_regions = 2*sizeof(uint32_t) + ambix->num_regions*(SIZEOF_CAFRegion + 2*sizeof(CAFMarker));
+    region_data      = calloc(1, datasize_regions);
+    region_chunk     = (CAFRegionChunk*)region_data;
+    byte_ptr_regions = (unsigned char*)region_data;
 
-    /* region */
-    new_region = (CAFRegion*) byte_ptr_regions;
-    new_region->mRegionID = i+1; // does not have a connection with a string
-    new_region->mFlags = 0;
-    new_region->mNumberMarkers = 2; // start, end marker
+    region_chunk->mSMPTE_TimeType = kCAF_SMPTE_TimeTypeNone;
+    region_chunk->mNumberRegions = ambix->num_regions;
+    if (byteswap)
+      swap_region_chunk(region_chunk);
+    // offset the data pointer by 2*uint32_t to point to start of mRegions
+    byte_ptr_regions += 2*sizeof(uint32_t);
+    for (i=0; i<ambix->num_regions;i++) {
+      CAFRegion *new_region   = NULL;
+      CAFMarker *start_marker = NULL, *end_marker = NULL;
 
-    /* start region marker */
-    byte_ptr_regions += SIZEOF_CAFRegion; // offset pointer to start marker
-    start_marker = (CAFMarker*)byte_ptr_regions;// &((new_region->mMarkers)[0]);
-    start_marker->mType = kCAFMarkerType_RegionStart;
-    start_marker->mFramePosition = ambix->regions[i].start_position;
-    start_marker->mMarkerID = ambix->num_markers+i+1; // string ID -> num_markers+1...num_markers+num_regions
-    start_marker->mChannel = 0; // 0 means for all channels
+      /* region */
+      new_region = (CAFRegion*) byte_ptr_regions;
+      new_region->mRegionID = i+1; // does not have a connection with a string
+      new_region->mFlags = 0;
+      new_region->mNumberMarkers = 2; // start, end marker
 
-    /* end region marker */
-    byte_ptr_regions += sizeof(CAFMarker); // offset pointer to end marker
-    end_marker = (CAFMarker*)byte_ptr_regions; // &new_region->mMarkers[1];
-    end_marker->mType = kCAFMarkerType_RegionEnd;
-    end_marker->mFramePosition = ambix->regions[i].end_position;
-    end_marker->mMarkerID = ambix->num_markers+i+1; // string ID -> num_markers+1...num_markers+num_regions
-    end_marker->mChannel = 0; // 0 means for all channels
-    if (byteswap) {
-      swap_region(new_region);
-      swap_marker(start_marker);
-      swap_marker(end_marker);
+      /* start region marker */
+      byte_ptr_regions += SIZEOF_CAFRegion; // offset pointer to start marker
+      start_marker = (CAFMarker*)byte_ptr_regions;// &((new_region->mMarkers)[0]);
+      start_marker->mType = kCAFMarkerType_RegionStart;
+      start_marker->mFramePosition = ambix->regions[i].start_position;
+      start_marker->mMarkerID = ambix->num_markers+i+1; // string ID -> num_markers+1...num_markers+num_regions
+      start_marker->mChannel = 0; // 0 means for all channels
+
+      /* end region marker */
+      byte_ptr_regions += sizeof(CAFMarker); // offset pointer to end marker
+      end_marker = (CAFMarker*)byte_ptr_regions; // &new_region->mMarkers[1];
+      end_marker->mType = kCAFMarkerType_RegionEnd;
+      end_marker->mFramePosition = ambix->regions[i].end_position;
+      end_marker->mMarkerID = ambix->num_markers+i+1; // string ID -> num_markers+1...num_markers+num_regions
+      end_marker->mChannel = 0; // 0 means for all channels
+      if (byteswap) {
+        swap_region(new_region);
+        swap_marker(start_marker);
+        swap_marker(end_marker);
+      }
+      byte_ptr_regions += sizeof(CAFMarker);
+
+      add_string_to_data(ambix->num_markers+i+1, byte_ptr_stringid, ambix->regions[i].name, &byteoffset_strings, byte_ptr_strings, &datasize_strings, byteswap);
+      byte_ptr_strings += (strlen((const char*)ambix->regions[i].name)+1);
+      byte_ptr_stringid += sizeof(CAFStringID);
     }
-    byte_ptr_regions += sizeof(CAFMarker);
-
-    add_string_to_data(ambix->num_markers+i+1, byte_ptr_stringid, ambix->regions[i].name, &byteoffset_strings, byte_ptr_strings, &datasize_strings, byteswap);
-    byte_ptr_strings += (strlen((const char*)ambix->regions[i].name)+1);
-    byte_ptr_stringid += sizeof(CAFStringID);
   }
 
   /* add the chunk data */
