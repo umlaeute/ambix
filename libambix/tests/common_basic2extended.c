@@ -59,9 +59,6 @@ int check_create_b2e(const char*path, ambix_sampleformat_t format,
   /* we want to write an EXTENDED file using the BASIC api (full set) */
   winfo.fileformat=AMBIX_BASIC;
 
-  ambix=ambix_open(path, AMBIX_WRITE, &winfo);
-  if(fail_if((NULL==ambix), __LINE__, "couldn't create ambix file '%s' for writing", path))return 1;
-
   orgambidata =data_sine(fmt, framesize, fullambichannels, periods);
   orgotherdata=data_ramp(fmt, framesize, extrachannels);
   if(fail_if((NULL==orgambidata), __LINE__, "couldn't create ambidata %dx%d sine @ %f", (int)framesize, (int)fullambichannels, (float)periods))return 1;
@@ -69,6 +66,9 @@ int check_create_b2e(const char*path, ambix_sampleformat_t format,
 
   memcpy(ambidata, orgambidata, framesize*fullambichannels*data_size(fmt));
   memcpy(otherdata, orgotherdata, framesize*extrachannels*data_size(fmt));
+
+  ambix=ambix_open(path, AMBIX_WRITE, &winfo);
+  if(fail_if((NULL==ambix), __LINE__, "couldn't create ambix file '%s' for writing", path))return 1;
 
   err=ambix_set_adaptormatrix(ambix, matrix);
 #if 0
