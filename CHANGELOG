@@ -1,3 +1,28 @@
+libambix (0.1.1) unstable; urgency=medium
+
+  [ IOhannes m zmölnig ]
+  * debugging printout in full precision
+  * updated pinv testdata
+  * raise threshold for pinv-test
+  * scale the differences to the fixedpoint max
+  * b2e_identity4x4_float: allow to set the eps
+  * tests/b2e_eye4_float32: allow to set the eps
+  * use double internally for test-data generation
+  * use float64_t internally if no speed-loss is to be expected
+  * tests/common_b2e: group ambix file operations
+  * epsilon for tests/b2e_eye4_f32_f64
+  * epsilon for tests/b2e_eye4_f32_i32
+  * adjusted epsilon for b2e_rand4x7_*_pcm16
+  * use VERBOSE envvar to display the test-suite.log on failure
+  * added coverity-override for CID:153347
+  * early exit if no strings are being added
+  * early check for valid data (to avoid dereference before NULL-check)
+  * made CAF-markers C-compatible
+  * helper-script to get authors and copyright per file
+  * added CHANGELOG and NEWS
+
+ -- IOhannes m zmölnig <zmoelnig@iem.at>  Sun, 16 Oct 2016 23:21:31 +0200
+
 libambix (0.1) unstable; urgency=medium
 
   [ IOhannes m zmölnig ]

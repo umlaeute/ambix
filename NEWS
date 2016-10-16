@@ -1,3 +1,13 @@
+libambix (0.1.1) unstable; urgency=medium
+
+  * Fixed coverity-scan issues
+    CID: 153342,153344,153345,153346,153347
+
+  * Adjusted test-suite tresholds
+    To cater for different precisions on various CPU-types
+
+ -- IOhannes m zmölnig <zmoelnig@iem.at>  Sun, 16 Oct 2016 23:21:51 +0200
+
 libambix (0.1) unstable; urgency=medium
 
   * Support for float64
