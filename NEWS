@@ -1,0 +1,19 @@
+libambix (0.1) unstable; urgency=medium
+
+  * Support for float64
+
+  * Support for markers in CAF-files
+
+  * Stable matrix inversion
+
+  * Many bug fixes,...
+
+  * travis-ci, coverity & codecov integration
+
+ -- IOhannes m zmölnig <zmoelnig@iem.at>  Sun,  5 Oct 2016 22:50:17 +0200
+
+libambix (0.0.1) unstable; urgency=medium
+
+  * Initial release.
+
+ -- IOhannes m zmölnig <zmoelnig@iem.at>  Sun, 14 Apr 2014 12:21:57 +0200

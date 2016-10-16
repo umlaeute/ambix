@@ -1,0 +1,1018 @@
+libambix (0.1) unstable; urgency=medium
+
+  [ IOhannes m zmölnig ]
+  * fixed typos in header
+  * return standard exit-codes
+  * fixed double free if ai_copy_block() failed
+  * allow dynamic matrices
+  * helper-functions to calculate predefined matrices
+  * prevent both matrix-file and matrix-specs at the same time
+  * overload '-X' flag to sepcify adaptor matrix
+  * updated help-printout
+  * re-formatted README (as markdown)
+  * initial Travis-CI config
+  * install build-dependencies for sndfile
+  * go back to project build-dir after building libsndfile
+  * verbose build of libsndfile
+  * fixed check for AMBIX_MATRIX_FUMA
+  * removed superfluous NULL-pointer check
+  * free data on early exit
+  * free temporary fmt buffer
+  * run the test-suite
+  * build everything verbosely
+  * remove libtool libs for libsndfile
+  * debug: check whether /usr/local/lib is in LD_LIBRARY_PATH
+  * debugging via ldd: which libsndfile is used?
+  * set LD_LIBRARY_PATH before running 'make check'
+  * started contributing guide
+
+  [ Matthias Kronlachner ]
+  * pd read external avoid loop on end of file
+  * pd write external support selection of sampleformat
+  * add support for read/write float64 (double)
+  * libsndfile backend support float64 (double)
+  * null backend support float64
+  * coreaudio backend float64 support
+  * add float64 matrix multiplication
+  * add pseudo-inverse matrix operation
+  * utils add float64 support
+
+  [ IOhannes m zmölnig ]
+  * ensure 'foreign' mode for automake
+  * [libambix/tests] include data.h into dist tarball
+  * [libambix/tests] include data/file1.caf into dist tarball
+  * pseudo-build test-data
+  * run `make distcheck` as part of the travis-ci build
+  * need to set the LD_LIBRARY_PATH for distcheck as well
+  * C<=C99 does not allow variable-declarations inside loop-preamble
+  * 'make distcheck' includes 'make check'
+  * copyright-update, trailing whitespace, moved comment
+  * fixed memleaks when calculating the pseudo-inverse fails
+  * fixed memleak when calculating the inverse fails
+  * Fixed typo resulting in FTBFS
+  * Update README.md
+  * more contibuting
+  * don't overwrite the to-be-inverted matrix
+  * nicer printout
+  * zero-padding, doc
+  * testing ambix_matrix_pinv()
+  * free temporary matrix after use.
+  * free eye-matrix after use
+  * skip unimplemented tests
+  * proper NULL-initialization of pointers
+  * print addresses when printing matrices
+  * STOPTEST macro to indicate successfull run of subtest
+  * use STARTTEST/STOPTEST
+  * mtxinverse_test takes 'const' matrices
+  * dynamically transpose data rather than storing transposed data statically
+  * some constness tests for matrix operations
+  * compiler warnings about unimplemented tests
+  * remember to do even more constness tests
+  * added matrix-constness test to testsuite
+  * [doxygen] subgroups
+  * use ascii - rather than unicode –
+  * removed empty lines
+  * fixed comments
+  * easier to read return of -abs()
+  * test-implementation (float32 only) for mergeadaptor_matrix
+  * declarations of the mergeadaptor_matrix() functions
+  * easier to read "return -abs(err)"
+  * call _ambix_mergeAdaptormatrix() if ambix->use_matrix is set when writing
+  * setting the adaptor-matrix in WRITE+BASIC mode switches to BASIC2EXTENDED
+  * fixed typo
+  * easier to read "return -abs(err)"
+  * [doxygen] (sub)sections for cmdline utilities
+  * return INVALID_MATRIX if matrix cannot be inverted
+  * use realinfo.fileformat for setting adaptormatrix in WRITE mode
+  * (fake) return success in the *_if() helpers
+  * print_if() helper that doesn't exit
+  * print matrix if it is uninvertible
+  * test invertibility of standard matrices
+  * basic test for basic2extended writing
+  * first basic2extended test
+  * make ambix_matrix_transpose() and ambix_matrix_invert() as private by prefixing '_'
+  * added _ambix_matrix_transpose() to private header
+  * alternative implementation for matrix inversion
+  * build the alternative matrix-inversion
+  * function prototypes for matrix inversion in private.h
+  * [matrix] use gauss-jordan inversion from matrix-invert.c
+  * [matrix] remove local implementation of gauss-jordan inversion
+  * use cholesky's algorithm to (pseudo) invert matrices
+  * note that cholesky's inversion gives us the pseudo-inverse for free
+  * renamed 'simple' tests to 'basic'
+  * renamed ambix_none.c to common_none.c
+  * saner frequency calculation
+  * use a normal frequency
+  * STARTTEST/STOPTEST now take format-strings and require \n
+  * start/stop for b2e test
+  * b2e: use identity matrix for first test
+  * run b2e test
+  * less verbose
+  * basic2extended testing a number of square matrices
+  * avoid passing of duplicate info to b2e test
+  * use new API for b2e tests
+  * don't test EXTENDED ambi readback
+  * be more specific about writing EXTENDED files as BASIC
+  * allow to open a basic2extended file for writing
+  * need to pass the ambichannels-on-disk to ambix_open()
+  * description of which FuMa matrix is being tested
+  * free mtx after use
+  * free pinv-matrix after use
+  * lower frequency for test-signal
+  * cleanup for early exit
+  * another basic2extended test with a [4x9] random-matrix
+  * make sure to reserve enough memory in the adaptorbuffer
+  * merge-adaptormatrix: cols=full set; rows=reduced set
+  * supporting BASIC2EXTENDED writing
+  * destroy temp matrix after use
+  * run tests in functions to isolate them
+  * removed "goto cleanup"
+  * compare against target ambichannels
+  * use '%g' to pretty-print floats
+  * re-use index variables
+  * simplify addings new TESTS to Makefile.am
+  * split basic2extended tests into separate files
+  * allocate enough memory to hold both raw and adaptored ambi-channels
+  * whitespace
+  * allow to run valgrind for unit-tests
+  * disabled serial-tests so check-valgrind works
+  * fixed memleak in const-matrix tests
+  * remove AX_VALGRIND_DFLT
+  * allow coverity-scan for this branch
+  * ambix_mergeadaptormatrix for all types
+  * basic2extended test with 4x7 matrix
+  * removed unneeded includes
+  * [tests] lower thresholds for diffs
+  * [tests] print used epsilon on failure
+  * [tests] basic2extended tests with extrachannels
+  * added float64 tests
+  * [tests] added basic2extended tests for PCM formats
+  * revert coverity-scan builds on all branches
+  * added copyright info for cholesky decomposition
+  * forgot closing comment
+  * support for using AMB-files as input to ambix-interleave
+  * fixed UUID-printout
+  * renamed 'interleavedata' to the more correct 'interleavedata'
+  * function to DEinterleave data
+  * don't cast the result of malloc()
+  * cleanup heap-allocated memory on early exit
+  * provide a working-buffer for de-interleaving mulichannel input data
+  * use temporary variable for number of channels per source
+  * use temporary variable to check the success of sf_readf()
+  * de-interleave multichannel input data
+  * whitespace
+  * don't build the gh-pages branch with travis-ci
+  * documentation on BASIC2EXTENDED writing
+  * simple doxygen apidoc deploy-script for travis/gh-pages
+  * deploy doxygen
+  * fixed typo in travis.yml
+  * only deploy doxygen if not a PR and on master
+  * getting rid of 'realpath'
+  * print the do-doxygen variable
+  * use C-style comments
+  * TRAVIS_PULLREQUEST is <empty> when there's no PR
+  * link to API documentation
+  * [travis] hardcoding the repository
+  * [travis] print errors when early exiting doxygen-deploy
+  * [travis] B-D on doxygen
+  * [travis] drop DOXYGEN_DEPLOY variable
+  * [travis] drop unneeded blacklist for gh-pages branch
+  * [doxygen] don't embed TIMESTAMP into html
+  * use C++-style comments for missing code
+  * [doxygen] free() the info junk
+  * [doxygen] cosmetic fixes
+  * [ooxygen] rephrased the basic2extended explanation
+  * [doxygen] fix URL to mathjax
+  * [doxygen] one-line project description
+  * [doxygen] use <a href> for external links
+  * [doxygen] started FAQ
+  * [doxygen] exclude a few section from documentation
+  * private versions of _ambix_matrix_multiply() and _ambix_matrix_pinv()
+  * deprecate ambix_matrix_pinv() and ambix_matrix_multiply()
+  * updated copyright
+  * updated copyright-dates
+  * added '--enable-debug' flag to configure
+  * re-ordered flags: preprocessor, compiler, linker
+  * raise visibility for DEBUG builds
+  * added LDFLAGS to coverage builds (and use configure --enable-debug)
+  * more generic testsuite-tests
+  * print line-number when accumulating diffs
+  * some generic tests for matrix-diff
+  * added generic test for data utils
+  * tricking higher coverage
+  * disabled unused code
+  * more matrix tests
+  * disabling more unused code
+  * ignore intermedia files from coverage-analysis
+  * private tests
+  * renamed deploy-doxygen to deploy-documentation
+  * [travis-ci] use addons.apt for installing packages
+  * deploy coverage directory as well...
+  * [travis-ci] create a coverage report
+  * run gcc+coverage and clang+coverity
+  * deploy commits the entire output-directory (and is more verbose)
+  * Use codecov.io as an external code-coverage test service
+  * collapsed duplicate code in ambix_set_adaptormatrix
+  * Call codecov.io after coverage.sh
+  * added codecov.io badge to README.md
+  * fix hyphenation of up-to-date
+
+  [ Matthias Kronlachner ]
+  * add marker and region functions to api
+  * add markers and regions to ambix_t_struct
+  * add implementation for marker and regions
+  * add marker and region debug printout to utilities
+  * add unit test for reading/writing markers and regions
+
+  [ IOhannes m zmölnig ]
+  * make doxyfile settable
+  * fixed typo
+  * mention output and *input* of audio-data
+  * mention float64 asd possible format
+  * single-line fail_if()
+  * run a simpl2extended-test with chunksize=0
+  * cast functions to make values representable in low-resolution formats
+  * make data_* generator functions accept a format-argument
+  * mroe towards type-agnostic tests
+  * adapted to new type-agnostic API
+  * adapted to new type-agnostic API
+  * easier debugging by using helper-vars
+  * include common_b2e.h
+  * adapt to new API (and use a header for function declarations)
+  * alignment, printout...
+  * first test to pass fmt
+  * enabled int32 and int16 builds for specific test (b2e-eye4x4)
+  * split format-tests
+  * [travis-ci] display test-suite logs in case of failure
+  * type-variable readf/writef wrappers
+  * use vartype filereader/writer
+  * consistent function-names for data_* foo
+  * put data_size() and data_calloc() into common-header
+  * use vartype data for b2e tests
+  * consinstent indentation
+  * common helper-functions getpid and unlink
+  * use new helper-functions to create unique filenames
+  * fun to generate uniqueish filename
+  * better uniquefilename generator
+  * use ambixtest_rmfile() instead of unlink()
+  * dynamic outfilename
+  * added a counter to allow for multiple files in the same process
+  * FILENAME macros
+  * use FILENAME macro
+  * use FILENAME_FILE macro for output files
+  * unique-filenames are now generated in the unittestfile itself
+  * indentation
+  * fixed indentation
+  * fixed left-over code that causes FTFBS
+  * normalized indentation
+  * install ca-certificates to (hopefully) support coverity's new certificate
+  * ignore .gcno files
+  * test for ambix_get_sndfile()
+  * build get_sndfile test
+  * yet another workaround for travis-ci's outdated ca-certificates
+  * fixed typo
+  * disable unused code via preprocessor
+  * renamed tests/matrix to tests/matrixtests
+  * allow mtx_pinv() tests without reference result
+  * try to invert MATRIX_ONE and MATRIX_ZERO
+  * early exit if matrix_diff() has NaNs (rather than failure)
+  * fail if mtx-inversions succeeds and no reference result is present.
+  * untabify
+
+  [ Matthias Kronlachner ]
+  * add missing documentation to marker api functions
+  * add private functions for handling chunks and reading/writing marker/region/strings data
+  * add read/write any chunk to sndfile implementation
+  * add implementation of reading/writing marker/region/strings chunk
+  * remove debug outputs
+  * check datasize before reading to avoid crash in case of invalid chunks
+  * remove code duplication for byteswapping
+  * remove warning of passing incompatible pointer types
+  * cast to avoid warnings
+
+  [ IOhannes m zmölnig ]
+  * fixed-all-the-things
+
+  [ Matthias Kronlachner ]
+  * fixed return code
+  * add read/write markers when opening file
+  * marker chunk fix unnecessary allocations
+  * add empty string in marker/region to unittest
+  * pd read output number of markers/regions
+  * pd-read external marker region read/seek support
+  * remove printf from marker unittest
+  * utils info print marker/region info
+
+  [ IOhannes m zmölnig ]
+  * [doc] note on unit-tests and CI
+  * Fixed memleaks in unit-test
+  * Fixed memory leaks in new marker_region_chunk code
+  * refactored ambix_write_chunk()
+  * [tests] link markers_region with common.c
+  * [tests] create "unique" filename for markers_region test
+  * [tests] remove test datafile once we are done
+  * C<99 needs variable declarations at beginning of block
+  * exclude .git* files from export
+  * exclude .git* files from export
+  * bumped version to 0.1
+
+ -- IOhannes m zmölnig <zmoelnig@iem.at>  Sun,  5 Oct 2016 22:50:17 +0200
+
+libambix (0.0.1) unstable; urgency=medium
+
+  [ iem user ]
+  * cleaned up include paths
+
+  [ iem user ]
+  * forgot ambix.h
+  * adjusted to custom libsndfile
+  * startup script for custom libsndfile
+  * load some more libraries
+  * some more tests
+  * ax testfiles
+
+  [ IOhannes m zmölnig ]
+  * moved external to pd/ folder
+  * almost empty header files
+  * UTF-8ified
+  * doxygen documentation
+  * dummy base file
+  * start of autotools
+  * doxygen config
+  * use 'unsigned long' rather than 'size_t'
+  * added ambix_err_t
+  * dummy implementation
+  * define AMBIX_INTERNAL when building the library
+  * more documentation
+  * return codes are ambix_err_t
+  * updated gitignore
+  * implemented ambix_get_sndfile
+  * added sampleformat enum
+  * check for libsndfile
+  * start to read files
+  * renamed AMBIX_EXTERN to AMBIX_API
+  * use AMBIX_API
+  * samplerate as double
+  * documentation
+  * typedefs for number types of given width
+  * check for stdint.h
+  * private header
+  * reading matrix
+  * added some fields to ambix_t
+  * might work (or now)
+  * protect file-inclusion with ifdef
+  * no need to check for unistd.h and stdint.h
+  * added matrix type
+  * UUID-chunk handling is now in separate file
+  * put matrix functionality in separate file
+  * removed functions now found in separate files
+  * build newly added files
+  * _ambix_checkuuid() returns uint32_t
+  * use new ambixmatrix_t type
+  * moved sndfile code into separate file
+  * added utility functions
+  * use utility functions
+  * test utilities
+  * reorganized code: (private) sources live in src/
+  * fixed leftovers from function-renames
+  * fixed double free on ambix_close()
+  * set ambixinfo structure after reading
+  * print some information
+  * 32bit byte-swapper helper
+  * ambix_matrix_fill_swapped() to fill matrix with byte-swapped data
+  * check whether we need to byte-swap and do accordingly
+  * reduced includes
+  * UTF8ified
+  * fixed typo
+  * moved typedefs into separate header file
+  * AMBI_EXPORT on gcc: visibility("default")
+  * use visibility=hidden by default
+  * use camelCase for function names
+  * remove trailing whitespace
+  * added some more errors
+  * functions for getting/setting the matrix
+  * fixed typo when assigning samplerate to ambixinfo
+  * reset ambixinfo before setting it and returning to host
+  * print reconstruction matrix
+  * return reconstruction matrix (if feasible)
+  * return proper error codes
+  * MARK() define for easier debugging
+  * use matrix from args
+  * return AMBIX_ERR_SUCCESS rather than 0
+  * added ambix_matrix_copy()
+  * implemented matrix multiplication
+  * renamed getReconstructionMatrix() to getAdaptorMatrix()
+  * dummy implementations for reading audio
+  * documentation
+  * initial adaptorbuffer handling
+  * it's "adaptor" not "adapator"
+  * initialize adaptor buffer on open
+  * function-rename ambix_getReconstructionMatrix() -> ambix_getAdaptorMatrix()
+  * adaptorbuffer resize now takes a sizeof() argument
+  * ambix_matrix_create() and ambix_matrix_destroy()
+  * adaptor code
+  * implement _ambix_readf_ for libsndfile
+  * deinitialize adaptorbuffer on ambix_close()
+  * simple read implementation
+  * shortened and improved description of ambix_readf_*
+  * API for writing ambix files
+  * backend implementation for writing audio to CAF
+  * renamed _ambix_adaptor to _ambix_splitAdaptor
+  * implement mergeAdapator
+  * fixed possible segfault
+  * implement data writing
+  * accessor functions for UUID by version
+  * implemented ambix_matrix_to_uuid1
+  * comment about quality of UUID
+  * renamed setPremultiplyMatrix() to setAdaptorMatrix()
+  * added filemode for read&write
+  * store openmode in ambix_t structure
+  * store byteswap info in ambix_t struct
+  * ambix_write_header()
+  * write_header() implementation
+  * check format before writing header
+  * fixed forgotten */
+  * documentation
+  * write_uuidchunk
+  * setting adaptormatrix for AMBIX_SIMPLE
+  * use matrix2 rather than finalmatrix
+  * shadow ambixinfo to allow easy conversion
+  * ambix_matrix_eye()
+  * clear 2nd matrix on ambix_close()
+  * AMBIX_SIMPLE->AMBIX_EXTENDED conversion
+  * use variables to enhance readability
+  * added ambix_test a simple ambix file writer
+  * private data is now only in backend
+  * first draft of _ambix_write_uuidchunk
+  * (dummy) checks before reading/writing
+  * typo prevented full copy of ambixinfo
+  * check whether properties are correct for writing
+  * _ambix_print_info() helper
+  * handle AMBIX_READ flag
+  * initialize everything to 0
+  * print_sfinfo() helper
+  * initialize everything to 0
+  * force otherchannels to 0 when opening ambix simple
+  * added FIXXME that ambix_open() shouldn't fail so often
+  * ambix_info now takes a list of files
+  * write simple and extended files
+  * use C-style comments rather than C++-style
+  * uncomment the 'extern "C"' clause
+  * moved format-detection logic out of sndfile.c
+  * moved variables to form better groups
+  * check whether reading/writing has started
+  * return negative error in ambix_(read|write)f_*
+  * made it compile...
+  * added unsigned int type to number32_t union
+  * _ambix_swap4array()
+  * simpler implementation (and easier to optimize)
+  * only free matrix if it is self-allocated
+  * full test writing ambix extended
+  * try to get properly aligned memory
+  * freeing chunk_info on close()
+  * trying to get properly align memory
+  * print utilities
+  * is_CAF is only boolean
+  * don't forget to swap rows/cols
+  * write something into matrix
+  * what utilities to expect
+  * moved matrix and utility declaration in separate headers
+  * start (not much yet)
+  * starting ambix_interleave
+  * seems to work a bit...
+  * fixed docs so doxygen stops complaining
+  * better wording
+  * use upper-case at beginning of sentence
+  * re-organized code
+  * protect against double inclusion
+  * checks for libraries
+  * specify Makefile's at beginning of configure.ac
+  * include config.h if possible
+  * write defines to config.h
+  * tests for some sndfile specifics
+  * typedefs for (u)int16
+  * sndfile.h should only be included in the backend specific implementation
+  * need stdio.h for fprintf()
+  * added pkg-config support for autotools
+  * use pkg-config to check for sndfile
+  * use SNDFILE_(CFLAGS|LIBS) for building ambix_interleave
+  * read blocksize from cmdline
+  * ambix_open overwrites ambixinfo, so use a copy
+  * use blocksize from cmdline (and fix copying code)
+  * print info on channels and frames after opening input files
+  * added --help and --version options
+  * added ambix_deinterleave
+  * return SUCCESS on success
+  * matrix multiplication of data-chunks
+  * unit tests
+  * include stdint.h on linux
+  * include unit-tests
+  * renamed 'success' to 'pass' to 'pass'
+  * added fail_if() and friends
+  * a real test: matrices
+  * fixed some issues caught by unittests
+  * ignore some autotools stuff
+  * added some common functions
+  * migrating functions to common.c
+  * some more functions: comparing anonymous data
+  * test for writing AMBIX_NONE files
+  * print data and fix data_sine()
+  * fixed data_sine()
+  * finalized
+  * tests for ambix simple
+  * add eps to _diff() functions
+  * split tests into functions
+  * more data, better eps
+  * added STARTTEST macro
+  * check for isNan
+  * use other matrix values to avoid roundign errors
+  * autoprefix
+  * new data generator: ramp
+  * test for large data multiplication with eye
+  * fixing matrix multiplications
+  * at least deinterleaving simple files now works
+  * test for ambix_extended
+  * fixed extra-names
+  * calloc(membercount, membersize)
+  * changed matrix_fill to accept additional byteswap parameter
+  * adapted to new matrix_fill function
+  * made it work more sanely
+  * implemented matrix reading
+  * removed byteswap business from public API
+  * no more byteswap in ambix API
+  * apply function renames
+  * renamed ambixfileformat to fileformat
+  * renamed 'otherchannels' to 'extrachannels'
+  * adapted to field renames
+  * adapted to no transpose/no byteswap ambix API
+  * error messages and matrix reading
+  * removed ambix_matrix_fill_transposed() from public API
+  * count samples that are outside eps
+  * test for chunked writing
+  * apply interleaver
+  * less verbose
+  * added data_transpose()
+  * fixed datamul test
+  * simplified code
+  * seems to work...
+  * cleaned up code
+  * removed trailing whitespace
+  * ISO-8859-15 to UTF-8
+  * renamed ambixinfo_t to ambix_info_t and likewise ambixmatrix_t
+  * renamed CamelCase names to lower_case names
+  * added license
+  * moved COPYING to root
+  * distribute doxygen file
+  * better wording
+  * generic install instruction
+  * added autogen.sh
+  * removed functions that are now in utils.h
+  * renamed ambix_isFullSet to ambix_is_fullset
+  * allow compilation on libsndfile without get_chunk()
+  * added support for SFC_UUID
+  * added test for sf_set_chunk()
+  * fixed UUID reading with HAVE_UUID_INFO
+  * unlink (delete) files after tests
+  * switch to iterator based chunk reading
+  * check for iterator based chunk access in sndfile
+  * renamed ambix_ to ambix-
+  * what's next?
+  * fixed memleaks in tests
+  * automake doesn't like hyphens in variables
+  * added NULL backend
+  * added ENABLED/DISABLED automake-conditionals
+  * enable silent rules
+  * added forgotten files
+  * let configure handle the soname version
+  * updated homepage field
+  * renamed matrix_fill functions
+  * adapted to function rename
+  * adapted to function rename
+  * remove trailing '====' when printing tests
+  * renamed private member variables
+  * added short readme
+  * clarified docs
+  * first half-implementation of FuMa->ambix converter
+  * allow .amb files to be read
+  * moved doxygen config into doc/ folder
+  * use tex to set formulas
+  * its libambix not libGcrypt
+  * added main documentation in libambix.h
+  * usage documentation (reading)
+  * documentation fixups
+  * removed ambix_write_header()
+  * ambix_write_header() has been removed
+  * ambix_write_header() has been removed
+  * removed executable flag from data files
+  * removed start-script only valid for a special computer
+  * getting rid of old code
+  * added check for OS
+  * more documentation
+  * stub for Pd-external
+  * configure the Pd-part
+  * added some more M4-macros
+  * added convenience links and RTE_FLAGS
+  * made it compile
+  * starting to implement ambix_read~
+  * rename CHECK_RTE to IEM_CHECK_RTE
+  * more in pd
+  * fixed splitAdaptormatrix implementations
+  * ambix_writef_*() takes pointer to const data
+  * use (const) pointers where appropriate
+  * non-threaded and working prototype
+  * link against libambix
+  * added ambix-dump, as simple utility that dumps ambix-files to the stdout
+  * shortened lines in comments to 80chars
+  * formatting
+  * ambix_writef() now take pointers to const sources
+  * iso2utf conversion
+  * use v5(SHA1) UUIDs
+  * added notes on format bugs
+  * renamed "SIMPLE" to "BASIC"
+  * enumerate some common conversion matrices
+  * doxygen files now reside in doc/
+  * added pd to SUBDIRS
+  * make _matrix_(diag|router) available internally
+  * move _matrix_sid2acn into separate source file
+  * move FuMa code into separate file
+  * added docs about .amb format
+  * started to port jack.play to ambix-jplay
+  * fixed boilerplate description
+  * enhanced utils/README
+  * added copyright boilerplate to ambix-jplay
+  * use ambix-jplay throughout
+  * use full pathname in usage()
+  * indentation
+  * common files for jack-clients
+  * slowly moving towards ambix-jplay
+  * when requesting EXTENDED as BASIC, return the number of decoded ambichannels
+  * small jcommon library
+  * include jcommon library into build system
+  * got some sound
+  * code cleanup
+  * properly setting memory to zero
+  * when splitting the interleaved data, we need to take care of the _real_ channel layout
+  * properly split out the extrachannels
+  * don't fail if libsamplerate cannot be found
+  * include config.h if there
+  * include jack.record as ambix-jrecord
+  * don't override HAVE_SAMPLERATE
+  * run even without libsamplerate
+  * AC_DEFINE(HAVE_*) for pkg-config
+  * starting to make it work
+  * renamed 'jack_client_unique_store' to 'jack_client_unique'
+  * group jack calls together
+  * added 'jack_client_unique' to libjcommon
+  * added '_jack_port_register' to jcommon
+  * moved functions to jcommon
+  * compiles, now make it work
+  * disabled unneeded cmdline flags
+  * fixed copyright dates for rohan
+  * changed 'jack.record' to 'ambix-jrecord'
+  * build ambix-jrecord
+  * trying to read matrixfile
+  * AVN numbering starts at zero
+  * provide client-unique function for (const char*)
+  * recording something
+  * provide default filename to ease debugging
+  * basic recording works!
+  * set adaptor matrix
+  * remove debug printout for matrices
+  * better description
+  * matix_permutate
+  * better matrix_print
+  * ambix-matrix check
+  * return NULL if FuMa is invalid
+  * hopefully good implementation of FuMa matrices
+  * removed unneeded code
+  * only calculate weight+order matrix once during life-cycle
+  * trying to reduce stack-size and simplify code
+  * 0order FuMa-matrix
+  * simplified code a bit
+  * 1st attempt to create ambix2fuma mapping
+  * check ambix2fuma matrices
+  * creating AMBIX2FUMA matrices
+  * fixed ambix2fuma conversion
+  * run some tests on matrix fillers
+  * add "name" argument to STARTTEST
+  * more checks for matrix fillers
+  * prototype for '_matrix_ambix2fuma'
+  * MATRIX_SID implementation
+  * starting to implement MATRIX_N3D
+  * N3D/SN3D and SID/ACN
+  * use fabs() rather than abs() for float32_t
+  * print small values with %g
+  * raise eps to 1e-6
+  * proper labelling for the matrices tests
+  * free memory
+  * prevent memleaks
+  * fully initialize (S)N3D weight vectors
+  * updated TODO
+  * fixed memleaks
+  * added inversion check for norm/order
+  * changed bitmask fields for AMBIX_READ/AMBIX_WRITE
+  * implementation of ambix_seek()
+  * allow seeking
+  * implemented ambix_seek
+  * more TODO
+  * use PACKAGE_VERSION for version display
+  * remove unneccessary includes
+  * added '-v' flag
+  * print some more matrices
+  * --version information ambix-j(record|play)
+  * added synopsis for jtools
+  * consistent help/version information
+  * don't install devtools
+  * note on install target
+  * fixed description of ambix_seek()
+  * AMBIX_SIMPLE -> AMBIX_BASIC
+  * install libraries into rte_
+  * no more pkglib_, we use rte_ now
+  * enable build of Pd externals
+  * fixed CFLAGS/LIBADD for libjcommon.la
+  * include <stdio.h> for printf()
+  * build-system issues have been sorted out
+  * clarified README
+  * ignore lots of by-products
+  * fixed typos
+  * more cross-references
+  * added first draft for [ambix_write~]
+  * allow to set matrix
+  * use post() rather than printf()
+  * added BUGS file
+  * added note about [writesf~] license
+  * changed 'Libgcrypt' to 'libambix' in boilerplate
+  * mention MSP in ambix_read~
+  * don't fail if no matrix is present
+  * code cleanup
+  * starting to re-implement ambix_read~ with threads
+  * we have sound but it is jerky
+  * remove whitespaces
+  * only seek if needed
+  * playback works
+  * search canvas-paths for file
+  * send matrix when in EXTENDED mode
+  * disable MARK()
+  * fail if we cannot allocate a deinterleavebuffer
+  * explain a bit about the ambix-deinterleave bug
+  * fixed bug when deinterlacing extra-only files
+  * nicer error messages
+  * ambix-deinterleave bug has been fixed
+  * run AM_PROG_CC_C_O for per-target flags
+  * use AM_CPPFLAGS rather than INCLUDES
+  * remove testing target
+  * only copy the matrix if opening was successfull
+  * output ambixinfo
+  * it seems like we should lock the shared data in the tick callback
+  * clear buffer (to avoid playing old samples)
+  * linebreaks to increase readability
+  * hopefully got the EOF check right
+  * don't start to send samples if we still need to send out matrix/ambixinfo
+  * build [ambix_info]
+  * updated help-patches
+  * install Pd-stuff into @rtedir@/ambix
+  * generate ambix-meta.pd
+  * fix file-handle leak
+  * output full filename
+  * use calloc() instead of malloc()
+  * fix memleak
+  * removed pd/old/ directory
+  * use "private_data" instead of "private" member
+  * cast results of malloc() and friends to correct types
+  * functions always have to declare what they will return
+  * declarations of some used functions
+  * in C++ <enum>s and <int>s are not the same
+  * include <unistd> when needed
+  * C++ is more strict regarding implicit casts
+  * trailing whitespaces
+  * ambix_write_matrix() does not return anything
+  * include "jcommon/observe-signal.h" when needed
+  * rindex() returns (const char*) when given a (const char*)
+  * don't include search in generated docs
+  * coalesce all headers into ambix.h
+  * moved main docs into .incl file (and hide it in generated files)
+  * output HTML into apiref/ directory
+  * build doxygen documentation
+  * check for doxygen
+  * only build docs if doxygen is present
+  * libambix.h is now called libambix.incl
+  * libambix.doxy lives in srcdir
+  * add Pd-patches to distribution
+  * adding pkg-config files
+  * version-info is set to 0:0:0
+  * removed unneeded code
+  * spell it "AMBIsonics eXchange"
+  * ISO-8859 to UTF-8 conversion
+  * only use stdint.h replacements for MSVC
+  * don't fail if a pkg-module cannot be found
+  * dummy VS208 project
+  * made debug project work
+  * explicit type-casts to reduce warnings in MSVC
+  * MSVC doesn't know about "inline", only "__inline"
+  * trying to make reducer_v work with MSVC
+  * use rows_v[] to check whether the setting is valid
+  * fixed "Release" config
+  * more type-fixes to keep MSVC happy
+  * visualstudio property pages
+  * use property pages
+  * project for ambix-info
+  * dummy projects for utils
+  * updated projects
+  * removed unneeded variables
+  * made it compile with MSVC
+  * moved HAVE_SNDFILE_H from ambix.vsprops to libsndfile.vsprops
+  * made it compile without wawrnings on MSVC
+  * MSVC properties for Pd
+  * added project for [ambix_info]
+  * fixed typos in tmpvar names
+  * dummy projects for Pd objects
+  * on w32, define MSW
+  * added pthread propertypage
+  * add more pd-objects to solution
+  * added hacks to ease compilation with MSVC/MinGW
+  * added winhacks to w32-builds
+  * add pthreads to read~/write~ externals
+  * make [ambix_read~] compile on MSVC
+  * our libsndfile has all the chunk-stuff
+  * make buildlog-files project specific
+  * build with winhacks
+  * more msvc fixes for strncpy() and the like...
+  * provide a strndup implementation
+  * use winhacks
+  * strndup() is needed both on msvc and mingw
+  * enhance target-specific flags with AM_FLAGS
+  * fix crasher bug with signed/unsigned
+  * indentation
+  * snprintf() takes a const format-string
+  * getting rid of warnings
+  * dummy use of variables
+  * remove lines that don't do anything
+  * fixed typo '==' is not the same as '='
+  * use parenthesis to clarify what is going on
+  * decrement frames to write by the actual number of frames written
+  * removed obsolete doxygen settings
+  * no need to check uint32>=0
+  * memsetting entire chunk to 0
+  * C<C99 does not really allow to repeat typedefs
+  * handle the case where realloc() returns NULL
+  * check return of malloc()
+  * always return negative errors in _write() functions
+  * check return of malloc()
+  * still trying to get rid of signed/unsigned warnings
+  * include config.h is available
+  * include sys/types.h if available
+  * only use PACKAGE_BUGREPORT|URL if available
+  * C-style comments are /* */ rather than \* *\
+  * protect usage of PACKAGE_VERSION
+  * replacement library for uncommon functions
+  * use 'static' so we can inline the replacements
+  * added replacement/ folder to build
+  * use replacement/strndup.h
+  * use central replacement/strndup.h
+  * distribute but don't install headers
+  * add path to find replacement/*.h
+  * renamed win to w32
+  * Makefile.am generator
+  * should be EXTRA_DIST rather than noinst_DATA
+  * avoid ambiguities
+  * add build/ to autoconf
+  * added pthread.vsprops
+  * force [ambix_readX~] to be build after [ambix_read~]
+  * ignore MSVC files
+  * add winhacks.h to dist
+  * typos
+  * fixed spelling
+  * krazy2 spelling corrections
+  * UTF8'ified
+  * XCode3 project file for building C-libraries
+  * fix null-backend
+  * use "struct SNDFILE_tag" rather than "typedef SNDFILE"
+  * buildable project
+  * updated project file to build universal binaries
+  * working on ambix framework
+  * more on AmbiX.framework
+  * framework that almost works
+  * use @rpath as INSTALL_PATH
+  * note on embedding libsndfile
+  * iso2utf8
+  * style-fixes according to krazy2
+  * added documentation
+  * threaded reader/writer objectclasses for Pd have been implemented
+  * todo: (optionally) replace libsndfile dependency
+  * added m4-macros to check for OSX-frameworks
+  * replaced C-style comments with shell-comments
+  * check for AudioToolbox framework
+  * stub implementation for coreaudio loader
+  * Added (conditional) check of ObjC
+  * use CoreAudio as fallback when no libsndfile is present
+  * move default AM_CONDITIONALs out of sndfile block
+  * added "--with-sndfile" flags to configure
+  * _ambix_get_sndfile() now returns 'struct SNDFILE_tag*'
+  * conditionally build programs depending on sndfile
+  * disable checks for sndfile if requested by user
+  * disable checks for CoreAudio if requested
+  * disable checks for JACK if requested
+  * fix typo when setting default values for "have_sndfile"
+  * disable checks for libsamplerate if requested
+  * fixed help-string for --with-CoreAudio
+  * move ambix_get_sndfile to the end
+  * properly set OBJCFLAGS
+  * starting to work on coreaudio backend
+  * Fix file description header
+  * CoreAudio support also needs the Foundation-framework
+  * opending ExtAudioFile via AudioFile
+  * opening works!
+  * starting open_write()
+  * trying to construct ambix2coreaudio info
+  * check result of coreaudio2ambix_info()
+  * simplify is_AMBIX code
+  * make isCAF endian-safe
+  * UUID print helpers
+  * check endianness of file vs host
+  * trying to fix AM_CONDITIONALS for double-checked frameworks
+  * removed stray ]
+  * conditionally build Pd-externals
+  * replace AC_LIB_APPENDTOVAR with ordinary shell-code
+  * seeking
+  * indentation
+  * more error checking
+  * first draft of CoreAudio reader
+  * first draft of coreaudio writer
+  * first draft for writing UUID-chunk using CoreAudio
+  * now make it work...
+  * indentation
+  * no need to reimplement the get_sndfile() in all non-sndfile backends
+  * unifying the format converters
+  * trying to write (unsuccessfully)
+  * set is_AMBIX when opening for writing
+  * setting byteswap/channels when opening for writing
+  * reduce verbosity
+  * ambix_readf may return less frames than requestd!
+  * ambix_readf() can return less frames than requested without being a bug
+  * split AMBIX_SIMPLE tests
+  * split test(s) for AMBIX_NONE
+  * split AMBIX_EXTENDED tests
+  * make sure that %d only gets an (int)
+  * better printout
+  * fixed bytesPerFrame calculation
+  * use coreaudio_getFlags() to calculate the lpcm flags
+  * try to correctly use bigEndian & nativeEndian
+  * fixed printf format specifier: it's %lu rather than %ul
+  * [savepanel] instead of [openpanel]
+  * renamed coreaudio_setFormat() to coreaudio_setClientFormat()
+  * removed empty manual
+  * Moved Pd-sample code into 'samples/' subfolder
+  * remove trailing whitespaces
+
+  [ ivana ]
+  * simle test for opening/closing a CAF-file
+  * Added seek-tests and modified open and close test (close returns !NULL when fails).
+  * Added new test for read and write functions, don't work
+
+  [ IOhannes m zmölnig ]
+  * use define AMBIXTEST_FILE1 for hardcoded testfiles
+  * added MARK() macro
+  * skip test if file cannot be opened rather than fail
+  * wrapper scripts to run tests in valgrind
+  * free ressources that have been allocated
+  * allow to disable building of RTE-plugins completely
+  * code-coverage analyser using gcov/lcov
+  * no need to disable-shared for coverage-tests
+  * proper array initialization
+  * added testfile
+  * fixing filename for test-data
+  * put data definitions into separate header-file
+  * format clarification
+  * modernized call to AM_INIT_AUTOMAKE
+  * fixing FuMa format (thanks to Aaron Heller)
+  * new phony targets "buildtests"
+  * terser testing of matrix creation,...
+  * ambix_close() returns ambix_err_t
+  * tests currently need serial-tests
+  * use AM_TESTS_ENVIRONMENT instead of TESTS_ENVIRONMENT
+  * make sure that o.client_name is NULL-terminated
+  * destroy expand/reduce/weightorder matrices on error
+  * destroy expand/reduce/weightorder matrices on error
+  * freeing temporary data on early exit (CID:22439)
+  * freeing temporary memory
+  * no need to call ai_close() if ai_dump_block() failed
+  * removed superfluous check
+  * default format to "0" and do default handling afterwards
+  * added missing "break;"
+  * use 64bit integer arithmetic for multiplying large integers
+  * check return of sf_open() (and assert ai->outhandles)
+  * make sure ai->outinfo has been allocated
+  * evaluate result of ambix_matrix_copy()
+  * proper detection of SFM_RDRW
+  * check whether ambix_readf() returns negative framecount
+  * (un)locking mutex in ctor
+  * (un)locking mutex in ctor
+  * fixed error printout
+  * protecting x_state with mutex
+  * ouch, need to unlock() the mutex after use...
+  * protex x_state with mutex
+  * no need to call ai_close() if ai_dump_block() failed (again)
+  * simplified error-handling in ambix-dump
+  * text alignment
+
+ -- IOhannes m zmölnig <zmoelnig@iem.at>  Sun, 14 Apr 2014 12:21:57 +0200
