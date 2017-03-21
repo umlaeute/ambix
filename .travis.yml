@@ -10,6 +10,7 @@ env:
         - COVERITY_SCAN_BUILD_COMMAND="make"
         - COVERITY_SCAN_PROJECT_NAME="$TRAVIS_REPO_SLUG"
         - LIBSNDFILE_URL="http://www.mega-nerd.com/libsndfile/files/libsndfile-1.0.27.tar.gz"
+        - LD_LIBRARY_PATH=/usr/local/lib
 
 os:
   - linux
@@ -51,6 +52,7 @@ install:
   ## remove libtool libs
   - find /usr/local/lib -type f -name "*.la" -exec sudo rm -f {} \+
 before_script:
+  - export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}
   # configure the build
   - cd "$TRAVIS_BUILD_DIR"
   - ./autogen.sh
