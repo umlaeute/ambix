@@ -49,8 +49,12 @@ install:
   ## build libsndfile
   - mkdir -p libsndfile/build && curl "$LIBSNDFILE_URL" | tar --strip-components=1 -C libsndfile -xvzf -
   - cd libsndfile/build && ../configure --disable-silent-rules && make && sudo make install
+  ## remove coverage traces
+  - find . -name "*.gcda" -delete
+  - find . -name "*.gcno" -delete
   ## remove libtool libs
   - find /usr/local/lib -type f -name "*.la" -exec sudo rm -f {} \+
+
 before_script:
   # configure the build
   - cd "$TRAVIS_BUILD_DIR"
