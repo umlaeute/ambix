@@ -69,6 +69,7 @@ typedef struct ai_t {
   ambix_matrix_t matrix;
 
   uint32_t blocksize;
+  int format;
 #define DEFAULT_BLOCKSIZE 1024
 #define MAX_FILENAMESIZE 1024
 } ai_t;
@@ -93,10 +94,32 @@ static char*ai_prefix(const char*filename) {
   result=strdup("outfile-");
   return result;
 }
+static char*ai_suffix(const char*suffix, int format) {
+  unsigned int length = strnlen(suffix, 1024)+6;
+  char*tmp=calloc(length, sizeof(char));
+  char*result=NULL;
+  switch (format) {
+  case SF_FORMAT_WAV:
+    snprintf(tmp, length-1, "%s.wav", suffix);
+    break;
+  case SF_FORMAT_CAF:
+    snprintf(tmp, length-1, "%s.caf", suffix);
+    break;
+  default:
+    snprintf(tmp, length-1, "%s", suffix);
+  }
+  result = strdup(tmp);
+  free(tmp);
+  return result;
+}
+
 
 static ai_t*ai_cmdline(const char*name, int argc, char**argv) {
   ai_t*ai=(ai_t*)calloc(1, sizeof(ai_t));
   uint32_t blocksize=0;
+  const char*suffix="";
+  const char*prefix=NULL;
+  ai->format=SF_FORMAT_WAV;
 
   while(argc) {
     if(!strcmp(argv[0], "-h") || !strcmp(argv[0], "--help")) {
@@ -110,7 +133,7 @@ static ai_t*ai_cmdline(const char*name, int argc, char**argv) {
     if(!strcmp(argv[0], "-p") || !strcmp(argv[0], "--prefix")) {
       if(argc>1) {
         //printf("prefix: '%s'\n", argv[1]);
-        ai->prefix=strdup(argv[1]);
+        prefix=argv[1];
         argv+=2;
         argc-=2;
         continue;
@@ -119,12 +142,27 @@ static ai_t*ai_cmdline(const char*name, int argc, char**argv) {
     }
     if(!strcmp(argv[0], "-s") || !strcmp(argv[0], "--suffix")) {
       if(argc>1) {
-        ai->suffix=strdup(argv[1]);
+        suffix = argv[1];
         argv+=2;
         argc-=2;
         continue;
       }
       return ai_close(ai);
+    }
+    if(!strcmp(argv[0], "-f") || !strcmp(argv[0], "--format")) {
+      if(argc<2)
+        return ai_close(ai);
+      if(!strncmp(argv[1], "caf", 3) || !strncmp(argv[1], "CAF", 3))
+        ai->format=SF_FORMAT_CAF;
+      else if(!strncmp(argv[1], "wav", 3) || !strncmp(argv[1], "WAV", 3))
+        ai->format=SF_FORMAT_WAV;
+      else {
+        fprintf(stderr, "unknown format '%s'\n", argv[1]);
+        return ai_close(ai);
+      }
+      argv+=2;
+      argc-=2;
+      continue;
     }
     if(!strcmp(argv[0], "-b") || !strcmp(argv[0], "--blocksize")) {
       if(argc>1) {
@@ -141,14 +179,15 @@ static ai_t*ai_cmdline(const char*name, int argc, char**argv) {
     break;
   }
 
+
   if(!ai->infilename)
       return ai_close(ai);
 
-  if(!ai->prefix)
+  if(prefix)
+    ai->prefix=strdup(prefix);
+  else
     ai->prefix=ai_prefix(ai->infilename);
-
-  if(!ai->suffix)
-    ai->suffix=strdup(DEFAULT_SUFFIX);
+  ai->suffix=ai_suffix(suffix, ai->format);
 
   if(blocksize>0)
     ai->blocksize=blocksize;
@@ -264,7 +303,7 @@ static ai_t*ai_open_output(ai_t*ai) {
   case(AMBIX_SAMPLEFORMAT_FLOAT32): format |= SF_FORMAT_FLOAT ; break;
   }
 
-  info.format = format | SF_FORMAT_WAV;
+  info.format = format | ai->format;
   info.frames = ai->info.frames;
 
   info.samplerate = (int)(ai->info.samplerate);
@@ -438,25 +477,22 @@ static ai_t*ai_copy(ai_t*ai) {
   }
   deinterleavebuf=(float32_t*)malloc(sizeof(float32_t)*size);
   if(NULL==deinterleavebuf) {
-    free(rawdata);
-    free(cookeddata);
-    free(extradata);
-
-    return ai_close(ai);
+    ai=ai_close(ai);
+    goto done;
   }
 
   while(frames>blocksize) {
     blocks++;
-    if(!ai_copy_block(ai, rawdata, cookeddata, extradata, deinterleavebuf, blocksize)) {
-      return ai_close(ai);
+    ai = ai_copy_block(ai, rawdata, cookeddata, extradata, deinterleavebuf, blocksize);
+    if(!ai) {
+      goto done;
     }
     frames-=blocksize;
   }
 
-  if(!ai_copy_block(ai, rawdata, cookeddata, extradata, deinterleavebuf, frames)) {
-    return ai_close(ai);
-  }
+  ai = ai_copy_block(ai, rawdata, cookeddata, extradata, deinterleavebuf, frames);
 
+ done:
   free(rawdata);
   free(cookeddata);
   free(extradata);
