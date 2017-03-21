@@ -62,7 +62,13 @@ typedef enum {
 } kCAF_SMPTE_TimeType; // uint32_t
 
 /* this is for the mType field of CAFMarker */
-#define AMBIX_MAKE_MARKER(a, b, c, d) ((uint32_t) ((((uint32_t) (a)) << 24) | ((b) << 16) | ((c) << 8) | (d)))
+#define AMBIX_MAKE_MARKER(a, b, c, d)           \
+  ((uint32_t) (                                 \
+               (((uint32_t) (a)) << 24) |       \
+               (((uint32_t) (b)) << 16) |       \
+               (((uint32_t) (c)) <<  8) |       \
+               (((uint32_t) (d)) <<  0)         \
+               ))
 typedef enum {
     kCAFMarkerType_Generic              = 0,
     kCAFMarkerType_ProgramStart         = AMBIX_MAKE_MARKER('p', 'b', 'e', 'g'),
