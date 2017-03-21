@@ -1,17 +1,11 @@
 #!/bin/sh
 
+## this assumes that libambix has been compiled with gcov support (--coverage)
+
 INFOFILE="libambix.info"
 OUTDIR=coverage/
+
 MAKE=make
-
-${MAKE} clean
-
-# Reconfigure with gcov support
-CFLAGS="-g -O0 --coverage" CXXFLAGS="-g -O0 --coverage" LDFLAGS="--coverage" \
-	./configure --enable-debug --disable-silent-rules || exit 1
-
-# Generate gcov output
-${MAKE} || exit 1
 
 # Generate html report
 
