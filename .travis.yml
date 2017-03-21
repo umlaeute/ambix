@@ -9,7 +9,7 @@ env:
         - COVERITY_SCAN_NOTIFICATION_EMAIL="dev@umlaeute.mur.at"
         - COVERITY_SCAN_BUILD_COMMAND="make"
         - COVERITY_SCAN_PROJECT_NAME="$TRAVIS_REPO_SLUG"
-        - LIBSNDFILE_URL="http://www.mega-nerd.com/libsndfile/files/libsndfile-1.0.26.tar.gz"
+        - LIBSNDFILE_URL="http://www.mega-nerd.com/libsndfile/files/libsndfile-1.0.27.tar.gz"
 
 os:
   - linux
