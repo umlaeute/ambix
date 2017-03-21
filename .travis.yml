@@ -32,7 +32,11 @@ matrix:
     - compiler: gcc
       env:
         - DO_EXTRA=""
+    - compiler: gcc
+      env:
         - DO_EXTRA="coverage"
+    - compiler: gcc
+      env:
         - DO_EXTRA="coverity"
   exclude:
     - os: osx
