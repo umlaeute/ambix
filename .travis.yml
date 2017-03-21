@@ -52,7 +52,6 @@ install:
   ## remove libtool libs
   - find /usr/local/lib -type f -name "*.la" -exec sudo rm -f {} \+
 before_script:
-  - export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}
   # configure the build
   - cd "$TRAVIS_BUILD_DIR"
   - ./autogen.sh
