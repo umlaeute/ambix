@@ -58,7 +58,7 @@ before_script:
   - ./autogen.sh
   - ./configure --disable-silent-rules ${CONFIGUREFLAGS}
   # OMG, Coverity scan uses a certificate not supported by travis-ci
-  - echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-certificates.crt
+  - if [ -d /etc/ssl/certs/ ] ; then echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-certificates.crt; fi
   # implement Coverity Scan with before_script instead of addons.coverity_scan
   # to work around too-early quota check by the coverity_scan addon
   - if [[ "x${DO_EXTRA}" = "xcoverity" ]] ; then curl -s 'https://scan.coverity.com/scripts/travisci_build_coverity_scan.sh' | bash || true ; fi
