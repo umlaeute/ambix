@@ -65,7 +65,7 @@ before_script:
 
 script:
 - make
-- LD_LIBRARY_PATH=/usr/local/lib VERBOSE=1 make distcheck
+- if [[ "x${DO_EXTRA}" = "x" ]] ; then make distcheck; fi
 
 after_success:
   - if [[ "x${DO_EXTRA}" = "xcoverage" ]] ; then LD_LIBRARY_PATH=/usr/local/lib ./coverage.sh; fi
