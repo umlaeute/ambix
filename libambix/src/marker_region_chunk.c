@@ -230,8 +230,8 @@ ambix_err_t _ambix_read_markersregions(ambix_t*ambix) {
         mystrings.strings = realloc(mystrings.strings, (mystrings.num_strings+temp_num_strings)*sizeof(unsigned char*));
       }
       strings_ptr = strings_data;
+      caf_stringid = (CAFStringID*)(&strings_ptr[4]);
       strings_ptr += (4+temp_num_strings*sizeof(CAFStringID)); // start of mStrings
-      caf_stringid = (CAFStringID*)(&strings_data[4]);
       for (i=0; i<temp_num_strings; i++) {
         unsigned char* mString = NULL;
         uint32_t mString_len = 0;
