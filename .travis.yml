@@ -10,6 +10,13 @@ env:
         - COVERITY_SCAN_BUILD_COMMAND="make"
         - LIBSNDFILE_URL="http://www.mega-nerd.com/libsndfile/files/libsndfile-1.0.26.tar.gz"
 
+os:
+  - linux
+  - osx
+compiler:
+  - clang
+  - gcc
+
 addons:
   apt:
     packages:
@@ -22,12 +29,14 @@ addons:
 
 matrix:
   include:
-    - compiler: clang
-      env:
-        - COVERITY_SCAN_PROJECT_NAME="$TRAVIS_REPO_SLUG"
     - compiler: gcc
       env:
-        - DO_COVERAGE="yes"
+        - DO_EXTRA=""
+        - DO_EXTRA="coverage"
+        - DO_EXTRA="coverity"
+  exclude:
+    - os: osx
+      compiler: gcc
 
 install:
   ## build libsndfile
@@ -36,6 +45,7 @@ install:
   ## remove libtool libs
   - find /usr/local/lib -type f -name "*.la" -exec sudo rm -f {} \+
 before_script:
+  # configure the build
   - cd "$TRAVIS_BUILD_DIR"
   - ./autogen.sh
   - ./configure --disable-silent-rules
@@ -43,13 +53,13 @@ before_script:
   - echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-certificates.crt
   # implement Coverity Scan with before_script instead of addons.coverity_scan
   # to work around too-early quota check by the coverity_scan addon
-  - if [[ -n $COVERITY_SCAN_PROJECT_NAME ]] ; then curl -s 'https://scan.coverity.com/scripts/travisci_build_coverity_scan.sh' | bash || true ; fi
+  - if [[ "x${DO_EXTRA}" = "xcoverity" ]] ; then curl -s 'https://scan.coverity.com/scripts/travisci_build_coverity_scan.sh' | bash || true ; fi
 
 script:
 - make
 - LD_LIBRARY_PATH=/usr/local/lib VERBOSE=1 make distcheck
 
 after_success:
-  - if [[ "x${DO_COVERAGE}" = "xyes" ]] ; then LD_LIBRARY_PATH=/usr/local/lib ./coverage.sh; fi
+  - if [[ "x${DO_EXTRA}" = "xcoverage" ]] ; then LD_LIBRARY_PATH=/usr/local/lib ./coverage.sh; fi
   - if [[ "yes.${TRAVIS_BRANCH}.${TRAVIS_PULLREQUEST}" = "yes.master." ]]; then ./.deploy-documentation.sh ; fi
   - bash <(curl -s https://codecov.io/bash)
