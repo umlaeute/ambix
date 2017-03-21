@@ -36,6 +36,10 @@ matrix:
     - compiler: gcc
       env:
         - DO_EXTRA="coverity"
+        - CFLAGS="-g -O0 --coverage"
+        - CXXFLAGS="-g -O0 --coverage"
+        - LDFLAGS="--coverage"
+        - CONFIGUREFLAGS="--enable-debug"
   exclude:
     - os: osx
       compiler: gcc
@@ -50,7 +54,7 @@ before_script:
   # configure the build
   - cd "$TRAVIS_BUILD_DIR"
   - ./autogen.sh
-  - ./configure --disable-silent-rules
+  - ./configure --disable-silent-rules ${CONFIGUREFLAGS}
   # OMG, Coverity scan uses a certificate not supported by travis-ci
   - echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-certificates.crt
   # implement Coverity Scan with before_script instead of addons.coverity_scan
