@@ -34,13 +34,13 @@ matrix:
     - compiler: gcc
       env:
         - DO_EXTRA="coverage"
-    - compiler: gcc
-      env:
-        - DO_EXTRA="coverity"
         - CFLAGS="-g -O0 --coverage"
         - CXXFLAGS="-g -O0 --coverage"
         - LDFLAGS="--coverage"
         - CONFIGUREFLAGS="--enable-debug"
+    - compiler: gcc
+      env:
+        - DO_EXTRA="coverity"
   exclude:
     - os: osx
       compiler: gcc
