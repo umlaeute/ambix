@@ -499,42 +499,52 @@ int main(int argc, char**argv) {
   return ambix_deinterleave(ai);
 }
 void print_usage(const char*name) {
-  printf("\n");
-  printf("Usage: %s [options] infile\n", name);
-  printf("Split an ambix file into several mono files\n");
+  fprintf(stderr, "\n");
+  fprintf(stderr, "Usage: %s [options] infile\n", name);
+  fprintf(stderr, "Split an ambix file into several mono files\n");
 
-  printf("\n");
-  printf("Options:\n");
-  printf("  -h, --help                       print this help\n");
-  printf("  -v, --version                    print version info\n");
-  printf("  -p, --prefix                     output prefix\n");
-  printf("\n");
+  fprintf(stderr, "\n");
+  fprintf(stderr, "Options:\n");
+  fprintf(stderr, "  -h, --help                       print this help\n");
+  fprintf(stderr, "  -v, --version                    print version info\n");
+  fprintf(stderr, "  -p, --prefix <PREFIX>            output prefix (default: '<infilename>-')\n");
+  fprintf(stderr, "  -s, --suffix <SUFFIX>            output suffix (default: '')\n");
+  fprintf(stderr, "  -f, --format <FMT>               output format (WAV, CAFF)\n");
+  fprintf(stderr, "\n");
 
-  printf(
-         "\nThis splits an ambix file into several mono files, naming them according to type:"
-         "\nIf infile is 'FieldRecording.caf', this will extract audio data into"
-         "\n'FieldRecording-ambi000.caf', 'FieldRecording-ambi001.caf', ..., 'FieldRecording-extra000.caf', ..."
-         "\n"
+  fprintf(stderr,
+          "\nThis splits an ambix file into several mono files,"
+          "\nnaming them according to prefix, suffix and format:"
+          "\nIf infile is 'FieldRecording.caf', this will extract audio data into"
+          "\n  - 'FieldRecording-ambi000.wav'"
+          "\n  - 'FieldRecording-ambi001.wav'"
+          "\n  - ..."
+          "\n  - 'FieldRecording-extra000.wav'"
+          "\n  - ..."
+          "\n"
          );
 
-  printf("\n");
-#ifdef PACKAGE_BUGREPORT
-  printf("Report bugs to: %s\n\n", PACKAGE_BUGREPORT);
-#endif
+  fprintf(stderr, "\n");
 #ifdef PACKAGE_URL
-  printf("Home page: %s\n", PACKAGE_URL);
+  fprintf(stderr, "Home page: %s\n", PACKAGE_URL);
+#endif
+#ifdef PACKAGE_BUGREPORT
+  fprintf(stderr, "Report bugs at: %s\n", PACKAGE_BUGREPORT);
 #endif
 }
 void print_version(const char*name) {
 #ifdef PACKAGE_VERSION
-  printf("%s %s\n", name, PACKAGE_VERSION);
+  fprintf(stderr, "%s %s\n", name, PACKAGE_VERSION);
 #endif
-  printf("\n");
-  printf("Copyright (C) 2012 Institute of Electronic Music and Acoustics (IEM), University of Music and Dramatic Arts (KUG), Graz, Austria.\n");
-  printf("\n");
-  printf("License LGPLv2.1: GNU Lesser GPL version 2.1 or later <http://gnu.org/licenses/lgpl.html>\n");
-  printf("This is free software: you are free to change and redistribute it.\n");
-  printf("There is NO WARRANTY, to the extent permitted by law.\n");
-  printf("\n");
-  printf("Written by IOhannes m zmoelnig <zmoelnig@iem.at>\n");
+  fprintf(stderr, "\n");
+  fprintf(stderr, "Copyright (C) 2012-2017 Institute of Electronic Music and Acoustics (IEM),\n"
+          "                        University of Music and Dramatic Arts (KUG),\n"
+          "                        Graz, Austria.\n");
+  fprintf(stderr, "\n");
+  fprintf(stderr, "License LGPLv2.1: GNU Lesser GPL version 2.1 or later\n"
+                  "                  <http://gnu.org/licenses/lgpl.html>\n");
+  fprintf(stderr, "This is free software: you are free to change and redistribute it.\n");
+  fprintf(stderr, "There is NO WARRANTY, to the extent permitted by law.\n");
+  fprintf(stderr, "\n");
+  fprintf(stderr, "Written by IOhannes m zmoelnig <zmoelnig@iem.at>\n");
 }
