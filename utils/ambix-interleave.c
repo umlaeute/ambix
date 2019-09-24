@@ -175,12 +175,14 @@ static ai_t*ai_cmdline(const char*name, int argc, char**argv) {
     if(!strcmp(argv[0], "-h") || !strcmp(argv[0], "--help")) {
       print_usage(name);
       ai_exit=0;
-      return ai_close(ai);
+      ai_close(ai);
+      exit(0);
     }
     if(!strcmp(argv[0], "-V") || !strcmp(argv[0], "--version")) {
       print_version(name);
       ai_exit=0;
-      return ai_close(ai);
+      ai_close(ai);
+      exit(0);
     }
     if(!strcmp(argv[0], "-o") || !strcmp(argv[0], "--output")) {
       if(argc>1) {
