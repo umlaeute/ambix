@@ -30,6 +30,7 @@
 # include "config.h"
 #endif
 
+#include <math.h>
 #include <stdlib.h>
 static inline int my_exit(int i) {exit(i); return i;}
 static inline int pass(void) {return my_exit(0); }
