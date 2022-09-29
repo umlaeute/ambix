@@ -104,7 +104,7 @@ static void ambix_info_open(t_ambix_info *x, t_symbol*s) {
   const ambix_matrix_t*matrix=NULL;
 
   t_symbol*filesym=get_filename(x->x_canvas, s);
-  char*filename=(filesym!=NULL)?filesym->s_name:NULL;
+  const char*filename=(filesym!=NULL)?filesym->s_name:NULL;
 
   memset(&ainfo, 0, sizeof(ainfo));
 

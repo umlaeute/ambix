@@ -194,7 +194,7 @@ typedef struct _ambix_read {
   t_float x_insamplerate;   /* sample rate of input signal if known */
 
   /* parameters to communicate with subthread */
-  char *x_filename;       /* file to open (string is permanently allocated) */
+  const char *x_filename;       /* file to open (string is permanently allocated) */
   int x_fileerror;        /* slot for "errno" return */
   t_float x_samplerate;     /* sample rate of soundfile */
   long x_onsetframes;     /* number of sample frames to skip */

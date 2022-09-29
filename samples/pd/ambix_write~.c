@@ -81,7 +81,7 @@ static int ambixwrite_argparse(void *obj, int *p_argc, t_atom **p_argv,
   while (argc > 0 && argv->a_type == A_SYMBOL &&
          *argv->a_w.w_symbol->s_name == '-')
     {
-      char *flag = argv->a_w.w_symbol->s_name + 1;
+      const char *flag = argv->a_w.w_symbol->s_name + 1;
       if(0) {
 #if 0
       } else if (!strcmp(flag, "nframes")) {
@@ -189,7 +189,7 @@ typedef struct _ambix_write
   t_float x_insamplerate;   /* sample rate of input signal if known */
 
   /* parameters to communicate with subthread */
-  char *x_filename;       /* file to open (string is permanently allocated) */
+  const char *x_filename;       /* file to open (string is permanently allocated) */
   ambix_fileformat_t x_fileformat; /* extended or basic */
   ambix_sampleformat_t x_sampleformat; /* 16, 24 or 32 bit */
   uint32_t x_ambichannels; /* number of ambisonics channels in soundfile */
