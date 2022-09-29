@@ -1,4 +1,4 @@
-AC_INIT([ambix],[0.1.1],[https://git.iem.at/ambisonics/libambix],
+AC_INIT([ambix],[0.1.2],[https://git.iem.at/ambisonics/libambix],
                 [libambix],[http://ambisonics.iem.at/xchange/format])
 AM_INIT_AUTOMAKE([foreign])
 

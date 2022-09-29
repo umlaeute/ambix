@@ -1,3 +1,22 @@
+libambix (0.1.2) unstable; urgency=medium
+
+  [ IOhannes m zmölnig ]
+  * Bug-reports should go to git.iem.at
+  * Fix type issues
+    * Fix issues with SNDFILE handle type (if sndfile.h is (not) included)
+      (Fixes FTBFS with libsndfile>=1.1)
+    * Dereference (char*) rather than (void*)
+    * Fix function prototypes: "uint32_t" is not necessarily "unsigned int"
+    * Use "const char*" for caching Pd symbol strings
+    * Make sure that AMBIX_MAKE_MARKER only deals with uint32_t
+  * Pd-externals: Use pd_error() instead of error()
+  * [ambix-deinterleave] Print version/usage to stderr
+  * [ambix-deinterleave] Settable suffix and format
+  * [ambix-interleave] Exit after "--help" and "--version"
+  * tests: Include <math.h> to avoid implicit declarations
+
+ -- IOhannes m zmölnig (Debian/GNU) <umlaeute@debian.org>  Thu, 29 Sep 2022 12:37:39 +0200
+
 libambix (0.1.1) unstable; urgency=medium
 
   [ IOhannes m zmölnig ]

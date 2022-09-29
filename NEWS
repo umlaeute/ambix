@@ -1,3 +1,11 @@
+libambix (0.1.2+nmu1) UNRELEASED; urgency=medium
+
+  * Fixed build failure with libsndfile>=1.1
+
+  * Fixed internal type misuse
+
+ -- IOhannes m zmölnig (Debian/GNU) <umlaeute@debian.org>  Thu, 29 Sep 2022 12:44:20 +0200
+
 libambix (0.1.1) unstable; urgency=medium
 
   * Fixed coverity-scan issues
