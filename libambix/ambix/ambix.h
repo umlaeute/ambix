@@ -60,6 +60,25 @@ typedef unsigned long uint64_t;
 # include <stdint.h>
 #endif
 
+/** @cond skip */
+  /* ugly hack to provide to allow the use type 'SNDFILE*'
+   * regardless of whether <sndfile.h> is included or not
+   */
+#ifndef HAVE_PUSH_MACRO
+# define HAVE_PUSH_MACRO 1
+#endif
+#if HAVE_PUSH_MACRO
+# pragma push_macro("SNDFILE")
+# ifdef SNDFILE
+#  undef SNDFILE
+# endif
+# define SNDFILE void
+#elif !defined(SNDFILE_1)
+# define SNDFILE void
+#endif
+/** @endcond */
+
+
 /** a 32bit number (either float or int), useful for endianness operations */
 typedef union {
   /** 32bit floating point */
@@ -415,17 +434,14 @@ int64_t ambix_writef_float32 (ambix_t *ambix, const float32_t *ambidata, const f
  */
 AMBIX_API
 int64_t ambix_writef_float64 (ambix_t *ambix, const float64_t *ambidata, const float64_t *otherdata, int64_t frames) ;
-/**
- * typedef from libsndfile
- * @private
- */
-struct SNDFILE_tag;
 
 /** @brief Get the libsndfile handle associated with the ambix handle
  *
- * If possible, require an SNDFILE handle if possible; if the ambix handle is
+ * If possible, require an SNDFILE handle; if the ambix handle is
  * not associated with SNDFILE (e.g. because libambix is compiled without
  * libsndfile support), NULL is returned.
+ * If you need this, you probably should include <sndfile.h> before
+ * including <ambix/ambix.h>
  *
  * @param ambix The handle to an ambix file
  *
@@ -434,7 +450,10 @@ struct SNDFILE_tag;
  * @ingroup ambix
  */
 AMBIX_API
-struct SNDFILE_tag *ambix_get_sndfile (ambix_t *ambix) ;
+SNDFILE *ambix_get_sndfile (ambix_t *ambix) ;
+
+#pragma pop_macro("SNDFILE")
+
 /** @brief Get the number of stored markers within the ambix file.
  *
  * @return number of markers.
@@ -825,4 +844,11 @@ int ambix_is_fullset(uint32_t channels) ;
 #ifdef __cplusplus
 } /* extern "C" */
 #endif /* __cplusplus */
+
+#if HAVE_PUSH_MACRO
+# pragma pop_macro("SNDFILE")
+#elif !defined(SNDFILE_1)
+# undef SNDFILE void
+#endif
+
 #endif /* AMBIX_AMBIX_H */

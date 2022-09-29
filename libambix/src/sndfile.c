@@ -332,7 +332,7 @@ int64_t _ambix_seek (ambix_t* ambix, int64_t frames, int bias) {
   return -1;
 }
 
-SNDFILE*_ambix_get_sndfile      (ambix_t*ambix) {
+void*_ambix_get_sndfile      (ambix_t*ambix) {
   return PRIVATE(ambix)->sf_file;
 }
 int64_t _ambix_readf_int16   (ambix_t*ambix, int16_t*data, int64_t frames) {

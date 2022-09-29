@@ -30,7 +30,7 @@ ambix_err_t     _ambix_close    (ambix_t*ambix) {
   return AMBIX_ERR_INVALID_FILE;
 }
 
-struct SNDFILE_tag*_ambix_get_sndfile   (ambix_t*ambix) {
+SNDFILE*_ambix_get_sndfile   (ambix_t*ambix) {
   return 0;
 }
 
