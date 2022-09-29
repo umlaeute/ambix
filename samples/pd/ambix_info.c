@@ -111,7 +111,7 @@ static void ambix_info_open(t_ambix_info *x, t_symbol*s) {
   ambix=ambix_open(filename, AMBIX_READ, &ainfo);
 
   if(!ambix) {
-    error("[ambix_info]: unable to open '%s'", filename);
+    pd_error(x, "[ambix_info]: unable to open '%s'", filename);
     return;
   }
 

@@ -433,7 +433,7 @@ static void *ambix_write_new(t_symbol*s, int argc, t_atom*argv) {
     bufframes  =atom_getint(argv+2);
     break;
   default:
-    error("usage: [ambix_write~ <ambichannels> <extrachannels> <buffersize>]");
+    pd_error(0, "usage: [ambix_write~ <ambichannels> <extrachannels> <buffersize>]");
     return NULL;
   }
 
@@ -652,7 +652,7 @@ static void ambix_write_free(t_ambix_write *x) {
   }
   pthread_mutex_unlock(&x->x_mutex);
   if (pthread_join(x->x_childthread, &threadrtn))
-    error("ambix_write_free: join failed");
+    pd_error(x, "ambix_write_free: join failed");
   /* post("... done."); */
 
   pthread_cond_destroy(&x->x_requestcondition);
