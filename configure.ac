@@ -61,6 +61,7 @@ IEM_CHECK_RTE
 AM_CONDITIONAL(HAVE_PUREDATA, [test "x$have_pd" = "xyes"])
 
 AC_HEADER_STDC
+AC_CHECK_HEADERS([limits.h])
 
 AM_CONDITIONAL(DISABLED, [test "xno" = "xyes"])
 AM_CONDITIONAL(ENABLED, [test "xyes" = "xyes"])
