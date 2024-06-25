@@ -43,6 +43,12 @@
 #include "jcommon/observe-signal.h"
 #include "jcommon/common.h"
 
+#if HAVE_LIMITS_H
+# include <limits.h>
+#else
+# define INT_MAX 0xFFFFFFFF
+#endif
+
 struct player_opt
 {
   int buffer_frames;
@@ -375,6 +381,15 @@ int jackplay(const char *file_name,
 
   d.buffer_samples = d.o.buffer_frames * d.channels;
   d.buffer_bytes = d.buffer_samples * sizeof(float);
+
+  if ( d.o.buffer_frames > INT_MAX / (d.channels * sizeof(float32_t))) {
+    eprintf("ambix-jplay: invalid frame buffer size %d * %d", d.o.buffer_frames, d.channels);
+    FAILURE;
+  }
+  if ( d.buffer_samples > INT_MAX / sizeof(float) ) {
+    eprintf("ambix-jplay: invalid sample buffer size %d * %d", d.buffer_samples, sizeof(float));
+    FAILURE;
+  }
 
   d.a_buffer = (float32_t*)xmalloc(d.o.buffer_frames * d.a_channels * sizeof(float32_t));
   d.e_buffer = (float32_t*)xmalloc(d.o.buffer_frames * d.e_channels * sizeof(float32_t));

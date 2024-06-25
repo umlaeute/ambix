@@ -35,6 +35,12 @@
 #include "jcommon/observe-signal.h"
 #include "jcommon/common.h"
 
+#if HAVE_LIMITS_H
+# include <limits.h>
+#else
+# define INT_MAX 0xFFFFFFFF
+#endif
+
 struct recorder
 {
   int buffer_bytes;
@@ -448,6 +454,15 @@ int main(int argc, char *argv[])
 
   d.buffer_samples = d.buffer_frames * d.channels;
   d.buffer_bytes = d.buffer_samples * sizeof(float);
+
+  if ( d.buffer_frames > INT_MAX / (d.channels * sizeof(float32_t))) {
+    eprintf("%s: invalid frame buffer size %d * %d", myname, d.buffer_frames, d.channels);
+    FAILURE;
+  }
+  if ( d.buffer_samples > INT_MAX / sizeof(float) ) {
+    eprintf("%s: invalid sample buffer size %d * %d", myname, d.buffer_samples, sizeof(float));
+    FAILURE;
+  }
 
   d.a_buffer = (float32_t*)xmalloc(d.buffer_frames * d.a_channels * sizeof(float32_t));
   d.e_buffer = (float32_t*)xmalloc(d.buffer_frames * d.e_channels * sizeof(float32_t));
