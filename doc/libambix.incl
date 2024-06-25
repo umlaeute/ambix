@@ -78,6 +78,7 @@
    ambix->fileformat = AMBIX_BASIC;
 
    ambix = ambix_open("ambixfile.caf", AMBIX_READ, info);
+
    if(ambix) {
      uint64_t frames = info->frames;
      uint64_t blocksize = 1024;
@@ -121,11 +122,11 @@
    ambix_info_t*info  = calloc(1, sizeof(ambix_info_t));
 
    /* setting the fileformat to AMBIX_EXTENDED forces the ambi data
-    * be delivered as stored in the file
-    */
+    * be delivered as stored in the file */
    ambix->fileformat = AMBIX_EXTENDED;
 
    ambix = ambix_open("ambixfile.caf", AMBIX_READ, info);
+
    if(ambix) {
      uint64_t frames = info->frames;
      uint64_t blocksize = 1024;
@@ -222,6 +223,7 @@
    ambix->ambichannels = 16; /* 16 channels means 3rd order ambisonics, according to L=(2N+1)^2 */
 
    ambix = ambix_open("ambixfile.caf", AMBIX_WRITE, info);
+
    if(ambix) {
      uint64_t frames = info->frames;
      uint64_t blocksize = 1024;
@@ -265,6 +267,7 @@
    ambix->extrachannels = 1; /* an extrachannel, e.g. click-track */
 
    ambix = ambix_open("ambixfile.caf", AMBIX_WRITE, info);
+
    if(ambix) {
      uint64_t frames = info->frames;
      uint64_t blocksize = 1024;
@@ -336,6 +339,7 @@
    info->ambichannels = 7; /* 3rd-order horizontal-only(!) */
 
    ambix = ambix_open("ambixfile.caf", AMBIX_WRITE, info);
+
    if(ambix) {
      uint64_t fullambichannels = 16;
      uint64_t frames = info->frames;
@@ -346,8 +350,7 @@
 
      /* on disk, the data is stored as 3rd-order horizontal-only Furse-Malham
       * set (7 channels); we need to provide an adaptor matrix that converts
-      * from the 7 FuMa-channels to the 16 AMBIX channels
-      */
+      * from the 7 FuMa-channels to the 16 AMBIX channels */
      ambix_matrix_t*mtx = NULL;
      mtx = ambix_matrix_init(fullambichannels, info->ambichannels, mtx);
      mtx = ambix_matrix_fill(mtx, ABIX_MATRIX_FUMA); /* fuma->ambix matrix [16x7] */
