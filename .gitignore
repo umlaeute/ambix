@@ -42,3 +42,5 @@ build/w32-vs*/*
 !*.vcproj
 !*.vsprops
 !Makefile.am
+# common build directory
+_build*/
